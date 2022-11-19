@@ -11,14 +11,9 @@ import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
 import frc.robot.Robot;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.FileHandler;
-import java.util.logging.SimpleFormatter;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
