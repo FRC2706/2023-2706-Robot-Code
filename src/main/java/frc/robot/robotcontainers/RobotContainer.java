@@ -4,46 +4,58 @@
 
 package frc.robot.robotcontainers;
 
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.Robot;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and button mappings) should be declared here.
+ * This should only be a superclass to other RobotContainers.
+ * 
+ * DO NOT PUT CODE IN THIS CLASS.
+ * 
  */
-public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
-
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    // Configure the button bindings
-    configureButtonBindings();
-  }
-
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {}
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return m_autoCommand;
-  }
+public abstract class RobotContainer {
+    public Command getAutonomousCommand() {
+        return new InstantCommand();
+    } 
 }
+
+/**
+ *  **The idea of having multiple RobotContainers**
+ * 
+ * TDLR:
+ * The idea is to have multiple robot containers to control the commands, button bindings and auto command for each robot individually.
+ * This prevents unwanted subsystems and unwanted hardware objects (like TalonSRX or SparkMax) from being constructed.
+ * 
+ * 
+ *  Idea:
+ *  We want to write code that works on multiple robots.
+ * 
+ *  Problem: 
+ *      Some devices like the TalonSRX or SparkMax can cause problems if they are
+ *          constructed by never find the canID for that device on the canBus.
+ * 
+ *  Solution:
+ *      To prevent hardware objects from being constructed, we prevent their Subsystems
+ *          from being construction.
+ * 
+ *      To prevent the subsystems from being constructed, we prevent the related commands
+ *          from being construction.
+ * 
+ *      To control what commands are constructed, we have multiple RobotContainers that can
+ *          define their own set of Commands, ButtonBindings, Autononaous command. 
+ * 
+ *      
+ *  SubsystemChecker.java
+ *      This is a tool to make sure this idea goes smootly.
+ * 
+ *      SubsystemChecker.java must be told when a Subsystem is constructed.
+ * 
+ *      Use the SubsystemChecker.subsystemConstructed function to tell the checker.
+ *          This function must be told the type of subsystem too.
+ *          Use SubsystemChecker.SubsystemType for the type
+ * 
+ *      Add types to SubsystemType if you are making a new Subsystem.
+ *  
+ *      Add the allowed SubsystemType for each robot ID in their related arrays.
+ *
+ */

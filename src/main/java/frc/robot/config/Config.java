@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 /**
@@ -45,7 +46,7 @@ public class Config {
     /**
      * ID of the robot that code is running on
      */
-    public static int robotId = -1;
+    private static int robotId = -1;
     
     /**
      * ROBOT IDs
@@ -66,21 +67,23 @@ public class Config {
     /**
      * CAN IDs, ports, channels, etc.
      */
-    public static int DIFF_LEADER_LEFT_CANID = robotSpecific(-01, 6, 2, 5, -01, 35);
-    public static int DIFF_LEADER_RIGHT_CANID = robotSpecific(-01, 3, 1, 3, -01, 33);
-    public static int DIFF_FOLLOWER_LEFT_CANID = robotSpecific(-01, 5, -1, 7, -01, 37);
-    public static int DIFF_FOLLOWER_RIGHT_CANID = robotSpecific(-01, 2, -1, 9, -01, 39);
-
-    public static int INTAKE_CANID = robotSpecific(-01, 8, -1, -1);
-    public static int SHOOTER_CANID = robotSpecific(-01, 11, 5, -1);
-    public static int CLIMBER_CANID = robotSpecific(-01, 4, -1, -1);
-    public static int INDEXER_CANID = robotSpecific(-01, 7, 7, -1);
-
-    public static int PIGEON_ID = robotSpecific(CLIMBER_CANID, 27, 27, 27, DIFF_FOLLOWER_LEFT_CANID);
-
-    public static int CANDLE_CANID = robotSpecific(-01, 15, -1, 15);
-    public static int CTRE_PCM_CANID = robotSpecific(-01, 1, -1, -1);
-
+    public static class CANID {
+        public static int DIFF_LEADER_LEFT = robotSpecific(-01, 6, 2, 5, -01, 35);
+        public static int DIFF_LEADER_RIGHT = robotSpecific(-01, 3, 1, 3, -01, 33);
+        public static int DIFF_FOLLOWER_LEFT = robotSpecific(-01, 5, -1, 7, -01, 37);
+        public static int DIFF_FOLLOWER_RIGHT = robotSpecific(-01, 2, -1, 9, -01, 39);
+    
+        public static int INTAKE = robotSpecific(-01, 8, -1, -1);
+        public static int SHOOTER = robotSpecific(-01, 11, 5, -1);
+        public static int CLIMBER = robotSpecific(-01, 4, -1, -1);
+        public static int INDEXER = robotSpecific(-01, 7, 7, -1);
+    
+        public static int PIGEON = robotSpecific(27, 27, 27, 27, DIFF_FOLLOWER_LEFT);
+    
+        public static int CANDLE = robotSpecific(-01, 15, -1, 15);
+        public static int CTRE_PCM = robotSpecific(-01, 1, -1, -1);
+    }
+    
     public static int ANALOG_SELECTOR_PORT_ONE = robotSpecific(-01, 0, 0, -1);
     public static int ANALOG_SELECTOR_PORT_TWO = robotSpecific(-01, -1, -1, -1);
     
@@ -92,31 +95,41 @@ public class Config {
     /**
      * Differential Drive Constants
      */
-    public static boolean DIFF_ISNEOS = robotSpecific(true, false, false, false);
-    public static boolean DIFF_LEFT_FOLLOWER_ISVICTOR = robotSpecific(false, true, false, true);
-    public static boolean DIFF_RIGHT_FOLLOWER_ISVICTOR = robotSpecific(false, true, false, true);
-
-    // Invert motors to consider forward as forward (same practice for all objects)
-    public static boolean DIFF_LEADER_LEFT_INVERTED_ = robotSpecific(false, false, false, false, false, false);
-    public static boolean DIFF_LEADER_RIGHT_INVERTED = robotSpecific(false, false, true, true, false, true);
-    public static boolean DIFF_FOLLOWER_LEFT_INVERTED = robotSpecific(false, true, false, false, false, false);
-    public static boolean DIFF_FOLLOWER_RIGHT_INVERTED = robotSpecific(false, false, false, true, false, false);
-
-    public static boolean DIFF_LEFT_SENSORPHASE = robotSpecific(false, true, true, true);
-    public static boolean DIFF_RIGHT_SENSORPHASE = robotSpecific(false, false, true, true);
-
-    // Current limiter Constants
-    public static boolean DIFF_TALON_CURRENT_LIMIT = true;   //Enable or disable motor current limiting.
-    public static int DIFF_TALON_PEAK_CURRENT_AMPS = 80;           //Peak current threshold to trigger the current limit
-    public static int DIFF_TALON_PEAK_TIME_MS = 250;               //Time after current exceeds peak current to trigger current limit
-    public static int DIFF_TALON_CONTIN_CURRENT_AMPS = 40;         //Current to mantain once current limit is triggered 
+    public static class DIFF {
+        public static boolean ISNEOS = robotSpecific(true, false, false, false);
+        public static boolean HAS_FOLLOWERS = robotSpecific(true, true, false, true, true);
+        public static boolean LEFT_FOLLOWER_ISVICTOR = robotSpecific(false, true, false, true);
+        public static boolean RIGHT_FOLLOWER_ISVICTOR = robotSpecific(false, true, false, true);
     
-    // Drivetrain idle mode and voltage/current limits
-    public static int DIFF_NEO_RAMSETE_CURRENTLIMIT = 40;
-    public static int DIFF_NEO_DRIVER_CURRENTLIMIT = 80;
-    public static IdleMode DIFF_DEFAULT_IDLEMODE = IdleMode.kBrake; 
+        // Invert motors to consider forward as forward (same practice for all objects)
+        public static boolean LEADER_LEFT_INVERTED = robotSpecific(false, false, false, false, false, false);
+        public static boolean LEADER_RIGHT_INVERTED = robotSpecific(false, true, true, true, false, true);
+        public static boolean FOLLOWER_LEFT_INVERTED = robotSpecific(false, true, false, false, false, false);
+        public static boolean FOLLOWER_RIGHT_INVERTED = robotSpecific(false, false, false, true, false, false);
+    
+        public static boolean LEFT_SENSORPHASE = robotSpecific(false, true, true, true);
+        public static boolean RIGHT_SENSORPHASE = robotSpecific(false, false, true, true);
+    
+        // Current limiter Constants
+        public static boolean TALON_CURRENT_LIMIT = true;   //Enable or disable motor current limiting.
+        public static int TALON_PEAK_CURRENT_AMPS = 80;           //Peak current threshold to trigger the current limit
+        public static int TALON_PEAK_TIME_MS = 250;               //Time after current exceeds peak current to trigger current limit
+        public static int TALON_CONTIN_CURRENT_AMPS = 40;         //Current to mantain once current limit is triggered 
+        
+        // Drivetrain idle mode and voltage/current limits
+        public static int NEO_RAMSETE_CURRENTLIMIT = 40;
+        public static int NEO_DRIVER_CURRENTLIMIT = 80;
 
-    // Drivetain data
+        public static IdleMode TELEOP_IDLEMODE = IdleMode.kBrake; 
+        public static NeutralMode TELEOP_NEUTRALMODE = NeutralMode.Brake;
+
+        public static IdleMode AUTO_IDLEMODE = IdleMode.kBrake; 
+        public static NeutralMode AUTO_NEUTRALMODE = NeutralMode.Brake;
+
+        public static double BRAKE_IN_DISABLE_TIME = 2.0;
+    }
+    
+
     public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.1524, 0.1524); // Diameter of wheel is 0.1524
     
         
@@ -159,11 +172,8 @@ public class Config {
     /**
      * Common Robot Constants
      */
-    public static Double JOYSTICK_AXIS_DEADBAND = 0.1; // TODO: Investigate if this can be better tuned
+    public static Double DRIVER_JOYSTICK_DEADBAND = 0.1; // TODO: Investigate if this can be better tuned
         
-    public static boolean DIFF_INVERT_JOYSTICK_FORWARD = true;
-    public static boolean DIFF_INVERT_JOYSTICK_STEERING = false;    
-
     public static double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, -1.0, 0.51762);
     public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
 
@@ -272,12 +282,12 @@ public class Config {
      *
      * @return The id of the robot
      */
-    private static int getRobotId() {
+    public static int getRobotId() {
         
         if (robotId < 0) {
             // Set to the ID of the 2023 Competition robot if the simulation is running
             if (RobotBase.isSimulation()) {
-                return 0;
+                return 1;
 
             // Not simulation so read the file on the roborio for it's robot id.
             } else {
