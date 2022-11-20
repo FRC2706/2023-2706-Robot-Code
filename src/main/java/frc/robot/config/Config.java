@@ -287,7 +287,7 @@ public class Config {
         if (robotId < 0) {
             // Set to the ID of the 2023 Competition robot if the simulation is running
             if (RobotBase.isSimulation()) {
-                return 1;
+                return 0;
 
             // Not simulation so read the file on the roborio for it's robot id.
             } else {
