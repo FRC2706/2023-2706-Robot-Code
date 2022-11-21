@@ -4,10 +4,22 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.SubsystemChecker.SubsystemType;
+import frc.robot.commands.BrakeModeDisabled;
+import frc.robot.config.Config;
+import frc.robot.robotcontainers.BeetleContainer;
+import frc.robot.robotcontainers.ClutchContainer;
+import frc.robot.robotcontainers.CompRobotContainer;
+import frc.robot.robotcontainers.MergonautContainer;
+import frc.robot.robotcontainers.MiniNeoDiffContainer;
+import frc.robot.robotcontainers.MiniSwerveContainer;
 import frc.robot.robotcontainers.RobotContainer;
+import frc.robot.subsystems.DiffNeoSubsystem;
+import frc.robot.subsystems.DiffTalonSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -17,8 +29,8 @@ import frc.robot.robotcontainers.RobotContainer;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-
   private RobotContainer m_robotContainer;
+  private BrakeModeDisabled brakeModeDisabledCommand = null;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -26,9 +38,42 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    // Instantiate the RobotContainer based on the Robot ID.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
+    switch (Config.getRobotId()) {
+      case 0:
+        m_robotContainer = new CompRobotContainer(); break;
+      
+      case 1:
+        m_robotContainer = new ClutchContainer(); break;
+
+      case 2:
+        m_robotContainer = new BeetleContainer(); break;
+
+      case 3:
+        m_robotContainer = new MergonautContainer(); break;
+
+      case 4:
+        m_robotContainer = new MiniSwerveContainer(); break;
+
+      case 5:
+        m_robotContainer = new MiniNeoDiffContainer(); break;
+
+      default:
+        m_robotContainer = new CompRobotContainer();
+        DriverStation.reportError(
+            String.format("ISSUE WITH CONSTRUCTING THE ROBOT CONTAINER. \n " +
+                          "CompRobotContainer constructed by default. RobotID: %d", Config.getRobotId()), 
+            true);
+    }
+
+    
+
+    if (SubsystemChecker.canSubsystemConstruct(SubsystemType.DiffNeoSubsystem) ||
+        SubsystemChecker.canSubsystemConstruct(SubsystemType.DiffTalonSubsystem)) 
+    {
+      brakeModeDisabledCommand = new BrakeModeDisabled();
+    }  
   }
 
   /**
@@ -49,12 +94,15 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    if (brakeModeDisabledCommand != null) 
+      brakeModeDisabledCommand.schedule();  
+  }
 
   @Override
   public void disabledPeriodic() {}
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
+  /** This autonomous runs the autonomous command selected by your {@link CompRobotContainer} class. */
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
@@ -62,6 +110,14 @@ public class Robot extends TimedRobot {
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
+    }
+    
+    // Set the IdleMode or NeutralMode of Differential subsystem
+    if (SubsystemChecker.canSubsystemConstruct(SubsystemType.DiffNeoSubsystem)) {
+      DiffNeoSubsystem.getInstance().setIdleMode(Config.DIFF.AUTO_IDLEMODE);
+
+    } else if (SubsystemChecker.canSubsystemConstruct(SubsystemType.DiffTalonSubsystem)) {
+      DiffTalonSubsystem.getInstance().setNeutralMode(Config.DIFF.AUTO_NEUTRALMODE);
     }
   }
 
