@@ -75,6 +75,9 @@ public class DiffTalonSubsystem extends SubsystemBase {
         rightLeader.setInverted(Config.DIFF.LEADER_RIGHT_INVERTED);
 
         if (leftFollower != null && rightFollower != null) {
+            leftFollower.configFactoryDefault();
+            rightFollower.configFactoryDefault();
+            
             leftFollower.setInverted(
                 Config.DIFF.FOLLOWER_LEFT_INVERTED ? InvertType.OpposeMaster : InvertType.FollowMaster);
 
