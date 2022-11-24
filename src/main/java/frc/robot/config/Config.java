@@ -103,8 +103,8 @@ public class Config {
     
         // Invert motors to consider forward as forward (same practice for all objects)
         public static boolean LEADER_LEFT_INVERTED = robotSpecific(false, false, false, false, false, false);
-        public static boolean LEADER_RIGHT_INVERTED = robotSpecific(false, true, true, true, false, true);
-        public static boolean FOLLOWER_LEFT_INVERTED = robotSpecific(false, true, false, false, false, false);
+        public static boolean LEADER_RIGHT_INVERTED = robotSpecific(false, false, true, true, false, true);
+        public static boolean FOLLOWER_LEFT_INVERTED = robotSpecific(false, false, false, false, false, false);
         public static boolean FOLLOWER_RIGHT_INVERTED = robotSpecific(false, false, false, true, false, false);
     
         public static boolean LEFT_SENSORPHASE = robotSpecific(false, true, true, true);
