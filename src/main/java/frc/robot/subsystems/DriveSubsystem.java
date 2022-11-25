@@ -39,7 +39,7 @@ public class DriveSubsystem extends SubsystemBase {
     private final SwerveModule m_rearRight = new SwerveModule(Config.CANID_REAR_RIGHT_DRIVE, Config.INVERTED_REAR_RIGHT_DRIVE, Config.CANID_REAR_RIGHT_STEERING, Config.INVERTED_REAR_RIGHT_STEERING, Config.CANID_REAR_RIGHT_CANCODER, Config.RR_ENCODER_OFFSET, "RR");
 
     // The gyro sensor
-    private final PigeonIMU gyro; 
+    private final PigeonIMU m_pigeon; 
 
     // Odometry class for tracking robot pose
     SwerveDriveOdometry m_odometry;
@@ -53,7 +53,7 @@ public class DriveSubsystem extends SubsystemBase {
     
     /** Creates a new DriveSubsystem. */
     private DriveSubsystem() {
-        gyro = new PigeonIMU(Config.CAN_PIGEON);
+        m_pigeon = new PigeonIMU(Config.CAN_PIGEON);
         m_odometry = new SwerveDriveOdometry(Config.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()));
     }
 
@@ -141,7 +141,7 @@ public class DriveSubsystem extends SubsystemBase {
      * @return the robot's heading in degrees, from -180 to 180
      */
     private double getGyro() {
-        return gyro.getYaw();
+        return m_pigeon.getFusedHeading();
     }
 
     /**
