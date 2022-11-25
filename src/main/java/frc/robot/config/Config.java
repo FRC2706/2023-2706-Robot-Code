@@ -31,6 +31,10 @@ import com.ctre.phoenix.ErrorCode;
  */
 public class Config {
 
+    public static final double FL_ENCODER_OFFSET = -(155 + 180)-3.22;
+    public static final double FR_ENCODER_OFFSET = -(94 + 180);
+    public static final double RL_ENCODER_OFFSET = -(200 + 180)-0.08;
+    public static final double RR_ENCODER_OFFSET = -(135 + 180)-1.24;
     public static final double kWheelBase = 0.7;
     public static double kTrackWidth = robotSpecific(-01);
 
@@ -44,6 +48,11 @@ public class Config {
     public static final int CANID_REAR_LEFT_STEERING = 0;
     public static final int CANID_FRONT_RIGHT_STEERING = 0;
     public static final int CANID_REAR_RIGHT_STEERING = 0;
+
+    public static final int CANID_FRONT_LEFT_CANCODER = 0;
+    public static final int CANID_REAR_LEFT_CANCODER = 0;
+    public static final int CANID_FRONT_RIGHT_CANCODER = 0;
+    public static final int CANID_REAR_RIGHT_CANCODER = 0; 
 
     public static final double turningEncoderConstant = (2*Math.PI)/8.0;
     public static final double drivetrainEncoderConstant = 0.1016*Math.PI*(1/(60*7.615));

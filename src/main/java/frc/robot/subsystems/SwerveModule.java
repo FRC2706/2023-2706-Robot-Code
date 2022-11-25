@@ -4,6 +4,11 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
+import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.CANCoderStatusFrame;
+import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -25,12 +30,11 @@ public class SwerveModule {
     // CODE: Prepare 2 variables for both SparkMaxs, use the object called CANSparkMax
     private CANSparkMax m_driveMotor;
     private CANSparkMax m_turningMotor;
-    private SparkMaxPIDController m_drivePIDController;
-    private SparkMaxPIDController m_turningPIDController;
     private RelativeEncoder m_driveEncoder;
     private RelativeEncoder m_turningEncoder;
-    private AnalogPotentiometer m_lamprey;
-    private FluidConstant<Double> lampreyOffset;
+    private SparkMaxPIDController m_drivePIDController;
+    private SparkMaxPIDController m_turningPIDController;
+    private CANCoder encoder;
     private NetworkTable swerveModuleTable;
     private NetworkTableEntry desiredSpeedEntry;
     private NetworkTableEntry desiredAngleEntry;
@@ -38,14 +42,12 @@ public class SwerveModule {
     private NetworkTableEntry currentAngleEntry;
     private NetworkTableEntry speedError;
     private NetworkTableEntry angleError;
-    private NetworkTableEntry lampreyAngle;
 
     /**
      * Constructs a SwerveModule.
      */
-    public SwerveModule(int driveCanID, boolean driveInverted, int turningCanID, boolean turningInverted, int kLampreyChannel, FluidConstant<Double> lampreyOffset, String ModuleName) {
+    public SwerveModule(int driveCanID, boolean driveInverted, int turningCanID, boolean turningInverted, int encoderCanID, double encoderOffset, String ModuleName) {
 
-        this.lampreyOffset = lampreyOffset;
         // CODE: Construct both CANSparkMax objects and set all the nessecary settings (get CONSTANTS from Config or from the parameters of the constructor)
         m_driveMotor = new CANSparkMax(driveCanID, MotorType.kBrushless);
 
@@ -59,16 +61,19 @@ public class SwerveModule {
         m_drivePIDController.setD(Config.fluid_drive_kD.get());
         m_drivePIDController.setIZone(Config.fluid_drive_kIZone.get());
         m_drivePIDController.setFF(Config.fluid_drive_kFF.get());   
-
-        m_driveEncoder = m_driveMotor.getEncoder();
-        m_driveEncoder.setVelocityConversionFactor(Config.drivetrainEncoderConstant);
         
         m_turningMotor = new CANSparkMax(turningCanID, MotorType.kBrushless);
         m_turningPIDController = m_turningMotor.getPIDController();
 
+        m_driveEncoder = m_driveMotor.getEncoder();
+        m_driveEncoder.setVelocityConversionFactor(Config.drivetrainEncoderConstant);
+
         m_turningMotor.restoreFactoryDefaults();
         m_turningMotor.setInverted(turningInverted);
         m_turningMotor.setIdleMode(IdleMode.kCoast);
+
+        m_turningEncoder = m_turningMotor.getEncoder();
+        m_turningEncoder.setPositionConversionFactor(Config.turningEncoderConstant);
 
         m_turningPIDController.setP(Config.fluid_steering_kP.get());
         m_turningPIDController.setI(Config.fluid_steering_kI.get());
@@ -76,21 +81,24 @@ public class SwerveModule {
         m_turningPIDController.setIZone(Config.fluid_steering_kIZone.get());
         m_turningPIDController.setFF(Config.fluid_steering_kFF.get());
 
-        m_turningEncoder = m_turningMotor.getEncoder();
-        m_turningEncoder.setPositionConversionFactor(Config.turningEncoderConstant);
-
-        m_lamprey = new AnalogPotentiometer(kLampreyChannel, 2*Math.PI);
-
         String tableName = "Swerve Chassis/SwerveModule" + ModuleName;
         swerveModuleTable = NetworkTableInstance.getDefault().getTable(tableName);
 
+        CANCoderConfiguration encoderConfiguration = new CANCoderConfiguration();
+        encoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
+        encoderConfiguration.magnetOffsetDegrees = encoderOffset;
+        encoderConfiguration.sensorDirection = direction == Direction.CLOCKWISE;
+
+        encoder = new CANCoder(encoderCanID);
+        
         desiredSpeedEntry = swerveModuleTable.getEntry("Desired speed (m/s)");
         desiredAngleEntry = swerveModuleTable.getEntry("Desired angle (radians)");
         currentSpeedEntry = swerveModuleTable.getEntry("Current speed (m/s)");
         currentAngleEntry = swerveModuleTable.getEntry("Current angle (radians)");
         speedError = swerveModuleTable.getEntry("speed Error");
-        angleError = swerveModuleTable.getEntry("angle Error");
-        lampreyAngle = swerveModuleTable.getEntry("Lamprey Angle (radians)");
+        angleError = swerveModuleTable.getEntry("angle Error"); 
+
+        updateSteeringFromCanCoder();
     }
 
     /**
@@ -174,16 +182,10 @@ public class SwerveModule {
      * Gets a reading from the Lamprey and updates the SparkMax encoder (interal NEO encoder).
      * This is specific to Swerge. Other methods need to be written for other hardware.
      */
-    public void updateSteeringFromLamprey() {
-        
-        // CODE: You can attempt this if you want but this will probably be done together in the 2nd or 3rd meeting.
-        // CODE: Read value from Lamprey and set internal Neo encoder for the steering SparkMax (but need to add an offset first)
-        double offset = lampreyOffset.get();
-        double lampreyRadians = m_lamprey.get();
-        //System.out.println(lampreyRadians);
+    public void updateSteeringFromCanCoder() {
+        double angle = Math.toRadians(encoder.getAbsolutePosition());
+        m_turningEncoder.setPosition(angle);
 
-        //m_turningEncoder.setPosition(lampreyRadians + offset);
-        m_turningEncoder.setPosition(0);
     }
 
     public void updatePIDValues(){
@@ -207,5 +209,11 @@ public class SwerveModule {
         // CODE: Call the stopMotors method in the CANSparkMax (provided with all WPILib motor controller objects)
         m_driveMotor.stopMotor();
         m_turningMotor.stopMotor();
+    }
+
+    private Direction direction = Direction.COUNTER_CLOCKWISE;
+    public enum Direction {
+        CLOCKWISE,
+        COUNTER_CLOCKWISE
     }
 }
