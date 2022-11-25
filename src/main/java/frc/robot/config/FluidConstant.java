@@ -23,6 +23,7 @@ public class FluidConstant<T> implements Supplier<T> {
     private final T initialValue;
     private final String name;
     private final ArrayList<BiConsumer<T, T>> updateActions = new ArrayList<>();
+    private final boolean m_runWhileEnabled;
 
 
     /**
@@ -31,9 +32,19 @@ public class FluidConstant<T> implements Supplier<T> {
      * @param defaultValue The compile-time default value
      */
     public FluidConstant(String name, T defaultValue) {
+        this(name, defaultValue, false);
+    }
+
+    /**
+     * Create a new FluidConstant of type T
+     * @param name The name to be used in NetworkTables and files
+     * @param defaultValue The compile-time default value
+     */
+    public FluidConstant(String name, T defaultValue, boolean runWhileEnabled) {
         this.value = defaultValue;
         this.initialValue = defaultValue;
         this.name = name;
+        this.m_runWhileEnabled = runWhileEnabled;
     }
 
     /**
@@ -81,8 +92,9 @@ public class FluidConstant<T> implements Supplier<T> {
      */
     public void setValue(T newValue) {
         // Send the update to all the registered actions
-        this.updateActions.forEach(a -> a.accept(this.value, newValue));
+        T oldValue = this.value;
         this.value = newValue;
+        this.updateActions.forEach(a -> a.accept(oldValue, newValue));
     }
 
     /**
@@ -90,16 +102,17 @@ public class FluidConstant<T> implements Supplier<T> {
      * @param notification info about the notification
      */
     private void entryUpdated(EntryNotification notification) {
-        // Only allow the value to be updated while the robot is disabled
-        if (DriverStation.isEnabled()) {
-            // Revert the change made by the user while the robot isn't disabled
+        // Only allow the value to be updated while the robot is disabled unless runWhileEnabled is true
+        if (DriverStation.getInstance().isDisabled() || m_runWhileEnabled) {
+            // This is a safe cast because NetworkTables already prevents assigning different types to NTEntries
+            @SuppressWarnings("unchecked")
+            T newValue = (T) notification.value.getValue();
+            this.setValue(newValue);
+        } else {
+            // Revert the change made by the user (user who changed the networktable value while robot was enabled)
             this.ntEntry.setValue(this.value);
             return;
         }
-
-        // This is a safe cast because NetworkTables already prevents assigning different types to NTEntries
-        T newValue = (T) notification.value.getValue();
-        this.setValue(newValue);
     }
 
     public T get() {
