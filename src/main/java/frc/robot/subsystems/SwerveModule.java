@@ -48,7 +48,7 @@ public class SwerveModule {
      */
     public SwerveModule(int driveCanID, boolean driveInverted, int turningCanID, boolean turningInverted, int encoderCanID, double encoderOffset, String ModuleName) {
 
-        // CODE: Construct both CANSparkMax objects and set all the nessecary settings (get CONSTANTS from Config or from the parameters of the constructor)
+        // CODE: Construct both CANSparkMax objects and set all the nessecary settings (CONSTANTS from Config or from the parameters of the constructor)
         m_driveMotor = new CANSparkMax(driveCanID, MotorType.kBrushless);
 
         m_driveMotor.restoreFactoryDefaults();

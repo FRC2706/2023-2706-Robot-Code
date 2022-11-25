@@ -30,7 +30,11 @@ import com.ctre.phoenix.ErrorCode;
  * Config manager for the robot
  */
 public class Config {
+    public static final double kPXController = 1;
+    public static final double kPYController = 1;
+    public static final double kPThetaController = 1;
 
+    public static final double kMaxTeleopAngularSpeed = Math.PI*2;
     public static final double FL_ENCODER_OFFSET = -(155 + 180)-3.22;
     public static final double FR_ENCODER_OFFSET = -(94 + 180);
     public static final double RL_ENCODER_OFFSET = -(200 + 180)-0.08;
