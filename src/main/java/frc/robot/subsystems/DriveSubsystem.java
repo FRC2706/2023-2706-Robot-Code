@@ -53,7 +53,7 @@ public class DriveSubsystem extends SubsystemBase {
     
     /** Creates a new DriveSubsystem. */
     private DriveSubsystem() {
-        m_pigeon = new PigeonIMU(Config.CAN_PIGEON);
+        m_pigeon = new PigeonIMU(Config.CANID.PIGEON);
         m_odometry = new SwerveDriveOdometry(Config.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()));
     }
 

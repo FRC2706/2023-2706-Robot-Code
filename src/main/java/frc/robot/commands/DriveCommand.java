@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.config.Config;
 import frc.robot.subsystems.DriveSubsystem;
@@ -33,9 +34,9 @@ public class DriveCommand extends CommandBase {
     @Override
     public void execute() {
         
-        double newX = driverStick.getRawAxis(Config.LEFT_CONTROL_STICK_Y);
-        double newY = driverStick.getRawAxis(Config.LEFT_CONTROL_STICK_X);
-        double newRot = driverStick.getRawAxis(Config.RIGHT_CONTROL_STICK_X);
+        double newX = -1 * driverStick.getRawAxis(XboxController.Axis.kLeftY.value); 
+        double newY = driverStick.getRawAxis(XboxController.Axis.kLeftX.value);
+        double newRot = driverStick.getRawAxis(XboxController.Axis.kRightX.value);
 
         if (Math.abs(newX) < DEADBAND_VALUE) {
             newX = 0;

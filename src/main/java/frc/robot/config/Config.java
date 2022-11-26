@@ -73,11 +73,16 @@ public class Config {
      */
     public static Double DRIVER_JOYSTICK_DEADBAND = 0.1; // TODO: Investigate if this can be better tuned
         
-    public static double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, -1.0, 0.51762);
+    public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.1524, 0.1524); // Diameter of wheel is 0.1524
+
+    public static final double kWheelBase = robotSpecific(-0.0, -0.0, -0.0, -0.0, 0.7, -0.0);
+    public static final double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, -1.0, 0.51762);
     public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
 
     public static final int DIFF_SLOTID_DRIVER = 0;
     public static final int DIFF_SLOTID_RAMSETE = 1;
+
+    
 
     /**
      * CAN IDs, ports, channels, etc.
@@ -114,7 +119,6 @@ public class Config {
     public static final double FR_ENCODER_OFFSET = -(94 + 180);
     public static final double RL_ENCODER_OFFSET = -(200 + 180)-0.08;
     public static final double RR_ENCODER_OFFSET = -(135 + 180)-1.24;
-    public static final double kWheelBase = 0.7;
 
     public static final int CANID_FRONT_LEFT_DRIVE = 6;
     public static final int CANID_REAR_LEFT_DRIVE = 0;
@@ -130,6 +134,16 @@ public class Config {
     public static final int CANID_REAR_LEFT_CANCODER = 0;
     public static final int CANID_FRONT_RIGHT_CANCODER = 0;
     public static final int CANID_REAR_RIGHT_CANCODER = 0; 
+
+    public static boolean INVERTED_FRONT_LEFT_DRIVE = robotSpecific(true);
+    public static boolean INVERTED_REAR_LEFT_DRIVE =  robotSpecific(true);
+    public static boolean INVERTED_FRONT_RIGHT_DRIVE = robotSpecific(true);
+    public static boolean INVERTED_REAR_RIGHT_DRIVE = robotSpecific(true);
+
+    public static boolean INVERTED_FRONT_LEFT_STEERING =  robotSpecific(true);
+    public static boolean INVERTED_REAR_LEFT_STEERING =  robotSpecific(true);
+    public static boolean INVERTED_FRONT_RIGHT_STEERING = robotSpecific(true);
+    public static boolean INVERTED_REAR_RIGHT_STEERING =  robotSpecific(true);
 
     public static final double turningEncoderConstant = (2*Math.PI)/8.0;
     public static final double drivetrainEncoderConstant = 0.1016*Math.PI*(1/(60*7.615));
@@ -183,8 +197,6 @@ public class Config {
         new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
-    public static int CAN_PIGEON = 27;
-
     public static final double kMaxAttainableWheelSpeed = 3.0;
     public static final double kMaxAutoSpeed = 3; // m/s
     public static final double kMaxAutoAcceleration = 3; // m/s/s
@@ -231,18 +243,7 @@ public class Config {
         public static double BRAKE_IN_DISABLE_TIME = 2.0;
     }
     
-    public static boolean INVERTED_FRONT_LEFT_DRIVE = robotSpecific(true);
-    public static boolean INVERTED_REAR_LEFT_DRIVE =  robotSpecific(true);
-    public static boolean INVERTED_FRONT_RIGHT_DRIVE = robotSpecific(true);
-    public static boolean INVERTED_REAR_RIGHT_DRIVE = robotSpecific(true);
-
-    public static boolean INVERTED_FRONT_LEFT_STEERING =  robotSpecific(true);
-    public static boolean INVERTED_REAR_LEFT_STEERING =  robotSpecific(true);
-    public static boolean INVERTED_FRONT_RIGHT_STEERING = robotSpecific(true);
-    public static boolean INVERTED_REAR_RIGHT_STEERING =  robotSpecific(true);
-
-
-    public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.1524, 0.1524); // Diameter of wheel is 0.1524
+    
     
         
     /**
