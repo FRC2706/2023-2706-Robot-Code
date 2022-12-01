@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.config.Config;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 
 public class DriveCommand extends CommandBase {
     private final double DEADBAND_VALUE = 0.1;
@@ -22,7 +22,7 @@ public class DriveCommand extends CommandBase {
     /** Creates a new DriveCommand. */
     public DriveCommand(Joystick driverStick) {
         this.driverStick = driverStick;
-        addRequirements(DriveSubsystem.getInstance());
+        addRequirements(SwerveSubsystem.getInstance());
     } 
 
     // Called when the command is initially scheduled.
@@ -57,12 +57,12 @@ public class DriveCommand extends CommandBase {
         newY = (newY - prevY) < -1 * maxAccel ? prevY - maxAccel : newY;
 
         if (Math.abs(newX) < DEADBAND_VALUE && Math.abs(newY) < DEADBAND_VALUE && Math.abs(newRot) < DEADBAND_VALUE) {
-            DriveSubsystem.getInstance().stopMotors();
+            SwerveSubsystem.getInstance().stopMotors();
         } else {
-            DriveSubsystem.getInstance().drive(
-                newX * Config.kMaxAttainableWheelSpeed,
-                newY * Config.kMaxAttainableWheelSpeed,
-                newRot * Config.kMaxTeleopAngularSpeed,
+            SwerveSubsystem.getInstance().drive(
+                newX * Config.Swerve.kMaxAttainableWheelSpeed,
+                newY * Config.Swerve.kMaxAttainableWheelSpeed,
+                newRot * Config.Swerve.kMaxTeleopAngularSpeed,
                 true);
         }
 

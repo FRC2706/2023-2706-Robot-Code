@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.Config;
 
-public class DriveSubsystem extends SubsystemBase {
+public class SwerveSubsystem extends SubsystemBase {
     private NetworkTable table = NetworkTableInstance.getDefault().getTable("DriveTrain");
     private NetworkTableEntry gyroEntry = table.getEntry("RawGyro");
     private NetworkTableEntry xEntry = table.getEntry("OdometryX");
@@ -27,16 +27,16 @@ public class DriveSubsystem extends SubsystemBase {
     private NetworkTableEntry rotEntry = table.getEntry("OdometryRot");
     
     // Instance for singleton class
-    private static DriveSubsystem instance;
+    private static SwerveSubsystem instance;
 
     // Robot swerve modules
-    private final SwerveModule m_frontLeft = new SwerveModule(Config.CANID_FRONT_LEFT_DRIVE, Config.INVERTED_FRONT_LEFT_DRIVE, Config.CANID_FRONT_LEFT_STEERING, Config.INVERTED_FRONT_LEFT_STEERING, Config.CANID_FRONT_LEFT_CANCODER, Config.FL_ENCODER_OFFSET, "FL");
+    private final SwerveModule m_frontLeft = new SwerveModule(Config.CANID.FRONT_LEFT_DRIVE, Config.Swerve.INVERTED_FRONT_LEFT_DRIVE, Config.CANID.FRONT_LEFT_STEERING, Config.Swerve.INVERTED_FRONT_LEFT_STEERING, Config.CANID.FRONT_LEFT_CANCODER, Config.Swerve.FL_ENCODER_OFFSET, "FL");
 
-    private final SwerveModule m_rearLeft = new SwerveModule(Config.CANID_REAR_LEFT_DRIVE, Config.INVERTED_REAR_LEFT_DRIVE, Config.CANID_REAR_LEFT_STEERING, Config.INVERTED_REAR_LEFT_STEERING, Config.CANID_REAR_LEFT_CANCODER, Config.RL_ENCODER_OFFSET, "RL");
+    private final SwerveModule m_rearLeft = new SwerveModule(Config.CANID.REAR_LEFT_DRIVE, Config.Swerve.INVERTED_REAR_LEFT_DRIVE, Config.CANID.REAR_LEFT_STEERING, Config.Swerve.INVERTED_REAR_LEFT_STEERING, Config.CANID.REAR_LEFT_CANCODER, Config.Swerve.RL_ENCODER_OFFSET, "RL");
 
-    private final SwerveModule m_frontRight = new SwerveModule(Config.CANID_FRONT_RIGHT_DRIVE, Config.INVERTED_FRONT_RIGHT_DRIVE, Config.CANID_FRONT_RIGHT_STEERING, Config.INVERTED_FRONT_RIGHT_STEERING, Config.CANID_FRONT_RIGHT_CANCODER, Config.FR_ENCODER_OFFSET, "FR");
+    private final SwerveModule m_frontRight = new SwerveModule(Config.CANID.FRONT_RIGHT_DRIVE, Config.Swerve.INVERTED_FRONT_RIGHT_DRIVE, Config.CANID.FRONT_RIGHT_STEERING, Config.Swerve.INVERTED_FRONT_RIGHT_STEERING, Config.CANID.FRONT_RIGHT_CANCODER, Config.Swerve.FR_ENCODER_OFFSET, "FR");
 
-    private final SwerveModule m_rearRight = new SwerveModule(Config.CANID_REAR_RIGHT_DRIVE, Config.INVERTED_REAR_RIGHT_DRIVE, Config.CANID_REAR_RIGHT_STEERING, Config.INVERTED_REAR_RIGHT_STEERING, Config.CANID_REAR_RIGHT_CANCODER, Config.RR_ENCODER_OFFSET, "RR");
+    private final SwerveModule m_rearRight = new SwerveModule(Config.CANID.REAR_RIGHT_DRIVE, Config.Swerve.INVERTED_REAR_RIGHT_DRIVE, Config.CANID.REAR_RIGHT_STEERING, Config.Swerve.INVERTED_REAR_RIGHT_STEERING, Config.CANID.REAR_RIGHT_CANCODER, Config.Swerve.RR_ENCODER_OFFSET, "RR");
 
     // The gyro sensor
     private final PigeonIMU m_pigeon; 
@@ -45,16 +45,16 @@ public class DriveSubsystem extends SubsystemBase {
     SwerveDriveOdometry m_odometry;
 
     /** Get instance of singleton class */
-    public static DriveSubsystem getInstance() {
+    public static SwerveSubsystem getInstance() {
         if (instance == null)
-            instance = new DriveSubsystem();
+            instance = new SwerveSubsystem();
         return instance;
     }
     
     /** Creates a new DriveSubsystem. */
-    private DriveSubsystem() {
+    private SwerveSubsystem() {
         m_pigeon = new PigeonIMU(Config.CANID.PIGEON);
-        m_odometry = new SwerveDriveOdometry(Config.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()));
+        m_odometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()));
     }
 
     @Override
@@ -107,11 +107,11 @@ public class DriveSubsystem extends SubsystemBase {
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
         SwerveModuleState[] swerveModuleStates;
         if (fieldRelative) {
-            swerveModuleStates = Config.kSwerveDriveKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getHeading()));
+            swerveModuleStates = Config.Swerve.kSwerveDriveKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getHeading()));
         } else {
-            swerveModuleStates = Config.kSwerveDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(xSpeed, ySpeed, rot));
+            swerveModuleStates = Config.Swerve.kSwerveDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(xSpeed, ySpeed, rot));
         }
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Config.kMaxAttainableWheelSpeed);
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Config.Swerve.kMaxAttainableWheelSpeed);
         m_frontLeft.setDesiredState(swerveModuleStates[0]);
         m_frontRight.setDesiredState(swerveModuleStates[1]);
         m_rearLeft.setDesiredState(swerveModuleStates[2]);
@@ -125,7 +125,7 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(
-                desiredStates, Config.kMaxAttainableWheelSpeed);
+                desiredStates, Config.Swerve.kMaxAttainableWheelSpeed);
         m_frontLeft.setDesiredState(desiredStates[0]);
         m_frontRight.setDesiredState(desiredStates[1]);
         m_rearLeft.setDesiredState(desiredStates[2]);

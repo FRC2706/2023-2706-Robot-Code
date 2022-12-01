@@ -10,7 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 
 public class ModuleAngleFromJoystick extends CommandBase {
 
@@ -42,7 +42,7 @@ public class ModuleAngleFromJoystick extends CommandBase {
         double y = yAxis.get();
         
         if (Math.abs(x) < 0.3 && Math.abs(y) < 0.3) {
-            DriveSubsystem.getInstance().stopMotors();
+            SwerveSubsystem.getInstance().stopMotors();
         } else {
             double hypo = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
             double velocity = (hypo - DEAD_BAND) / (1.0 - DEAD_BAND) * MAX_SPEED;
@@ -50,7 +50,7 @@ public class ModuleAngleFromJoystick extends CommandBase {
 
             SwerveModuleState state = new SwerveModuleState(velocity, angle);
 
-            DriveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state}); 
+            SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state}); 
         }
 
     }
@@ -58,7 +58,7 @@ public class ModuleAngleFromJoystick extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        DriveSubsystem.getInstance().stopMotors();
+        SwerveSubsystem.getInstance().stopMotors();
     }
 
     // Returns true when the command should end.
