@@ -3,27 +3,29 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
-
-import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.CANCoderStatusFrame;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
+import com.ctre.phoenix.sensors.SensorTimeBase;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
-import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import frc.lib3512.math.OnboardModuleState;
+import frc.lib3512.util.CANCoderUtil;
+import frc.lib3512.util.CANSparkMaxUtil;
+import frc.lib3512.util.CANCoderUtil.CCUsage;
+import frc.lib3512.util.CANSparkMaxUtil.Usage;
 import frc.robot.config.Config;
-import frc.robot.config.FluidConstant;
 
 public class SwerveModule {
 
@@ -35,6 +37,7 @@ public class SwerveModule {
     private SparkMaxPIDController m_drivePIDController;
     private SparkMaxPIDController m_turningPIDController;
     private CANCoder encoder;
+    private double lastAngle;
     private NetworkTable swerveModuleTable;
     private NetworkTableEntry desiredSpeedEntry;
     private NetworkTableEntry desiredAngleEntry;
@@ -43,53 +46,72 @@ public class SwerveModule {
     private NetworkTableEntry speedError;
     private NetworkTableEntry angleError;
 
+
+    SimpleMotorFeedforward feedforward = 
+        new SimpleMotorFeedforward(Config.Swerve.driveKS, Config.Swerve.driveKV, Config.Swerve.driveKA);
     /**
      * Constructs a SwerveModule.
      */
     public SwerveModule(int driveCanID, boolean driveInverted, int turningCanID, boolean turningInverted, int encoderCanID, double encoderOffset, String ModuleName) {
 
         // CODE: Construct both CANSparkMax objects and set all the nessecary settings (CONSTANTS from Config or from the parameters of the constructor)
+        
         m_driveMotor = new CANSparkMax(driveCanID, MotorType.kBrushless);
 
         m_driveMotor.restoreFactoryDefaults();
+        CANSparkMaxUtil.setCANSparkMaxBusUsage(m_driveMotor, Usage.kVelocityOnly);
         m_driveMotor.setInverted(driveInverted);
-        m_driveMotor.setIdleMode(IdleMode.kCoast);
+        m_driveMotor.setIdleMode(Config.Swerve.defaultDriveIdleMode);
+        m_driveMotor.setSmartCurrentLimit(Config.Swerve.driveCurrentLimit);
+        m_driveMotor.enableVoltageCompensation(Config.Swerve.driveVoltComp);
+        m_driveMotor.burnFlash();
+        m_driveEncoder.setPosition(0.0);
 
         m_drivePIDController = m_driveMotor.getPIDController();
-        m_drivePIDController.setP(Config.fluid_drive_kP.get());
-        m_drivePIDController.setI(Config.fluid_drive_kI.get());
-        m_drivePIDController.setD(Config.fluid_drive_kD.get());
-        m_drivePIDController.setIZone(Config.fluid_drive_kIZone.get());
-        m_drivePIDController.setFF(Config.fluid_drive_kFF.get());   
+        m_drivePIDController.setP(Config.Swerve.fluid_drive_kP.get());
+        m_drivePIDController.setI(Config.Swerve.fluid_drive_kI.get());
+        m_drivePIDController.setD(Config.Swerve.fluid_drive_kD.get());
+        m_drivePIDController.setIZone(Config.Swerve.fluid_drive_kIZone.get());
+        m_drivePIDController.setFF(Config.Swerve.fluid_drive_kFF.get());   
+        CANSparkMaxUtil.setCANSparkMaxBusUsage(m_driveMotor, Usage.kPositionOnly);
         
         m_turningMotor = new CANSparkMax(turningCanID, MotorType.kBrushless);
         m_turningPIDController = m_turningMotor.getPIDController();
+        m_turningMotor.enableVoltageCompensation(Config.Swerve.steeringVoltComp);
 
         m_driveEncoder = m_driveMotor.getEncoder();
-        m_driveEncoder.setVelocityConversionFactor(Config.drivetrainEncoderConstant);
+        m_driveEncoder.setVelocityConversionFactor(Config.Swerve.drivetrainEncoderConstant);
 
         m_turningMotor.restoreFactoryDefaults();
         m_turningMotor.setInverted(turningInverted);
-        m_turningMotor.setIdleMode(IdleMode.kCoast);
+        m_turningMotor.setIdleMode(Config.Swerve.defaultSteeringIdleMode);
 
         m_turningEncoder = m_turningMotor.getEncoder();
-        m_turningEncoder.setPositionConversionFactor(Config.turningEncoderConstant);
+        m_turningEncoder.setPositionConversionFactor(Config.Swerve.turningEncoderConstant);
 
-        m_turningPIDController.setP(Config.fluid_steering_kP.get());
-        m_turningPIDController.setI(Config.fluid_steering_kI.get());
-        m_turningPIDController.setD(Config.fluid_steering_kD.get());
-        m_turningPIDController.setIZone(Config.fluid_steering_kIZone.get());
-        m_turningPIDController.setFF(Config.fluid_steering_kFF.get());
+        m_turningPIDController.setP(Config.Swerve.fluid_steering_kP.get());
+        m_turningPIDController.setI(Config.Swerve.fluid_steering_kI.get());
+        m_turningPIDController.setD(Config.Swerve.fluid_steering_kD.get());
+        m_turningPIDController.setIZone(Config.Swerve.fluid_steering_kIZone.get());
+        m_turningPIDController.setFF(Config.Swerve.fluid_steering_kFF.get());
+        m_turningMotor.burnFlash();
 
         String tableName = "Swerve Chassis/SwerveModule" + ModuleName;
         swerveModuleTable = NetworkTableInstance.getDefault().getTable(tableName);
 
         CANCoderConfiguration encoderConfiguration = new CANCoderConfiguration();
+        encoderConfiguration.initializationStrategy = 
+            SensorInitializationStrategy.BootToAbsolutePosition;
+        encoderConfiguration.sensorTimeBase = SensorTimeBase.PerSecond;
         encoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
         encoderConfiguration.magnetOffsetDegrees = encoderOffset;
         encoderConfiguration.sensorDirection = direction == Direction.CLOCKWISE;
 
         encoder = new CANCoder(encoderCanID);
+
+        encoder.configFactoryDefault();
+        CANCoderUtil.setCANCoderBusUsage(encoder, CCUsage.kMinimal);
+        encoder.configAllSettings(encoderConfiguration);
         
         desiredSpeedEntry = swerveModuleTable.getEntry("Desired speed (m/s)");
         desiredAngleEntry = swerveModuleTable.getEntry("Desired angle (radians)");
@@ -99,6 +121,8 @@ public class SwerveModule {
         angleError = swerveModuleTable.getEntry("angle Error"); 
 
         updateSteeringFromCanCoder();
+
+        lastAngle = getState().angle.getRadians();
     }
 
     /**
@@ -116,41 +140,31 @@ public class SwerveModule {
      * @param desiredState Desired state with speed and angle.
      */
     public void setDesiredState(SwerveModuleState desiredState) {
-        // Optimize the reference state to avoid spinning further than 90 degrees
-        double measuredVelocity = getVelocity();
-        Rotation2d measuredAngle = getSteeringAngle();
-        double deltaAngle = desiredState.angle.getRadians() - measuredAngle.getRadians();
-        //make sure deltaAngle in [0,2pi]
-        deltaAngle %= 2.0*Math.PI;
-        if (deltaAngle < 0.0)
-        deltaAngle += 2.0*Math.PI;
-        //make sure detlaAngle in [-pi, pi]
-        if ( deltaAngle > Math.PI && deltaAngle <= 2*Math.PI)
-        {
-            deltaAngle -= 2*Math.PI;
-        }
-        //make sure (desiredState.angle - currentAngle) difference is [-pi, pi], which is what optimize() requires.
-        Rotation2d currentAngle = new Rotation2d(- deltaAngle + desiredState.angle.getRadians() );
-        //Optimize the reference state to avoid spinning further than 90 degrees
-        SwerveModuleState updatedDesiredstate = SwerveModuleState.optimize(desiredState, currentAngle);
-        double velocity = updatedDesiredstate.speedMetersPerSecond;
-        //deltaAngle now is in [-pi/2, pi/2], which is the angle to be adjusted.
-        deltaAngle = updatedDesiredstate.angle.minus(currentAngle).getRadians();
-        double angle = (measuredAngle.getRadians() + deltaAngle);
-        
+        Rotation2d angle = getSteeringAngle();
+        double velocity = getVelocity();
+
+        desiredState = 
+            OnboardModuleState.optimize(
+                desiredState, angle);
         
         // CODE: Pass the velocity (which is in meters per second) to velocity PID on drive SparkMax. (VelocityConversionFactor set so SparkMax wants m/s)
-        m_drivePIDController.setReference(velocity, ControlType.kVelocity);
+        m_drivePIDController.setReference(desiredState.speedMetersPerSecond, ControlType.kVelocity, 0, feedforward.calculate(desiredState.speedMetersPerSecond));
 
+        double newAngle = 
+            (Math.abs(desiredState.speedMetersPerSecond) <= (Config.Swerve.kMaxAttainableWheelSpeed *0.01))
+                ? lastAngle
+                :desiredState.angle.getRadians();
         // CODE: Pass the angle (which is in radians) to position PID on steering SparkMax. (PositionConversionFactor set so SparkMax wants radians)
-        m_turningPIDController.setReference(angle, ControlType.kPosition);
+        m_turningPIDController.setReference(desiredState.angle.getRadians(), ControlType.kPosition);
 
-        desiredSpeedEntry.setDouble(velocity);
-        desiredAngleEntry.setDouble(angle);
-        currentSpeedEntry.setDouble(measuredVelocity);
-        currentAngleEntry.setDouble(measuredAngle.getDegrees());
-        speedError.setDouble(velocity - measuredVelocity);
-        angleError.setDouble(angle - measuredAngle.getDegrees());
+        lastAngle = newAngle;
+
+        desiredSpeedEntry.setDouble(desiredState.speedMetersPerSecond);
+        desiredAngleEntry.setDouble(desiredState.angle.getDegrees());
+        currentSpeedEntry.setDouble(velocity);
+        currentAngleEntry.setDouble(angle.getDegrees());
+        speedError.setDouble(desiredState.speedMetersPerSecond - velocity);
+        angleError.setDouble(desiredState.angle.getDegrees() - angle.getDegrees());
     }
 
     /**
@@ -189,17 +203,17 @@ public class SwerveModule {
     }
 
     public void updatePIDValues(){
-        m_drivePIDController.setP(Config.fluid_drive_kP.get());
-        m_drivePIDController.setI(Config.fluid_drive_kI.get());
-        m_drivePIDController.setD(Config.fluid_drive_kD.get());
-        m_drivePIDController.setIZone(Config.fluid_drive_kIZone.get());
-        m_drivePIDController.setFF(Config.fluid_drive_kFF.get());
+        m_drivePIDController.setP(Config.Swerve.fluid_drive_kP.get());
+        m_drivePIDController.setI(Config.Swerve.fluid_drive_kI.get());
+        m_drivePIDController.setD(Config.Swerve.fluid_drive_kD.get());
+        m_drivePIDController.setIZone(Config.Swerve.fluid_drive_kIZone.get());
+        m_drivePIDController.setFF(Config.Swerve.fluid_drive_kFF.get());
 
-        m_turningPIDController.setP(Config.fluid_steering_kP.get());
-        m_turningPIDController.setI(Config.fluid_steering_kI.get());
-        m_turningPIDController.setD(Config.fluid_steering_kD.get());
-        m_turningPIDController.setIZone(Config.fluid_steering_kIZone.get());
-        m_turningPIDController.setFF(Config.fluid_steering_kFF.get());
+        m_turningPIDController.setP(Config.Swerve.fluid_steering_kP.get());
+        m_turningPIDController.setI(Config.Swerve.fluid_steering_kI.get());
+        m_turningPIDController.setD(Config.Swerve.fluid_steering_kD.get());
+        m_turningPIDController.setIZone(Config.Swerve.fluid_steering_kIZone.get());
+        m_turningPIDController.setFF(Config.Swerve.fluid_steering_kFF.get());
     }
 
     /**

@@ -15,8 +15,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.SubsystemChecker;
+import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.config.Config;
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -46,8 +47,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
     /** Get instance of singleton class */
     public static SwerveSubsystem getInstance() {
-        if (instance == null)
+        if (instance == null){
+            SubsystemChecker.subsystemConstructed(SubsystemType.SwerveSubsystem);
             instance = new SwerveSubsystem();
+        }
+
         return instance;
     }
     

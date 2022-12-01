@@ -4,8 +4,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -129,6 +127,12 @@ public class Config {
      */
 
     public static class Swerve{
+        public static final int steeringCurrentLimit = 20;
+        public static final int driveCurrentLimit = 80;
+
+        public static final double driveVoltComp = 12.0;
+        public static final double steeringVoltComp = 12.0;
+
         public static final double kPXController = 1;
         public static final double kPYController = 1;
         public static final double kPThetaController = 1;
@@ -151,6 +155,9 @@ public class Config {
 
         public static final double turningEncoderConstant = (2*Math.PI)/8.0;
         public static final double drivetrainEncoderConstant = 0.1016*Math.PI*(1/(60*7.615));
+
+        public static final IdleMode defaultDriveIdleMode = IdleMode.kCoast;
+        public static final IdleMode defaultSteeringIdleMode = IdleMode.kCoast;
 
         public static final double drive_kIZone = 0.15;
         public static final double drive_kFF = 0.25; // These can also be module specific.
@@ -175,11 +182,11 @@ public class Config {
                         .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
 
 
-        public static final double steering_kFF = 0;
-        public static final double steering_kP = 0.8;
-        public static final double steering_kI = 0.016;
-        public static final double steering_kD = 1.6;
-        public static final double steering_kIZone = 0.05; //5 degrees
+        public static final double steering_kFF = 0.0;
+        public static final double steering_kP = 0.01;
+        public static final double steering_kI = 0.0;
+        public static final double steering_kD = 0.005;
+        public static final double steering_kIZone = 0.0; //5 degrees
 
         public static FluidConstant<Double> fluid_steering_kFF = new FluidConstant<>("Steering kFF", steering_kFF, true)
                         .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
@@ -208,6 +215,10 @@ public class Config {
         public static final double kMaxAutoAcceleration = 3; // m/s/s
         public static final double kMaxAutoAngularSpeed = Math.PI; // rad/s
         public static final double kMaxAutoAngularAcceleration = Math.PI; // rad/s/s
+
+        public static final double driveKS = 0.667;
+        public static final double driveKV = 2.44;
+        public static final double driveKA = 0.27;
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
             kMaxAutoAngularSpeed, kMaxAutoAngularAcceleration);
