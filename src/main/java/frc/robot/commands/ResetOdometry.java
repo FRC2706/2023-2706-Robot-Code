@@ -6,7 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 
 public class ResetOdometry extends CommandBase {
   Pose2d pose2d;
@@ -19,7 +19,7 @@ public class ResetOdometry extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    DriveSubsystem.getInstance().resetOdometry(pose2d);
+    SwerveSubsystem.getInstance().resetOdometry(pose2d);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

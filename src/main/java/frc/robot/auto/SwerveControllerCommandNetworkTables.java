@@ -182,10 +182,6 @@ public class SwerveControllerCommandNetworkTables extends CommandBase {
     var targetChassisSpeeds =
         m_controller.calculate(currentPose, desiredState, desiredRotation);
 
-    // THE LINE BELOW DISABLES ROTATION CONTROL. THIS WAS A TEMPORARY CHANGE IN KINGSTON BECAUSE ROTATION WAS CAUSING PROBLEMS BUT WE STILL WANTED FOOTAGE OF AUTO.
-    targetChassisSpeeds = new  ChassisSpeeds(targetChassisSpeeds.vxMetersPerSecond, targetChassisSpeeds.vyMetersPerSecond, 0);
-    //
-
     var targetModuleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);
 
     m_outputModuleStates.accept(targetModuleStates);

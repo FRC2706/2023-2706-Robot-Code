@@ -11,10 +11,10 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import frc.robot.config.Config;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 
 public class SwerveCommandMerge extends SwerveControllerCommandNetworkTables {
-    static private Supplier<DriveSubsystem> sub = DriveSubsystem::getInstance;  
+    static private Supplier<SwerveSubsystem> sub = SwerveSubsystem::getInstance;  
 
     /**
      *  SwerveCommandMerge simplfies the construction of SwerveControllerCommands.
@@ -28,9 +28,9 @@ public class SwerveCommandMerge extends SwerveControllerCommandNetworkTables {
         super(
             trajectory,
             sub.get()::getPose,
-            Config.kSwerveDriveKinematics,
-            new PIDController(Config.kPXController, 0, 0),
-            new PIDController(Config.kPYController, 0, 0),
+            Config.Swerve.kSwerveDriveKinematics,
+            new PIDController(Config.Swerve.kPXController, 0, 0),
+            new PIDController(Config.Swerve.kPYController, 0, 0),
             getNewThetaController(), 
             desiredRotation,
             sub.get()::setModuleStates,
@@ -50,9 +50,9 @@ public class SwerveCommandMerge extends SwerveControllerCommandNetworkTables {
         super(
             trajectory,
             sub.get()::getPose,
-            Config.kSwerveDriveKinematics,
-            new PIDController(Config.kPXController, 0, 0),
-            new PIDController(Config.kPYController, 0, 0),
+            Config.Swerve.kSwerveDriveKinematics,
+            new PIDController(Config.Swerve.kPXController, 0, 0),
+            new PIDController(Config.Swerve.kPYController, 0, 0),
             getNewThetaController(), 
             sub.get()::setModuleStates,
             sub.get()
@@ -81,8 +81,8 @@ public class SwerveCommandMerge extends SwerveControllerCommandNetworkTables {
      */
     private static ProfiledPIDController getNewThetaController() {
         ProfiledPIDController thetaController = new ProfiledPIDController(
-            Config.kPThetaController, 0, 0,    // P, I, D
-            Config.kThetaControllerConstraints);  // Trapizoid profile
+            Config.Swerve.kPThetaController, 0, 0,    // P, I, D
+            Config.Swerve.kThetaControllerConstraints);  // Trapizoid profile
 
             
         // Allows the robot to allows go the shorter direction around the circle to the target.
