@@ -4,8 +4,12 @@
 
 package frc.robot.robotcontainers;
 
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.IndexerCommand;
 
 /**
  * This should only be a superclass to other RobotContainers.
@@ -17,6 +21,11 @@ public abstract class RobotContainer {
     public Command getAutonomousCommand() {
         return new InstantCommand();
     } 
+    private void configureButtonBindings() {
+        Joystick controlStick = new Joystick(1);
+
+        new JoystickButton(controlStick, XboxController.Button.kX.value).whenHeld(new IndexerCommand());
+    }
 }
 
 /**
