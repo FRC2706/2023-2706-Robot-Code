@@ -47,7 +47,7 @@ public class SubsystemChecker {
 
     // RobotID: 2, Half-scale talon differential drive robot, Beetle
     private static SubsystemType[] beetleId2 = new SubsystemType[] {
-        SubsystemType.SwerveSubsystem,  // Chassis
+        SubsystemType.DiffTalonSubsystem,  // Chassis
     };
 
     // RobotID: 3, 2019 Comp Robot, Deep Space, Mergonaut
