@@ -4,8 +4,11 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
 import frc.robot.Robot;
@@ -22,7 +25,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
  * Config manager for the robot
  */
 public class Config {
-    
     /**
      * Instructions for set up of robot.conf file on robot
      *
@@ -65,6 +67,22 @@ public class Config {
      **/
 
     /**
+     * Common Robot Constants
+     */
+    public static Double DRIVER_JOYSTICK_DEADBAND = 0.1; // TODO: Investigate if this can be better tuned
+        
+    public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.1524, 0.1524); // Diameter of wheel is 0.1524
+
+    public static final double kWheelBase = robotSpecific(-0.0, -0.0, -0.0, -0.0, 0.7, -0.0);
+    public static final double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, -1.0, 0.51762);
+    public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
+
+    public static final int DIFF_SLOTID_DRIVER = 0;
+    public static final int DIFF_SLOTID_RAMSETE = 1;
+
+    
+
+    /**
      * CAN IDs, ports, channels, etc.
      */
     public static class CANID {
@@ -82,6 +100,23 @@ public class Config {
     
         public static int CANDLE = robotSpecific(-01, 15, -1, 15);
         public static int CTRE_PCM = robotSpecific(-01, 1, -1, -1);
+
+        public static final int FRONT_LEFT_DRIVE = 6;
+        public static final int REAR_LEFT_DRIVE = 0;
+        public static final int FRONT_RIGHT_DRIVE = 0;
+        public static final int REAR_RIGHT_DRIVE = 0;
+
+        public static final int FRONT_LEFT_STEERING = 5;
+        public static final int REAR_LEFT_STEERING = 0;
+        public static final int FRONT_RIGHT_STEERING = 0;
+        public static final int REAR_RIGHT_STEERING = 0;
+
+        public static final int FRONT_LEFT_CANCODER = 0;
+        public static final int REAR_LEFT_CANCODER = 0;
+        public static final int FRONT_RIGHT_CANCODER = 0;
+        public static final int REAR_RIGHT_CANCODER = 0; 
+
+
     }
     
     public static int ANALOG_SELECTOR_PORT_ONE = robotSpecific(-01, 0, 0, -1);
@@ -90,8 +125,104 @@ public class Config {
     /**
      * Swerve Drive Constants
      */
-    
-    
+
+    public static class Swerve{
+        public static final int steeringCurrentLimit = 20;
+        public static final int driveCurrentLimit = 80;
+
+        public static final double driveVoltComp = 12.0;
+        public static final double steeringVoltComp = 12.0;
+
+        public static final double kPXController = 1;
+        public static final double kPYController = 1;
+        public static final double kPThetaController = 1;
+
+        public static final double kMaxTeleopAngularSpeed = Math.PI*2;
+        public static final double FL_ENCODER_OFFSET = -(155 + 180)-3.22;
+        public static final double FR_ENCODER_OFFSET = -(94 + 180);
+        public static final double RL_ENCODER_OFFSET = -(200 + 180)-0.08;
+        public static final double RR_ENCODER_OFFSET = -(135 + 180)-1.24;
+
+        public static boolean INVERTED_FRONT_LEFT_DRIVE = robotSpecific(true);
+        public static boolean INVERTED_REAR_LEFT_DRIVE =  robotSpecific(true);
+        public static boolean INVERTED_FRONT_RIGHT_DRIVE = robotSpecific(true);
+        public static boolean INVERTED_REAR_RIGHT_DRIVE = robotSpecific(true);
+
+        public static boolean INVERTED_FRONT_LEFT_STEERING =  robotSpecific(true);
+        public static boolean INVERTED_REAR_LEFT_STEERING =  robotSpecific(true);
+        public static boolean INVERTED_FRONT_RIGHT_STEERING = robotSpecific(true);
+        public static boolean INVERTED_REAR_RIGHT_STEERING =  robotSpecific(true);
+
+        public static final double turningEncoderConstant = (2*Math.PI)/8.0;
+        public static final double drivetrainEncoderConstant = 0.1016*Math.PI*(1/(60*7.615));
+
+        public static final IdleMode defaultDriveIdleMode = IdleMode.kCoast;
+        public static final IdleMode defaultSteeringIdleMode = IdleMode.kCoast;
+
+        public static final double drive_kIZone = 0.15;
+        public static final double drive_kFF = 0.25; // These can also be module specific.
+        public static final double drive_kP = 0.2; // Hopefully they won't need to be.
+        public static final double drive_kI = 0.002; // Depends on hardware differences.
+        public static final double drive_kD =1.0;
+        
+        public static FluidConstant<Double> fluid_drive_kFF = new FluidConstant<>("Drive kFF", drive_kFF, true)
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+
+        public static FluidConstant<Double> fluid_drive_kP = new FluidConstant<>("Drive kP", drive_kP, true)
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+
+        public static FluidConstant<Double> fluid_drive_kI = new FluidConstant<>("Drive kI", drive_kI, true)
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+
+
+        public static FluidConstant<Double> fluid_drive_kD = new FluidConstant<>("Drive kD", drive_kD, true)
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+
+        public static FluidConstant<Double> fluid_drive_kIZone = new FluidConstant<>("Drive kIZone", drive_kI, true)
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+
+
+        public static final double steering_kFF = 0.0;
+        public static final double steering_kP = 0.01;
+        public static final double steering_kI = 0.0;
+        public static final double steering_kD = 0.005;
+        public static final double steering_kIZone = 0.0; //5 degrees
+
+        public static FluidConstant<Double> fluid_steering_kFF = new FluidConstant<>("Steering kFF", steering_kFF, true)
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+
+        public static FluidConstant<Double> fluid_steering_kP = new FluidConstant<>("Steering kP", steering_kP, true)
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+
+        public static FluidConstant<Double> fluid_steering_kI = new FluidConstant<>("Steering kI", steering_kI, true)
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+
+        public static FluidConstant<Double> fluid_steering_kD = new FluidConstant<>("Steering kD", steering_kD, true)
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+                        
+        public static FluidConstant<Double> fluid_steering_kIZone = new FluidConstant<>("Steering kIZone", steering_kI, true)
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+        // Distance between centers of right and left wheels on robot
+
+        public static final SwerveDriveKinematics kSwerveDriveKinematics = new SwerveDriveKinematics(
+            new Translation2d(kWheelBase / 2, kTrackWidth / 2),
+            new Translation2d(kWheelBase / 2, -kTrackWidth / 2),   
+            new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
+            new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
+
+        public static final double kMaxAttainableWheelSpeed = 3.0;
+        public static final double kMaxAutoSpeed = 3; // m/s
+        public static final double kMaxAutoAcceleration = 3; // m/s/s
+        public static final double kMaxAutoAngularSpeed = Math.PI; // rad/s
+        public static final double kMaxAutoAngularAcceleration = Math.PI; // rad/s/s
+
+        public static final double driveKS = 0.667;
+        public static final double driveKV = 2.44;
+        public static final double driveKA = 0.27;
+
+        public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
+            kMaxAutoAngularSpeed, kMaxAutoAngularAcceleration);
+    }   
     /**
      * Differential Drive Constants
      */
@@ -129,8 +260,7 @@ public class Config {
         public static double BRAKE_IN_DISABLE_TIME = 2.0;
     }
     
-
-    public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.1524, 0.1524); // Diameter of wheel is 0.1524
+    
     
         
     /**
@@ -168,19 +298,7 @@ public class Config {
     public static final int MINIROBOT_0A41SK_ANALOG_PORT = 7;
     // All constants above for specific to Beetle
 
-    
-    /**
-     * Common Robot Constants
-     */
-    public static Double DRIVER_JOYSTICK_DEADBAND = 0.1; // TODO: Investigate if this can be better tuned
         
-    public static double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, -1.0, 0.51762);
-    public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
-
-    public static final int DIFF_SLOTID_DRIVER = 0;
-    public static final int DIFF_SLOTID_RAMSETE = 1;
-
-    
     
     /**
      * Common Hardware Constants
