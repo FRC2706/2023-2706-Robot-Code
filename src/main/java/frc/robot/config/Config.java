@@ -127,6 +127,16 @@ public class Config {
         public static NeutralMode AUTO_NEUTRALMODE = NeutralMode.Brake;
 
         public static double BRAKE_IN_DISABLE_TIME = 2.0;
+
+        // Conversion Ratios for the SparkMax units
+        public static double DRIVETRAIN_GEAR_RATIO = 10.71;
+        public static double ROTATIONS_TO_METERS = Math.PI * drivetrainWheelDiameter / DRIVETRAIN_GEAR_RATIO;
+        public static double RPM_TO_METERS_PER_SECOND = ROTATIONS_TO_METERS * 0.1;  
+
+        public static double DRIVESUBSYSTEM_VOLTAGECOMP = 9;
+
+        // P Gain -> Motor voltage to apply for every m/s of error
+        public static double kRamsetePGain = 0.00082467;   
     }
     
 
