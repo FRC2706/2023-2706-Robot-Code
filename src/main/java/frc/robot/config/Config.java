@@ -96,25 +96,25 @@ public class Config {
         public static int CLIMBER = robotSpecific(-01, 4, -1, -1);
         public static int INDEXER = robotSpecific(-01, 7, 7, -1);
     
-        public static int PIGEON = robotSpecific(27, 27, 27, 27, DIFF_FOLLOWER_LEFT);
+        public static int PIGEON = robotSpecific(27, 27, 27, 27, 30);
     
         public static int CANDLE = robotSpecific(-01, 15, -1, 15);
         public static int CTRE_PCM = robotSpecific(-01, 1, -1, -1);
 
-        public static final int FRONT_LEFT_DRIVE = 6;
-        public static final int REAR_LEFT_DRIVE = 0;
-        public static final int FRONT_RIGHT_DRIVE = 0;
-        public static final int REAR_RIGHT_DRIVE = 0;
+        public static final int FRONT_LEFT_DRIVE = robotSpecific(-01, -01, -01, -01, 24);
+        public static final int REAR_LEFT_DRIVE = robotSpecific(-01, -01, -01, -01, 20);
+        public static final int FRONT_RIGHT_DRIVE = robotSpecific(-01, -01, -01, -01, 21);
+        public static final int REAR_RIGHT_DRIVE = robotSpecific(-01, -01, -01, -01, 27);
 
-        public static final int FRONT_LEFT_STEERING = 5;
-        public static final int REAR_LEFT_STEERING = 0;
-        public static final int FRONT_RIGHT_STEERING = 0;
-        public static final int REAR_RIGHT_STEERING = 0;
+        public static final int FRONT_LEFT_STEERING = robotSpecific(-01, -01, -01, -01, 23);
+        public static final int REAR_LEFT_STEERING = robotSpecific(-01, -01, -01, -01, 26);
+        public static final int FRONT_RIGHT_STEERING = robotSpecific(-01, -01, -01, -01, 25);
+        public static final int REAR_RIGHT_STEERING = robotSpecific(-01, -01, -01, -01, 22);
 
-        public static final int FRONT_LEFT_CANCODER = 0;
-        public static final int REAR_LEFT_CANCODER = 0;
-        public static final int FRONT_RIGHT_CANCODER = 0;
-        public static final int REAR_RIGHT_CANCODER = 0; 
+        public static final int FRONT_LEFT_CANCODER = robotSpecific(-01, -01, -01, -01, 9);
+        public static final int REAR_LEFT_CANCODER = robotSpecific(-01, -01, -01, -01, 8);
+        public static final int FRONT_RIGHT_CANCODER = robotSpecific(-01, -01, -01, -01, 6);
+        public static final int REAR_RIGHT_CANCODER = robotSpecific(-01, -01, -01, -01, 7); 
 
 
     }
@@ -138,10 +138,10 @@ public class Config {
         public static final double kPThetaController = 1;
 
         public static final double kMaxTeleopAngularSpeed = Math.PI*2;
-        public static final double FL_ENCODER_OFFSET = -(155 + 180)-3.22;
-        public static final double FR_ENCODER_OFFSET = -(94 + 180);
-        public static final double RL_ENCODER_OFFSET = -(200 + 180)-0.08;
-        public static final double RR_ENCODER_OFFSET = -(135 + 180)-1.24;
+        public static final double FL_ENCODER_OFFSET = -85.714;
+        public static final double FR_ENCODER_OFFSET = -336.0058;
+        public static final double RL_ENCODER_OFFSET = -10.02;
+        public static final double RR_ENCODER_OFFSET = -183.7;
 
         public static boolean INVERTED_FRONT_LEFT_DRIVE = robotSpecific(true);
         public static boolean INVERTED_REAR_LEFT_DRIVE =  robotSpecific(true);
@@ -153,8 +153,8 @@ public class Config {
         public static boolean INVERTED_FRONT_RIGHT_STEERING = robotSpecific(true);
         public static boolean INVERTED_REAR_RIGHT_STEERING =  robotSpecific(true);
 
-        public static final double turningEncoderConstant = (2*Math.PI)/8.0;
-        public static final double drivetrainEncoderConstant = 0.1016*Math.PI*(1/(60*7.615));
+        public static final double turningEncoderConstant = (2*Math.PI)/12.8;
+        public static final double drivetrainEncoderConstant = 0.1016*Math.PI*(1/(60*8.14));
 
         public static final IdleMode defaultDriveIdleMode = IdleMode.kCoast;
         public static final IdleMode defaultSteeringIdleMode = IdleMode.kCoast;
@@ -181,11 +181,12 @@ public class Config {
         public static FluidConstant<Double> fluid_drive_kIZone = new FluidConstant<>("Drive kIZone", drive_kI, true)
                         .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
 
+    
 
         public static final double steering_kFF = 0.0;
-        public static final double steering_kP = 0.01;
+        public static final double steering_kP = 0.25;
         public static final double steering_kI = 0.0;
-        public static final double steering_kD = 0.005;
+        public static final double steering_kD = 0.05;
         public static final double steering_kIZone = 0.0; //5 degrees
 
         public static FluidConstant<Double> fluid_steering_kFF = new FluidConstant<>("Steering kFF", steering_kFF, true)
@@ -210,7 +211,7 @@ public class Config {
             new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
             new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
-        public static final double kMaxAttainableWheelSpeed = 3.0;
+        public static final double kMaxAttainableWheelSpeed = 1.0;
         public static final double kMaxAutoSpeed = 3; // m/s
         public static final double kMaxAutoAcceleration = 3; // m/s/s
         public static final double kMaxAutoAngularSpeed = Math.PI; // rad/s
@@ -220,6 +221,15 @@ public class Config {
         public static final double driveKV = 2.44;
         public static final double driveKA = 0.27;
 
+        public static FluidConstant<Double> fluid_kA = new FluidConstant<>("Drive kA", driveKA, true)
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule")); 
+        
+        public static FluidConstant<Double> fluid_kV = new FluidConstant<>("Drive kV", driveKV, true)
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+
+        public static FluidConstant<Double> fluid_kS = new FluidConstant<>("Drive kS", driveKS, true)
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));     
+                        
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
             kMaxAutoAngularSpeed, kMaxAutoAngularAcceleration);
     }   
@@ -405,7 +415,7 @@ public class Config {
         if (robotId < 0) {
             // Set to the ID of the 2023 Competition robot if the simulation is running
             if (RobotBase.isSimulation()) {
-                return 0;
+                return 4;
 
             // Not simulation so read the file on the roborio for it's robot id.
             } else {

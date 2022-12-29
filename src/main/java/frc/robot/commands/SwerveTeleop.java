@@ -48,7 +48,7 @@ public class SwerveTeleop extends CommandBase {
             x * Config.Swerve.kMaxAttainableWheelSpeed,
             y * Config.Swerve.kMaxAttainableWheelSpeed,
             rot * Config.Swerve.kMaxTeleopAngularSpeed,
-            true);
+            true, true);
     }
 
     // Called once the command ends or is interrupted.

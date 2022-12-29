@@ -65,6 +65,12 @@ public class SwerveSubsystem extends SubsystemBase {
     public void periodic() {
         double currentGyro = getGyro();
 
+        m_frontLeft.updateNT();
+        m_frontRight.updateNT();
+        m_rearLeft.updateNT();
+        m_rearRight.updateNT();
+
+
         // Update the odometry in the periodic block
         m_odometry.update(
                 Rotation2d.fromDegrees(currentGyro),
@@ -108,7 +114,7 @@ public class SwerveSubsystem extends SubsystemBase {
      *                      field.
      */
     @SuppressWarnings("ParameterName")
-    public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isOpenLoop) {
         SwerveModuleState[] swerveModuleStates;
         if (fieldRelative) {
             swerveModuleStates = Config.Swerve.kSwerveDriveKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getHeading()));
@@ -116,10 +122,10 @@ public class SwerveSubsystem extends SubsystemBase {
             swerveModuleStates = Config.Swerve.kSwerveDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(xSpeed, ySpeed, rot));
         }
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Config.Swerve.kMaxAttainableWheelSpeed);
-        m_frontLeft.setDesiredState(swerveModuleStates[0]);
-        m_frontRight.setDesiredState(swerveModuleStates[1]);
-        m_rearLeft.setDesiredState(swerveModuleStates[2]);
-        m_rearRight.setDesiredState(swerveModuleStates[3]);
+        m_frontLeft.setDesiredState(swerveModuleStates[0], isOpenLoop);
+        m_frontRight.setDesiredState(swerveModuleStates[1], isOpenLoop);
+        m_rearLeft.setDesiredState(swerveModuleStates[2], isOpenLoop);
+        m_rearRight.setDesiredState(swerveModuleStates[3],isOpenLoop);
     }
 
     /**
@@ -127,13 +133,13 @@ public class SwerveSubsystem extends SubsystemBase {
      *
      * @param desiredStates The desired SwerveModule states.
      */
-    public void setModuleStates(SwerveModuleState[] desiredStates) {
+    public void setModuleStates(SwerveModuleState[] desiredStates, boolean isOpenLoop) {
         SwerveDriveKinematics.desaturateWheelSpeeds(
                 desiredStates, Config.Swerve.kMaxAttainableWheelSpeed);
-        m_frontLeft.setDesiredState(desiredStates[0]);
-        m_frontRight.setDesiredState(desiredStates[1]);
-        m_rearLeft.setDesiredState(desiredStates[2]);
-        m_rearRight.setDesiredState(desiredStates[3]);
+        m_frontLeft.setDesiredState(desiredStates[0], isOpenLoop);
+        m_frontRight.setDesiredState(desiredStates[1], isOpenLoop);
+        m_rearLeft.setDesiredState(desiredStates[2], isOpenLoop);
+        m_rearRight.setDesiredState(desiredStates[3], isOpenLoop);
     }
 
     /**
