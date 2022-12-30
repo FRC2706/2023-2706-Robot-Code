@@ -50,6 +50,13 @@ public class BrakeModeDisabled extends CommandBase {
     public void initialize() {
         m_timer.reset();
         m_timer.start();
+
+        if (SubsystemChecker.canSubsystemConstruct(SubsystemType.DiffNeoSubsystem)) {
+            DiffNeoSubsystem.getInstance().setIdleMode(IdleMode.kBrake);
+
+        } else if (SubsystemChecker.canSubsystemConstruct(SubsystemType.DiffTalonSubsystem)) {
+            DiffTalonSubsystem.getInstance().setNeutralMode(NeutralMode.Brake);
+        }
     }
 
     // Called once the command ends or is interrupted.
@@ -58,11 +65,10 @@ public class BrakeModeDisabled extends CommandBase {
         m_timer.stop();
 
         if (SubsystemChecker.canSubsystemConstruct(SubsystemType.DiffNeoSubsystem)) {
-            DiffNeoSubsystem.getInstance().setIdleMode(IdleMode.kBrake);
+            DiffNeoSubsystem.getInstance().setIdleMode(IdleMode.kCoast);
 
         } else if (SubsystemChecker.canSubsystemConstruct(SubsystemType.DiffTalonSubsystem)) {
-            DiffTalonSubsystem.getInstance().setNeutralMode(NeutralMode.Brake);
-        
+            DiffTalonSubsystem.getInstance().setNeutralMode(NeutralMode.Coast);
         }
     }
 
