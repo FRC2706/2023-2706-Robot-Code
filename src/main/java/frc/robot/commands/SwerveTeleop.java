@@ -36,8 +36,8 @@ public class SwerveTeleop extends CommandBase {
     public void execute() {
         
         double x = -1 * driverStick.getRawAxis(XboxController.Axis.kLeftY.value); 
-        double y = driverStick.getRawAxis(XboxController.Axis.kLeftX.value);
-        double rot = driverStick.getRawAxis(XboxController.Axis.kRightX.value);
+        double y = -1 * driverStick.getRawAxis(XboxController.Axis.kLeftX.value);
+        double rot = -1 * driverStick.getRawAxis(XboxController.Axis.kRightX.value);
 
         x = MathUtil.applyDeadband(x, Config.DRIVER_JOYSTICK_DEADBAND);
         y = MathUtil.applyDeadband(y, Config.DRIVER_JOYSTICK_DEADBAND);
