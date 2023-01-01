@@ -143,6 +143,7 @@ public class SwerveModule {
      *
      * @param desiredState Desired state with speed and angle.
      */
+
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         Rotation2d angle = getSteeringAngle();
         double velocity = getVelocity();
