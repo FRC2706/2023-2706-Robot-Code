@@ -71,10 +71,10 @@ public class Config {
      */
     public static Double DRIVER_JOYSTICK_DEADBAND = 0.1; // TODO: Investigate if this can be better tuned
         
-    public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.1524, 0.1524); // Diameter of wheel is 0.1524
+    public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.1016, 0.1524); // Diameter of wheel is 0.1524
 
-    public static final double kWheelBase = robotSpecific(-0.0, -0.0, -0.0, -0.0, 0.7, -0.0);
-    public static final double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, -1.0, 0.51762);
+    public static final double kWheelBase = robotSpecific(-0.0, -0.0, -0.0, -0.0, 0.6, -0.0);
+    public static final double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, 0.5, 0.51762);
     public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
 
     public static final int DIFF_SLOTID_DRIVER = 0;
@@ -138,71 +138,72 @@ public class Config {
         public static final double kPThetaController = 1;
 
         public static final double kMaxTeleopAngularSpeed = Math.PI*2;
-        public static final double FL_ENCODER_OFFSET = -85.714;
-        public static final double FR_ENCODER_OFFSET = -336.0058;
-        public static final double RL_ENCODER_OFFSET = -10.02;
-        public static final double RR_ENCODER_OFFSET = -183.7;
+        public static final double FL_ENCODER_OFFSET = 85.714;
+        public static final double FR_ENCODER_OFFSET = 336.0058;
+        public static final double RL_ENCODER_OFFSET = 10.02;
+        public static final double RR_ENCODER_OFFSET = 183.7;
 
-        public static boolean INVERTED_FRONT_LEFT_DRIVE = robotSpecific(true);
-        public static boolean INVERTED_REAR_LEFT_DRIVE =  robotSpecific(true);
-        public static boolean INVERTED_FRONT_RIGHT_DRIVE = robotSpecific(true);
-        public static boolean INVERTED_REAR_RIGHT_DRIVE = robotSpecific(true);
+        public static boolean INVERTED_FRONT_LEFT_DRIVE = robotSpecific(false);
+        public static boolean INVERTED_REAR_LEFT_DRIVE =  robotSpecific(false);
+        public static boolean INVERTED_FRONT_RIGHT_DRIVE = robotSpecific(false);
+        public static boolean INVERTED_REAR_RIGHT_DRIVE = robotSpecific(false);
 
-        public static boolean INVERTED_FRONT_LEFT_STEERING =  robotSpecific(true);
-        public static boolean INVERTED_REAR_LEFT_STEERING =  robotSpecific(true);
-        public static boolean INVERTED_FRONT_RIGHT_STEERING = robotSpecific(true);
-        public static boolean INVERTED_REAR_RIGHT_STEERING =  robotSpecific(true);
+        public static boolean INVERTED_FRONT_LEFT_STEERING =  robotSpecific(false);
+        public static boolean INVERTED_REAR_LEFT_STEERING =  robotSpecific(false);
+        public static boolean INVERTED_FRONT_RIGHT_STEERING = robotSpecific(false);
+        public static boolean INVERTED_REAR_RIGHT_STEERING =  robotSpecific(false);
 
         public static final double turningEncoderConstant = (2*Math.PI)/12.8;
-        public static final double drivetrainEncoderConstant = 0.1016*Math.PI*(1/(60*8.14));
+        public static final double drivePositionConversionFactor = drivetrainWheelDiameter * Math.PI / 8.14;
+        public static final double driveVelocityConversionFactor = drivePositionConversionFactor / 60.0;
 
         public static final IdleMode defaultDriveIdleMode = IdleMode.kCoast;
         public static final IdleMode defaultSteeringIdleMode = IdleMode.kCoast;
 
-        public static final double drive_kIZone = 0.15;
-        public static final double drive_kFF = 0.25; // These can also be module specific.
-        public static final double drive_kP = 0.2; // Hopefully they won't need to be.
-        public static final double drive_kI = 0.002; // Depends on hardware differences.
-        public static final double drive_kD =1.0;
+        public static final double drive_kIZone = 0.0;
+        public static final double drive_kFF = 0.0; // These can also be module specific.
+        public static final double drive_kP = 0.1; // Hopefully they won't need to be.
+        public static final double drive_kI = 0.0; // Depends on hardware differences.
+        public static final double drive_kD = 0.0;
         
         public static FluidConstant<Double> fluid_drive_kFF = new FluidConstant<>("Drive kFF", drive_kFF, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID"));
 
         public static FluidConstant<Double> fluid_drive_kP = new FluidConstant<>("Drive kP", drive_kP, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID"));
 
         public static FluidConstant<Double> fluid_drive_kI = new FluidConstant<>("Drive kI", drive_kI, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID"));
 
 
         public static FluidConstant<Double> fluid_drive_kD = new FluidConstant<>("Drive kD", drive_kD, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID"));
 
-        public static FluidConstant<Double> fluid_drive_kIZone = new FluidConstant<>("Drive kIZone", drive_kI, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+        public static FluidConstant<Double> fluid_drive_kIZone = new FluidConstant<>("Drive kIZone", drive_kIZone, true)
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID"));
 
     
 
         public static final double steering_kFF = 0.0;
-        public static final double steering_kP = 0.25;
+        public static final double steering_kP = 0.573;
         public static final double steering_kI = 0.0;
-        public static final double steering_kD = 0.05;
+        public static final double steering_kD = 0.0;
         public static final double steering_kIZone = 0.0; //5 degrees
 
         public static FluidConstant<Double> fluid_steering_kFF = new FluidConstant<>("Steering kFF", steering_kFF, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/SteeringPID"));
 
         public static FluidConstant<Double> fluid_steering_kP = new FluidConstant<>("Steering kP", steering_kP, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/SteeringPID"));
 
         public static FluidConstant<Double> fluid_steering_kI = new FluidConstant<>("Steering kI", steering_kI, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/SteeringPID"));
 
         public static FluidConstant<Double> fluid_steering_kD = new FluidConstant<>("Steering kD", steering_kD, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/SteeringPID"));
                         
-        public static FluidConstant<Double> fluid_steering_kIZone = new FluidConstant<>("Steering kIZone", steering_kI, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+        public static FluidConstant<Double> fluid_steering_kIZone = new FluidConstant<>("Steering kIZone", steering_kIZone, true)
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/SteeringPID"));
         // Distance between centers of right and left wheels on robot
 
         public static final SwerveDriveKinematics kSwerveDriveKinematics = new SwerveDriveKinematics(
@@ -222,13 +223,13 @@ public class Config {
         public static final double driveKA = 0.27;
 
         public static FluidConstant<Double> fluid_kA = new FluidConstant<>("Drive kA", driveKA, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule")); 
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DriveFF")); 
         
         public static FluidConstant<Double> fluid_kV = new FluidConstant<>("Drive kV", driveKV, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DriveFF"));
 
         public static FluidConstant<Double> fluid_kS = new FluidConstant<>("Drive kS", driveKS, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveModule"));     
+                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DriveFF"));     
                         
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
             kMaxAutoAngularSpeed, kMaxAutoAngularAcceleration);

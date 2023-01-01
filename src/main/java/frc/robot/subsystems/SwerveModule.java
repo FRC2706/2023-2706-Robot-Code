@@ -75,14 +75,14 @@ public class SwerveModule {
         m_drivePIDController.setD(Config.Swerve.fluid_drive_kD.get());
         m_drivePIDController.setIZone(Config.Swerve.fluid_drive_kIZone.get());
         m_drivePIDController.setFF(Config.Swerve.fluid_drive_kFF.get());   
-        CANSparkMaxUtil.setCANSparkMaxBusUsage(m_driveMotor, Usage.kPositionOnly);
+        CANSparkMaxUtil.setCANSparkMaxBusUsage(m_driveMotor, Usage.kAll);
         
         m_turningMotor = new CANSparkMax(turningCanID, MotorType.kBrushless);
         m_turningPIDController = m_turningMotor.getPIDController();
         m_turningMotor.enableVoltageCompensation(Config.Swerve.steeringVoltComp);
 
         m_driveEncoder = m_driveMotor.getEncoder();
-        m_driveEncoder.setVelocityConversionFactor(Config.Swerve.drivetrainEncoderConstant);
+        m_driveEncoder.setVelocityConversionFactor(Config.Swerve.driveVelocityConversionFactor);
         m_driveEncoder.setPosition(0.0);
 
         m_turningMotor.restoreFactoryDefaults();
@@ -99,7 +99,7 @@ public class SwerveModule {
         m_turningPIDController.setFF(Config.Swerve.fluid_steering_kFF.get());
         m_turningMotor.burnFlash();
 
-        String tableName = "Swerve Chassis/SwerveModule" + ModuleName;
+        String tableName = "SwerveChassis/SwerveModule" + ModuleName;
         swerveModuleTable = NetworkTableInstance.getDefault().getTable(tableName);
 
         CANCoderConfiguration encoderConfiguration = new CANCoderConfiguration();
@@ -116,12 +116,12 @@ public class SwerveModule {
         CANCoderUtil.setCANCoderBusUsage(encoder, CCUsage.kMinimal);
         encoder.configAllSettings(encoderConfiguration);
         
-        desiredSpeedEntry = swerveModuleTable.getEntry("Desired speed (m/s)");
-        desiredAngleEntry = swerveModuleTable.getEntry("Desired angle (radians)");
-        currentSpeedEntry = swerveModuleTable.getEntry("Current speed (m/s)");
-        currentAngleEntry = swerveModuleTable.getEntry("Current angle (radians)");
-        speedError = swerveModuleTable.getEntry("speed Error");
-        angleError = swerveModuleTable.getEntry("angle Error"); 
+        desiredSpeedEntry = swerveModuleTable.getEntry("Desired speed (mps)");
+        desiredAngleEntry = swerveModuleTable.getEntry("Desired angle (deg)");
+        currentSpeedEntry = swerveModuleTable.getEntry("Current speed (mps)");
+        currentAngleEntry = swerveModuleTable.getEntry("Current angle (deg)");
+        speedError = swerveModuleTable.getEntry("Speed error (mps)");
+        angleError = swerveModuleTable.getEntry("Angle error (deg)"); 
         canCoderEntry = swerveModuleTable.getEntry("CanCoder");
 
         updateSteeringFromCanCoder();
@@ -209,7 +209,7 @@ public class SwerveModule {
      * This is specific to Swerge. Other methods need to be written for other hardware.
      */
     public void updateSteeringFromCanCoder() {
-        double angle = Math.toRadians(m_encoderOffset + encoder.getAbsolutePosition());
+        double angle = Math.toRadians(encoder.getAbsolutePosition() - m_encoderOffset);
         m_turningEncoder.setPosition(angle);
 
     }
