@@ -73,8 +73,8 @@ public class Config {
         
     public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.1016, 0.1524); // Diameter of wheel is 0.1524
 
-    public static final double kWheelBase = robotSpecific(-0.0, -0.0, -0.0, -0.0, 0.6, -0.0);
-    public static final double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, 0.5, 0.51762);
+    public static final double kWheelBase = robotSpecific(-0.0, -0.0, -0.0, -0.0, 0.65, -0.0);
+    public static final double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, 0.518, 0.51762);
     public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
 
     public static final int DIFF_SLOTID_DRIVER = 0;
@@ -127,7 +127,7 @@ public class Config {
      */
 
     public static class Swerve{
-        public static final int steeringCurrentLimit = 20;
+        public static final int steeringCurrentLimit = 30;
         public static final int driveCurrentLimit = 80;
 
         public static final double driveVoltComp = 12.0;
@@ -138,10 +138,10 @@ public class Config {
         public static final double kPThetaController = 1;
 
         public static final double kMaxTeleopAngularSpeed = Math.PI*2;
-        public static final double FL_ENCODER_OFFSET = 85.714;
-        public static final double FR_ENCODER_OFFSET = 336.0058;
-        public static final double RL_ENCODER_OFFSET = 10.02;
-        public static final double RR_ENCODER_OFFSET = 183.7;
+        public static final double FL_ENCODER_OFFSET = 90.13;
+        public static final double FR_ENCODER_OFFSET = 205.0;
+        public static final double RL_ENCODER_OFFSET = 169.0;
+        public static final double RR_ENCODER_OFFSET = -4.0; 
 
         public static boolean INVERTED_FRONT_LEFT_DRIVE = robotSpecific(false);
         public static boolean INVERTED_REAR_LEFT_DRIVE =  robotSpecific(false);
@@ -157,8 +157,8 @@ public class Config {
         public static final double drivePositionConversionFactor = drivetrainWheelDiameter * Math.PI / 8.14;
         public static final double driveVelocityConversionFactor = drivePositionConversionFactor / 60.0;
 
-        public static final IdleMode defaultDriveIdleMode = IdleMode.kCoast;
-        public static final IdleMode defaultSteeringIdleMode = IdleMode.kCoast;
+        public static final IdleMode defaultDriveIdleMode = IdleMode.kBrake;
+        public static final IdleMode defaultSteeringIdleMode = IdleMode.kBrake;
 
         public static final double drive_kIZone = 0.0;
         public static final double drive_kFF = 0.0; // These can also be module specific.
@@ -185,9 +185,9 @@ public class Config {
     
 
         public static final double steering_kFF = 0.0;
-        public static final double steering_kP = 0.573;
+        public static final double steering_kP = 1.3;
         public static final double steering_kI = 0.0;
-        public static final double steering_kD = 0.0;
+        public static final double steering_kD = 0.3;
         public static final double steering_kIZone = 0.0; //5 degrees
 
         public static FluidConstant<Double> fluid_steering_kFF = new FluidConstant<>("Steering kFF", steering_kFF, true)
@@ -204,6 +204,7 @@ public class Config {
                         
         public static FluidConstant<Double> fluid_steering_kIZone = new FluidConstant<>("Steering kIZone", steering_kIZone, true)
                         .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/SteeringPID"));
+
         // Distance between centers of right and left wheels on robot
 
         public static final SwerveDriveKinematics kSwerveDriveKinematics = new SwerveDriveKinematics(

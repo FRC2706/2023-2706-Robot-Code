@@ -27,6 +27,7 @@ import frc.lib3512.util.CANSparkMaxUtil;
 import frc.lib3512.util.CANCoderUtil.CCUsage;
 import frc.lib3512.util.CANSparkMaxUtil.Usage;
 import frc.robot.config.Config;
+import frc.robot.config.FluidConstant;
 
 public class SwerveModule {
 
@@ -48,6 +49,7 @@ public class SwerveModule {
     private NetworkTableEntry angleError;
     private double m_encoderOffset;
     private NetworkTableEntry canCoderEntry;
+    FluidConstant<Double> fluid_offset;
 
 
     SimpleMotorFeedforward feedforward = 
@@ -58,6 +60,8 @@ public class SwerveModule {
     public SwerveModule(int driveCanID, boolean driveInverted, int turningCanID, boolean turningInverted, int encoderCanID, double encoderOffset, String ModuleName) {
 
         // CODE: Construct both CANSparkMax objects and set all the nessecary settings (CONSTANTS from Config or from the parameters of the constructor)
+        fluid_offset = new FluidConstant<>("Offset" + ModuleName , encoderOffset, true)
+                    .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/offset"));
         m_encoderOffset = encoderOffset;
         m_driveMotor = new CANSparkMax(driveCanID, MotorType.kBrushless);
 
@@ -80,6 +84,7 @@ public class SwerveModule {
         m_turningMotor = new CANSparkMax(turningCanID, MotorType.kBrushless);
         m_turningPIDController = m_turningMotor.getPIDController();
         m_turningMotor.enableVoltageCompensation(Config.Swerve.steeringVoltComp);
+        m_turningMotor.setSmartCurrentLimit(Config.Swerve.steeringCurrentLimit);
 
         m_driveEncoder = m_driveMotor.getEncoder();
         m_driveEncoder.setVelocityConversionFactor(Config.Swerve.driveVelocityConversionFactor);
@@ -148,9 +153,9 @@ public class SwerveModule {
         Rotation2d angle = getSteeringAngle();
         double velocity = getVelocity();
 
-        desiredState = 
+        /*desiredState = 
             OnboardModuleState.optimize(
-                desiredState, angle);
+                desiredState, angle);*/
         
 
         if (isOpenLoop){
@@ -167,6 +172,7 @@ public class SwerveModule {
                 ? lastAngle
                 :desiredState.angle.getRadians();
         // CODE: Pass the angle (which is in radians) to position PID on steering SparkMax. (PositionConversionFactor set so SparkMax wants radians)
+        /*double newAngle = desiredState.angle.getRadians();*/
         m_turningPIDController.setReference(newAngle, ControlType.kPosition);
 
         lastAngle = newAngle;
@@ -177,6 +183,7 @@ public class SwerveModule {
         currentAngleEntry.setDouble(angle.getDegrees());
         speedError.setDouble(desiredState.speedMetersPerSecond - velocity);
         angleError.setDouble(desiredState.angle.getDegrees() - angle.getDegrees());
+        NetworkTableInstance.getDefault().flush();
     }
 
     /**
@@ -209,7 +216,7 @@ public class SwerveModule {
      * This is specific to Swerge. Other methods need to be written for other hardware.
      */
     public void updateSteeringFromCanCoder() {
-        double angle = Math.toRadians(encoder.getAbsolutePosition() - m_encoderOffset);
+        double angle = Math.toRadians(encoder.getAbsolutePosition() + fluid_offset.get());
         m_turningEncoder.setPosition(angle);
 
     }

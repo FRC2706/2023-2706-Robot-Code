@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Robot;
 import frc.robot.commands.ModuleAngleFromJoystick;
+import frc.robot.commands.ResetGyro;
 import frc.robot.commands.SwerveTeleop;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -44,28 +45,36 @@ public class MiniSwerveContainer extends RobotContainer{
 
     SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
 
-    new JoystickButton(driver, XboxController.Button.kA.value).whenPressed(
+    new JoystickButton(driver, XboxController.Button.kStart.value).whenPressed(
       new InstantCommand(()-> SwerveSubsystem.getInstance().updateModulesPID())
     );
 
+    new JoystickButton(driver, XboxController.Button.kBack.value).whenPressed(new ResetGyro());
 
-    SwerveModuleState state1 = new SwerveModuleState(0, Rotation2d.fromDegrees(0));
-    SwerveModuleState state2 = new SwerveModuleState(0, Rotation2d.fromDegrees(90));
-    SwerveModuleState state3 = new SwerveModuleState(1.5, Rotation2d.fromDegrees(0));
-    SwerveModuleState state4 = new SwerveModuleState(-1.5, Rotation2d.fromDegrees(0));
+    new JoystickButton(driver, XboxController.Button.kY.value).whenPressed(
+      new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder())
+    );
+    
+    SwerveModuleState state1 = new SwerveModuleState(0.3, Rotation2d.fromDegrees(0));
+    SwerveModuleState state2 = new SwerveModuleState(0.3, Rotation2d.fromDegrees(90));
+    SwerveModuleState state3 = new SwerveModuleState(0.5, Rotation2d.fromDegrees(0));
+    SwerveModuleState state4 = new SwerveModuleState(-0.5, Rotation2d.fromDegrees(0));
 
 
-    Command angleSetPoint1 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state1, state1, state1, state1}, false), SwerveSubsystem.getInstance());
+    Command angleSetPoint1 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state1, state1, state1, state1}, true), SwerveSubsystem.getInstance());
     new JoystickButton(driver, XboxController.Button.kB.value).whenHeld(angleSetPoint1).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
 
-    Command angleSetPoint2 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state2, state2, state2, state2}, false), SwerveSubsystem.getInstance());
+    Command angleSetPoint2 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state2, state1, state1, state1}, true), SwerveSubsystem.getInstance());
     new JoystickButton(driver, XboxController.Button.kX.value).whenHeld(angleSetPoint2).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
 
-    Command angleSetPoint3 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state3, state3, state3, state3}, false), SwerveSubsystem.getInstance());
-    new JoystickButton(driver, XboxController.Button.kRightBumper.value).whenHeld(angleSetPoint3).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
+    Command angleSetPoint3 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state2, state2, state2, state2}, true), SwerveSubsystem.getInstance());
+    new JoystickButton(driver, XboxController.Button.kA.value).whenHeld(angleSetPoint3).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
 
-    Command angleSetPoint4 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state4, state4, state4, state4}, false), SwerveSubsystem.getInstance());
-    new JoystickButton(driver, XboxController.Button.kLeftBumper.value).whenHeld(angleSetPoint4).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
+    Command angleSetPoint4 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state3, state3, state3, state3}, true), SwerveSubsystem.getInstance());
+    new JoystickButton(driver, XboxController.Button.kRightBumper.value).whenHeld(angleSetPoint4).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
+
+    Command angleSetPoint5 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state4, state4, state4, state4}, true), SwerveSubsystem.getInstance());
+    new JoystickButton(driver, XboxController.Button.kLeftBumper.value).whenHeld(angleSetPoint5).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
   }
 
 
