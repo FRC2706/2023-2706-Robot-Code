@@ -5,6 +5,7 @@
       "/LiveWindow/DiffNeoSubsystem": "Subsystem",
       "/LiveWindow/DiffTalonSubsystem": "Subsystem",
       "/LiveWindow/ExampleSubsystem": "Subsystem",
+      "/LiveWindow/SwerveSubsystem": "Subsystem",
       "/LiveWindow/Ungrouped/DifferentialDrive[1]": "DifferentialDrive",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/Victor SPX [2]": "Motor Controller",
@@ -18,7 +19,24 @@
           "open": true
         },
         "open": true
+      }
+    },
+    "Swerve Chassis": {
+      "SwerveModuleFL": {
+        "open": true
       },
+      "SwerveModuleFR": {
+        "open": true
+      },
+      "open": true
+    },
+    "SwerveChassis": {
+      "SwerveModuleFL": {
+        "open": true
+      },
+      "open": true
+    },
+    "SwerveModule": {
       "open": true
     }
   }
