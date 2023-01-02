@@ -47,6 +47,7 @@ public class SwerveModule {
     private NetworkTableEntry angleError;
 
 
+    //@todo: how to obtain ks, kv and ka.
     SimpleMotorFeedforward feedforward = 
         new SimpleMotorFeedforward(Config.Swerve.driveKS, Config.Swerve.driveKV, Config.Swerve.driveKA);
     /**
@@ -148,6 +149,8 @@ public class SwerveModule {
                 desiredState, angle);
         
         // CODE: Pass the velocity (which is in meters per second) to velocity PID on drive SparkMax. (VelocityConversionFactor set so SparkMax wants m/s)
+        //@todo: feedforward scaling factor?
+        //       feedforward only uses ks and kv for now.
         m_drivePIDController.setReference(desiredState.speedMetersPerSecond, ControlType.kVelocity, 0, feedforward.calculate(desiredState.speedMetersPerSecond));
 
         double newAngle = 
