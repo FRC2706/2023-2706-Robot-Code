@@ -127,7 +127,7 @@ public class Config {
      */
 
     public static class Swerve{
-        public static final int steeringCurrentLimit = 30;
+        public static final int steeringCurrentLimit = 20;
         public static final int driveCurrentLimit = 80;
 
         public static final double driveVoltComp = 12.0;
@@ -137,11 +137,11 @@ public class Config {
         public static final double kPYController = 1;
         public static final double kPThetaController = 1;
 
-        public static final double kMaxTeleopAngularSpeed = Math.PI*2;
-        public static final double FL_ENCODER_OFFSET = 90.13;
-        public static final double FR_ENCODER_OFFSET = 205.0;
-        public static final double RL_ENCODER_OFFSET = 169.0;
-        public static final double RR_ENCODER_OFFSET = -4.0; 
+        public static final double kMaxTeleopAngularSpeed = Math.PI/4.0;
+        public static final double FL_ENCODER_OFFSET = 90.73;
+        public static final double FR_ENCODER_OFFSET = 204.3;
+        public static final double RL_ENCODER_OFFSET = 168.9;
+        public static final double RR_ENCODER_OFFSET = -5.5; 
 
         public static boolean INVERTED_FRONT_LEFT_DRIVE = robotSpecific(false);
         public static boolean INVERTED_REAR_LEFT_DRIVE =  robotSpecific(false);
@@ -153,12 +153,15 @@ public class Config {
         public static boolean INVERTED_FRONT_RIGHT_STEERING = robotSpecific(false);
         public static boolean INVERTED_REAR_RIGHT_STEERING =  robotSpecific(false);
 
+        public static double ENCODER_SYNCING_PERIOD = 0.7; // seconds
+        public static int ENCODER_SYNCING_TIMEOUT = 20; // seconds
+
         public static final double turningEncoderConstant = (2*Math.PI)/12.8;
         public static final double drivePositionConversionFactor = drivetrainWheelDiameter * Math.PI / 8.14;
         public static final double driveVelocityConversionFactor = drivePositionConversionFactor / 60.0;
 
         public static final IdleMode defaultDriveIdleMode = IdleMode.kBrake;
-        public static final IdleMode defaultSteeringIdleMode = IdleMode.kBrake;
+        public static final IdleMode defaultSteeringIdleMode = IdleMode.kCoast;
 
         public static final double drive_kIZone = 0.0;
         public static final double drive_kFF = 0.0; // These can also be module specific.
@@ -213,7 +216,7 @@ public class Config {
             new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
             new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
-        public static final double kMaxAttainableWheelSpeed = 1.0;
+        public static final double kMaxAttainableWheelSpeed = 0.1;
         public static final double kMaxAutoSpeed = 3; // m/s
         public static final double kMaxAutoAcceleration = 3; // m/s/s
         public static final double kMaxAutoAngularSpeed = Math.PI; // rad/s
