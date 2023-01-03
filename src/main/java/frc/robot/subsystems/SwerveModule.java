@@ -70,7 +70,6 @@ public class SwerveModule {
         m_driveMotor.setIdleMode(Config.Swerve.defaultDriveIdleMode);
         m_driveMotor.setSmartCurrentLimit(Config.Swerve.driveCurrentLimit);
         m_driveMotor.enableVoltageCompensation(Config.Swerve.driveVoltComp);
-        m_driveMotor.burnFlash();
 
         m_drivePIDController = m_driveMotor.getPIDController();
         m_drivePIDController.setP(Config.Swerve.fluid_drive_kP.get());
@@ -103,6 +102,8 @@ public class SwerveModule {
         m_turningPIDController.setD(Config.Swerve.fluid_steering_kD.get());
         m_turningPIDController.setIZone(Config.Swerve.fluid_steering_kIZone.get());
         m_turningPIDController.setFF(Config.Swerve.fluid_steering_kFF.get());
+
+        m_driveMotor.burnFlash();
         m_turningMotor.burnFlash();
 
         String tableName = "SwerveChassis/SwerveModule" + ModuleName;
