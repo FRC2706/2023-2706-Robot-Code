@@ -202,6 +202,11 @@ public class SwerveSubsystem extends SubsystemBase {
                 m_rearRight.areSteeringEncodersSynced();
     }
 
+    SwerveModule arr[] = new SwerveModule[]{m_frontLeft, m_frontRight, m_rearLeft, m_rearRight};
+    public boolean check(int module) {
+        return arr[module].areSteeringEncodersSynced();
+    }
+
     public void resetLastAngles() {
         m_frontLeft.resetLastAngle();
         m_frontRight.resetLastAngle();
