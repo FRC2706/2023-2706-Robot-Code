@@ -3,6 +3,8 @@ package frc.lib3512.util;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderStatusFrame;
 
+import static frc.robot.ErrorCheck.errCTRE;
+
 /** Sets status frames for the CTRE CANCoder. */
 public class CANCoderUtil {
   public enum CCUsage {
@@ -25,17 +27,17 @@ public class CANCoderUtil {
    */
   public static void setCANCoderBusUsage(CANCoder cancoder, CCUsage usage) {
     if (usage == CCUsage.kAll) {
-      cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10);
-      cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 10);
+      errCTRE(cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10));
+      errCTRE(cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 10));
     } else if (usage == CCUsage.kSensorDataOnly) {
-      cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10);
-      cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 100);
+      errCTRE(cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10));
+      errCTRE(cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 100));
     } else if (usage == CCUsage.kFaultsOnly) {
-      cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 100);
-      cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 10);
+      errCTRE(cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 100));
+      errCTRE(cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 10));
     } else if (usage == CCUsage.kMinimal) {
-      cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 100);
-      cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 100);
+      errCTRE(cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 100));
+      errCTRE(cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 100));
     }
   }
 }

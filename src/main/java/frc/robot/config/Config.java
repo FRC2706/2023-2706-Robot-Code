@@ -153,7 +153,7 @@ public class Config {
         public static boolean INVERTED_FRONT_RIGHT_STEERING = robotSpecific(false);
         public static boolean INVERTED_REAR_RIGHT_STEERING =  robotSpecific(false);
 
-        public static double ENCODER_SYNCING_PERIOD = 0.7; // seconds
+        public static double ENCODER_SYNCING_PERIOD = 0.2; // seconds
         public static int ENCODER_SYNCING_TIMEOUT = 20; // seconds
 
         public static final double turningEncoderConstant = (2*Math.PI)/12.8;
