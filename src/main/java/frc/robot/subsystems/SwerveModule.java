@@ -270,7 +270,7 @@ public class SwerveModule {
      * @return Whether the encoders are synced or not
      */
     public boolean areSteeringEncodersSynced() {
-        return Math.abs(getCancoder() - getSteeringAngle().getRadians()) < 0.01;
+        return Math.abs(getCancoder() - getSteeringAngle().getRadians()) < 0.0017;
     }
 
     private Direction direction = Direction.COUNTER_CLOCKWISE;
