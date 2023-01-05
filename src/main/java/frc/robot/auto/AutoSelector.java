@@ -4,6 +4,7 @@
 
 package frc.robot.auto;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -11,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.ResetOdometry;
@@ -65,7 +67,7 @@ public class AutoSelector {
         m_autonomousRoutines.addOption(AutoRoutine.RapidReactTest.toString(), AutoRoutine.RapidReactTest);
         m_autonomousRoutines.addOption(AutoRoutine.MeasureableTest.toString(), AutoRoutine.MeasureableTest);
 
-        tab.add("Routines", m_autonomousRoutines).withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(3, 0).withSize(2, 1);
+        tab.add("Routines", m_autonomousRoutines).withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(0, 0).withSize(2, 1);
     }
 
 
@@ -89,9 +91,10 @@ public class AutoSelector {
                 if (trajs == null) 
                     return new InstantCommand();
 
+                
                 return new SequentialCommandGroup(
                     new ResetOdometry(trajs[0].getInitialPose()),
-                    new SwerveCommandMerge(trajs[0]),
+                    new SwerveCommandMerge(trajs[0], trajs[0].getInitialPose().getRotation()),
                     new InstantCommand(SwerveSubsystem.getInstance()::stopMotors)
                 );
 
@@ -103,7 +106,7 @@ public class AutoSelector {
 
                 return new SequentialCommandGroup(
                     new ResetOdometry(trajs[0].getInitialPose()),
-                    new SwerveCommandMerge(trajs[0]),
+                    new SwerveCommandMerge(trajs[0], trajs[0].getInitialPose().getRotation()),
                     new InstantCommand(SwerveSubsystem.getInstance()::stopMotors)
                 );
 
@@ -115,7 +118,7 @@ public class AutoSelector {
 
                 return new SequentialCommandGroup(
                     new ResetOdometry(trajs[0].getInitialPose()),
-                    new SwerveCommandMerge(trajs[0]),
+                    new SwerveCommandMerge(trajs[0], trajs[0].getInitialPose().getRotation()),
                     new InstantCommand(SwerveSubsystem.getInstance()::stopMotors)
                 );
 
@@ -127,7 +130,7 @@ public class AutoSelector {
 
                 return new SequentialCommandGroup(
                     new ResetOdometry(trajs[0].getInitialPose()),
-                    new SwerveCommandMerge(trajs[0]),
+                    new SwerveCommandMerge(trajs[0], trajs[0].getInitialPose().getRotation()),
                     new InstantCommand(SwerveSubsystem.getInstance()::stopMotors)
                 );
 
@@ -139,7 +142,7 @@ public class AutoSelector {
 
                 return new SequentialCommandGroup(
                     new ResetOdometry(trajs[0].getInitialPose()),
-                    new SwerveCommandMerge(trajs[0]),
+                    new SwerveCommandMerge(trajs[0], trajs[0].getInitialPose().getRotation()),
                     new InstantCommand(SwerveSubsystem.getInstance()::stopMotors)
                 );
 
@@ -149,13 +152,14 @@ public class AutoSelector {
                 if (trajs == null) 
                     return new InstantCommand();
                 
+                Rotation2d fixedHeading = trajs[0].getInitialPose().getRotation();
                 return new SequentialCommandGroup(
                     new ResetOdometry(trajs[0].getInitialPose()),
-                    new SwerveCommandMerge(trajs[0]),
-                    new WaitCommand(2),
-                    new SwerveCommandMerge(trajs[1]),
-                    new WaitCommand(2),
-                    new SwerveCommandMerge(trajs[2]),
+                    new SwerveCommandMerge(trajs[0], fixedHeading),
+                    new WaitCommand(2).raceWith(new RunCommand(SwerveSubsystem.getInstance()::stopMotors)),
+                    new SwerveCommandMerge(trajs[1], fixedHeading),
+                    new WaitCommand(2).raceWith(new RunCommand(SwerveSubsystem.getInstance()::stopMotors)),
+                    new SwerveCommandMerge(trajs[2], fixedHeading),
                     new InstantCommand(SwerveSubsystem.getInstance()::stopMotors)
                 );
               

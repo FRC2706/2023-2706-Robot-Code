@@ -216,7 +216,7 @@ public class Config {
             new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
             new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
-        public static final double kMaxAttainableWheelSpeed = 3;
+        public static final double kMaxAttainableWheelSpeed = 1.0;
         public static final double kMaxAutoSpeed = 3; // m/s
         public static final double kMaxAutoAcceleration = 3; // m/s/s
         public static final double kMaxAutoAngularSpeed = Math.PI; // rad/s
