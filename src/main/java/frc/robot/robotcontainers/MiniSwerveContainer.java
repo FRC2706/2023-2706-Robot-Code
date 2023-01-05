@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Robot;
+import frc.robot.auto.AutoSelector;
 import frc.robot.commands.ModuleAngleFromJoystick;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.SwerveTeleop;
@@ -28,10 +29,14 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class MiniSwerveContainer extends RobotContainer{
 
+  AutoSelector m_autoSelector;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public MiniSwerveContainer() {
     // Configure the button bindings
     configureButtonBindings();
+
+    m_autoSelector = new AutoSelector();
   }
 
   /**
@@ -85,7 +90,7 @@ public class MiniSwerveContainer extends RobotContainer{
    */
   @Override
   public Command getAutonomousCommand() {
-    return new InstantCommand();
+    return m_autoSelector.getAutoCommand();
   }
 
 
