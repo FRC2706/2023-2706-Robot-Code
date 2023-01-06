@@ -59,7 +59,7 @@ public class AutoSelector {
         m_autonomousRoutines.setDefaultOption("Use Selector Switch", AutoRoutine.UseSelectorSwitch);
         m_autonomousRoutines.addOption("DO NOTHING", AutoRoutine.DoNothing);
         m_autonomousRoutines.addOption(AutoRoutine.Test1.toString(), AutoRoutine.Test1);
-        m_autonomousRoutines.addOption(AutoRoutine.Test2.toString(), AutoRoutine.Test1);
+        m_autonomousRoutines.addOption(AutoRoutine.Test2.toString(), AutoRoutine.Test2);
         m_autonomousRoutines.addOption(AutoRoutine.Test3.toString(), AutoRoutine.Test3);
         m_autonomousRoutines.addOption(AutoRoutine.Test4.toString(), AutoRoutine.Test4);
         m_autonomousRoutines.addOption(AutoRoutine.Test5.toString(), AutoRoutine.Test5);

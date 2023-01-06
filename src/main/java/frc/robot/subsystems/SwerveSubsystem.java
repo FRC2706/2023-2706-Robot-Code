@@ -24,7 +24,7 @@ import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.config.Config;
 
 public class SwerveSubsystem extends SubsystemBase {
-    private final Field2d m_field = new Field2d();    
+    private Field2d m_field = new Field2d();    
 
 
     private NetworkTable table = NetworkTableInstance.getDefault().getTable("DriveTrain");
