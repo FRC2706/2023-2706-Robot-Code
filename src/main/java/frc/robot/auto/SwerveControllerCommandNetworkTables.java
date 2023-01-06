@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import frc.robot.subsystems.SwerveSubsystem;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -160,6 +161,9 @@ public class SwerveControllerCommandNetworkTables extends CommandBase {
 
   @Override
   public void initialize() {
+    // ADDED NETWORKTABLES
+    SwerveSubsystem.getInstance().setTrajectory(m_trajectory);
+    
     m_timer.reset();
     m_timer.start();
   }
