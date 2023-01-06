@@ -66,12 +66,10 @@ public class SwerveModule {
         m_driveMotor = new CANSparkMax(driveCanID, MotorType.kBrushless);
 
         m_driveMotor.restoreFactoryDefaults();
-        CANSparkMaxUtil.setCANSparkMaxBusUsage(m_driveMotor, Usage.kVelocityOnly);
         m_driveMotor.setInverted(driveInverted);
         m_driveMotor.setIdleMode(Config.Swerve.defaultDriveIdleMode);
         m_driveMotor.setSmartCurrentLimit(Config.Swerve.driveCurrentLimit);
         m_driveMotor.enableVoltageCompensation(Config.Swerve.driveVoltComp);
-        m_driveMotor.burnFlash();
 
         m_drivePIDController = m_driveMotor.getPIDController();
         m_drivePIDController.setP(Config.Swerve.fluid_drive_kP.get());
@@ -82,6 +80,7 @@ public class SwerveModule {
         CANSparkMaxUtil.setCANSparkMaxBusUsage(m_driveMotor, Usage.kAll);
         
         m_turningMotor = new CANSparkMax(turningCanID, MotorType.kBrushless);
+        m_turningMotor.restoreFactoryDefaults();
         m_turningPIDController = m_turningMotor.getPIDController();
         m_turningMotor.enableVoltageCompensation(Config.Swerve.steeringVoltComp);
         m_turningMotor.setSmartCurrentLimit(Config.Swerve.steeringCurrentLimit);
@@ -90,7 +89,8 @@ public class SwerveModule {
         m_driveEncoder.setVelocityConversionFactor(Config.Swerve.driveVelocityConversionFactor);
         m_driveEncoder.setPosition(0.0);
 
-        m_turningMotor.restoreFactoryDefaults();
+        
+        CANSparkMaxUtil.setCANSparkMaxBusUsage(m_turningMotor, Usage.kPositionOnly);
         m_turningMotor.setInverted(turningInverted);
         m_turningMotor.setIdleMode(Config.Swerve.defaultSteeringIdleMode);
 
@@ -102,6 +102,8 @@ public class SwerveModule {
         m_turningPIDController.setD(Config.Swerve.fluid_steering_kD.get());
         m_turningPIDController.setIZone(Config.Swerve.fluid_steering_kIZone.get());
         m_turningPIDController.setFF(Config.Swerve.fluid_steering_kFF.get());
+
+        m_driveMotor.burnFlash();
         m_turningMotor.burnFlash();
 
         String tableName = "SwerveChassis/SwerveModule" + ModuleName;
@@ -131,7 +133,7 @@ public class SwerveModule {
 
         updateSteeringFromCanCoder();
 
-        lastAngle = getState().angle.getRadians();
+        resetLastAngle();
     }
 
     /**
@@ -153,9 +155,9 @@ public class SwerveModule {
         Rotation2d angle = getSteeringAngle();
         double velocity = getVelocity();
 
-        /*desiredState = 
+        desiredState = 
             OnboardModuleState.optimize(
-                desiredState, angle);*/
+                desiredState, angle);
         
 
         if (isOpenLoop){
@@ -165,10 +167,9 @@ public class SwerveModule {
             m_drivePIDController.setReference(desiredState.speedMetersPerSecond, ControlType.kVelocity, 0, feedforward.calculate(desiredState.speedMetersPerSecond));
         }
         // CODE: Pass the velocity (which is in meters per second) to velocity PID on drive SparkMax. (VelocityConversionFactor set so SparkMax wants m/s)
-        
 
         double newAngle = 
-            (Math.abs(desiredState.speedMetersPerSecond) <= (Config.Swerve.kMaxAttainableWheelSpeed *0.01))
+            (Math.abs(desiredState.speedMetersPerSecond) <= (Config.Swerve.kMaxAttainableWheelSpeed *0.001))
                 ? lastAngle
                 :desiredState.angle.getRadians();
         // CODE: Pass the angle (which is in radians) to position PID on steering SparkMax. (PositionConversionFactor set so SparkMax wants radians)
@@ -184,6 +185,10 @@ public class SwerveModule {
         speedError.setDouble(desiredState.speedMetersPerSecond - velocity);
         angleError.setDouble(desiredState.angle.getDegrees() - angle.getDegrees());
         NetworkTableInstance.getDefault().flush();
+    }
+
+    public void resetLastAngle() {
+        lastAngle = getState().angle.getRadians();
     }
 
     /**
@@ -212,12 +217,19 @@ public class SwerveModule {
     }
 
     /**
-     * Gets a reading from the Lamprey and updates the SparkMax encoder (interal NEO encoder).
+     * Returns the Cancoder + offset.
+     * @return radians
+     */
+    public double getCancoder() {
+        return Math.toRadians(encoder.getAbsolutePosition() + fluid_offset.get());
+    }
+
+    /**
+     * Gets a reading from the CanCoder and updates the SparkMax encoder (interal NEO encoder).
      * This is specific to Swerge. Other methods need to be written for other hardware.
      */
     public void updateSteeringFromCanCoder() {
-        double angle = Math.toRadians(encoder.getAbsolutePosition() + fluid_offset.get());
-        m_turningEncoder.setPosition(angle);
+        m_turningEncoder.setPosition(getCancoder());
 
     }
 
@@ -249,6 +261,16 @@ public class SwerveModule {
         // CODE: Call the stopMotors method in the CANSparkMax (provided with all WPILib motor controller objects)
         m_driveMotor.stopMotor();
         m_turningMotor.stopMotor();
+    }
+
+    /**
+     * Checks if the Neo encoder is synced with the CanCoder
+     * NOTE: This only works before the first enable since optimizing messes it up
+     * 
+     * @return Whether the encoders are synced or not
+     */
+    public boolean areSteeringEncodersSynced() {
+        return Math.abs(getCancoder() - getSteeringAngle().getRadians()) < 0.0017;
     }
 
     private Direction direction = Direction.COUNTER_CLOCKWISE;

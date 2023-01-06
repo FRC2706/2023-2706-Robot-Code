@@ -189,4 +189,25 @@ public class SwerveSubsystem extends SubsystemBase {
         m_rearRight.updateSteeringFromCanCoder();
     }
 
+    /**
+     * Checks if the Neo encoders are synced with their CanCoders
+     * NOTE: This only works before the first enable since optimizing messes it up
+     * 
+     * @return Whether the encoders are synced or not
+     */
+    public boolean checkSteeringEncoders() {
+        return m_frontLeft.areSteeringEncodersSynced() &&
+                m_frontRight.areSteeringEncodersSynced() &&
+                m_rearLeft.areSteeringEncodersSynced() &&
+                m_rearRight.areSteeringEncodersSynced();
+    }
+
+    public void resetLastAngles() {
+        m_frontLeft.resetLastAngle();
+        m_frontRight.resetLastAngle();
+        m_rearLeft.resetLastAngle();
+        m_rearRight.resetLastAngle();
+    }
+
+
 }

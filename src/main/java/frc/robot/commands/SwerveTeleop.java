@@ -29,6 +29,7 @@ public class SwerveTeleop extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        SwerveSubsystem.getInstance().resetLastAngles();
     }
 
     // Called every time the scheduler runs while the command is scheduled.

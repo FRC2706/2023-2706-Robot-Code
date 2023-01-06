@@ -9,7 +9,8 @@
       "/LiveWindow/Ungrouped/DifferentialDrive[1]": "DifferentialDrive",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/Victor SPX [2]": "Motor Controller",
-      "/LiveWindow/Ungrouped/Victor SPX [5]": "Motor Controller"
+      "/LiveWindow/Ungrouped/Victor SPX [5]": "Motor Controller",
+      "/Shuffleboard/Auto/Routines": "String Chooser"
     }
   },
   "NetworkTables": {
@@ -20,6 +21,15 @@
         },
         "open": true
       }
+    },
+    "Shuffleboard": {
+      "Auto": {
+        "Routines": {
+          "open": true
+        },
+        "open": true
+      },
+      "open": true
     },
     "Swerve Chassis": {
       "SwerveModuleFL": {
@@ -33,8 +43,7 @@
     "SwerveChassis": {
       "SwerveModuleFL": {
         "open": true
-      },
-      "open": true
+      }
     },
     "SwerveModule": {
       "open": true

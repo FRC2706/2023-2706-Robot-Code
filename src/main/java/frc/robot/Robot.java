@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.commands.BrakeModeDisabled;
+import frc.robot.commands.SyncSteerEncoders;
 import frc.robot.config.Config;
 import frc.robot.robotcontainers.BeetleContainer;
 import frc.robot.robotcontainers.ClutchContainer;
@@ -73,7 +74,11 @@ public class Robot extends TimedRobot {
         SubsystemChecker.canSubsystemConstruct(SubsystemType.DiffTalonSubsystem)) 
     {
       brakeModeDisabledCommand = new BrakeModeDisabled();
-    }  
+    } 
+    
+    if (SubsystemChecker.canSubsystemConstruct(SubsystemType.SwerveSubsystem)) {
+      new SyncSteerEncoders().schedule();
+    }
   }
 
   /**
