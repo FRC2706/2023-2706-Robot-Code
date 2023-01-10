@@ -54,6 +54,13 @@ public class AutoTrajectories {
             pathWeaver("RapidReactTestR2"),
             pathWeaver("RapidReactTestR3")
         });
+
+        // DeepSpaceTest
+        trajectories.put(AutoRoutine.DeepSpaceTest, new Trajectory[]{
+            pathWeaver("DSTestR1"),
+            pathWeaver("DSTestR2"),
+            pathWeaver("DSTestR3"),
+        });
     }
 
 

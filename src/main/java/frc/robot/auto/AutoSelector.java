@@ -32,7 +32,8 @@ public class AutoSelector {
         Test5(5),
 
         RapidReactTest(8),
-        MeasureableTest(9);
+        MeasureableTest(9),
+        DeepSpaceTest(10);
 
         private int id;
 
@@ -66,6 +67,7 @@ public class AutoSelector {
 
         m_autonomousRoutines.addOption(AutoRoutine.RapidReactTest.toString(), AutoRoutine.RapidReactTest);
         m_autonomousRoutines.addOption(AutoRoutine.MeasureableTest.toString(), AutoRoutine.MeasureableTest);
+        m_autonomousRoutines.addOption(AutoRoutine.DeepSpaceTest.toString(), AutoRoutine.DeepSpaceTest);
 
         tab.add("Routines", m_autonomousRoutines).withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(0, 0).withSize(2, 1);
     }
@@ -162,6 +164,22 @@ public class AutoSelector {
                     new SwerveCommandMerge(trajs[2], fixedHeading),
                     new InstantCommand(SwerveSubsystem.getInstance()::stopMotors)
                 );
+
+            case DeepSpaceTest:
+                trajs = AutoTrajectories.getTrajectories(AutoRoutine.DeepSpaceTest);
+                if (trajs == null) {
+                    return new InstantCommand();
+                }
+                return new SequentialCommandGroup(
+                    new ResetOdometry(trajs[0].getInitialPose()),
+                    new SwerveCommandMerge(trajs[0]),
+                    new WaitCommand(0.3).raceWith(new RunCommand(SwerveSubsystem.getInstance()::stopMotors)),
+                    new SwerveCommandMerge(trajs[1]),
+                    new WaitCommand(0.3).raceWith(new RunCommand(SwerveSubsystem.getInstance()::stopMotors)),
+                    new SwerveCommandMerge(trajs[2]),
+                    new InstantCommand(SwerveSubsystem.getInstance()::stopMotors)
+                );
+
               
             //
             default:
