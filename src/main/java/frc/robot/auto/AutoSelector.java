@@ -94,7 +94,7 @@ public class AutoSelector {
                 
                 return new SequentialCommandGroup(
                     new ResetOdometry(trajs[0].getInitialPose()),
-                    new SwerveCommandMerge(trajs[0], trajs[0].getInitialPose().getRotation()),
+                    new SwerveCommandMerge(trajs[0], new Rotation2d(Math.PI/2)),
                     new InstantCommand(SwerveSubsystem.getInstance()::stopMotors)
                 );
 
