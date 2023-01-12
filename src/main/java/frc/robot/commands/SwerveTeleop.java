@@ -4,26 +4,29 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.config.Config;
+import frc.robot.config.Config.Swerve;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class SwerveTeleop extends CommandBase {
-    private final double DEADBAND_VALUE = 0.1;
-    //Originally 0.02 by Machine Mavericks
-    private final double maxAccel = 0.04;
-
     private Joystick driverStick;
-    private double prevX = 0;
-    private double prevY = 0;
+    private SlewRateLimiter transLimiter = new SlewRateLimiter(2.5);
+    private SlewRateLimiter strafeLimiter = new SlewRateLimiter(2.5);
+    private SlewRateLimiter rotationLimiter = new SlewRateLimiter(2.5);
+    
 
     /** Creates a new DriveCommand. */
     public SwerveTeleop(Joystick driverStick) {
         this.driverStick = driverStick;
         addRequirements(SwerveSubsystem.getInstance());
+
     } 
 
     // Called when the command is initially scheduled.
@@ -43,6 +46,10 @@ public class SwerveTeleop extends CommandBase {
         x = MathUtil.applyDeadband(x, Config.DRIVER_JOYSTICK_DEADBAND);
         y = MathUtil.applyDeadband(y, Config.DRIVER_JOYSTICK_DEADBAND);
         rot = MathUtil.applyDeadband(rot, Config.DRIVER_JOYSTICK_DEADBAND);
+
+        x = transLimiter.calculate(x);
+        y = strafeLimiter.calculate(y);
+        rot = rotationLimiter.calculate(rot);
     
         
         SwerveSubsystem.getInstance().drive(
@@ -51,6 +58,8 @@ public class SwerveTeleop extends CommandBase {
             rot * Config.Swerve.kMaxTeleopAngularSpeed,
             true, true);
     }
+
+
 
     // Called once the command ends or is interrupted.
     @Override
