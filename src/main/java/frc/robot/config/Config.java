@@ -135,7 +135,7 @@ public class Config {
 
         public static final double kPXController = 1;
         public static final double kPYController = 1;
-        public static final double kPThetaController = 1;
+        public static final double kPThetaController = 1.35;
 
         public static final double FL_ENCODER_OFFSET = 90.73;
         public static final double FR_ENCODER_OFFSET = 204.3;
@@ -187,9 +187,9 @@ public class Config {
     
 
         public static final double steering_kFF = 0.0;
-        public static final double steering_kP = 1.3;
+        public static final double steering_kP = 1.0;
         public static final double steering_kI = 0.0;
-        public static final double steering_kD = 0.3;
+        public static final double steering_kD = 0.1;
         public static final double steering_kIZone = 0.0; //5 degrees
 
         public static FluidConstant<Double> fluid_steering_kFF = new FluidConstant<>("Steering kFF", steering_kFF, true)
@@ -220,8 +220,8 @@ public class Config {
         public static final double kMaxAttainableWheelSpeed = 3.0;
         public static final double kMaxAutoSpeed = 3; // m/s
         public static final double kMaxAutoAcceleration = 3; // m/s/s
-        public static final double kMaxAutoAngularSpeed = Math.PI; // rad/s
-        public static final double kMaxAutoAngularAcceleration = Math.PI; // rad/s/s
+        public static final double kMaxAutoAngularSpeed = Math.PI *3; // rad/s
+        public static final double kMaxAutoAngularAcceleration = Math.PI * 3; // rad/s/s
 
         public static final double driveKS = 0.667;
         public static final double driveKV = 2.44;
