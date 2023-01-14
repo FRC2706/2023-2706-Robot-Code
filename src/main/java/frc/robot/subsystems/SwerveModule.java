@@ -16,6 +16,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -149,6 +150,15 @@ public class SwerveModule {
     }
 
     /**
+     * Returns the current state of the module.
+     *
+     * @return The current state of the module.
+     */
+    public SwerveModulePosition getModulePosition() {   
+        return new SwerveModulePosition(getDrivePosition(), getSteeringAngle());
+    }
+
+    /**
      * Sets the desired state for the module.
      *
      * @param desiredState Desired state with speed and angle.
@@ -192,6 +202,18 @@ public class SwerveModule {
 
     public void resetLastAngle() {
         lastAngle = getState().angle.getRadians();
+    }
+
+    /**
+     * Returns the velocity of the wheel in meters per second.
+     * 
+     * @return meters per second of the wheel
+     */
+    public double getDrivePosition() {
+
+        // CODE: Read encoder velocity from drive SparkMax and return m/s. (VelocityConversionFactor set so SparkMax returns m/s))
+        
+        return m_driveEncoder.getVelocity();
     }
 
     /**
