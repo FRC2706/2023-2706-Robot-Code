@@ -10,7 +10,16 @@
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/Victor SPX [2]": "Motor Controller",
       "/LiveWindow/Ungrouped/Victor SPX [5]": "Motor Controller",
-      "/Shuffleboard/Auto/Routines": "String Chooser"
+      "/Shuffleboard/Auto/Routines": "String Chooser",
+      "/Shuffleboard/BasicDebugging/CommandScheduler": "Scheduler",
+      "/SmartDashboard/Field": "Field2d"
+    },
+    "windows": {
+      "/SmartDashboard/Field": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables": {

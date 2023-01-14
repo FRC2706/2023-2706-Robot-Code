@@ -4,6 +4,14 @@
 
 package frc.robot.robotcontainers;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.PIDConstants;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -14,6 +22,7 @@ import frc.robot.auto.AutoSelector;
 import frc.robot.commands.ModuleAngleFromJoystick;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.SwerveTeleop;
+import frc.robot.config.Config;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -90,9 +99,9 @@ public class MiniSwerveContainer extends RobotContainer{
    */
   @Override
   public Command getAutonomousCommand() {
-    Map<String, Command> eventMap = new HashMap>();
+    Map<String, Command> eventMap = new HashMap<String, Command>();
     eventMap.put("intake", new InstantCommand(() -> System.out.println("intake")));
-    eventMap.put ("shoot", new INstantCommand (() -> System.out.println("shoot")));
+    eventMap.put ("shoot", new InstantCommand (() -> System.out.println("shoot")));
 
     SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
       SwerveSubsystem.getInstance():: getPose,
@@ -100,11 +109,14 @@ public class MiniSwerveContainer extends RobotContainer{
       Config.Swerve.kSwerveDriveKinematics,
       new PIDConstants (0,0,0),
       new PIDConstants (0,0,0),
+      SwerveSubsystem.getInstance() :: setModuleStatesAuto,
+      eventMap,
       SwerveSubsystem.getInstance()
-    )
-    return new InstantCommand();
+      );
 
-    return m_autoSelector.getAutoCommand();
+      PathPlannerTrajectory path = PathPlanner.loadPath("Keira Path",1 ,1);
+    return autoBuilder.fullAuto(path);
+
   }
 
 
