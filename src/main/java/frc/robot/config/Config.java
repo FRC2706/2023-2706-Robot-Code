@@ -128,7 +128,7 @@ public class Config {
 
     public static class Swerve{
         public static final int steeringCurrentLimit = 20;
-        public static final int driveCurrentLimit = 80;
+        public static final int driveCurrentLimit = 60;
 
         public static final double driveVoltComp = 12.0;
         public static final double steeringVoltComp = 12.0;
@@ -137,7 +137,6 @@ public class Config {
         public static final double kPYController = 1;
         public static final double kPThetaController = 1;
 
-        public static final double kMaxTeleopAngularSpeed = Math.PI/4.0;
         public static final double FL_ENCODER_OFFSET = 90.73;
         public static final double FR_ENCODER_OFFSET = 204.3;
         public static final double RL_ENCODER_OFFSET = 168.9;
@@ -216,7 +215,9 @@ public class Config {
             new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
             new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
-        public static final double kMaxAttainableWheelSpeed = 1.0;
+        public static final double teleopSpeed = 3.0;
+        public static final double kMaxTeleopAngularSpeed = Math.PI*2.5;
+        public static final double kMaxAttainableWheelSpeed = 3.0;
         public static final double kMaxAutoSpeed = 3; // m/s
         public static final double kMaxAutoAcceleration = 3; // m/s/s
         public static final double kMaxAutoAngularSpeed = Math.PI; // rad/s

@@ -17,9 +17,9 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 public class SwerveTeleop extends CommandBase {
     private Joystick driverStick;
-    private SlewRateLimiter transLimiter = new SlewRateLimiter(2.5);
-    private SlewRateLimiter strafeLimiter = new SlewRateLimiter(2.5);
-    private SlewRateLimiter rotationLimiter = new SlewRateLimiter(2.5);
+    /*private SlewRateLimiter transLimiter = new SlewRateLimiter(3.0);
+    private SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);
+    private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);*/
     
 
     /** Creates a new DriveCommand. */
@@ -47,14 +47,14 @@ public class SwerveTeleop extends CommandBase {
         y = MathUtil.applyDeadband(y, Config.DRIVER_JOYSTICK_DEADBAND);
         rot = MathUtil.applyDeadband(rot, Config.DRIVER_JOYSTICK_DEADBAND);
 
-        x = transLimiter.calculate(x);
+        /*x = transLimiter.calculate(x);
         y = strafeLimiter.calculate(y);
-        rot = rotationLimiter.calculate(rot);
+        rot = rotationLimiter.calculate(rot);*/
     
         
         SwerveSubsystem.getInstance().drive(
-            x * Config.Swerve.kMaxAttainableWheelSpeed,
-            y * Config.Swerve.kMaxAttainableWheelSpeed,
+            x * Config.Swerve.teleopSpeed,
+            y * Config.Swerve.teleopSpeed,
             rot * Config.Swerve.kMaxTeleopAngularSpeed,
             true, true);
     }
