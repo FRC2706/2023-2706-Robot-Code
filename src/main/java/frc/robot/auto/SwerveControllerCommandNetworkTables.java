@@ -4,8 +4,6 @@
 
 package frc.robot.auto;
 
-import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
-
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -94,21 +92,19 @@ public class SwerveControllerCommandNetworkTables extends CommandBase {
       Supplier<Rotation2d> desiredRotation,
       BiConsumer<SwerveModuleState[], Boolean> outputModuleStates,
       Subsystem... requirements) {
-    m_trajectory = requireNonNullParam(trajectory, "trajectory", "SwerveControllerCommand");
-    m_pose = requireNonNullParam(pose, "pose", "SwerveControllerCommand");
-    m_kinematics = requireNonNullParam(kinematics, "kinematics", "SwerveControllerCommand");
+    m_trajectory = trajectory;
+    m_pose = pose;
+    m_kinematics = kinematics;
 
     m_controller =
         new HolonomicDriveController(
-            requireNonNullParam(xController, "xController", "SwerveControllerCommand"),
-            requireNonNullParam(yController, "yController", "SwerveControllerCommand"),
-            requireNonNullParam(thetaController, "thetaController", "SwerveControllerCommand"));
+            xController,
+            yController,
+            thetaController);
 
-    m_outputModuleStates =
-        requireNonNullParam(outputModuleStates, "outputModuleStates", "SwerveControllerCommand");
+    m_outputModuleStates = outputModuleStates;
 
-    m_desiredRotation =
-        requireNonNullParam(desiredRotation, "desiredRotation", "SwerveControllerCommand");
+    m_desiredRotation = desiredRotation;
 
     addRequirements(requirements);
   }
