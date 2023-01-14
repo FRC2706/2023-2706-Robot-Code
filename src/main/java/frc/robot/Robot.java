@@ -6,10 +6,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.commands.BrakeModeDisabled;
+import frc.robot.commands.SyncSteerEncoders;
 import frc.robot.config.Config;
 import frc.robot.robotcontainers.BeetleContainer;
 import frc.robot.robotcontainers.ClutchContainer;
@@ -67,13 +70,22 @@ public class Robot extends TimedRobot {
             true);
     }
 
-    
-
     if (SubsystemChecker.canSubsystemConstruct(SubsystemType.DiffNeoSubsystem) ||
         SubsystemChecker.canSubsystemConstruct(SubsystemType.DiffTalonSubsystem)) 
     {
       brakeModeDisabledCommand = new BrakeModeDisabled();
-    }  
+    } 
+    
+    if (SubsystemChecker.canSubsystemConstruct(SubsystemType.SwerveSubsystem)) {
+      new SyncSteerEncoders().schedule();
+    } 
+
+    // Add CommandScheduler to shuffleboard so we can display what commands are scheduled
+    ShuffleboardTab basicDebuggingTab = Shuffleboard.getTab("BasicDebugging");
+    basicDebuggingTab
+      .add("CommandScheduler", CommandScheduler.getInstance())
+      .withPosition(3, 0)
+      .withSize(3, 6);
   }
 
   /**

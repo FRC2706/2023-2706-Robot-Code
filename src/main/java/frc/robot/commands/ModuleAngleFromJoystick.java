@@ -50,7 +50,7 @@ public class ModuleAngleFromJoystick extends CommandBase {
 
             SwerveModuleState state = new SwerveModuleState(velocity, angle);
 
-            SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state}); 
+            SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state}, true); 
         }
 
     }

@@ -4,8 +4,6 @@
 
 package frc.robot.auto;
 
-import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
-
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -22,8 +20,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import frc.robot.subsystems.SwerveSubsystem;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
 import java.util.function.Supplier;
 
 /**
@@ -49,7 +50,7 @@ public class SwerveControllerCommandNetworkTables extends CommandBase {
   private final Supplier<Pose2d> m_pose;
   private final SwerveDriveKinematics m_kinematics;
   private final HolonomicDriveController m_controller;
-  private final Consumer<SwerveModuleState[]> m_outputModuleStates;
+  private final BiConsumer<SwerveModuleState[], Boolean> m_outputModuleStates;
   private final Supplier<Rotation2d> m_desiredRotation;
 
   // ADDED NETWORKTABLES
@@ -89,23 +90,21 @@ public class SwerveControllerCommandNetworkTables extends CommandBase {
       PIDController yController,
       ProfiledPIDController thetaController,
       Supplier<Rotation2d> desiredRotation,
-      Consumer<SwerveModuleState[]> outputModuleStates,
+      BiConsumer<SwerveModuleState[], Boolean> outputModuleStates,
       Subsystem... requirements) {
-    m_trajectory = requireNonNullParam(trajectory, "trajectory", "SwerveControllerCommand");
-    m_pose = requireNonNullParam(pose, "pose", "SwerveControllerCommand");
-    m_kinematics = requireNonNullParam(kinematics, "kinematics", "SwerveControllerCommand");
+    m_trajectory = trajectory;
+    m_pose = pose;
+    m_kinematics = kinematics;
 
     m_controller =
         new HolonomicDriveController(
-            requireNonNullParam(xController, "xController", "SwerveControllerCommand"),
-            requireNonNullParam(yController, "yController", "SwerveControllerCommand"),
-            requireNonNullParam(thetaController, "thetaController", "SwerveControllerCommand"));
+            xController,
+            yController,
+            thetaController);
 
-    m_outputModuleStates =
-        requireNonNullParam(outputModuleStates, "outputModuleStates", "SwerveControllerCommand");
+    m_outputModuleStates = outputModuleStates;
 
-    m_desiredRotation =
-        requireNonNullParam(desiredRotation, "desiredRotation", "SwerveControllerCommand");
+    m_desiredRotation = desiredRotation;
 
     addRequirements(requirements);
   }
@@ -141,7 +140,7 @@ public class SwerveControllerCommandNetworkTables extends CommandBase {
       PIDController xController,
       PIDController yController,
       ProfiledPIDController thetaController,
-      Consumer<SwerveModuleState[]> outputModuleStates,
+      BiConsumer<SwerveModuleState[], Boolean> outputModuleStates,
       Subsystem... requirements) {
     this(
         trajectory,
@@ -158,6 +157,9 @@ public class SwerveControllerCommandNetworkTables extends CommandBase {
 
   @Override
   public void initialize() {
+    // ADDED NETWORKTABLES
+    SwerveSubsystem.getInstance().setTrajectory(m_trajectory);
+    
     m_timer.reset();
     m_timer.start();
   }
@@ -184,7 +186,7 @@ public class SwerveControllerCommandNetworkTables extends CommandBase {
 
     var targetModuleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);
 
-    m_outputModuleStates.accept(targetModuleStates);
+    m_outputModuleStates.accept(targetModuleStates, false);
   }
 
   @Override

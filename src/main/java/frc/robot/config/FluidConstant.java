@@ -1,7 +1,7 @@
 package frc.robot.config;
 
-import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.networktables.EntryNotification;
+// import edu.wpi.first.networktables.EntryListenerFlags;
+// import edu.wpi.first.networktables.EntryNotification;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -56,7 +56,7 @@ public class FluidConstant<T> implements Supplier<T> {
         // Register the entry and set the value if it doesn't exist
         this.ntEntry = table.getEntry(name);
         if (!this.ntEntry.exists()) this.ntEntry.setValue(this.value);
-        this.ntEntry.addListener(this::entryUpdated, EntryListenerFlags.kUpdate);
+        // this.ntEntry.addListener(this::entryUpdated, EntryListenerFlags.kUpdate);
         // Return the instance to make one-line declarations possible
         return this;
     }
@@ -101,19 +101,19 @@ public class FluidConstant<T> implements Supplier<T> {
      * Private NetworkTableEntry listener method for when the entry is updated
      * @param notification info about the notification
      */
-    private void entryUpdated(EntryNotification notification) {
-        // Only allow the value to be updated while the robot is disabled unless runWhileEnabled is true
-        if (DriverStation.isDisabled() || m_runWhileEnabled) {
-            // This is a safe cast because NetworkTables already prevents assigning different types to NTEntries
-            @SuppressWarnings("unchecked")
-            T newValue = (T) notification.value.getValue();
-            this.setValue(newValue);
-        } else {
-            // Revert the change made by the user (user who changed the networktable value while robot was enabled)
-            this.ntEntry.setValue(this.value);
-            return;
-        }
-    }
+    // private void entryUpdated(EntryNotification notification) {
+    //     // Only allow the value to be updated while the robot is disabled unless runWhileEnabled is true
+    //     if (DriverStation.isDisabled() || m_runWhileEnabled) {
+    //         // This is a safe cast because NetworkTables already prevents assigning different types to NTEntries
+    //         @SuppressWarnings("unchecked")
+    //         T newValue = (T) notification.value.getValue();
+    //         this.setValue(newValue);
+    //     } else {
+    //         // Revert the change made by the user (user who changed the networktable value while robot was enabled)
+    //         this.ntEntry.setValue(this.value);
+    //         return;
+    //     }
+    // }
 
     public T get() {
         return this.value;
