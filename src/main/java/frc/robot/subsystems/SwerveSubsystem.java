@@ -159,6 +159,15 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     /**
+     * Sets the swerve ModuleStates in auto. Defaults to closed loop.
+     *
+     * @param desiredStates The desired SwerveModule states.
+     */
+    public void setModuleStatesAuto(SwerveModuleState[] desiredStates) {
+        setModuleStates(desiredStates, false);
+    }
+    
+    /**
      * Returns the heading of the robot.
      * 
      * This is private because only the odoemtry get's the raw gyro value. 
