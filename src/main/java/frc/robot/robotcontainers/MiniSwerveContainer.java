@@ -4,11 +4,21 @@
 
 package frc.robot.robotcontainers;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.PIDConstants;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.Robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Robot;
+import frc.robot.subsystems.SwerveSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -39,6 +49,26 @@ public class MiniSwerveContainer extends RobotContainer{
    */
   @Override
   public Command getAutonomousCommand() {
-    return new InstantCommand();
+
+    
+    Map<String, Command> eventMap = new HashMap<String, Command>();
+    eventMap.put("intake", new InstantCommand(() -> System.out.println("intake")));
+    eventMap.put("shoot", new InstantCommand(() -> System.out.println("shoot")));
+
+    SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+      SwerveSubsystem.getInstance()::getPose, 
+      SwerveSubsystem.getInstance()::resetOdometry, 
+      frc.robot.config.Config.Swerve.kSwerveDriveKinematics, 
+      new PIDConstants(0, 0, 0), 
+      new PIDConstants(0, 0, 0), 
+      SwerveSubsystem.getInstance()::setModuleStates,
+      eventMap, 
+      SwerveSubsystem.getInstance()
+    );
+
+    PathPlannerTrajectory basicPath = PathPlanner.loadPath("Basic path", new PathConstraints(4, 3));
+
+    //return new InstantCommand();
+    return autoBuilder.fullAuto(basicPath);
   }
 }
