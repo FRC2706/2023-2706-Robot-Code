@@ -29,6 +29,10 @@ public class DiffTalonSubsystem extends SubsystemBase {
     
     private PigeonIMU pigeon;
 
+    double speedSlow = 0.24;
+    double rotateSpeed = 0.35;
+    double rotateSpeedSlow = 0.25;
+
     private static DiffTalonSubsystem instance;
     public static DiffTalonSubsystem getInstance() {
         if (instance == null) {
@@ -134,4 +138,59 @@ public class DiffTalonSubsystem extends SubsystemBase {
     public void arcadeDrive(double forwardVal, double rotateVal) {
         diffDrive.arcadeDrive(forwardVal, rotateVal, false);
     }
-}
+
+    public double[] getPitchVal() {
+        double[] ypr = new double[3];
+        pigeon.getYawPitchRoll(ypr);
+        return ypr;
+    }
+
+    public void resetPigeon() {
+        pigeon.setFusedHeading(0);
+        pigeon.setYaw(0);
+    }
+
+    public void balanceDrive() {
+        if (getPitchVal()[1] <= 3) {
+            arcadeDrive(speedSlow - (pigeon.getPitch()) / 15, 0);
+        }
+        else if (getPitchVal()[1] < 10) {
+            if (pigeon.getPitch() > 0) {
+                arcadeDrive(speedSlow, 0.1);
+            }
+            else if (pigeon.getPitch() < 0) {
+                arcadeDrive(speedSlow, -0.1);
+            }
+        }
+        else {
+            if (pigeon.getPitch() > 0) {
+                while (pigeon.getPitch() > 10) {
+                    arcadeDrive(-rotateSpeed, 0);
+                }
+                while (pigeon.getPitch() > 0) {
+                    arcadeDrive(-rotateSpeedSlow, 0);
+                }
+                while (pigeon.getPitch() < 0) {
+                    arcadeDrive(rotateSpeedSlow, 0);
+                }
+            }
+            else {
+                while (pigeon.getPitch() < -10) {
+                    arcadeDrive(rotateSpeed, 0);
+                }
+                while (pigeon.getPitch() < 0) {
+                    arcadeDrive(rotateSpeedSlow, 0);
+                }
+                while (pigeon.getPitch() > 0) {
+                    arcadeDrive(-rotateSpeedSlow, 0);
+                }
+            }
+
+            }
+        }
+    }
+
+    
+
+
+

@@ -12,6 +12,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
+import frc.robot.subsystems.*;
+import frc.robot.commands.*;
+import frc.robot.config.*;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -19,6 +23,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class BeetleContainer extends RobotContainer {
+
+  Command balanceCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public BeetleContainer() {
@@ -33,8 +39,15 @@ public class BeetleContainer extends RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    balanceCommand = new Balance();
+
     Joystick driverStick = new Joystick(0);
     Joystick controlStick = new Joystick(1);
+
+    new JoystickButton(controlStick, XboxController.Button.kBack.value).whenHeld(balanceCommand);
+    
+    
  }
 
   /**
