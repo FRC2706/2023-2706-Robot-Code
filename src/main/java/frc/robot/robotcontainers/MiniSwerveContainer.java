@@ -39,6 +39,19 @@ public class MiniSwerveContainer extends RobotContainer{
    */
   @Override
   public Command getAutonomousCommand() {
+    Map<String, COmmand> eventMap = new HashMap>();
+    eventMap.put("intake", new InstantCommand(() -> System.out.println("intake")));
+    eventMap.put ("shoot", new INstantCommand (() -> System.out.println("shoot")));
+
+    SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+      SwerveSubsystem.getInstance():: getPose,
+      SwerveSubsystem.getInstance():: resetOdometry,
+      Config.Swerve.kSwerveDriveKinematics,
+      new PIDConstants (0,0,0),
+      new PIDConstants (0,0,0),
+      SwerveSubsystem.getInstance()
+    )
     return new InstantCommand();
+
   }
 }
