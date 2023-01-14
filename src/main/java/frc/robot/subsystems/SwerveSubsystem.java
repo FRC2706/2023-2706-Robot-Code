@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
@@ -67,7 +68,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         m_rearRight = new SwerveModule(Config.CANID.REAR_RIGHT_DRIVE, Config.Swerve.INVERTED_REAR_RIGHT_DRIVE, Config.CANID.REAR_RIGHT_STEERING, Config.Swerve.INVERTED_REAR_RIGHT_STEERING, Config.CANID.REAR_RIGHT_CANCODER, Config.Swerve.RR_ENCODER_OFFSET, "RR");
         m_pigeon = new PigeonIMU(Config.CANID.PIGEON);
-        m_odometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()));
+        m_odometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition());
         SmartDashboard.putData("Field", m_field);
     }
 
@@ -84,10 +85,8 @@ public class SwerveSubsystem extends SubsystemBase {
         // Update the odometry in the periodic block
         m_odometry.update(
                 Rotation2d.fromDegrees(currentGyro),
-                m_frontLeft.getState(),
-                m_frontRight.getState(),
-                m_rearLeft.getState(),
-                m_rearRight.getState());
+                getPosition()
+        );
         
         gyroEntry.setDouble(currentGyro);
         xEntry.setDouble(getPose().getX());
@@ -96,6 +95,14 @@ public class SwerveSubsystem extends SubsystemBase {
 
         m_field.setRobotPose(getPose());
         
+    }
+
+    private SwerveModulePosition[] getPosition() {
+        return new SwerveModulePosition[] {
+            m_frontLeft.getModulePosition(),
+            m_frontRight.getModulePosition(),
+            m_rearLeft.getModulePosition(),
+            m_rearRight.getModulePosition()};
     }
 
     public void setTrajectory(Trajectory traj){
@@ -117,7 +124,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @param pose The pose to which to set the odometry.
      */
     public void resetOdometry(Pose2d pose) {
-        m_odometry.resetPosition(pose, Rotation2d.fromDegrees(getGyro()));
+        m_odometry.resetPosition(Rotation2d.fromDegrees(getGyro()), getPosition(), pose);
     }
 
     /**
