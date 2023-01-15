@@ -42,8 +42,8 @@ public class BeetleContainer extends RobotContainer {
 
     balanceCommand = new Balance();
 
-    Joystick driverStick = new Joystick(0);
-    Joystick controlStick = new Joystick(1);
+    Joystick driverStick = new Joystick(1);
+    Joystick controlStick = new Joystick(0);
 
     new JoystickButton(controlStick, XboxController.Button.kBack.value).whenHeld(balanceCommand);
     

@@ -151,6 +151,7 @@ public class DiffTalonSubsystem extends SubsystemBase {
     }
 
     public void balanceDrive() {
+        System.out.println(getPitchVal());
         if (getPitchVal()[1] <= 3) {
             arcadeDrive(speedSlow - (pigeon.getPitch()) / 15, 0);
         }
