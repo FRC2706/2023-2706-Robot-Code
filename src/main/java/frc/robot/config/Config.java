@@ -219,6 +219,7 @@ public class Config {
         public static final double teleopSlowAngularSpeed = 0.3;
         public static final double teleopSpeed = 3.0;
         public static final double kMaxTeleopAngularSpeed = Math.PI*2.5;
+        public static final double kMaxAttainableAngularSpeed = 3.0;
         public static final double kMaxAttainableWheelSpeed = 3.0;
         public static final double kMaxAutoSpeed = 3; // m/s
         public static final double kMaxAutoAcceleration = 3; // m/s/s

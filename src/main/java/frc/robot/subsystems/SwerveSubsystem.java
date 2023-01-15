@@ -132,12 +132,23 @@ public class SwerveSubsystem extends SubsystemBase {
     @SuppressWarnings("ParameterName")
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isOpenLoop) {
         SwerveModuleState[] swerveModuleStates;
+        ChassisSpeeds speeds;
+
         if (fieldRelative) {
-            swerveModuleStates = Config.Swerve.kSwerveDriveKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getHeading()));
+            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getHeading());
         } else {
-            swerveModuleStates = Config.Swerve.kSwerveDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(xSpeed, ySpeed, rot));
+            speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
         }
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Config.Swerve.kMaxAttainableWheelSpeed);
+
+        swerveModuleStates = Config.Swerve.kSwerveDriveKinematics.toSwerveModuleStates(speeds);
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(
+            swerveModuleStates, 
+            speeds,
+            Config.Swerve.kMaxAttainableAngularSpeed,
+            Config.Swerve.kMaxAttainableWheelSpeed,
+            Config.Swerve.kMaxAutoAngularSpeed);
+
         m_frontLeft.setDesiredState(swerveModuleStates[0], isOpenLoop);
         m_frontRight.setDesiredState(swerveModuleStates[1], isOpenLoop);
         m_rearLeft.setDesiredState(swerveModuleStates[2], isOpenLoop);
