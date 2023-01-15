@@ -17,14 +17,18 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 public class SwerveTeleop extends CommandBase {
     private Joystick driverStick;
+    private double teleopSpeed;
+    private double teleopAngularSpeed;
     /*private SlewRateLimiter transLimiter = new SlewRateLimiter(3.0);
     private SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);
     private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);*/
     
 
     /** Creates a new DriveCommand. */
-    public SwerveTeleop(Joystick driverStick) {
+    public SwerveTeleop(Joystick driverStick, double teleopSpeed, double teleopAngularSpeed) {
         this.driverStick = driverStick;
+        this.teleopAngularSpeed = teleopAngularSpeed;
+        this.teleopSpeed = teleopSpeed;
         addRequirements(SwerveSubsystem.getInstance());
 
     } 
@@ -53,9 +57,9 @@ public class SwerveTeleop extends CommandBase {
     
         
         SwerveSubsystem.getInstance().drive(
-            x * Config.Swerve.teleopSpeed,
-            y * Config.Swerve.teleopSpeed,
-            rot * Config.Swerve.kMaxTeleopAngularSpeed,
+            x * teleopSpeed,
+            y * teleopSpeed,
+            rot * teleopAngularSpeed,
             true, true);
     }
 

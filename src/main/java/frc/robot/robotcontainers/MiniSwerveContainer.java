@@ -14,6 +14,7 @@ import frc.robot.auto.AutoSelector;
 import frc.robot.commands.ModuleAngleFromJoystick;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.SwerveTeleop;
+import frc.robot.config.Config;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -48,7 +49,12 @@ public class MiniSwerveContainer extends RobotContainer{
   private void configureButtonBindings() {
     Joystick driver = new Joystick(0);
 
-    SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
+    SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver, Config.Swerve.teleopSpeed, Config.Swerve.kMaxTeleopAngularSpeed));
+
+    new JoystickButton(driver, XboxController.Button.kLeftBumper.value).whenHeld(
+      new SwerveTeleop(driver, Config.Swerve.teleopSlowSpeed, Config.Swerve.teleopSlowAngularSpeed)
+    );
+
 
     new JoystickButton(driver, XboxController.Button.kStart.value).whenPressed(
       new InstantCommand(()-> SwerveSubsystem.getInstance().updateModulesPID())
@@ -66,7 +72,7 @@ public class MiniSwerveContainer extends RobotContainer{
     SwerveModuleState state4 = new SwerveModuleState(-0.5, Rotation2d.fromDegrees(0));
 
 
-    Command angleSetPoint1 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state1, state1, state1, state1}, true), SwerveSubsystem.getInstance());
+    /*Command angleSetPoint1 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state1, state1, state1, state1}, true), SwerveSubsystem.getInstance());
     new JoystickButton(driver, XboxController.Button.kB.value).whenHeld(angleSetPoint1).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
 
     Command angleSetPoint2 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state2, state1, state1, state1}, true), SwerveSubsystem.getInstance());
@@ -79,7 +85,7 @@ public class MiniSwerveContainer extends RobotContainer{
     new JoystickButton(driver, XboxController.Button.kRightBumper.value).whenHeld(angleSetPoint4).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
 
     Command angleSetPoint5 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state4, state4, state4, state4}, true), SwerveSubsystem.getInstance());
-    new JoystickButton(driver, XboxController.Button.kLeftBumper.value).whenHeld(angleSetPoint5).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
+    new JoystickButton(driver, XboxController.Button.kLeftBumper.value).whenHeld(angleSetPoint5).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));*/
   }
 
 
