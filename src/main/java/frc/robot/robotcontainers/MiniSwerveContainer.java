@@ -5,10 +5,13 @@
 package frc.robot.robotcontainers;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Robot;
+import frc.robot.commands.BalanceSwerve;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 
 /**
@@ -18,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class MiniSwerveContainer extends RobotContainer{
+
+  Command balanceCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public MiniSwerveContainer() {
@@ -31,7 +36,16 @@ public class MiniSwerveContainer extends RobotContainer{
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+
+    balanceCommand = new BalanceSwerve();
+
+    Joystick driverStick = new Joystick(1);
+    Joystick controlStick = new Joystick(0);
+
+    new JoystickButton(controlStick, XboxController.Button.kBack.value).whenHeld(balanceCommand);
+
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
