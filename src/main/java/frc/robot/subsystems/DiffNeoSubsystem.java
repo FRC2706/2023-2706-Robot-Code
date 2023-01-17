@@ -119,7 +119,7 @@ public class DiffNeoSubsystem extends SubsystemBase {
          * Construct other objects
          */
         pigeon = new PigeonIMU(Config.CANID.PIGEON);
-        odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getCurrentAngle())); 
+        odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getCurrentAngle()), getLeftPosition(), getRightPosition(), getPose()); 
 
         differentialDrive = new DifferentialDrive(leftLeader, rightLeader);
 
@@ -226,7 +226,7 @@ public class DiffNeoSubsystem extends SubsystemBase {
     public void resetPose(Pose2d newPose) {
         leftLeader.getEncoder().setPosition(0);
         rightLeader.getEncoder().setPosition(0);
-        odometry.resetPosition(newPose, Rotation2d.fromDegrees(getCurrentAngle()));
+        odometry.resetPosition(Rotation2d.fromDegrees(getCurrentAngle()), 0, 0, newPose);
     }
 
     /**
