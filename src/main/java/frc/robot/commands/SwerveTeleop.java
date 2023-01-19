@@ -19,16 +19,19 @@ public class SwerveTeleop extends CommandBase {
     private Joystick driverStick;
     private double teleopSpeed;
     private double teleopAngularSpeed;
-    /*private SlewRateLimiter transLimiter = new SlewRateLimiter(3.0);
-    private SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);
-    private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);*/
+    private SlewRateLimiter transLimiter; 
+    private SlewRateLimiter strafeLimiter;
+    private SlewRateLimiter rotationLimiter;
     
 
     /** Creates a new DriveCommand. */
-    public SwerveTeleop(Joystick driverStick, double teleopSpeed, double teleopAngularSpeed) {
+    public SwerveTeleop(Joystick driverStick, double teleopSpeed, double teleopAngularSpeed, double rateLimit) {
         this.driverStick = driverStick;
         this.teleopAngularSpeed = teleopAngularSpeed;
         this.teleopSpeed = teleopSpeed;
+        transLimiter = new SlewRateLimiter(rateLimit);
+        strafeLimiter = new SlewRateLimiter(rateLimit);
+        rotationLimiter = new SlewRateLimiter(rateLimit);
         addRequirements(SwerveSubsystem.getInstance());
 
     } 
@@ -51,9 +54,9 @@ public class SwerveTeleop extends CommandBase {
         y = MathUtil.applyDeadband(y, Config.DRIVER_JOYSTICK_DEADBAND);
         rot = MathUtil.applyDeadband(rot, Config.DRIVER_JOYSTICK_DEADBAND);
 
-        /*x = transLimiter.calculate(x);
+        x = transLimiter.calculate(x);
         y = strafeLimiter.calculate(y);
-        rot = rotationLimiter.calculate(rot);*/
+        rot = rotationLimiter.calculate(rot);
     
         
         SwerveSubsystem.getInstance().drive(

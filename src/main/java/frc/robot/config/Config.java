@@ -215,11 +215,14 @@ public class Config {
             new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
             new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
+        public static final double teleopFastSpeed = 3.0;
+        public static final double teleopFastAngularSpeed = Math.PI*3.0;
+
         public static final double teleopSlowSpeed = 0.3;
         public static final double teleopSlowAngularSpeed = 0.3;
-        public static final double teleopSpeed = 3.0;
-        public static final double teleopAngularSpeed = Math.PI*2.5;
-        public static final double kMaxAttainableAngularSpeed = 3.0;
+        public static final double teleopSpeed = 2.0;
+        public static final double teleopAngularSpeed = Math.PI*2.0;
+        public static final double kMaxAttainableAngularSpeed = Math.PI*3.0;
         public static final double kMaxAttainableWheelSpeed = 3.0;
         public static final double kMaxAutoSpeed = 3; // m/s
         public static final double kMaxAutoAcceleration = 3; // m/s/s
