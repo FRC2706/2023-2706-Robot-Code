@@ -14,6 +14,7 @@ import frc.robot.auto.AutoSelector;
 import frc.robot.commands.ModuleAngleFromJoystick;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.SwerveTeleop;
+import frc.robot.config.Config;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -48,7 +49,7 @@ public class MiniSwerveContainer extends RobotContainer{
   private void configureButtonBindings() {
     Joystick driver = new Joystick(0);
 
-    SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
+    SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver, Config.Swerve.teleopSpeed, Config.Swerve.teleopAngularSpeed));
 
     new JoystickButton(driver, XboxController.Button.kStart.value).whenPressed(
       new InstantCommand(()-> SwerveSubsystem.getInstance().updateModulesPID())
