@@ -17,6 +17,9 @@ public class BalanceSwerve extends CommandBase {
   PigeonIMU m_pigeon = new PigeonIMU(Config.CANID.PIGEON);
   // Servo servoCam = new Servo(0);
 
+  double balanceSpeedSlow = 0.24;
+  double balanceSpeed = 0.35;
+
   /** Creates a new Balance. */
   public BalanceSwerve() {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -33,7 +36,41 @@ public class BalanceSwerve extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SwerveSubsystem.getInstance().balanceDrive();
+    if (SwerveSubsystem.getInstance().getPitchVal()[1] <= 3) {
+      SwerveSubsystem.getInstance().drive(0, balanceSpeedSlow - (m_pigeon.getPitch()) / 15, 0, false, true);
+  }
+  else if (SwerveSubsystem.getInstance().getPitchVal()[1] < 10) {
+      if (m_pigeon.getPitch() > 0) {
+          SwerveSubsystem.getInstance().drive(0, balanceSpeedSlow, 0, false, true);
+      }
+      else if (m_pigeon.getPitch() < 0) {
+          SwerveSubsystem.getInstance().drive(0, -balanceSpeedSlow, 0, false, true);
+      }
+  }
+  else {
+      if (m_pigeon.getPitch() > 0) {
+          while (m_pigeon.getPitch() > 10) {
+              SwerveSubsystem.getInstance().drive(0, balanceSpeed, 0, false, true);
+          }
+          while (m_pigeon.getPitch() > 0) {
+              SwerveSubsystem.getInstance().drive(0, balanceSpeedSlow, 0, false, true);
+          }
+          while (m_pigeon.getPitch() < 0) {
+              SwerveSubsystem.getInstance().drive(0, -balanceSpeedSlow, 0, false, true);
+          }
+      }
+      else {
+          while (m_pigeon.getPitch() < -10) {
+            SwerveSubsystem.getInstance().drive(0, -balanceSpeed, 0, false, true);
+          }
+          while (m_pigeon.getPitch() < 0) {
+            SwerveSubsystem.getInstance().drive(0, -balanceSpeedSlow, 0, false, true);
+          }
+          while (m_pigeon.getPitch() > 0) {
+            SwerveSubsystem.getInstance().drive(0, balanceSpeedSlow, 0, false, true);
+          }
+      }
+  }
   }
 
   // Called once the command ends or is interrupted.

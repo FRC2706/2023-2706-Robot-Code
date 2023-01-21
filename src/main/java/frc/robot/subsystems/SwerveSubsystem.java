@@ -156,47 +156,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void resetPigeon() {
         m_pigeon.setFusedHeading(0);
-        m_pigeon.setYaw(0);
     }
 
-    public void balanceDrive() {
-        System.out.println(getPitchVal());
-        if (getPitchVal()[1] <= 3) {
-            drive(0, balanceSpeedSlow - (m_pigeon.getPitch()) / 15, 0, false, true);
-        }
-        else if (getPitchVal()[1] < 10) {
-            if (m_pigeon.getPitch() > 0) {
-                drive(0, balanceSpeedSlow, 0, false, true);
-            }
-            else if (m_pigeon.getPitch() < 0) {
-                drive(0, -balanceSpeedSlow, 0, false, true);
-            }
-        }
-        else {
-            if (m_pigeon.getPitch() > 0) {
-                while (m_pigeon.getPitch() > 10) {
-                    drive(0, balanceSpeed, 0, false, true);
-                }
-                while (m_pigeon.getPitch() > 0) {
-                    drive(0, balanceSpeedSlow, 0, false, true);
-                }
-                while (m_pigeon.getPitch() < 0) {
-                    drive(0, -balanceSpeedSlow, 0, false, true);
-                }
-            }
-            else {
-                while (m_pigeon.getPitch() < -10) {
-                    drive(0, -balanceSpeed, 0, false, true);
-                }
-                while (m_pigeon.getPitch() < 0) {
-                    drive(0, -balanceSpeedSlow, 0, false, true);
-                }
-                while (m_pigeon.getPitch() > 0) {
-                    drive(0, balanceSpeedSlow, 0, false, true);
-                }
-            }
-        }
-    }
+    
 
     /**
      * Sets the swerve ModuleStates.
@@ -278,6 +240,5 @@ public class SwerveSubsystem extends SubsystemBase {
         m_rearLeft.resetLastAngle();
         m_rearRight.resetLastAngle();
     }
-
 
 }

@@ -16,6 +16,10 @@ public class Balance extends CommandBase {
   PigeonIMU m_pigeon = new PigeonIMU(Config.CANID.PIGEON);
   // Servo servoCam = new Servo(0);
 
+  double speedSlow = 0.24;
+  double rotateSpeed = 0.35;
+  double rotateSpeedSlow = 0.25;
+
   /** Creates a new Balance. */
   public Balance() {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -32,7 +36,41 @@ public class Balance extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    DiffTalonSubsystem.getInstance().balanceDrive();
+    if (DiffTalonSubsystem.getInstance().getPitchVal()[1] <= 3) {
+      DiffTalonSubsystem.getInstance().arcadeDrive(speedSlow - (m_pigeon.getPitch()) / 15, 0);
+  }
+  else if (DiffTalonSubsystem.getInstance().getPitchVal()[1] < 10) {
+      if (m_pigeon.getPitch() > 0) {
+        DiffTalonSubsystem.getInstance().arcadeDrive(speedSlow, 0);
+      }
+      else if (m_pigeon.getPitch() < 0) {
+        DiffTalonSubsystem.getInstance().arcadeDrive(speedSlow, 0);
+      }
+  }
+  else {
+      if (m_pigeon.getPitch() > 0) {
+          while (m_pigeon.getPitch() > 10) {
+            DiffTalonSubsystem.getInstance().arcadeDrive(-rotateSpeed, 0);
+          }
+          while (m_pigeon.getPitch() > 0) {
+            DiffTalonSubsystem.getInstance().arcadeDrive(-rotateSpeedSlow, 0);
+          }
+          while (m_pigeon.getPitch() < 0) {
+            DiffTalonSubsystem.getInstance().arcadeDrive(rotateSpeedSlow, 0);
+          }
+      }
+      else {
+          while (m_pigeon.getPitch() < -10) {
+            DiffTalonSubsystem.getInstance().arcadeDrive(rotateSpeed, 0);
+          }
+          while (m_pigeon.getPitch() < 0) {
+            DiffTalonSubsystem.getInstance().arcadeDrive(rotateSpeedSlow, 0);
+          }
+          while (m_pigeon.getPitch() > 0) {
+            DiffTalonSubsystem.getInstance().arcadeDrive(-rotateSpeedSlow, 0);
+          }
+      }
+      }
   }
 
   // Called once the command ends or is interrupted.
