@@ -36,37 +36,40 @@ public class BalanceSwerve extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (SwerveSubsystem.getInstance().getPitchVal()[1] <= 3) {
+    if (SwerveSubsystem.getInstance().getPitchValue() == 0) {
+      SwerveSubsystem.getInstance().drive(0, 0, 0, false, true);
+    }
+    else if (SwerveSubsystem.getInstance().getPitchValue() <= 3) {
       SwerveSubsystem.getInstance().drive(0, balanceSpeedSlow - (m_pigeon.getPitch()) / 15, 0, false, true);
   }
-  else if (SwerveSubsystem.getInstance().getPitchVal()[1] < 10) {
-      if (m_pigeon.getPitch() > 0) {
+  else if (SwerveSubsystem.getInstance().getPitchValue() < 10) {
+      if (SwerveSubsystem.getInstance().getPitchValue() > 0) {
           SwerveSubsystem.getInstance().drive(0, balanceSpeedSlow, 0, false, true);
       }
-      else if (m_pigeon.getPitch() < 0) {
+      else if (SwerveSubsystem.getInstance().getPitchValue() < 0) {
           SwerveSubsystem.getInstance().drive(0, -balanceSpeedSlow, 0, false, true);
       }
   }
   else {
-      if (m_pigeon.getPitch() > 0) {
-          while (m_pigeon.getPitch() > 10) {
+      if (SwerveSubsystem.getInstance().getPitchValue() > 0) {
+          while (SwerveSubsystem.getInstance().getPitchValue() > 10) {
               SwerveSubsystem.getInstance().drive(0, balanceSpeed, 0, false, true);
           }
-          while (m_pigeon.getPitch() > 0) {
+          while (SwerveSubsystem.getInstance().getPitchValue() > 0) {
               SwerveSubsystem.getInstance().drive(0, balanceSpeedSlow, 0, false, true);
           }
-          while (m_pigeon.getPitch() < 0) {
+          while (SwerveSubsystem.getInstance().getPitchValue() < 0) {
               SwerveSubsystem.getInstance().drive(0, -balanceSpeedSlow, 0, false, true);
           }
       }
       else {
-          while (m_pigeon.getPitch() < -10) {
+          while (SwerveSubsystem.getInstance().getPitchValue() < -10) {
             SwerveSubsystem.getInstance().drive(0, -balanceSpeed, 0, false, true);
           }
-          while (m_pigeon.getPitch() < 0) {
+          while (SwerveSubsystem.getInstance().getPitchValue() < 0) {
             SwerveSubsystem.getInstance().drive(0, -balanceSpeedSlow, 0, false, true);
           }
-          while (m_pigeon.getPitch() > 0) {
+          while (SwerveSubsystem.getInstance().getPitchValue() > 0) {
             SwerveSubsystem.getInstance().drive(0, balanceSpeedSlow, 0, false, true);
           }
       }

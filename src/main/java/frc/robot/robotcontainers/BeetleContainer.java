@@ -25,6 +25,7 @@ import frc.robot.config.*;
 public class BeetleContainer extends RobotContainer {
 
   Command balanceCommand;
+  Command driveCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public BeetleContainer() {
@@ -40,12 +41,14 @@ public class BeetleContainer extends RobotContainer {
    */
   private void configureButtonBindings() {
 
-    balanceCommand = new Balance();
-
     Joystick driverStick = new Joystick(1);
     Joystick controlStick = new Joystick(0);
 
+    balanceCommand = new Balance();
+    driveCommand = new ArcadeDrive(controlStick, 0, 0);
+
     new JoystickButton(controlStick, XboxController.Button.kBack.value).whenHeld(balanceCommand);
+    new JoystickButton(controlStick, XboxController.Button.kLeftStick.value).whenHeld(driveCommand);
     
     
  }

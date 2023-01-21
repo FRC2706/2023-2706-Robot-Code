@@ -17,8 +17,10 @@ public class Balance extends CommandBase {
   // Servo servoCam = new Servo(0);
 
   double speedSlow = 0.24;
+  double speedMed = 0.30;
   double rotateSpeed = 0.35;
   double rotateSpeedSlow = 0.25;
+  double initialAngle = 0;
 
   /** Creates a new Balance. */
   public Balance() {
@@ -31,44 +33,30 @@ public class Balance extends CommandBase {
   public void initialize() {
     // Find the reset method
     DiffTalonSubsystem.getInstance().resetPigeon();
+    initialAngle = DiffTalonSubsystem.getInstance().getPitchValue();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (DiffTalonSubsystem.getInstance().getPitchVal()[1] <= 3) {
-      DiffTalonSubsystem.getInstance().arcadeDrive(speedSlow - (m_pigeon.getPitch()) / 15, 0);
-  }
-  else if (DiffTalonSubsystem.getInstance().getPitchVal()[1] < 10) {
-      if (m_pigeon.getPitch() > 0) {
+    System.out.println(DiffTalonSubsystem.getInstance().getPitchValue());
+    if (DiffTalonSubsystem.getInstance().getPitchValue() >= initialAngle - 0.05 && DiffTalonSubsystem.getInstance().getPitchValue() <= initialAngle + 0.05) {
+      DiffTalonSubsystem.getInstance().arcadeDrive(0, 0);
+    }
+    else if (DiffTalonSubsystem.getInstance().getPitchValue() > initialAngle + 0.2) {
+      if (DiffTalonSubsystem.getInstance().getPitchValue() <= initialAngle + 0.3) {
         DiffTalonSubsystem.getInstance().arcadeDrive(speedSlow, 0);
-      }
-      else if (m_pigeon.getPitch() < 0) {
-        DiffTalonSubsystem.getInstance().arcadeDrive(speedSlow, 0);
-      }
-  }
-  else {
-      if (m_pigeon.getPitch() > 0) {
-          while (m_pigeon.getPitch() > 10) {
-            DiffTalonSubsystem.getInstance().arcadeDrive(-rotateSpeed, 0);
-          }
-          while (m_pigeon.getPitch() > 0) {
-            DiffTalonSubsystem.getInstance().arcadeDrive(-rotateSpeedSlow, 0);
-          }
-          while (m_pigeon.getPitch() < 0) {
-            DiffTalonSubsystem.getInstance().arcadeDrive(rotateSpeedSlow, 0);
-          }
       }
       else {
-          while (m_pigeon.getPitch() < -10) {
-            DiffTalonSubsystem.getInstance().arcadeDrive(rotateSpeed, 0);
-          }
-          while (m_pigeon.getPitch() < 0) {
-            DiffTalonSubsystem.getInstance().arcadeDrive(rotateSpeedSlow, 0);
-          }
-          while (m_pigeon.getPitch() > 0) {
-            DiffTalonSubsystem.getInstance().arcadeDrive(-rotateSpeedSlow, 0);
-          }
+        DiffTalonSubsystem.getInstance().arcadeDrive(speedMed, 0);
+      }
+      }
+    else if (DiffTalonSubsystem.getInstance().getPitchValue() < initialAngle - 0.2) {
+      if (DiffTalonSubsystem.getInstance().getPitchValue() >= initialAngle - 0.3) {
+        DiffTalonSubsystem.getInstance().arcadeDrive(-speedSlow, 0);
+      }
+      else {
+        DiffTalonSubsystem.getInstance().arcadeDrive(-speedMed, 0);
       }
       }
   }
