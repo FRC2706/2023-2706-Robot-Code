@@ -111,10 +111,11 @@ public class MiniSwerveContainer extends RobotContainer{
       new PIDConstants (0,0,0),
       SwerveSubsystem.getInstance() :: setModuleStatesAuto,
       eventMap,
+      false,
       SwerveSubsystem.getInstance()
       );
 
-      PathPlannerTrajectory path = PathPlanner.loadPath("Keira Path",1 ,1);
+      PathPlannerTrajectory path = PathPlanner.loadPath("New New Path",1 ,1);
     return autoBuilder.fullAuto(path);
 
   }

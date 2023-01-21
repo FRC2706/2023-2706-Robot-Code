@@ -1,0 +1,116 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 1.8002833975211106,
+        "y": 0.4313315428661329
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.8002833975211097,
+        "y": 0.4313315428661329
+      },
+      "holonomicAngle": 179.14847392266827,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "place game piece"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.487962052066236,
+        "y": 0.8382480927398412
+      },
+      "prevControl": {
+        "x": 6.825195432116753,
+        "y": 0.8585939202335262
+      },
+      "nextControl": {
+        "x": 6.15072867201572,
+        "y": 0.8179022652461563
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.751453411536266,
+        "y": 1.6358045304923103
+      },
+      "prevControl": {
+        "x": 1.7852268012377017,
+        "y": 0.9096766519114575
+      },
+      "nextControl": {
+        "x": 1.7189000875463687,
+        "y": 2.3357009962750905
+      },
+      "holonomicAngle": -179.15974257132657,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 3.9162494568643966,
+        "y": 2.758894208143747
+      },
+      "prevControl": {
+        "x": 3.3058746320538335,
+        "y": 2.799585863131118
+      },
+      "nextControl": null,
+      "holonomicAngle": 179.7685877543219,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "balance"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "markers": [
+    {
+      "position": 1.0129870129870002,
+      "names": [
+        "pick up game piece"
+      ]
+    },
+    {
+      "position": 1.9948051948054306,
+      "names": [
+        "place game piece"
+      ]
+    }
+  ]
+}

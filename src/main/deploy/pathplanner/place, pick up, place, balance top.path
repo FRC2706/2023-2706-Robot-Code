@@ -1,0 +1,114 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 1.7677300735312143,
+        "y": 4.801615288509765
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.7677300735312134,
+        "y": 4.801615288509765
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "place game piece"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.626313679023298,
+        "y": 4.671401992550179
+      },
+      "prevControl": {
+        "x": 5.340457381422378,
+        "y": 4.492358710605746
+      },
+      "nextControl": {
+        "x": 5.340457381422378,
+        "y": 4.492358710605746
+      },
+      "holonomicAngle": 0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.7677300735312143,
+        "y": 4.215655456691625
+      },
+      "prevControl": {
+        "x": 0.7677300735312143,
+        "y": 4.215655456691625
+      },
+      "nextControl": {
+        "x": 2.7677300735312143,
+        "y": 4.215655456691625
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 3.8592811398820777,
+        "y": 3.3692690329543105
+      },
+      "prevControl": {
+        "x": 2.3618282363468293,
+        "y": 3.3123007159719915
+      },
+      "nextControl": null,
+      "holonomicAngle": 179.54528113830688,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "markers": [
+    {
+      "position": 0.9974025974026501,
+      "names": [
+        "pick up game piece"
+      ]
+    },
+    {
+      "position": 1.8701298701299542,
+      "names": [
+        "place game piece"
+      ]
+    }
+  ]
+}
