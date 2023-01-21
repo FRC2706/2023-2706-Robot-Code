@@ -18,6 +18,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -51,6 +52,8 @@ public class SwerveModule {
     private NetworkTableEntry currentAngleEntry;
     private NetworkTableEntry speedError;
     private NetworkTableEntry angleError;
+    private NetworkTableEntry desiredAngle360Range;
+    private NetworkTableEntry currentAngle360Range;
     private double m_encoderOffset;
     private NetworkTableEntry canCoderEntry;
     FluidConstant<Double> fluid_offset;
@@ -137,7 +140,9 @@ public class SwerveModule {
         speedError = swerveModuleTable.getEntry("Speed error (mps)");
         angleError = swerveModuleTable.getEntry("Angle error (deg)"); 
         canCoderEntry = swerveModuleTable.getEntry("CanCoder");
-
+        desiredAngle360Range = swerveModuleTable.getEntry("Desired angle 360 range");
+        currentAngle360Range = swerveModuleTable.getEntry("Current angle 360 range");
+        
         updateSteeringFromCanCoder();
 
         resetLastAngle();
@@ -200,6 +205,8 @@ public class SwerveModule {
         currentAngleEntry.setDouble(angle.getDegrees());
         speedError.setDouble(desiredState.speedMetersPerSecond - velocity);
         angleError.setDouble(desiredState.angle.getDegrees() - angle.getDegrees());
+        desiredAngle360Range.setDouble(MathUtil.inputModulus(desiredState.angle.getDegrees(), -180.0, 180.0));
+        currentAngle360Range.setDouble(MathUtil.inputModulus(angle.getDegrees(), -180.0, 180.0));
         NetworkTableInstance.getDefault().flush();
     }
 
