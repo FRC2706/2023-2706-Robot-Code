@@ -5,8 +5,10 @@
 package frc.robot.robotcontainers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
@@ -26,6 +28,7 @@ import frc.robot.config.Config;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -113,16 +116,19 @@ public class MiniSwerveContainer extends RobotContainer{
       SwerveSubsystem.getInstance():: getPose,
       SwerveSubsystem.getInstance():: resetOdometry,
       Config.Swerve.kSwerveDriveKinematics,
-      new PIDConstants (0,0,0),
-      new PIDConstants (0,0,0),
+      new PIDConstants (5,0,0),
+      new PIDConstants (1,0,0),
       SwerveSubsystem.getInstance() :: setModuleStatesAuto,
       eventMap,
-      false,
+      true,
       SwerveSubsystem.getInstance()
       );
 
-      PathPlannerTrajectory path = PathPlanner.loadPath("New New Path",1 ,1);
-    return autoBuilder.fullAuto(path);
+      List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Practice1", new PathConstraints( 2.5,  2));
+      path.addAll (PathPlanner.loadPathGroup("Practice1", new PathConstraints( 2.5,  2)));
+      path.addAll (PathPlanner.loadPathGroup("Practice1", new PathConstraints( 2.5,  2)));
+    return new InstantCommand (SwerveSubsystem.getInstance() :: updateModulesPID).andThen (autoBuilder.fullAuto(path));
+
 
   }
 
