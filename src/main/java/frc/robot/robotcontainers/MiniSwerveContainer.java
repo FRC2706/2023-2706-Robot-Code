@@ -117,16 +117,16 @@ public class MiniSwerveContainer extends RobotContainer{
       SwerveSubsystem.getInstance():: resetOdometry,
       Config.Swerve.kSwerveDriveKinematics,
       new PIDConstants (5,0,0),
-      new PIDConstants (1,0,0),
+      new PIDConstants (3,0,0.1),
       SwerveSubsystem.getInstance() :: setModuleStatesAuto,
       eventMap,
       true,
       SwerveSubsystem.getInstance()
       );
 
-      List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Practice1", new PathConstraints( 2.5,  2));
-      path.addAll (PathPlanner.loadPathGroup("Practice1", new PathConstraints( 2.5,  2)));
-      path.addAll (PathPlanner.loadPathGroup("Practice1", new PathConstraints( 2.5,  2)));
+      List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Practice2", new PathConstraints( 2.5,  2));
+      // path.addAll (PathPlanner.loadPathGroup("Practice2", new PathConstraints( 2.5,  2)));
+      // path.addAll (PathPlanner.loadPathGroup("Practice1", new PathConstraints( 2.5,  2)));
     return new InstantCommand (SwerveSubsystem.getInstance() :: updateModulesPID).andThen (autoBuilder.fullAuto(path));
 
 
