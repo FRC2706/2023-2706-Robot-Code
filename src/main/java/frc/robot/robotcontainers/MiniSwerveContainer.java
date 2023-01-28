@@ -50,19 +50,13 @@ public class MiniSwerveContainer extends RobotContainer{
   private void configureButtonBindings() {
     CommandXboxController driver = new CommandXboxController(0);
 
-    SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver, Config.Swerve.teleopSpeed, Config.Swerve.teleopAngularSpeed,5.0));
+    SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
 
-    driver.leftBumper().whileTrue(new SwerveTeleop(driver, Config.Swerve.teleopFastSpeed, Config.Swerve.teleopFastAngularSpeed,5.0));
-    driver.rightBumper().whileTrue(new SwerveTeleop(driver, Config.Swerve.teleopSlowSpeed, Config.Swerve.teleopSlowAngularSpeed,20.0));
+    //Do not use Right or Left Bumper already used in separate file
     driver.start().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().updateModulesPID()));
     driver.back().onTrue(new ResetGyro());
     driver.y().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
-
-
-    SwerveModuleState state1 = new SwerveModuleState(0.3, Rotation2d.fromDegrees(0));
-    SwerveModuleState state2 = new SwerveModuleState(0.3, Rotation2d.fromDegrees(90));
-    SwerveModuleState state3 = new SwerveModuleState(0.5, Rotation2d.fromDegrees(0));
-    SwerveModuleState state4 = new SwerveModuleState(-0.5, Rotation2d.fromDegrees(0));
+    
   }
 
 

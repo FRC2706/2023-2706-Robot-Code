@@ -14,21 +14,12 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 public class SwerveTeleop extends CommandBase {
     private CommandXboxController driverStick;
-    private double teleopSpeed;
-    private double teleopAngularSpeed;
-    private SlewRateLimiter transLimiter; 
-    private SlewRateLimiter strafeLimiter;
-    private SlewRateLimiter rotationLimiter;
-    
+    private SlewRateLimiter rateLimiter;
 
     /** Creates a new DriveCommand. */
-    public SwerveTeleop(CommandXboxController driverStick, double teleopSpeed, double teleopAngularSpeed, double rateLimit) {
+    public SwerveTeleop(CommandXboxController driverStick) {
         this.driverStick = driverStick;
-        this.teleopAngularSpeed = teleopAngularSpeed;
-        this.teleopSpeed = teleopSpeed;
-        transLimiter = new SlewRateLimiter(rateLimit);
-        strafeLimiter = new SlewRateLimiter(rateLimit);
-        rotationLimiter = new SlewRateLimiter(rateLimit);
+        this.rateLimiter = new SlewRateLimiter(Config.Swerve.teleopRateLimit);
         addRequirements(SwerveSubsystem.getInstance());
 
     } 
@@ -55,8 +46,21 @@ public class SwerveTeleop extends CommandBase {
         if (x==0){
             return 0;
         }
-        x = transLimiter.calculate(x);
-        x *= teleopSpeed;
+
+        if(driverStick.leftBumper().getAsBoolean()){
+            x = rateLimiter.calculate(x);
+            x *= Config.Swerve.teleopFastSpeed;
+        }
+        else if(driverStick.rightBumper().getAsBoolean()){
+            rateLimiter.reset(0);
+            x *= Config.Swerve.teleopSlowSpeed;
+
+        }
+        else{
+            x = rateLimiter.calculate(x);
+            x *= Config.Swerve.teleopSpeed;
+        }
+
         return x;
     }
 
@@ -66,8 +70,20 @@ public class SwerveTeleop extends CommandBase {
         if (y==0){
             return 0;
         }
-        y = strafeLimiter.calculate(y);
-        y *= teleopSpeed;
+
+        if(driverStick.leftBumper().getAsBoolean()){
+            y *= Config.Swerve.teleopFastSpeed;
+            y = rateLimiter.calculate(y); 
+        }
+        else if(driverStick.rightBumper().getAsBoolean()){
+            rateLimiter.reset(0); 
+            y *= Config.Swerve.teleopSlowSpeed;
+
+        }
+        else{ 
+            y = rateLimiter.calculate(y); 
+            y *= Config.Swerve.teleopSpeed;
+        }
         return y;
     }
 
@@ -77,8 +93,21 @@ public class SwerveTeleop extends CommandBase {
         if (rot == 0){
             return 0;
         }
-        rot = rotationLimiter.calculate(rot);
-        rot *= teleopAngularSpeed;
+
+
+        if(driverStick.leftBumper().getAsBoolean()){
+            rot = rateLimiter.calculate(rot); 
+            rot *= Config.Swerve.teleopFastAngularSpeed;
+        }
+        else if(driverStick.rightBumper().getAsBoolean()){
+            rateLimiter.reset(0);
+            rot *= Config.Swerve.teleopSlowAngularSpeed;
+
+        }
+        else{
+            rot = rateLimiter.calculate(rot); 
+            rot *= Config.Swerve.teleopAngularSpeed;
+        }
         return rot;
 
     }
