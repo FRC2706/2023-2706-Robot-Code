@@ -13,6 +13,7 @@ import frc.robot.Robot;
 import frc.robot.auto.AutoSelector;
 import frc.robot.commands.ModuleAngleFromJoystick;
 import frc.robot.commands.ResetGyro;
+import frc.robot.commands.ResetGyroToNearest;
 import frc.robot.commands.SwerveTeleop;
 import frc.robot.config.Config;
 import frc.robot.subsystems.SwerveModule;
@@ -53,7 +54,7 @@ public class MiniSwerveContainer extends RobotContainer{
     SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
 
     //Do not use Right or Left Bumper already used in separate file
-    driver.start().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().updateModulesPID()));
+    driver.start().onTrue(new ResetGyroToNearest());
     driver.back().onTrue(new ResetGyro());
     driver.y().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
     
