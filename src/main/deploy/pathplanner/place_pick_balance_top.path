@@ -2,21 +2,23 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.7840067355261626,
-        "y": 0.5045765218433994
+        "x": 2.0,
+        "y": 4.928307658813121
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.784006735526161,
-        "y": 0.5045765218433994
+        "x": 2.9999999999999996,
+        "y": 4.928307658813121
       },
-      "holonomicAngle": 178.73632744834165,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "place game piece"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -24,16 +26,16 @@
     },
     {
       "anchorPoint": {
-        "x": 6.61003701702835,
-        "y": 0.9359080647095324
+        "x": 6.4,
+        "y": 4.627924129990137
       },
       "prevControl": {
-        "x": 6.642590341018245,
-        "y": 0.9277697337120578
+        "x": 5.207174537425998,
+        "y": 4.412079522476747
       },
       "nextControl": {
-        "x": 6.642590341018245,
-        "y": 0.9277697337120578
+        "x": 5.207174537425998,
+        "y": 4.412079522476747
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -49,26 +51,35 @@
     },
     {
       "anchorPoint": {
-        "x": 3.826727815892181,
-        "y": 2.864692511110911
+        "x": 4.129448149006189,
+        "y": 2.8437031599337934
       },
       "prevControl": {
-        "x": 4.48593262668759,
-        "y": 2.8484158491159635
+        "x": 6.1174905866295255,
+        "y": 2.4574549149098313
       },
       "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "balance"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
-  "markers": []
+  "markers": [
+    {
+      "position": 0.9974025974026355,
+      "names": [
+        "pick up game piece"
+      ]
+    }
+  ]
 }

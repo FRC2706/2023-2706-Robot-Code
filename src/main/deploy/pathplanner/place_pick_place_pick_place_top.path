@@ -2,15 +2,15 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.7351767495413177,
-        "y": 3.2634707299871457
+        "x": 1.9549116864731202,
+        "y": 4.866721936489558
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.775868404528688,
-        "y": 4.329592090656264
+        "x": 2.9549116864731193,
+        "y": 4.866721936489558
       },
-      "holonomicAngle": -180.0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -24,66 +24,16 @@
     },
     {
       "anchorPoint": {
-        "x": 6.561207031043504,
-        "y": 4.590018682575437
+        "x": 6.35774875610665,
+        "y": 4.622572006565334
       },
       "prevControl": {
-        "x": 5.0149241415234105,
-        "y": 5.574756733269813
+        "x": 4.673114239629495,
+        "y": 5.257361824368318
       },
       "nextControl": {
-        "x": 5.0149241415234105,
-        "y": 5.574756733269813
-      },
-      "holonomicAngle": 0,
-      "isReversal": true,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 1.7351767495413177,
-        "y": 3.9715055267673995
-      },
-      "prevControl": {
-        "x": 0.7970244568204669,
-        "y": 3.625282656837347
-      },
-      "nextControl": {
-        "x": 3.1024163571108767,
-        "y": 4.4760820486046935
-      },
-      "holonomicAngle": -180.0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.691420327009196,
-        "y": 3.5238973219124228
-      },
-      "prevControl": {
-        "x": 4.8114658665865555,
-        "y": 5.957258290151099
-      },
-      "nextControl": {
-        "x": 6.776588009070271,
-        "y": 3.413658633877293
+        "x": 6.413191243741113,
+        "y": 4.601680634413218
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -99,15 +49,65 @@
     },
     {
       "anchorPoint": {
-        "x": 1.7840067355322662,
-        "y": 4.956243577467879
+        "x": 1.9549116864731202,
+        "y": 3.9552288647724505
       },
       "prevControl": {
-        "x": 5.910140551251674,
-        "y": 5.127148528414836
+        "x": 3.232629653076566,
+        "y": 5.542203409279915
+      },
+      "nextControl": {
+        "x": 1.943499304549849,
+        "y": 3.941054250281763
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.406578742091495,
+        "y": 3.3285773779669388
+      },
+      "prevControl": {
+        "x": 4.388272654717898,
+        "y": 6.941996340845474
+      },
+      "nextControl": {
+        "x": 6.422941769014751,
+        "y": 3.299282281378527
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.9549116864731202,
+        "y": 3.0600124550502916
+      },
+      "prevControl": {
+        "x": 4.19295271077852,
+        "y": 7.51981784166614
       },
       "nextControl": null,
-      "holonomicAngle": -180.0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
