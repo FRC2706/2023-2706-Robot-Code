@@ -4,19 +4,16 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.config.Config;
-import frc.robot.config.Config.Swerve;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class SwerveTeleop extends CommandBase {
-    private Joystick driverStick;
+    private CommandXboxController driverStick;
     private double teleopSpeed;
     private double teleopAngularSpeed;
     private SlewRateLimiter transLimiter; 
@@ -25,7 +22,7 @@ public class SwerveTeleop extends CommandBase {
     
 
     /** Creates a new DriveCommand. */
-    public SwerveTeleop(Joystick driverStick, double teleopSpeed, double teleopAngularSpeed, double rateLimit) {
+    public SwerveTeleop(CommandXboxController driverStick, double teleopSpeed, double teleopAngularSpeed, double rateLimit) {
         this.driverStick = driverStick;
         this.teleopAngularSpeed = teleopAngularSpeed;
         this.teleopSpeed = teleopSpeed;
@@ -45,28 +42,46 @@ public class SwerveTeleop extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        
-        double x = -1 * driverStick.getRawAxis(XboxController.Axis.kLeftY.value); 
-        double y = -1 * driverStick.getRawAxis(XboxController.Axis.kLeftX.value);
-        double rot = -1 * driverStick.getRawAxis(XboxController.Axis.kRightX.value);
-
-        x = MathUtil.applyDeadband(x, Config.DRIVER_JOYSTICK_DEADBAND);
-        y = MathUtil.applyDeadband(y, Config.DRIVER_JOYSTICK_DEADBAND);
-        rot = MathUtil.applyDeadband(rot, Config.DRIVER_JOYSTICK_DEADBAND);
-
-        x = transLimiter.calculate(x);
-        y = strafeLimiter.calculate(y);
-        rot = rotationLimiter.calculate(rot);
-    
-        
         SwerveSubsystem.getInstance().drive(
-            x * teleopSpeed,
-            y * teleopSpeed,
-            rot * teleopAngularSpeed,
+            calculateX(),
+            calculateY(),
+            calculateRot(),
             true, true);
     }
 
+    protected double calculateX(){
+        double x = -1 * driverStick.getRawAxis(XboxController.Axis.kLeftY.value);
+        x = MathUtil.applyDeadband(x, Config.DRIVER_JOYSTICK_DEADBAND);
+        if (x==0){
+            return 0;
+        }
+        x = transLimiter.calculate(x);
+        x *= teleopSpeed;
+        return x;
+    }
 
+    protected double calculateY(){
+        double y = -1 * driverStick.getRawAxis(XboxController.Axis.kLeftX.value);
+        y = MathUtil.applyDeadband(y, Config.DRIVER_JOYSTICK_DEADBAND);
+        if (y==0){
+            return 0;
+        }
+        y = strafeLimiter.calculate(y);
+        y *= teleopSpeed;
+        return y;
+    }
+
+    protected double calculateRot(){
+        double rot = -1 * driverStick.getRawAxis(XboxController.Axis.kRightX.value);
+        rot = MathUtil.applyDeadband(rot, Config.DRIVER_JOYSTICK_DEADBAND);
+        if (rot == 0){
+            return 0;
+        }
+        rot = rotationLimiter.calculate(rot);
+        rot *= teleopAngularSpeed;
+        return rot;
+
+    }
 
     // Called once the command ends or is interrupted.
     @Override
