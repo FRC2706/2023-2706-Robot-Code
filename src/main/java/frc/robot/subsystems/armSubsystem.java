@@ -15,11 +15,11 @@ public class armSubsystem extends SubsystemBase {
   DoubleSolenoid breakSolenoidHigh;
   /** Creates a new armSubsystem. */
   public armSubsystem() {
-    breakSolenoidLow = new DoubleSolenoid(Config.CTRE_ARMLOW_PCM_CAN_ID,
+    breakSolenoidLow = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
                                           PneumaticsModuleType.CTREPCM,
                                           Config.ARMLOW_PNEUMATIC_FORWARD_CHANNEL,
                                           Config.ARMLOW_PNEUMATIC_REVERSE_CHANNEL);
-    breakSolenoidHigh = new DoubleSolenoid(Config.CTRE_ARMHIGH_PCM_CAN_ID,
+    breakSolenoidHigh = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
                                           PneumaticsModuleType.CTREPCM,
                                           Config.ARMHIGH_PNEUMATIC_FORWARD_CHANNEL,
                                           Config.ARMHIGH_PNEUMATIC_REVERSE_CHANNEL);
@@ -29,18 +29,43 @@ public class armSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
-  public void setLowBreak() {
-    breakSolenoidLow.set(Value.kForward);
+  /*
+   * This method will control the Bottom Arm Break
+   * @param bBreakOn true: set break mode
+   *                 false: remove break mode
+   */
+  public void controlBottomArmBreak( boolean bBreakOn)
+  {
+    if (bBreakOn == true)
+    {
+      //set break on the arm
+      breakSolenoidLow.set(Value.kForward);
+
+    }
+    else 
+    {
+      breakSolenoidLow.set(Value.kReverse);
+    }
   }
-  public void setHighBreak() {
-    breakSolenoidHigh.set(Value.kForward);
+  /*
+   * This method will control the Top Arm Break
+   * @param bBreakon true: set break mode
+   *                 false: remove break mode
+   */
+  public void controlTopArmBreak( boolean bBreakOn)
+  {
+    if (bBreakOn == true)
+    {
+      //set break on the arm
+      breakSolenoidHigh.set(Value.kForward);
+
+    }
+    else 
+    {
+      breakSolenoidHigh.set(Value.kReverse);
+    }
   }
-  public void offLowBreak() {
-    breakSolenoidLow.set(Value.kReverse);
-  }
-  public void offHighBreak() {
-    breakSolenoidHigh.set(Value.kReverse);
-  }
+
   public void stopLowBreak() {
     breakSolenoidLow.set(Value.kOff);
   }
