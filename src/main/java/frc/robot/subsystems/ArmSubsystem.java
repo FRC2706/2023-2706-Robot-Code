@@ -24,6 +24,8 @@ public class ArmSubsystem extends SubsystemBase {
   private AbsoluteEncoder m_absoluteTopArmEncoder;
   private AbsoluteEncoder m_absoluteBottomArmEncoder;
 
+  private static ArmSubsystem instance;
+
 
   private final CANSparkMax m_topArm;
   private final CANSparkMax m_bottomArm;
@@ -75,6 +77,11 @@ public class ArmSubsystem extends SubsystemBase {
 
 
   }
+
+  public static ArmSubsystem getInstance() {
+    instance = new ArmSubsystem();
+    return instance;
+}
 
   @Override
   public void periodic() {
