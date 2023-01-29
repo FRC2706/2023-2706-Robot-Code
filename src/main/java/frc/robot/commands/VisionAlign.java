@@ -25,6 +25,8 @@ public class VisionAlign extends CommandBase {
   private double iLimit = 0;
   private double kD = 0;
 
+  private NetworkTable table = NetworkTableInstance.getDefault().getTable("DriveTrain");
+
   private NetworkTableEntry DistanceToTarget = table.getEntry("DistanceToTarget");
   private NetworkTableEntry YawToTarget = table.getEntry("YawToTarget");
   private NetworkTableEntry TargetPixelFromCenter = table.getEntry("TargetPixelFromCenter");
@@ -50,7 +52,7 @@ public class VisionAlign extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    currentPosition = TargetPixelFromCenter;
+    currentPosition = TargetPixelFromCenter.getDouble(0);
     currentTime = Timer.getFPGATimestamp();
     dt = currentTime - lastTime;
 
@@ -68,7 +70,8 @@ public class VisionAlign extends CommandBase {
 
     lastError = error;
     lastTime = currentTime;
-  }
+    }
+}
 
   // Called once the command ends or is interrupted.
   @Override
