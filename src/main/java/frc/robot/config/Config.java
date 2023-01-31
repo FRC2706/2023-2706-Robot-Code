@@ -394,11 +394,11 @@ public class Config {
         .setKinematics(kDriveKinematics).addConstraint(autoVoltageConstraint);
     
     //For intake pneumatics
-    public static final int INTAKE2_PNEUMATIC_CHANNEL_1 = -1;
-    public static final int INTAKE2_PNEUMATIC_CHANNEL_2 = -1;
-    public static final int INTAKE1_PNEUMATIC_CHANNEL_1 = -1;
-    public static final int INTAKE1_PNEUMATIC_CHANNEL_2 = -1;
-    public static final int CTRE_INTAKE_PCM_CAN_ID = -1;
+    public static final int INTAKE2_PNEUMATIC_FORWARD_CHANNEL = -1;
+    public static final int INTAKE2_PNEUMATIC_REVERSE_CHANNEL = -1;
+    public static final int INTAKE1_PNEUMATIC_FORWARD_CHANNEL = -1;
+    public static final int INTAKE1_PNEUMATIC_REVERSE_CHANNEL = -1;
+    public static final int CTRE_PCM_CAN_ID = -1;
 
     /**
      * Returns one of the values passed based on the robot ID

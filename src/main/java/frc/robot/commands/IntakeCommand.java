@@ -32,11 +32,11 @@ public class IntakeCommand extends InstantCommand {
    intake.noPressure();
   }
 
-public void takeCone(){
-  intake.highPressure();
+  public void takeCone(){
+    intake.highPressure();
 }
 
-public void takeCube(){
-  intake.lowPressure();
+  public void takeCube(){
+    intake.lowPressure();
   }
 }
