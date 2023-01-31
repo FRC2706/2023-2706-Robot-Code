@@ -14,9 +14,9 @@ public class IntakeCommand extends InstantCommand {
   IntakeSubsystem intake;
 
   /** Creates a new IntakeCommand. */
-  //PositionId 0 means open
-  //position id 1 means take cone
-  //position id 2 means take cube
+  //PositionId 1 means open
+  //position id 2 means take cone
+  //position id 3 means take cube
   public IntakeCommand(int positionId) {
     position = positionId;
     intake = IntakeSubsystem.getInstance();
@@ -26,7 +26,21 @@ public class IntakeCommand extends InstantCommand {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  switch(position){
+     case 1:
+      open();
+      break;
+     case 2:
+      takeCone();
+      break;
+     case 3:
+      takeCube();
+      break;
+     default:
+      break;
+     }
+  }
 
   public void open (){
    intake.noPressure();
