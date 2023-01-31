@@ -139,56 +139,15 @@ public class DiffTalonSubsystem extends SubsystemBase {
         diffDrive.arcadeDrive(forwardVal, rotateVal, false);
     }
 
-    public double[] getPitchVal() {
+    public double getPitchValue() {
         double[] ypr = new double[3];
         pigeon.getYawPitchRoll(ypr);
-        return ypr;
+        return Math.abs(ypr[1]);
     }
 
     public void resetPigeon() {
         pigeon.setFusedHeading(0);
-        pigeon.setYaw(0);
     }
-
-    public void balanceDrive() {
-        System.out.println(getPitchVal());
-        if (getPitchVal()[1] <= 3) {
-            arcadeDrive(speedSlow - (pigeon.getPitch()) / 15, 0);
-        }
-        else if (getPitchVal()[1] < 10) {
-            if (pigeon.getPitch() > 0) {
-                arcadeDrive(speedSlow, 0.1);
-            }
-            else if (pigeon.getPitch() < 0) {
-                arcadeDrive(speedSlow, -0.1);
-            }
-        }
-        else {
-            if (pigeon.getPitch() > 0) {
-                while (pigeon.getPitch() > 10) {
-                    arcadeDrive(-rotateSpeed, 0);
-                }
-                while (pigeon.getPitch() > 0) {
-                    arcadeDrive(-rotateSpeedSlow, 0);
-                }
-                while (pigeon.getPitch() < 0) {
-                    arcadeDrive(rotateSpeedSlow, 0);
-                }
-            }
-            else {
-                while (pigeon.getPitch() < -10) {
-                    arcadeDrive(rotateSpeed, 0);
-                }
-                while (pigeon.getPitch() < 0) {
-                    arcadeDrive(rotateSpeedSlow, 0);
-                }
-                while (pigeon.getPitch() > 0) {
-                    arcadeDrive(-rotateSpeedSlow, 0);
-                }
-            }
-
-            }
-        }
     }
 
     

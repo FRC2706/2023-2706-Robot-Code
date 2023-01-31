@@ -144,10 +144,10 @@ public class SwerveSubsystem extends SubsystemBase {
         m_rearRight.setDesiredState(swerveModuleStates[3],isOpenLoop);
     }
 
-    public double[] getPitchVal() {
+    public double getPitchValue() {
         double[] ypr = new double[3];
         m_pigeon.getYawPitchRoll(ypr);
-        return ypr;
+        return Math.abs(ypr[1]);
     }
     public double getPitch() {
         return(m_pigeon.getPitch());
@@ -158,8 +158,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void resetPigeon() {
         m_pigeon.setFusedHeading(0);
-        m_pigeon.setYaw(0);
     }
+
+    
 
     /**
      * Sets the swerve ModuleStates.
@@ -241,6 +242,5 @@ public class SwerveSubsystem extends SubsystemBase {
         m_rearLeft.resetLastAngle();
         m_rearRight.resetLastAngle();
     }
-
 
 }
