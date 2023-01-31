@@ -42,11 +42,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SwerveModule m_frontRight;
     private final SwerveModule m_rearRight;
     // The gyro sensor
-    private final PigeonIMU m_pigeon; 
-
-    //gyro speed constants
-    double balanceSpeedSlow = 0.24;
-    double balanceSpeed = 0.35;
+    private final PigeonIMU m_pigeon;
 
     // Odometry class for tracking robot pose
     SwerveDriveOdometry m_odometry;
@@ -153,49 +149,16 @@ public class SwerveSubsystem extends SubsystemBase {
         m_pigeon.getYawPitchRoll(ypr);
         return ypr;
     }
+    public double getPitch() {
+        return(m_pigeon.getPitch());
+    }
+    public double getYaw() {
+        return(m_pigeon.getYaw());
+    }
 
     public void resetPigeon() {
         m_pigeon.setFusedHeading(0);
         m_pigeon.setYaw(0);
-    }
-
-    public void balanceDrive() {
-        System.out.println(getPitchVal());
-        if (getPitchVal()[1] <= 3) {
-            drive(0, balanceSpeedSlow - (m_pigeon.getPitch()) / 15, 0, false, true);
-        }
-        else if (getPitchVal()[1] < 10) {
-            if (m_pigeon.getPitch() > 0) {
-                drive(0, balanceSpeedSlow, 0, false, true);
-            }
-            else if (m_pigeon.getPitch() < 0) {
-                drive(0, -balanceSpeedSlow, 0, false, true);
-            }
-        }
-        else {
-            if (m_pigeon.getPitch() > 0) {
-                while (m_pigeon.getPitch() > 10) {
-                    drive(0, balanceSpeed, 0, false, true);
-                }
-                while (m_pigeon.getPitch() > 0) {
-                    drive(0, balanceSpeedSlow, 0, false, true);
-                }
-                while (m_pigeon.getPitch() < 0) {
-                    drive(0, -balanceSpeedSlow, 0, false, true);
-                }
-            }
-            else {
-                while (m_pigeon.getPitch() < -10) {
-                    drive(0, -balanceSpeed, 0, false, true);
-                }
-                while (m_pigeon.getPitch() < 0) {
-                    drive(0, -balanceSpeedSlow, 0, false, true);
-                }
-                while (m_pigeon.getPitch() > 0) {
-                    drive(0, balanceSpeedSlow, 0, false, true);
-                }
-            }
-        }
     }
 
     /**

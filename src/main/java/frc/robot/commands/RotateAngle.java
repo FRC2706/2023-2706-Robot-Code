@@ -4,41 +4,42 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
-
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Servo;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.config.Config;
-import frc.robot.subsystems.DiffTalonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
-public class BalanceSwerve extends CommandBase {
+public class RotateAngle extends CommandBase {
 
-  // Servo servoCam = new Servo(0);
-  PIDController pid = new PIDController(0, 0, 0);
+  PIDController pid = new PIDController(0, 0, 0); //pid to be tested
+  double newYaw;
+  double angle;
 
-  /** Creates a new Balance. */
-  public BalanceSwerve() {
+  //tolerance for rotation
+  double tolerance = 0.5;
+
+  /** Creates a new RotateAngle. */
+  public RotateAngle(double _angle) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(SwerveSubsystem.getInstance());
+
+    this.angle = _angle;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // Find the reset method
     SwerveSubsystem.getInstance().resetPigeon();
+
+    this.newYaw = this.angle + SwerveSubsystem.getInstance().getYaw();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     SwerveSubsystem.getInstance().drive(
-      pid.calculate(SwerveSubsystem.getInstance().getPitch(), 0), 
       0, 
       0, 
+      pid.calculate(SwerveSubsystem.getInstance().getYaw(), this.newYaw), 
       false, 
       true
     );
@@ -51,6 +52,9 @@ public class BalanceSwerve extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if (Math.abs(SwerveSubsystem.getInstance().getYaw() - this.newYaw) <= tolerance) {
+      return(true);
+    }
     return false;
   }
 }
