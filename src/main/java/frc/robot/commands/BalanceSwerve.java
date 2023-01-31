@@ -38,11 +38,21 @@ public class BalanceSwerve extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    SwerveSubsystem.getInstance().drive(
+      0,
+      pid.calculate(SwerveSubsystem.getInstance().getPitch(), 0),  //could be x or y
+      0, 
+      false, 
+      true
+    );
+
+
+
     if (SwerveSubsystem.getInstance().getPitchValue() == 0) {
       SwerveSubsystem.getInstance().drive(0, 0, 0, false, true);
     }
     else if (SwerveSubsystem.getInstance().getPitchValue() <= 3) {
-      SwerveSubsystem.getInstance().drive(0, balanceSpeedSlow - (m_pigeon.getPitch()) / 15, 0, false, true);
+      SwerveSubsystem.getInstance().drive(0, balanceSpeedSlow - (SwerveSubsystem.getInstance().getPitch()) / 15, 0, false, true);
   }
   else if (SwerveSubsystem.getInstance().getPitchValue() < 10) {
       if (SwerveSubsystem.getInstance().getPitchValue() > 0) {
