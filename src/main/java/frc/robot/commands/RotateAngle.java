@@ -28,9 +28,10 @@ public class RotateAngle extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    SwerveSubsystem.getInstance().resetPigeon();
+    pid.setTolerance(0.1);
+    pid.enableContinuousInput(-180.0, 180.0);
 
-    this.newYaw = this.angle + SwerveSubsystem.getInstance().getYaw();
+    this.newYaw = this.angle + SwerveSubsystem.getInstance().getHeading().getDegrees();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,7 +40,7 @@ public class RotateAngle extends CommandBase {
     SwerveSubsystem.getInstance().drive(
       0, 
       0, 
-      pid.calculate(SwerveSubsystem.getInstance().getYaw(), this.newYaw), 
+      pid.calculate(SwerveSubsystem.getInstance().getHeading().getDegrees(), this.newYaw), 
       false, 
       true
     );
@@ -52,9 +53,10 @@ public class RotateAngle extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Math.abs(SwerveSubsystem.getInstance().getYaw() - this.newYaw) <= tolerance) {
-      return(true);
+    if(pid.atSetpoint()) {
+      return true;
     }
+
     return false;
   }
 }
