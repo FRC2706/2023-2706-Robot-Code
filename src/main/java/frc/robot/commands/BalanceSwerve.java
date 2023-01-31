@@ -21,6 +21,7 @@ public class BalanceSwerve extends CommandBase {
   double balanceSpeedSlow = 0.24;
   double balanceSpeed = 0.35;
   PIDController pid = new PIDController(0, 0, 0);
+  double initialAngle = 0;
 
   /** Creates a new Balance. */
   public BalanceSwerve() {
@@ -33,6 +34,7 @@ public class BalanceSwerve extends CommandBase {
   public void initialize() {
     // Find the reset method
     SwerveSubsystem.getInstance().resetPigeon();
+    initialAngle = SwerveSubsystem.getInstance().getPitchValue();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -48,40 +50,40 @@ public class BalanceSwerve extends CommandBase {
 
 
 
-    if (SwerveSubsystem.getInstance().getPitchValue() == 0) {
+    if (SwerveSubsystem.getInstance().getPitchValue() >= initialAngle - 0.05 && SwerveSubsystem.getInstance().getPitchValue() <= initialAngle + 0.05) {
       SwerveSubsystem.getInstance().drive(0, 0, 0, false, true);
     }
-    else if (SwerveSubsystem.getInstance().getPitchValue() <= 3) {
+    else if (SwerveSubsystem.getInstance().getPitchValue() <= initialAngle + 3) {
       SwerveSubsystem.getInstance().drive(0, balanceSpeedSlow - (SwerveSubsystem.getInstance().getPitch()) / 15, 0, false, true);
   }
-  else if (SwerveSubsystem.getInstance().getPitchValue() < 10) {
-      if (SwerveSubsystem.getInstance().getPitchValue() > 0) {
+  else if (SwerveSubsystem.getInstance().getPitchValue() < initialAngle + 10) {
+      if (SwerveSubsystem.getInstance().getPitchValue() > initialAngle) {
           SwerveSubsystem.getInstance().drive(0, balanceSpeedSlow, 0, false, true);
       }
-      else if (SwerveSubsystem.getInstance().getPitchValue() < 0) {
+      else if (SwerveSubsystem.getInstance().getPitchValue() < initialAngle) {
           SwerveSubsystem.getInstance().drive(0, -balanceSpeedSlow, 0, false, true);
       }
   }
   else {
-      if (SwerveSubsystem.getInstance().getPitchValue() > 0) {
-          while (SwerveSubsystem.getInstance().getPitchValue() > 10) {
+      if (SwerveSubsystem.getInstance().getPitchValue() > initialAngle) {
+          while (SwerveSubsystem.getInstance().getPitchValue() > initialAngle + 10) {
               SwerveSubsystem.getInstance().drive(0, balanceSpeed, 0, false, true);
           }
-          while (SwerveSubsystem.getInstance().getPitchValue() > 0) {
+          while (SwerveSubsystem.getInstance().getPitchValue() > initialAngle) {
               SwerveSubsystem.getInstance().drive(0, balanceSpeedSlow, 0, false, true);
           }
-          while (SwerveSubsystem.getInstance().getPitchValue() < 0) {
+          while (SwerveSubsystem.getInstance().getPitchValue() < initialAngle) {
               SwerveSubsystem.getInstance().drive(0, -balanceSpeedSlow, 0, false, true);
           }
       }
       else {
-          while (SwerveSubsystem.getInstance().getPitchValue() < -10) {
+          while (SwerveSubsystem.getInstance().getPitchValue() < initialAngle - 10) {
             SwerveSubsystem.getInstance().drive(0, -balanceSpeed, 0, false, true);
           }
-          while (SwerveSubsystem.getInstance().getPitchValue() < 0) {
+          while (SwerveSubsystem.getInstance().getPitchValue() < initialAngle) {
             SwerveSubsystem.getInstance().drive(0, -balanceSpeedSlow, 0, false, true);
           }
-          while (SwerveSubsystem.getInstance().getPitchValue() > 0) {
+          while (SwerveSubsystem.getInstance().getPitchValue() > initialAngle) {
             SwerveSubsystem.getInstance().drive(0, balanceSpeedSlow, 0, false, true);
           }
       }
