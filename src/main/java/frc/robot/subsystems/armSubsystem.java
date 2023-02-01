@@ -66,10 +66,4 @@ public class armSubsystem extends SubsystemBase {
     }
   }
 
-  public void stopLowBreak() {
-    breakSolenoidLow.set(Value.kOff);
-  }
-  public void stopHighBreak() {
-    breakSolenoidHigh.set(Value.kOff);
-  }
 }
