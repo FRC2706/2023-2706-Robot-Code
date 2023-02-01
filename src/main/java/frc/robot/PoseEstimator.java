@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.commands.poseEstimator;
 
 /** Add your docs here. */
 public class PoseEstimator {
@@ -15,10 +16,16 @@ public class PoseEstimator {
     public static DoubleSubscriber yaw;
     public static DoubleSubscriber imageTimestamp;
     public static IntegerSubscriber aprilTagID;
-    private NetworkTable table = NetworkTableInstance.getDefault().getTable("DriveTrain");
+    public static NetworkTable aprilTagTable;
+
+    public PoseEstimator(){
+        aprilTagTable = NetworkTableInstance.getDefault().getTable("AprilTagTable");
+        distance = aprilTagTable.getDoubleTopic("Distance: ").subscribe();
+
+    }
+
 
     public static void update(){
-
         if(distance.get(-99) == -99){
             return;
         }
