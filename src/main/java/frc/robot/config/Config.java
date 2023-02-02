@@ -372,16 +372,21 @@ public class Config {
     public static TrajectoryConfig trajectoryConfig = new TrajectoryConfig(kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared)
         .setKinematics(kDriveKinematics).addConstraint(autoVoltageConstraint);
     
-    // Constants for arm pneumatics
+    // PCM Can ID
     public static final int CTRE_PCM_CAN_ID = -1;
+    
+    //For intake pneumatics
+    public static final int INTAKE2_PNEUMATIC_FORWARD_CHANNEL = -1;
+    public static final int INTAKE2_PNEUMATIC_REVERSE_CHANNEL = -1;
+    public static final int INTAKE1_PNEUMATIC_FORWARD_CHANNEL = -1;
+    public static final int INTAKE1_PNEUMATIC_REVERSE_CHANNEL = -1;
+    
+
+    // Constants for arm pneumatics
     public static final int ARMLOW_PNEUMATIC_FORWARD_CHANNEL = -1;
     public static final int ARMLOW_PNEUMATIC_REVERSE_CHANNEL = -1;
     public static final int ARMHIGH_PNEUMATIC_FORWARD_CHANNEL = -1;
     public static final int ARMHIGH_PNEUMATIC_REVERSE_CHANNEL = -1;
-
-
-   
-
 
 
 
