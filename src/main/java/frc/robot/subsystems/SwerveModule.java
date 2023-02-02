@@ -19,8 +19,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib3512.math.OnboardModuleState;
@@ -29,7 +31,6 @@ import frc.lib3512.util.CANSparkMaxUtil;
 import frc.lib3512.util.CANCoderUtil.CCUsage;
 import frc.lib3512.util.CANSparkMaxUtil.Usage;
 import frc.robot.config.Config;
-import frc.robot.config.FluidConstant;
 import static frc.robot.ErrorCheck.errCTRE;
 import static frc.robot.ErrorCheck.errREV;
 
@@ -46,17 +47,17 @@ public class SwerveModule {
     private CANCoder encoder;
     private double lastAngle;
     private NetworkTable swerveModuleTable;
-    private NetworkTableEntry desiredSpeedEntry;
-    private NetworkTableEntry desiredAngleEntry;
-    private NetworkTableEntry currentSpeedEntry;
-    private NetworkTableEntry currentAngleEntry;
-    private NetworkTableEntry speedError;
-    private NetworkTableEntry angleError;
-    private NetworkTableEntry desiredAngle360Range;
-    private NetworkTableEntry currentAngle360Range;
+    private DoublePublisher desiredSpeedEntry;
+    private DoublePublisher desiredAngleEntry;
+    private DoublePublisher currentSpeedEntry;
+    private DoublePublisher currentAngleEntry;
+    private DoublePublisher speedError;
+    private DoublePublisher angleError;
+    private DoublePublisher desiredAngle360Range;
+    private DoublePublisher currentAngle360Range;
     private double m_encoderOffset;
-    private NetworkTableEntry canCoderEntry;
-    FluidConstant<Double> fluid_offset;
+    private DoublePublisher canCoderEntry;
+    private DoubleSubscriber sub_offset;
 
 
     SimpleMotorFeedforward feedforward = 
@@ -67,9 +68,6 @@ public class SwerveModule {
     public SwerveModule(int driveCanID, boolean driveInverted, int turningCanID, boolean turningInverted, int encoderCanID, double encoderOffset, String ModuleName) {
 
         // CODE: Construct both CANSparkMax objects and set all the nessecary settings (CONSTANTS from Config or from the parameters of the constructor)
-        fluid_offset = new FluidConstant<>("Offset" + ModuleName , encoderOffset, true)
-                    .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/offset"));
-        m_encoderOffset = encoderOffset;
         m_driveMotor = new CANSparkMax(driveCanID, MotorType.kBrushless);
 
         errREV(m_driveMotor.restoreFactoryDefaults());
@@ -79,11 +77,11 @@ public class SwerveModule {
         errREV(m_driveMotor.enableVoltageCompensation(Config.Swerve.driveVoltComp));
 
         m_drivePIDController = m_driveMotor.getPIDController();
-        errREV(m_drivePIDController.setP(Config.Swerve.fluid_drive_kP.get()));
-        errREV(m_drivePIDController.setI(Config.Swerve.fluid_drive_kI.get()));
-        errREV(m_drivePIDController.setD(Config.Swerve.fluid_drive_kD.get()));
-        errREV(m_drivePIDController.setIZone(Config.Swerve.fluid_drive_kIZone.get()));
-        errREV(m_drivePIDController.setFF(Config.Swerve.fluid_drive_kFF.get()));   
+        errREV(m_drivePIDController.setP(Config.Swerve.sub_drive_kP.get()));
+        errREV(m_drivePIDController.setI(Config.Swerve.sub_drive_kI.get()));
+        errREV(m_drivePIDController.setD(Config.Swerve.sub_drive_kD.get()));
+        errREV(m_drivePIDController.setIZone(Config.Swerve.sub_drive_kIZone.get()));
+        errREV(m_drivePIDController.setFF(Config.Swerve.sub_drive_kFF.get()));   
         CANSparkMaxUtil.setCANSparkMaxBusUsage(m_driveMotor, Usage.kAll);
         
         m_turningMotor = new CANSparkMax(turningCanID, MotorType.kBrushless);
@@ -104,11 +102,11 @@ public class SwerveModule {
         m_turningEncoder = m_turningMotor.getEncoder();
         errREV(m_turningEncoder.setPositionConversionFactor(Config.Swerve.turningEncoderConstant));
 
-        errREV(m_turningPIDController.setP(Config.Swerve.fluid_steering_kP.get()));
-        errREV(m_turningPIDController.setI(Config.Swerve.fluid_steering_kI.get()));
-        errREV(m_turningPIDController.setD(Config.Swerve.fluid_steering_kD.get()));
-        errREV(m_turningPIDController.setIZone(Config.Swerve.fluid_steering_kIZone.get()));
-        errREV(m_turningPIDController.setFF(Config.Swerve.fluid_steering_kFF.get()));
+        errREV(m_turningPIDController.setP(Config.Swerve.sub_steering_kP.get()));
+        errREV(m_turningPIDController.setI(Config.Swerve.sub_steering_kI.get()));
+        errREV(m_turningPIDController.setD(Config.Swerve.sub_steering_kD.get()));
+        errREV(m_turningPIDController.setIZone(Config.Swerve.sub_steering_kIZone.get()));
+        errREV(m_turningPIDController.setFF(Config.Swerve.sub_steering_kFF.get()));
 
         errREV(m_driveMotor.burnFlash());
         errREV(m_turningMotor.burnFlash());
@@ -130,15 +128,16 @@ public class SwerveModule {
         CANCoderUtil.setCANCoderBusUsage(encoder, CCUsage.kMinimal);
         errCTRE(encoder.configAllSettings(encoderConfiguration));
         
-        desiredSpeedEntry = swerveModuleTable.getEntry("Desired speed (mps)");
-        desiredAngleEntry = swerveModuleTable.getEntry("Desired angle (deg)");
-        currentSpeedEntry = swerveModuleTable.getEntry("Current speed (mps)");
-        currentAngleEntry = swerveModuleTable.getEntry("Current angle (deg)");
-        speedError = swerveModuleTable.getEntry("Speed error (mps)");
-        angleError = swerveModuleTable.getEntry("Angle error (deg)"); 
-        canCoderEntry = swerveModuleTable.getEntry("CanCoder");
-        desiredAngle360Range = swerveModuleTable.getEntry("Desired angle 360 range");
-        currentAngle360Range = swerveModuleTable.getEntry("Current angle 360 range");
+        desiredSpeedEntry = swerveModuleTable.getDoubleTopic("Desired speed (mps)").publish();
+        desiredAngleEntry = swerveModuleTable.getDoubleTopic("Desired angle (deg)").publish();
+        currentSpeedEntry = swerveModuleTable.getDoubleTopic("Current speed (mps)").publish();
+        currentAngleEntry = swerveModuleTable.getDoubleTopic("Current angle (deg)").publish();
+        speedError = swerveModuleTable.getDoubleTopic("Speed error (mps)").publish();
+        angleError = swerveModuleTable.getDoubleTopic("Angle error (deg)").publish(); 
+        canCoderEntry = swerveModuleTable.getDoubleTopic("CanCoder").publish();
+        desiredAngle360Range = swerveModuleTable.getDoubleTopic("Desired angle 360 range").publish();
+        currentAngle360Range = swerveModuleTable.getDoubleTopic("Current angle 360 range").publish();
+        sub_offset = swerveModuleTable.getDoubleTopic("Current angle 360 range").subscribe(encoderOffset);
         
         updateSteeringFromCanCoder();
 
@@ -196,14 +195,14 @@ public class SwerveModule {
 
         lastAngle = newAngle;
 
-        desiredSpeedEntry.setDouble(desiredState.speedMetersPerSecond);
-        desiredAngleEntry.setDouble(desiredState.angle.getDegrees());
-        currentSpeedEntry.setDouble(velocity);
-        currentAngleEntry.setDouble(angle.getDegrees());
-        speedError.setDouble(desiredState.speedMetersPerSecond - velocity);
-        angleError.setDouble(desiredState.angle.getDegrees() - angle.getDegrees());
-        desiredAngle360Range.setDouble(MathUtil.inputModulus(desiredState.angle.getDegrees(), -180.0, 180.0));
-        currentAngle360Range.setDouble(MathUtil.inputModulus(angle.getDegrees(), -180.0, 180.0));
+        desiredSpeedEntry.accept(desiredState.speedMetersPerSecond);
+        desiredAngleEntry.accept(desiredState.angle.getDegrees());
+        currentSpeedEntry.accept(velocity);
+        currentAngleEntry.accept(angle.getDegrees());
+        speedError.accept(desiredState.speedMetersPerSecond - velocity);
+        angleError.accept(desiredState.angle.getDegrees() - angle.getDegrees());
+        desiredAngle360Range.accept(MathUtil.inputModulus(desiredState.angle.getDegrees(), -180.0, 180.0));
+        currentAngle360Range.accept(MathUtil.inputModulus(angle.getDegrees(), -180.0, 180.0));
         NetworkTableInstance.getDefault().flush();
     }
 
@@ -253,7 +252,7 @@ public class SwerveModule {
      * @return radians
      */
     public double getCancoder() {
-        return Math.toRadians(encoder.getAbsolutePosition() + fluid_offset.get());
+        return Math.toRadians(encoder.getAbsolutePosition() + sub_offset.get());
     }
 
     /**
@@ -266,24 +265,24 @@ public class SwerveModule {
     }
 
     public void updatePIDValues(){
-        errREV(m_drivePIDController.setP(Config.Swerve.fluid_drive_kP.get()));
-        errREV(m_drivePIDController.setI(Config.Swerve.fluid_drive_kI.get()));
-        errREV(m_drivePIDController.setD(Config.Swerve.fluid_drive_kD.get()));
-        errREV(m_drivePIDController.setIZone(Config.Swerve.fluid_drive_kIZone.get()));
-        errREV(m_drivePIDController.setFF(Config.Swerve.fluid_drive_kFF.get()));
+        errREV(m_drivePIDController.setP(Config.Swerve.sub_drive_kP.get()));
+        errREV(m_drivePIDController.setI(Config.Swerve.sub_drive_kI.get()));
+        errREV(m_drivePIDController.setD(Config.Swerve.sub_drive_kD.get()));
+        errREV(m_drivePIDController.setIZone(Config.Swerve.sub_drive_kIZone.get()));
+        errREV(m_drivePIDController.setFF(Config.Swerve.sub_drive_kFF.get()));
 
-        errREV(m_turningPIDController.setP(Config.Swerve.fluid_steering_kP.get()));
-        errREV(m_turningPIDController.setI(Config.Swerve.fluid_steering_kI.get()));
-        errREV(m_turningPIDController.setD(Config.Swerve.fluid_steering_kD.get()));
-        errREV(m_turningPIDController.setIZone(Config.Swerve.fluid_steering_kIZone.get()));
-        errREV(m_turningPIDController.setFF(Config.Swerve.fluid_steering_kFF.get()));
+        errREV(m_turningPIDController.setP(Config.Swerve.sub_steering_kP.get()));
+        errREV(m_turningPIDController.setI(Config.Swerve.sub_steering_kI.get()));
+        errREV(m_turningPIDController.setD(Config.Swerve.sub_steering_kD.get()));
+        errREV(m_turningPIDController.setIZone(Config.Swerve.sub_steering_kIZone.get()));
+        errREV(m_turningPIDController.setFF(Config.Swerve.sub_steering_kFF.get()));
 
-        feedforward = new SimpleMotorFeedforward(Config.Swerve.fluid_kS.get(), Config.Swerve.fluid_kV.get(), Config.Swerve.fluid_kA.get());
+        feedforward = new SimpleMotorFeedforward(Config.Swerve.sub_kS.get(), Config.Swerve.sub_kV.get(), Config.Swerve.sub_kA.get());
     
     }
 
     public void updateNT(){
-        canCoderEntry.setDouble(Math.toDegrees(m_turningEncoder.getPosition()));
+        canCoderEntry.accept(Math.toDegrees(m_turningEncoder.getPosition()));
     }
 
     /**
