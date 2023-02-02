@@ -15,8 +15,9 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,10 +30,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
     private NetworkTable table = NetworkTableInstance.getDefault().getTable("DriveTrain");
-    private NetworkTableEntry gyroEntry = table.getEntry("RawGyro");
-    private NetworkTableEntry xEntry = table.getEntry("OdometryX");
-    private NetworkTableEntry yEntry = table.getEntry("OdometryY");
-    private NetworkTableEntry rotEntry = table.getEntry("OdometryRot");
+    private DoublePublisher gyroEntry = table.getDoubleTopic("RawGyro").publish();
+    private DoublePublisher xEntry = table.getDoubleTopic("OdometryX").publish();
+    private DoublePublisher yEntry = table.getDoubleTopic("OdometryY").publish();
+    private DoublePublisher rotEntry = table.getDoubleTopic("OdometryRot").publish();
     
     // Instance for singleton class
     private static SwerveSubsystem instance;
@@ -88,10 +89,10 @@ public class SwerveSubsystem extends SubsystemBase {
                 getPosition()
         );
         
-        gyroEntry.setDouble(currentGyro);
-        xEntry.setDouble(getPose().getX());
-        yEntry.setDouble(getPose().getY());
-        rotEntry.setDouble(getPose().getRotation().getDegrees());
+        gyroEntry.accept(currentGyro);
+        xEntry.accept(getPose().getX());
+        yEntry.accept(getPose().getY());
+        rotEntry.accept(getPose().getRotation().getDegrees());
 
         m_field.setRobotPose(getPose());
         
