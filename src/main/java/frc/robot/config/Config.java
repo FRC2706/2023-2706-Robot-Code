@@ -210,7 +210,7 @@ public class Config {
         public static final double kMaxAutoAngularSpeed = Math.PI *3; // rad/s
         public static final double kMaxAutoAngularAcceleration = Math.PI * 3; // rad/s/s
 
-        public static final double teleopRateLimit = 0.3;
+        public static final double teleopRateLimit = 3;
 
         public static final double driveKS = 0.667;
         public static final double driveKV = 2.44;
