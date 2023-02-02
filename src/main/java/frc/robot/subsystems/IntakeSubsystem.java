@@ -1,6 +1,3 @@
-//set three settings for claw open, cube and cone(In Progress)
-//think of better name then 1 and 2
-//
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;

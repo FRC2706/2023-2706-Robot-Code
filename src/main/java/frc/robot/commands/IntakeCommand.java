@@ -20,8 +20,10 @@ public class IntakeCommand extends InstantCommand {
   public IntakeCommand(int positionId) {
     position = positionId;
     intake = IntakeSubsystem.getInstance();
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intake);
+    if (intake!=null){
+        // Use addRequirements() here to declare subsystem dependencies.
+        addRequirements(intake);
+    }
   }
 
   // Called when the command is initially scheduled.
@@ -43,14 +45,17 @@ public class IntakeCommand extends InstantCommand {
   }
 
   public void open (){
-   intake.noPressure();
+   if (intake!=null)
+    intake.noPressure();
   }
 
   public void takeCone(){
+   if (intake!=null)
     intake.highPressure();
 }
 
   public void takeCube(){
+   if (intake!=null)
     intake.lowPressure();
   }
 }
