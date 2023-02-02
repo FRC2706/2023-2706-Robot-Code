@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Robot;
+import frc.robot.auto.AutoRoutines;
 import frc.robot.auto.AutoSelector;
 import frc.robot.commands.ModuleAngleFromJoystick;
 import frc.robot.commands.ResetGyro;
@@ -43,12 +44,15 @@ public class MiniSwerveContainer extends RobotContainer{
 
   AutoSelector m_autoSelector;
 
+
+  AutoRoutines routines;
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public MiniSwerveContainer() {
     // Configure the button bindings
     configureButtonBindings();
 
     m_autoSelector = new AutoSelector();
+    routines = new AutoRoutines();
   }
 
   /**
@@ -107,30 +111,7 @@ public class MiniSwerveContainer extends RobotContainer{
    * @return the command to run in autonomous
    */
   @Override
-  public Command getAutonomousCommand() {
-    Map<String, Command> eventMap = new HashMap<String, Command>();
-    eventMap.put("intake", new InstantCommand(() -> System.out.println("intake")));
-    eventMap.put ("shoot", new InstantCommand (() -> System.out.println("shoot")));
-
-    SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-      SwerveSubsystem.getInstance():: getPose,
-      SwerveSubsystem.getInstance():: resetOdometry,
-      Config.Swerve.kSwerveDriveKinematics,
-      new PIDConstants (5,0,0),
-      new PIDConstants (3,0,0.1),
-      SwerveSubsystem.getInstance() :: setModuleStatesAuto,
-      eventMap,
-      true,
-      SwerveSubsystem.getInstance()
-      );
-
-      List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Practice2", new PathConstraints( 2.5,  2));
-      // path.addAll (PathPlanner.loadPathGroup("Practice2", new PathConstraints( 2.5,  2)));
-      // path.addAll (PathPlanner.loadPathGroup("Practice1", new PathConstraints( 2.5,  2)));
-    return new InstantCommand (SwerveSubsystem.getInstance() :: updateModulesPID).andThen (autoBuilder.fullAuto(path));
-
-
+  public Command getAutonomousCommand(){
+    return routines.getAutonomousCommand(0);
   }
-
-
 }
