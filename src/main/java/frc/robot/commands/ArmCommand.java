@@ -9,22 +9,14 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
+import com.revrobotics.CANSparkMax.ControlType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
-public class ArmExtend extends CommandBase {
-  private static final MotorType motorType = MotorType.kBrushless;
-  private static final SparkMaxAbsoluteEncoder.Type encAbsType = SparkMaxAbsoluteEncoder.Type.kDutyCycle;
-
-  private AbsoluteEncoder m_absoluteTopArmEncoder;
-  private AbsoluteEncoder m_absoluteBottomArmEncoder;
-
-  CANSparkMax m_topArm = new CANSparkMax(0, motorType);
-  CANSparkMax m_bottomArm = new CANSparkMax(0,motorType); 
-
+public class ArmCommand extends CommandBase {
   double kP = 0;
   double kI = 0;
   double kD = 0;
@@ -43,10 +35,7 @@ public class ArmExtend extends CommandBase {
 
   /** Creates a new ArmExtend. */
   
-  public ArmExtend() {
-
-    m_absoluteTopArmEncoder = m_topArm.getAbsoluteEncoder(encAbsType);
-    m_absoluteBottomArmEncoder = m_bottomArm.getAbsoluteEncoder(encAbsType);
+  public ArmCommand() {
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(ArmSubsystem.getInstance());
@@ -66,27 +55,26 @@ public class ArmExtend extends CommandBase {
   public void execute() {
 
     double drivetrainx = SwerveSubsystem.getInstance().getPose().getX();
-    double x = setx(drivetrainx,nodeX);
-    double[] angles = calculateAngle(L1, L2, x, z);
+    double x = ArmSubsystem.getInstance().setx(drivetrainx,nodeX);
+    double[] angles = ArmSubsystem.getInstance().calculateAngle(L1, L2, x, z);
     double angle1 = angles[0];
     double angle2 = angles[1];
 
-    double targetAngularDistanceBottomArm = getAngularDistance(angle1, NEO_GEAR_RATIO);
-    double targetAngularDistanceTopArm = getAngularDistance(angle2, NEO_GEAR_RATIO);
+    double targetAngularDistanceBottomArm = ArmSubsystem.getInstance().getAngularDistance(angle1, NEO_GEAR_RATIO);
+    double targetAngularDistanceTopArm = ArmSubsystem.getInstance().getAngularDistance(angle2, NEO_GEAR_RATIO);
 
-    if (m_absoluteBottomArmEncoder.getPosition() < targetAngularDistanceBottomArm) {
-      m_bottomArm.set(pid.calculate(m_absoluteBottomArmEncoder.getVelocity(), armSpeed));
+    if (ArmSubsystem.getInstance().m_absoluteBottomArmEncoder.getPosition() < targetAngularDistanceBottomArm) {
+      ArmSubsystem.getInstance().setJoint1(targetAngularDistanceBottomArm);
     }
     else {
-      m_bottomArm.set(0);
+      ArmSubsystem.getInstance().m_bottomArm.set(0);
     }
 
-
-    if (m_absoluteTopArmEncoder.getPosition() < targetAngularDistanceTopArm) {
-      m_topArm.set(pid.calculate(m_absoluteTopArmEncoder.getVelocity(), armSpeed));
+    if (ArmSubsystem.getInstance().m_absoluteTopArmEncoder.getPosition() < targetAngularDistanceTopArm) {
+      ArmSubsystem.getInstance().setJoint2(targetAngularDistanceTopArm);
     }
     else {
-      m_topArm.set(0);
+      ArmSubsystem.getInstance().m_topArm.set(0);
     }
 
 
@@ -100,19 +88,5 @@ public class ArmExtend extends CommandBase {
   @Override
   public boolean isFinished() {
     return false;
-  }
-  public double[] calculateAngle(double L1, double L2, double x, double z) {
-    double zx = (Math.pow(x,2)+Math.pow(z,2));
-    double angle2 = Math.acos((zx-Math.pow(L1,2)-Math.pow(L2,2)/-2*L1*L2));
-    double angle1 = Math.atan(z/x)+Math.acos((Math.pow(L2,2)-zx+Math.pow(L1,2))/-2*zx*Math.pow(L1,2));
-    double[] angles = {angle1,angle2};
-    return angles;
-  }
-  public double setx(double drivetrain_x,double Node_x){
-    double x = Node_x - drivetrain_x;
-    return x;
-  }
-  public double getAngularDistance(double angle, double gearRatio) {
-    return angle * gearRatio;
   }
 }

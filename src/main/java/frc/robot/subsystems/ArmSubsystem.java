@@ -8,8 +8,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.SensorTimeBase;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.Config;
@@ -21,33 +25,37 @@ public class ArmSubsystem extends SubsystemBase {
   private static final MotorType motorType = MotorType.kBrushless;
   private static final SparkMaxAbsoluteEncoder.Type encAbsType = SparkMaxAbsoluteEncoder.Type.kDutyCycle;
   
-  private AbsoluteEncoder m_absoluteTopArmEncoder;
-  private AbsoluteEncoder m_absoluteBottomArmEncoder;
-
-  private static ArmSubsystem instance;
+  public CANCoder m_absoluteTopArmEncoder;
+  public CANCoder m_absoluteBottomArmEncoder;
 
 
-  private final CANSparkMax m_topArm;
-  private final CANSparkMax m_bottomArm;
-  private SparkMaxPIDController m_pidControllerTopArm;
-  private SparkMaxPIDController m_pidControllerBottomArm;
+  private static ArmSubsystem instance = null;
+
+
+  public final CANSparkMax m_topArm;
+  public final CANSparkMax m_bottomArm;
+  public SparkMaxPIDController m_pidControllerTopArm;
+  public SparkMaxPIDController m_pidControllerBottomArm;
   public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
     m_topArm = new CANSparkMax(SparkTopArmCANID, motorType);
     m_bottomArm = new CANSparkMax(SparkBottomArmCANID, motorType);
+    CANCoderConfiguration config = new CANCoderConfiguration();
     m_topArm.restoreFactoryDefaults();
     m_bottomArm.restoreFactoryDefaults();
 
-    m_absoluteTopArmEncoder = m_topArm.getAbsoluteEncoder(encAbsType);
-    m_absoluteBottomArmEncoder = m_bottomArm.getAbsoluteEncoder(encAbsType);
+    // set units of the CANCoder to radians, with velocity being radians per second
+    config.sensorCoefficient = 2 * Math.PI / 4096.0;
+    config.unitString = "rad";
+    config.sensorTimeBase = SensorTimeBase.PerSecond;
+
+    m_absoluteTopArmEncoder.configAllSettings(config);
+    m_absoluteBottomArmEncoder.configAllSettings(config);
 
     m_pidControllerTopArm = m_topArm.getPIDController();
     m_pidControllerBottomArm = m_bottomArm.getPIDController();
-
-    m_pidControllerTopArm.setFeedbackDevice(m_absoluteTopArmEncoder);
-    m_pidControllerBottomArm.setFeedbackDevice(m_absoluteBottomArmEncoder);
 
     // PID coefficients (probably need to change values and put the values in config)
     kP = 0.1;
@@ -74,12 +82,12 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerBottomArm.setFF(kFF);
     m_pidControllerBottomArm.setOutputRange(kMinOutput, kMaxOutput);
 
-
-
   }
 
   public static ArmSubsystem getInstance() {
-    instance = new ArmSubsystem();
+    if (instance == null) {
+      instance = new ArmSubsystem();
+    }
     return instance;
 }
 
@@ -87,4 +95,26 @@ public class ArmSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
+  public double[] calculateAngle(double L1, double L2, double x, double z) {
+    double zx = (Math.pow(x,2)+Math.pow(z,2));
+    double angle2 = Math.acos((zx-Math.pow(L1,2)-Math.pow(L2,2)/-2*L1*L2));
+    double angle1 = Math.atan(z/x)+Math.acos((Math.pow(L2,2)-zx+Math.pow(L1,2))/-2*zx*Math.pow(L1,2));
+    double[] angles = {angle1,angle2};
+    return angles;
+  }
+  public double setx(double drivetrain_x,double Node_x){
+    double x = Node_x - drivetrain_x;
+    return x;
+  }
+  public double getAngularDistance(double angle, double gearRatio) {
+    return angle / gearRatio;
+  }
+  public void setJoint1(double angle) {
+    m_bottomArm.getPIDController().setReference(angle, ControlType.kPosition);
+  }
+  public void setJoint2(double angle) {
+    m_topArm.getPIDController().setReference(angle, ControlType.kPosition);
+  }
+
 }
