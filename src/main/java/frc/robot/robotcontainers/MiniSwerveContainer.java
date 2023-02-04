@@ -57,8 +57,9 @@ public class MiniSwerveContainer extends RobotContainer{
     //Do not use Right or Left Bumper already used in separate file
     driver.start().onTrue(new ResetGyroToNearest());
     driver.back().onTrue(new ResetGyro());
-    driver.y().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
-    driver.a().whileTrue(new RotateAngleXY(driver, 0));
+    driver.b().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
+    driver.y().whileTrue(new RotateAngleXY(driver, 0));
+    driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
     
   }
 

@@ -5,12 +5,15 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RotateAngleXY extends SwerveTeleop {
 
-  PIDController pid = new PIDController(0.5, 0, 0); //pid to be tested
+  ProfiledPIDController pid = new ProfiledPIDController(5.0, 0, 0.4, 
+                                        new TrapezoidProfile.Constraints(4 * Math.PI, 8 * Math.PI)); //pid to be tested
   double angle;
 
   /** Creates a new RotateAngleXY. */
