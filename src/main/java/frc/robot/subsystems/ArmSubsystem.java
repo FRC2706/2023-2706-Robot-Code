@@ -19,9 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.Config;
 
 public class ArmSubsystem extends SubsystemBase {
-
-  private static final int SparkTopArmCANID = 0;
-  private static final int SparkBottomArmCANID = 0;
+  
   private static final MotorType motorType = MotorType.kBrushless;
   private static final SparkMaxAbsoluteEncoder.Type encAbsType = SparkMaxAbsoluteEncoder.Type.kDutyCycle;
   
@@ -40,8 +38,8 @@ public class ArmSubsystem extends SubsystemBase {
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
-    m_topArm = new CANSparkMax(SparkTopArmCANID, motorType);
-    m_bottomArm = new CANSparkMax(SparkBottomArmCANID, motorType);
+    m_topArm = new CANSparkMax(Config.Arm.TOP_ARM_SPARK_CAN_ID, motorType);
+    m_bottomArm = new CANSparkMax(Config.Arm.BOTTOM_ARM_SPARK_CAN_ID, motorType);
     CANCoderConfiguration config = new CANCoderConfiguration();
     m_topArm.restoreFactoryDefaults();
     m_bottomArm.restoreFactoryDefaults();
@@ -53,6 +51,9 @@ public class ArmSubsystem extends SubsystemBase {
 
     m_absoluteTopArmEncoder.configAllSettings(config);
     m_absoluteBottomArmEncoder.configAllSettings(config);
+
+    m_absoluteTopArmEncoder = new CANCoder(Config.Arm.TOP_ARM_SPARK_CAN_ID);
+    m_absoluteBottomArmEncoder = new CANCoder(Config.Arm.BOTTOM_ARM_SPARK_CAN_ID);
 
     m_pidControllerTopArm = m_topArm.getPIDController();
     m_pidControllerBottomArm = m_bottomArm.getPIDController();
@@ -98,8 +99,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   public double[] calculateAngle(double L1, double L2, double x, double z) {
     double zx = (Math.pow(x,2)+Math.pow(z,2));
-    double angle2 = Math.acos((zx-Math.pow(L1,2)-Math.pow(L2,2)/-2*L1*L2));
-    double angle1 = Math.atan(z/x)+Math.acos((Math.pow(L2,2)-zx+Math.pow(L1,2))/-2*zx*Math.pow(L1,2));
+    //angle2 --> top arm
+    double angle2 = Math.toRadians(Math.acos((zx-Math.pow(L1,2)-Math.pow(L2,2)/-2*L1*L2)));
+    //angle1 --> bottom arm
+    double angle1 = Math.toRadians(Math.atan(z/x)+Math.acos((Math.pow(L2,2)-zx+Math.pow(L1,2))/-2*zx*Math.pow(L1,2)));
     double[] angles = {angle1,angle2};
     return angles;
   }
@@ -111,10 +114,10 @@ public class ArmSubsystem extends SubsystemBase {
     return angle / gearRatio;
   }
   public void setJoint1(double angle) {
-    m_bottomArm.getPIDController().setReference(angle, ControlType.kPosition);
+    m_pidControllerBottomArm.setReference(angle, ControlType.kPosition);
   }
   public void setJoint2(double angle) {
-    m_topArm.getPIDController().setReference(angle, ControlType.kPosition);
+    m_pidControllerTopArm.setReference(angle, ControlType.kPosition);
   }
 
 }

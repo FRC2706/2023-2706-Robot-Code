@@ -13,30 +13,25 @@ import com.revrobotics.CANSparkMax.ControlType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.config.Config;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class ArmCommand extends CommandBase {
-  double kP = 0;
-  double kI = 0;
-  double kD = 0;
+  boolean level1;
+  boolean level2;
+  boolean level3;
   double integralMinimum = -0.5;
   double integralMaximum = 0.5;
-
-  PIDController pid = new PIDController(kP, kI, kD);
-
-  double NEO_GEAR_RATIO = 7.67;
-  double L1 = 0; //length of arm 1
-  double L2 =0; //length of arm 2
-  double z = 0;//constants --> first and second z positions - depends on the height of the node we are going for
-  double nodeX = 0; //the x positiion of the node we are going for
+  double z;
+  double nodeX;
   double armSpeed = 0.2;
-
-
   /** Creates a new ArmExtend. */
   
-  public ArmCommand() {
-
+  public ArmCommand(boolean level1, boolean level2, boolean level3) {
+    this.level1 = level1;
+    this.level2 = level2;
+    this.level3 = level3;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(ArmSubsystem.getInstance());
   }
@@ -46,36 +41,51 @@ public class ArmCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    pid.setIntegratorRange(integralMinimum, integralMaximum);
-
+    ArmSubsystem.getInstance().m_pidControllerBottomArm.setPositionPIDWrappingMaxInput(integralMaximum);
+    ArmSubsystem.getInstance().m_pidControllerBottomArm.setPositionPIDWrappingMinInput(integralMinimum);
+    ArmSubsystem.getInstance().m_pidControllerTopArm.setPositionPIDWrappingMaxInput(integralMaximum);
+    ArmSubsystem.getInstance().m_pidControllerTopArm.setPositionPIDWrappingMinInput(integralMinimum);
+    if (level1) {
+      z = 6;//constants --> first and second z positions - depends on the height of the node we are going for
+      nodeX = 8;//the x positiion of the node we are going for
+    } 
+    else if(level2) {
+      z = 30;
+      nodeX = 26;
+    }
+    else {
+      z = 36;
+      nodeX = 40;
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    double drivetrainx = SwerveSubsystem.getInstance().getPose().getX();
-    double x = ArmSubsystem.getInstance().setx(drivetrainx,nodeX);
-    double[] angles = ArmSubsystem.getInstance().calculateAngle(L1, L2, x, z);
+    double x = ArmSubsystem.getInstance().setx(0,nodeX);
+    double[] angles = ArmSubsystem.getInstance().calculateAngle(Config.Arm.L1, Config.Arm.L2, x, z);
     double angle1 = angles[0];
     double angle2 = angles[1];
 
-    double targetAngularDistanceBottomArm = ArmSubsystem.getInstance().getAngularDistance(angle1, NEO_GEAR_RATIO);
-    double targetAngularDistanceTopArm = ArmSubsystem.getInstance().getAngularDistance(angle2, NEO_GEAR_RATIO);
+    double targetAngularDistanceBottomArm = ArmSubsystem.getInstance().getAngularDistance(angle1, Config.Arm.NEO_GEAR_RATIO);
+    double targetAngularDistanceTopArm = ArmSubsystem.getInstance().getAngularDistance(angle2, Config.Arm.NEO_GEAR_RATIO);
 
-    if (ArmSubsystem.getInstance().m_absoluteBottomArmEncoder.getPosition() < targetAngularDistanceBottomArm) {
-      ArmSubsystem.getInstance().setJoint1(targetAngularDistanceBottomArm);
-    }
-    else {
-      ArmSubsystem.getInstance().m_bottomArm.set(0);
-    }
 
-    if (ArmSubsystem.getInstance().m_absoluteTopArmEncoder.getPosition() < targetAngularDistanceTopArm) {
-      ArmSubsystem.getInstance().setJoint2(targetAngularDistanceTopArm);
-    }
-    else {
-      ArmSubsystem.getInstance().m_topArm.set(0);
-    }
+    System.out.println(angles);
+    // if (ArmSubsystem.getInstance().m_absoluteBottomArmEncoder.getPosition() < targetAngularDistanceBottomArm) {
+    //   ArmSubsystem.getInstance().setJoint1(targetAngularDistanceBottomArm);
+    // }
+    // else {
+    //   ArmSubsystem.getInstance().m_bottomArm.set(0);
+    // }
+
+    // if (ArmSubsystem.getInstance().m_absoluteTopArmEncoder.getPosition() < targetAngularDistanceTopArm) {
+    //   ArmSubsystem.getInstance().setJoint2(targetAngularDistanceTopArm);
+    // }
+    // else {
+    //   ArmSubsystem.getInstance().m_topArm.set(0);
+    // }
 
 
   }

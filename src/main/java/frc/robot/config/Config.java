@@ -282,7 +282,14 @@ public class Config {
         public static double BRAKE_IN_DISABLE_TIME = 2.0;
     }
     
-    
+    public static class Arm {
+        public static final double NEO_GEAR_RATIO = 7.67;
+        public static final double L1 = 30; //length of arm 1
+        public static final double L2 =30; //length of arm 2
+        public static final int TOP_ARM_SPARK_CAN_ID = 18;
+        public static final int BOTTOM_ARM_SPARK_CAN_ID = 18;
+
+    }
     
         
     /**
