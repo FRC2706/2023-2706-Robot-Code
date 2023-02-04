@@ -25,7 +25,7 @@ public class translationCommand extends CommandBase {
   
   /** Creates a new translation. */
   public translationCommand( double deltaX, double deltaY) {
-    pidControlX = new ProfiledPIDController(0.1, 0.0, 0.0, 
+    pidControlX = new ProfiledPIDController(1, 0.0, 0.2, 
                                            new TrapezoidProfile.Constraints(1, 2));
     pidControlY = new ProfiledPIDController(0.1, 0.0, 0.0, 
                                            new TrapezoidProfile.Constraints(1,2));
@@ -47,13 +47,14 @@ public class translationCommand extends CommandBase {
     desiredY = currentY + deltaY;
 
     //set the tolerance
-    pidControlX.setTolerance(0.1, 0.1);
-    pidControlY.setTolerance(0.1, 0.1);
+    pidControlX.setTolerance(0.1);//, 0.1);
+    pidControlY.setTolerance(0.1);//, 0.1);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    System.out.println("Current X: " + currentX + ", DesiredX: " + desiredX + ", Position Error: " + pidControlX.getPositionError());
     //update the currentX and currentY
     currentX = SwerveSubsystem.getInstance().getPose().getX();
     currentY = SwerveSubsystem.getInstance().getPose().getY();
@@ -61,7 +62,7 @@ public class translationCommand extends CommandBase {
     double x = pidControlX.calculate(currentX, desiredX);
     double y = pidControlY.calculate(currentY, desiredY);
 
-    SwerveSubsystem.getInstance().drive(x, y, 0, true, true);
+    SwerveSubsystem.getInstance().drive(x, y, 0, true, false);
 
   }
 
@@ -75,7 +76,7 @@ public class translationCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(pidControlX.atSetpoint() && pidControlY.atSetpoint())
+    if(pidControlX.atSetpoint())// && pidControlY.atSetpoint())
     {
       return true;
     }

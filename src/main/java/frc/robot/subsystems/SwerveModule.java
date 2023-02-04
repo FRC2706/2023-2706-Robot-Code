@@ -219,7 +219,7 @@ public class SwerveModule {
 
         // CODE: Read encoder velocity from drive SparkMax and return m/s. (VelocityConversionFactor set so SparkMax returns m/s))
         
-        return m_driveEncoder.getVelocity();
+        return m_driveEncoder.getPosition();
     }
 
     /**
