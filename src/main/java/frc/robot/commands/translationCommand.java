@@ -4,14 +4,12 @@
 
 package frc.robot.commands;
 
-import javax.swing.text.html.HTMLDocument.RunElement;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveSubsystem;
 
+//TODO: change name to TranslationCommand to maintain Java standards for class names.
 public class translationCommand extends CommandBase {
   ProfiledPIDController pidControlX;
   double currentX;
