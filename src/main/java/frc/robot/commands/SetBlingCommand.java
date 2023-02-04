@@ -33,8 +33,14 @@ public class SetBlingCommand extends InstantCommand {
   public void initialize() {
     if (bling != null)
     {
+      if (m_blingPatternId!= 0) {
+        bling.setBrightness();
+      }
       switch( m_blingPatternId )
       {
+        case 0:
+          bling.setDisabled();
+          break;
         case 1:
           bling.setPurple();
           break;
