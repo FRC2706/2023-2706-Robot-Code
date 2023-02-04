@@ -26,9 +26,9 @@ public class translationCommand extends CommandBase {
   /** Creates a new translation. */
   public translationCommand( double deltaX, double deltaY) {
     pidControlX = new ProfiledPIDController(0.1, 0.0, 0.0, 
-                                           new TrapezoidProfile.Constraints(3, 2));
+                                           new TrapezoidProfile.Constraints(1, 2));
     pidControlY = new ProfiledPIDController(0.1, 0.0, 0.0, 
-                                           new TrapezoidProfile.Constraints(3,2));
+                                           new TrapezoidProfile.Constraints(1,2));
 
     this.deltaX = deltaX;
     this.deltaY = deltaY;
@@ -54,19 +54,23 @@ public class translationCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    //update the currentX and currentY
+    currentX = SwerveSubsystem.getInstance().getPose().getX();
+    currentY = SwerveSubsystem.getInstance().getPose().getY();
+
     double x = pidControlX.calculate(currentX, desiredX);
     double y = pidControlY.calculate(currentY, desiredY);
 
     SwerveSubsystem.getInstance().drive(x, y, 0, true, true);
 
-    //update the currentX and currentY
-    currentX = SwerveSubsystem.getInstance().getPose().getX();
-    currentY = SwerveSubsystem.getInstance().getPose().getY();
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    SwerveSubsystem.getInstance().stopMotors();
+    //todo: set brake mode
+  }
 
   // Returns true when the command should end.
   @Override
