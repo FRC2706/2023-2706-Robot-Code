@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.auto.AutoSelector;
 import frc.robot.commands.ModuleAngleFromJoystick;
@@ -40,6 +41,10 @@ public class MiniSwerveContainer extends RobotContainer{
     configureButtonBindings();
 
     m_autoSelector = new AutoSelector();
+
+    //use FRC Labview Dashboard
+    String[] autoList = {"Test1", "Test2", "Test3", "To add more"};
+    SmartDashboard.putStringArray("Auto List", autoList );
   }
 
   /**

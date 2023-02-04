@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -32,7 +33,9 @@ public class AutoSelector {
         Test5(5),
 
         RapidReactTest(8),
-        MeasureableTest(9);
+        MeasureableTest(9),
+
+        UseFRCDashBoard(100);
 
         private int id;
 
@@ -183,6 +186,10 @@ public class AutoSelector {
         if (m_autonomousRoutines.getSelected() == AutoRoutine.UseSelectorSwitch) {
             return getPathIDFromSwitch();
         }
+        else if (m_autonomousRoutines.getSelected() == AutoRoutine.UseFRCDashBoard)
+        {
+            return getPathIDFromFRCDashboard();
+        }
 
         return m_autonomousRoutines.getSelected();
     }
@@ -193,5 +200,31 @@ public class AutoSelector {
      */
     private AutoRoutine getPathIDFromSwitch() {
         return AutoRoutine.DoNothing;
+    }
+
+    /**
+     * Use FRC Labview Dashboard
+     * @return The ID of the selected Auto Routine
+     */
+    private AutoRoutine getPathIDFromFRCDashboard() {
+        AutoRoutine autoId = AutoRoutine.DoNothing;
+        String autoName = SmartDashboard.getString("Auto Selector", "Test!");
+        switch(autoName)
+        {
+            case "Test1":
+                autoId = AutoRoutine.Test1;
+                break;
+            case "Test2":
+                autoId = AutoRoutine.Test2; 
+                break;
+            case "Test3":
+                autoId = AutoRoutine.Test3;
+                break;
+            default:      
+                autoId = AutoRoutine.DoNothing;
+                break;
+        }
+
+        return autoId;
     }
 }
