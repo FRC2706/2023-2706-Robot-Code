@@ -11,15 +11,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.Config;
 
 public class armSubsystem extends SubsystemBase {
-  DoubleSolenoid breakSolenoidLow;
-  DoubleSolenoid breakSolenoidHigh;
+  DoubleSolenoid brakeSolenoidLow;
+  DoubleSolenoid brakeSolenoidHigh;
   /** Creates a new armSubsystem. */
   public armSubsystem() {
-    breakSolenoidLow = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
+    brakeSolenoidLow = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
                                           PneumaticsModuleType.CTREPCM,
                                           Config.ARMLOW_PNEUMATIC_FORWARD_CHANNEL,
                                           Config.ARMLOW_PNEUMATIC_REVERSE_CHANNEL);
-    breakSolenoidHigh = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
+    brakeSolenoidHigh = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
                                           PneumaticsModuleType.CTREPCM,
                                           Config.ARMHIGH_PNEUMATIC_FORWARD_CHANNEL,
                                           Config.ARMHIGH_PNEUMATIC_REVERSE_CHANNEL);
@@ -30,39 +30,39 @@ public class armSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
   /*
-   * This method will control the Bottom Arm Break
-   * @param bBreakOn true: set break mode
-   *                 false: remove break mode
+   * This method will control the Bottom Arm Brake
+   * @param bBrakeOn true: set brake mode
+   *                 false: remove brake mode
    */
-  public void controlBottomArmBreak( boolean bBreakOn)
+  public void controlBottomArmBrake( boolean bBrakeOn)
   {
-    if (bBreakOn == true)
+    if (bBrakeOn == true)
     {
-      //set break on the arm
-      breakSolenoidLow.set(Value.kForward);
+      //set brake on the arm
+      brakeSolenoidLow.set(Value.kForward);
 
     }
     else 
     {
-      breakSolenoidLow.set(Value.kReverse);
+      brakeSolenoidLow.set(Value.kReverse);
     }
   }
   /*
-   * This method will control the Top Arm Break
-   * @param bBreakon true: set break mode
-   *                 false: remove break mode
+   * This method will control the Top Arm Brake
+   * @param bBrakeon true: set brake mode
+   *                 false: remove brake mode
    */
-  public void controlTopArmBreak( boolean bBreakOn)
+  public void controlTopArmBrake( boolean bBrakeOn)
   {
-    if (bBreakOn == true)
+    if (bBrakeOn == true)
     {
-      //set break on the arm
-      breakSolenoidHigh.set(Value.kForward);
+      //set brake on the arm
+      brakeSolenoidHigh.set(Value.kForward);
 
     }
     else 
     {
-      breakSolenoidHigh.set(Value.kReverse);
+      brakeSolenoidHigh.set(Value.kReverse);
     }
   }
 
