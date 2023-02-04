@@ -68,7 +68,7 @@ public class MiniSwerveContainer extends RobotContainer{
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
     driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
     
-    driver.x().whileTrue(new translationCommand(1, 0));
+    driver.x().whileTrue(new translationCommand(1, 1));
   }
 
 

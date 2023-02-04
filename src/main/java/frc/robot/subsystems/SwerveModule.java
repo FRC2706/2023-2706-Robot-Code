@@ -91,6 +91,7 @@ public class SwerveModule {
         errREV(m_turningMotor.setSmartCurrentLimit(Config.Swerve.steeringCurrentLimit));
 
         m_driveEncoder = m_driveMotor.getEncoder();
+        errREV(m_driveEncoder.setPositionConversionFactor(Config.Swerve.drivePositionConversionFactor));
         errREV(m_driveEncoder.setVelocityConversionFactor(Config.Swerve.driveVelocityConversionFactor));
         errREV(m_driveEncoder.setPosition(0.0));
 
