@@ -14,6 +14,7 @@ import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.commands.BrakeModeDisabled;
 import frc.robot.commands.SyncSteerEncoders;
 import frc.robot.config.Config;
+import frc.robot.robotcontainers.ArmSimContainer;
 import frc.robot.robotcontainers.BeetleContainer;
 import frc.robot.robotcontainers.ClutchContainer;
 import frc.robot.robotcontainers.CompRobotContainer;
@@ -41,9 +42,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+
     // Instantiate the RobotContainer based on the Robot ID.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    switch (Config.getRobotId()) {
+    //switch (Config.getRobotId()) {
+      switch (100) {
       case 0:
         m_robotContainer = new CompRobotContainer(); break;
       
@@ -61,6 +64,9 @@ public class Robot extends TimedRobot {
 
       case 5:
         m_robotContainer = new MiniNeoDiffContainer(); break;
+
+      case 100: 
+        m_robotContainer = new ArmSimContainer(); break;
 
       default:
         m_robotContainer = new CompRobotContainer();
