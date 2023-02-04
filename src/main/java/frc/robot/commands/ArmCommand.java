@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.config.Config;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import java.util.Arrays;
 
 public class ArmCommand extends CommandBase {
   boolean level1;
@@ -45,11 +46,11 @@ public class ArmCommand extends CommandBase {
     ArmSubsystem.getInstance().m_pidControllerBottomArm.setPositionPIDWrappingMinInput(integralMinimum);
     ArmSubsystem.getInstance().m_pidControllerTopArm.setPositionPIDWrappingMaxInput(integralMaximum);
     ArmSubsystem.getInstance().m_pidControllerTopArm.setPositionPIDWrappingMinInput(integralMinimum);
-    if (level1) {
+    if (level1==true) {
       z = 6;//constants --> first and second z positions - depends on the height of the node we are going for
       nodeX = 8;//the x positiion of the node we are going for
     } 
-    else if(level2) {
+    else if(level2==true) {
       z = 30;
       nodeX = 26;
     }
@@ -70,9 +71,7 @@ public class ArmCommand extends CommandBase {
 
     double targetAngularDistanceBottomArm = ArmSubsystem.getInstance().getAngularDistance(angle1, Config.Arm.NEO_GEAR_RATIO);
     double targetAngularDistanceTopArm = ArmSubsystem.getInstance().getAngularDistance(angle2, Config.Arm.NEO_GEAR_RATIO);
-
-
-    System.out.println(angles);
+    ArmSubsystem.getInstance().setJoint1(targetAngularDistanceBottomArm);
     // if (ArmSubsystem.getInstance().m_absoluteBottomArmEncoder.getPosition() < targetAngularDistanceBottomArm) {
     //   ArmSubsystem.getInstance().setJoint1(targetAngularDistanceBottomArm);
     // }
@@ -87,6 +86,7 @@ public class ArmCommand extends CommandBase {
     //   ArmSubsystem.getInstance().m_topArm.set(0);
     // }
 
+    System.out.println(Arrays.toString(angles));
 
   }
 

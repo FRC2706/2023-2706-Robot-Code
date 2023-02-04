@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.Config;
 
 public class ArmSubsystem extends SubsystemBase {
-  
+
   private static final MotorType motorType = MotorType.kBrushless;
   private static final SparkMaxAbsoluteEncoder.Type encAbsType = SparkMaxAbsoluteEncoder.Type.kDutyCycle;
   
@@ -49,11 +49,11 @@ public class ArmSubsystem extends SubsystemBase {
     config.unitString = "rad";
     config.sensorTimeBase = SensorTimeBase.PerSecond;
 
+    m_absoluteTopArmEncoder = new CANCoder(16);
+    m_absoluteBottomArmEncoder = new CANCoder(17);
+
     m_absoluteTopArmEncoder.configAllSettings(config);
     m_absoluteBottomArmEncoder.configAllSettings(config);
-
-    m_absoluteTopArmEncoder = new CANCoder(Config.Arm.TOP_ARM_SPARK_CAN_ID);
-    m_absoluteBottomArmEncoder = new CANCoder(Config.Arm.BOTTOM_ARM_SPARK_CAN_ID);
 
     m_pidControllerTopArm = m_topArm.getPIDController();
     m_pidControllerBottomArm = m_bottomArm.getPIDController();
@@ -100,9 +100,9 @@ public class ArmSubsystem extends SubsystemBase {
   public double[] calculateAngle(double L1, double L2, double x, double z) {
     double zx = (Math.pow(x,2)+Math.pow(z,2));
     //angle2 --> top arm
-    double angle2 = Math.toRadians(Math.acos((zx-Math.pow(L1,2)-Math.pow(L2,2)/-2*L1*L2)));
+    double angle2 = (Math.acos((zx-Math.pow(L1,2)-Math.pow(L2,2))/(-2*L1*L2)));
     //angle1 --> bottom arm
-    double angle1 = Math.toRadians(Math.atan(z/x)+Math.acos((Math.pow(L2,2)-zx+Math.pow(L1,2))/-2*zx*Math.pow(L1,2)));
+    double angle1 = (Math.atan(z/x)+Math.acos((Math.pow(L2,2)-zx-Math.pow(L1,2))/(-2*Math.sqrt(zx)*L1)));
     double[] angles = {angle1,angle2};
     return angles;
   }
