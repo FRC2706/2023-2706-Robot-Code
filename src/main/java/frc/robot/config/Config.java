@@ -59,7 +59,7 @@ public class Config {
      * ID 3: Cosmobot (Deep Space)
      * ID 4: MiniSwerve (Small swerve chassis)
      * ID 5: NeoBeetle (Small Neo tank drive)
-     * ID 6: 
+     * ID 6: ArmBot (Arm Bot)
      * 
      *  ...
      * 

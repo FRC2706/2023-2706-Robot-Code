@@ -16,6 +16,8 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.SubsystemChecker;
+import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.config.Config;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -87,6 +89,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public static ArmSubsystem getInstance() {
     if (instance == null) {
+      SubsystemChecker.subsystemConstructed(SubsystemType.ArmSubsystem);
       instance = new ArmSubsystem();
     }
     return instance;
