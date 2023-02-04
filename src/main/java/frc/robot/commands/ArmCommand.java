@@ -27,6 +27,10 @@ public class ArmCommand extends CommandBase {
   double z;
   double nodeX;
   double armSpeed = 0.2;
+
+  double targetAngularDistanceBottomArm;
+  double targetAngularDistanceTopArm;
+
   /** Creates a new ArmExtend. */
   
   public ArmCommand(boolean level1, boolean level2, boolean level3) {
@@ -69,8 +73,8 @@ public class ArmCommand extends CommandBase {
     double angle1 = angles[0];
     double angle2 = angles[1];
 
-    double targetAngularDistanceBottomArm = ArmSubsystem.getInstance().getAngularDistance(angle1, Config.Arm.NEO_GEAR_RATIO);
-    double targetAngularDistanceTopArm = ArmSubsystem.getInstance().getAngularDistance(angle2, Config.Arm.NEO_GEAR_RATIO);
+    targetAngularDistanceBottomArm = ArmSubsystem.getInstance().getAngularDistance(angle1, Config.Arm.NEO_GEAR_RATIO);
+    targetAngularDistanceTopArm = ArmSubsystem.getInstance().getAngularDistance(angle2, Config.Arm.NEO_GEAR_RATIO);
     ArmSubsystem.getInstance().setJoint1(targetAngularDistanceBottomArm);
     // if (ArmSubsystem.getInstance().m_absoluteBottomArmEncoder.getPosition() < targetAngularDistanceBottomArm) {
     //   ArmSubsystem.getInstance().setJoint1(targetAngularDistanceBottomArm);
@@ -97,6 +101,11 @@ public class ArmCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if (Math.abs(targetAngularDistanceBottomArm - ArmSubsystem.getInstance().m_bottomArm.getEncoder().getPosition()) < Math.toRadians(1) ) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 }

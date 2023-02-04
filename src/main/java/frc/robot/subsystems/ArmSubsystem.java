@@ -76,6 +76,9 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerTopArm.setIZone(kIz);
     m_pidControllerTopArm.setFF(kFF);
     m_pidControllerTopArm.setOutputRange(kMinOutput, kMaxOutput);
+    
+    m_bottomArm.getEncoder().setPositionConversionFactor(2*Math.PI / Config.Arm.NEO_GEAR_RATIO);
+    m_topArm.getEncoder().setPositionConversionFactor(2*Math.PI / Config.Arm.NEO_GEAR_RATIO);
 
     // setting PID coefficients for bottom arm
     m_pidControllerBottomArm.setP(kP);
