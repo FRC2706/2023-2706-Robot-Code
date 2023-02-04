@@ -10,7 +10,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 public class RotateAngleXY extends SwerveTeleop {
 
-  PIDController pid = new PIDController(0, 0, 0); //pid to be tested
+  PIDController pid = new PIDController(0.5, 0, 0); //pid to be tested
   double angle;
 
   /** Creates a new RotateAngleXY. */
@@ -20,11 +20,11 @@ public class RotateAngleXY extends SwerveTeleop {
     this.angle = _angle;
 
     pid.setTolerance(0.1);
-    pid.enableContinuousInput(-180.0, 180.0);
+    pid.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   @Override
   public double calculateRot() {
-    return(pid.calculate(SwerveSubsystem.getInstance().getHeading().getDegrees(), this.angle));
+    return(pid.calculate(SwerveSubsystem.getInstance().getHeading().getRadians(), this.angle));
   }
 }
