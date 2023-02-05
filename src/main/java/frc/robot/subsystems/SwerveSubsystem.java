@@ -190,6 +190,28 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     /**
+     * Returns the pitch of the robot.
+     * 
+     * Uses this method for pitch
+     *
+     * @return the robot's pitch in rotation 2d
+     */
+    public Rotation2d getPitch() {
+        return(Rotation2d.fromDegrees(m_pigeon.getPitch()));
+    }
+
+    /**
+     * Returns the roll of the robot.
+     * 
+     * Uses this method for roll
+     *
+     * @return the robot's roll in rotation 2d
+     */
+    public Rotation2d getRoll() {
+        return(Rotation2d.fromDegrees(m_pigeon.getRoll()));
+    }
+
+    /**
      * Standard stop motors method for every subsystem.
      */
     public void stopMotors() {
