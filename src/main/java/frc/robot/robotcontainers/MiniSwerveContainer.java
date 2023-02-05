@@ -19,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.robot.Robot;
 import frc.robot.auto.AutoRoutines;
 import frc.robot.auto.AutoSelector;
@@ -48,6 +49,7 @@ public class MiniSwerveContainer extends RobotContainer{
   AutoRoutines routines;
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public MiniSwerveContainer() {
+    LiveWindow.enableAllTelemetry();
     // Configure the button bindings
     configureButtonBindings();
 

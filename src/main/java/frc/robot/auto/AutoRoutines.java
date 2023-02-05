@@ -23,7 +23,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class AutoRoutines {
     SwerveAutoBuilder autoBuilder;
 
-    List<PathPlannerTrajectory> Practice1copy;
+    List<PathPlannerTrajectory> Practice1;
     List<PathPlannerTrajectory> Practice2;
     List<PathPlannerTrajectory> leave_top;
     List<PathPlannerTrajectory> leave_middle_around_;
@@ -68,7 +68,7 @@ public class AutoRoutines {
                 true,
                 SwerveSubsystem.getInstance());
 
-        Practice1copy = PathPlanner.loadPathGroup("Practice1copy", 2.5, 3);
+        Practice1 = PathPlanner.loadPathGroup("Practice1", 2.5, 3);
         Practice2 = PathPlanner.loadPathGroup("Practice2", 2.5, 3);
         leave_top = PathPlanner.loadPathGroup("leave_top", 2.5, 3);
         leave_middle_around_ = PathPlanner.loadPathGroup("leave_middle_around_", 2.5, 3);
@@ -178,7 +178,7 @@ public class AutoRoutines {
                 return (autoBuilder.fullAuto(place_pick_place_pick_place_bottom));
             
             case 25:
-                return (autoBuilder.fullAuto(Practice1copy));
+                return (autoBuilder.fullAuto(Practice1));
                 
             case 26:
                 return (autoBuilder.fullAuto(Practice2));
