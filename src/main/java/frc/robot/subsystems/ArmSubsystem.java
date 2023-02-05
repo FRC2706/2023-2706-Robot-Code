@@ -106,7 +106,7 @@ public class ArmSubsystem extends SubsystemBase {
   public double[] calculateAngle(double L1, double L2, double x, double z) {
     double zx = (Math.pow(x,2)+Math.pow(z,2));
     //angle2 --> top arm
-    double angle2 = (Math.acos((zx-Math.pow(L1,2)-Math.pow(L2,2))/(-2*L1*L2)));
+    double angle2 = Math.acos((zx-Math.pow(L1,2)-Math.pow(L2,2))/(-2*L1*L2));
     //angle1 --> bottom arm
     double angle1 = (Math.atan(z/x)+Math.acos((Math.pow(L2,2)-zx-Math.pow(L1,2))/(-2*Math.sqrt(zx)*L1)));
     double[] angles = {angle1,angle2};
@@ -120,7 +120,7 @@ public class ArmSubsystem extends SubsystemBase {
     return angle / gearRatio;
   }
   public void setJoint1(double angle) {
-    m_pidControllerBottomArm.setReference(angle, ControlType.kPosition);
+    m_pidControllerTopArm.setReference(angle, ControlType.kPosition); //this is only for testing will switch to bottom arm
   }
   public void setJoint2(double angle) {
     m_pidControllerTopArm.setReference(angle, ControlType.kPosition);

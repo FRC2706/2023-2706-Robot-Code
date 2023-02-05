@@ -92,7 +92,7 @@ public class MiniSwerveContainer extends RobotContainer{
 
     // Command angleSetPoint5 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state4, state4, state4, state4}, true), SwerveSubsystem.getInstance());
     // new JoystickButton(driver, XboxController.Button.kLeftBumper.value).whenHeld(angleSetPoint5).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
-    controlStick.b().onTrue(new ArmCommand(false, false, true));
+    // controlStick.b().onTrue(new ArmCommand(false, false, true));
   }
 
 

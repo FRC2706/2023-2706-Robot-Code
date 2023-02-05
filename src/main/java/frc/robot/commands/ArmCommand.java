@@ -19,9 +19,8 @@ import frc.robot.subsystems.SwerveSubsystem;
 import java.util.Arrays;
 
 public class ArmCommand extends CommandBase {
-  boolean level1;
-  boolean level2;
-  boolean level3;
+  int level;
+  boolean isTop;
   double integralMinimum = -0.5;
   double integralMaximum = 0.5;
   double z;
@@ -33,10 +32,9 @@ public class ArmCommand extends CommandBase {
 
   /** Creates a new ArmExtend. */
   
-  public ArmCommand(boolean level1, boolean level2, boolean level3) {
-    this.level1 = level1;
-    this.level2 = level2;
-    this.level3 = level3;
+  public ArmCommand(int level, boolean isTop) {
+    this.level = level;
+    this.isTop = isTop;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(ArmSubsystem.getInstance());
   }
@@ -50,16 +48,16 @@ public class ArmCommand extends CommandBase {
     ArmSubsystem.getInstance().m_pidControllerBottomArm.setPositionPIDWrappingMinInput(integralMinimum);
     ArmSubsystem.getInstance().m_pidControllerTopArm.setPositionPIDWrappingMaxInput(integralMaximum);
     ArmSubsystem.getInstance().m_pidControllerTopArm.setPositionPIDWrappingMinInput(integralMinimum);
-    if (level1==true) {
-      z = 6;//constants --> first and second z positions - depends on the height of the node we are going for
+    if (level==1) {
+      z = 4;//constants --> first and second z positions - depends on the height of the node we are going for
       nodeX = 8;//the x positiion of the node we are going for
     } 
-    else if(level2==true) {
-      z = 30;
+    else if(level==2) {
+      z = 10;
       nodeX = 26;
     }
-    else {
-      z = 36;
+    else if (level==3) {
+      z = 10;
       nodeX = 40;
     }
   }
@@ -75,7 +73,13 @@ public class ArmCommand extends CommandBase {
 
     targetAngularDistanceBottomArm = ArmSubsystem.getInstance().getAngularDistance(angle1, Config.Arm.NEO_GEAR_RATIO);
     targetAngularDistanceTopArm = ArmSubsystem.getInstance().getAngularDistance(angle2, Config.Arm.NEO_GEAR_RATIO);
-    ArmSubsystem.getInstance().setJoint1(targetAngularDistanceBottomArm);
+    
+    if (level == 3) {
+      ArmSubsystem.getInstance().setJoint2(angle2);
+    }
+    else if (level == 2) {
+      ArmSubsystem.getInstance().setJoint1(angle1);
+    }
     // if (ArmSubsystem.getInstance().m_absoluteBottomArmEncoder.getPosition() < targetAngularDistanceBottomArm) {
     //   ArmSubsystem.getInstance().setJoint1(targetAngularDistanceBottomArm);
     // }
@@ -91,21 +95,39 @@ public class ArmCommand extends CommandBase {
     // }
 
     System.out.println(Arrays.toString(angles));
+    System.out.println(targetAngularDistanceBottomArm);
+    System.out.println(ArmSubsystem.getInstance().m_topArm.getEncoder().getPosition());
+    System.out.println(targetAngularDistanceTopArm);
+    System.out.println(ArmSubsystem.getInstance().m_bottomArm.getEncoder().getPosition());
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    ArmSubsystem.getInstance().m_bottomArm.stopMotor();
+    ArmSubsystem.getInstance().m_topArm.stopMotor();
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Math.abs(targetAngularDistanceBottomArm - ArmSubsystem.getInstance().m_bottomArm.getEncoder().getPosition()) < Math.toRadians(1) ) {
-      return true;
+    if (isTop == true) {
+      if (Math.abs(targetAngularDistanceTopArm - ArmSubsystem.getInstance().m_topArm.getEncoder().getPosition()) < Math.toRadians(1) ) {
+        return true;
+      }
+      else {
+        return false;
+      }
     }
     else {
-      return false;
+      if (Math.abs(targetAngularDistanceBottomArm - ArmSubsystem.getInstance().m_topArm.getEncoder().getPosition()) < Math.toRadians(1) ) {
+        return true;
+      }
+      else {
+        return false;
+      }
     }
+    
   }
 }

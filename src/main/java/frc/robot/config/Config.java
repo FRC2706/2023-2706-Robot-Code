@@ -284,10 +284,10 @@ public class Config {
     
     public static class Arm {
         public static final double NEO_GEAR_RATIO = 7.67;
-        public static final double L1 = 30; //length of arm 1
-        public static final double L2 =30; //length of arm 2
-        public static final int TOP_ARM_SPARK_CAN_ID = 19;
-        public static final int BOTTOM_ARM_SPARK_CAN_ID = 18;
+        public static final double L1 = 40; //length of arm 1
+        public static final double L2 = 40; //length of arm 2
+        public static final int TOP_ARM_SPARK_CAN_ID = 18;
+        public static final int BOTTOM_ARM_SPARK_CAN_ID = 19;
 
     }
     
