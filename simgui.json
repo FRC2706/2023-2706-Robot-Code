@@ -1,0 +1,11 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Auto/Routines": "String Chooser",
+      "/Shuffleboard/BasicDebugging/CommandScheduler": "Scheduler",
+      "/SmartDashboard/Arm Sim": "Mechanism2d",
+      "/SmartDashboard/Field": "Field2d"
+    }
+  }
+}
