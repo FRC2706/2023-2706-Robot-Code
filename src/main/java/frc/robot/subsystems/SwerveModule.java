@@ -126,9 +126,9 @@ public class SwerveModule {
         encoder = new CANCoder(encoderCanID);
 
         errCTRE(encoder.configFactoryDefault());
-        CANCoderUtil.setCANCoderBusUsage(encoder, CCUsage.kMinimal);
+        CANCoderUtil.setCANCoderBusUsage(encoder, CCUsage.kSensorDataOnly);
         errCTRE(encoder.configAllSettings(encoderConfiguration));
-        
+
         desiredSpeedEntry = swerveModuleTable.getDoubleTopic("Desired speed (mps)").publish();
         desiredAngleEntry = swerveModuleTable.getDoubleTopic("Desired angle (deg)").publish();
         currentSpeedEntry = swerveModuleTable.getDoubleTopic("Current speed (mps)").publish();

@@ -31,9 +31,18 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private NetworkTable table = NetworkTableInstance.getDefault().getTable("DriveTrain");
     private DoublePublisher gyroEntry = table.getDoubleTopic("RawGyro").publish();
-    private DoublePublisher xEntry = table.getDoubleTopic("OdometryX").publish();
-    private DoublePublisher yEntry = table.getDoubleTopic("OdometryY").publish();
-    private DoublePublisher rotEntry = table.getDoubleTopic("OdometryRot").publish();
+    private DoublePublisher xEntry = table.getDoubleTopic("OdometryX").publish(PubSubOption.periodic(0.02));
+    private DoublePublisher yEntry = table.getDoubleTopic("OdometryY").publish(PubSubOption.periodic(0.02));
+    private DoublePublisher rotEntry = table.getDoubleTopic("OdometryRot").publish(PubSubOption.periodic(0.02));
+
+    private DoublePublisher[] cancoderOdometryPubs = new DoublePublisher[] {
+        table.getDoubleTopic("cancoderOdometry/X").publish(PubSubOption.periodic(0.02)),
+        table.getDoubleTopic("cancoderOdometry/Y").publish(PubSubOption.periodic(0.02)),
+        table.getDoubleTopic("cancoderOdometry/Deg").publish(PubSubOption.periodic(0.02)),
+        table.getDoubleTopic("cancoderOdometry/Xerr").publish(PubSubOption.periodic(0.02)),
+        table.getDoubleTopic("cancoderOdometry/Yerr").publish(PubSubOption.periodic(0.02)),
+        table.getDoubleTopic("cancoderOdometry/DegErr").publish(PubSubOption.periodic(0.02)),
+    };
     
     // Instance for singleton class
     private static SwerveSubsystem instance;
@@ -48,6 +57,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     // Odometry class for tracking robot pose
     SwerveDriveOdometry m_odometry;
+    SwerveDriveOdometry m_cancoderOdometry;
 
     /** Get instance of singleton class */
     public static SwerveSubsystem getInstance() {
@@ -70,6 +80,8 @@ public class SwerveSubsystem extends SubsystemBase {
         m_rearRight = new SwerveModule(Config.CANID.REAR_RIGHT_DRIVE, Config.Swerve.INVERTED_REAR_RIGHT_DRIVE, Config.CANID.REAR_RIGHT_STEERING, Config.Swerve.INVERTED_REAR_RIGHT_STEERING, Config.CANID.REAR_RIGHT_CANCODER, Config.Swerve.RR_ENCODER_OFFSET, "RR");
         m_pigeon = new PigeonIMU(Config.CANID.PIGEON);
         m_odometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition(), new Pose2d());
+        m_cancoderOdometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getCanCoderPosition(), new Pose2d());
+
         SmartDashboard.putData("Field", m_field);
     }
 
@@ -89,6 +101,18 @@ public class SwerveSubsystem extends SubsystemBase {
                 getPosition()
         );
         
+        // Cancoder odometry for testing only
+        Pose2d cancoderPose = m_cancoderOdometry.update(
+            Rotation2d.fromDegrees(currentGyro),
+            getCanCoderPosition()
+        );
+        cancoderOdometryPubs[0].accept(cancoderPose.getX());
+        cancoderOdometryPubs[1].accept(cancoderPose.getY());
+        cancoderOdometryPubs[2].accept(cancoderPose.getRotation().getDegrees());
+        cancoderOdometryPubs[3].accept(getPose().getX() - cancoderPose.getX());
+        cancoderOdometryPubs[4].accept(getPose().getY() - cancoderPose.getY());
+        cancoderOdometryPubs[5].accept(getPose().getRotation().getDegrees() - cancoderPose.getRotation().getDegrees());
+
         gyroEntry.accept(currentGyro);
         xEntry.accept(getPose().getX());
         yEntry.accept(getPose().getY());
@@ -104,6 +128,15 @@ public class SwerveSubsystem extends SubsystemBase {
             m_frontRight.getModulePosition(),
             m_rearLeft.getModulePosition(),
             m_rearRight.getModulePosition()};
+    }
+
+    private SwerveModulePosition[] getCanCoderPosition() {
+        return new SwerveModulePosition[] {
+            new SwerveModulePosition(m_frontLeft.getDrivePosition(), new Rotation2d(m_frontLeft.getCancoder())),
+            new SwerveModulePosition(m_frontRight.getDrivePosition(), new Rotation2d(m_frontRight.getCancoder())),
+            new SwerveModulePosition(m_rearLeft.getDrivePosition(), new Rotation2d(m_rearLeft.getCancoder())),
+            new SwerveModulePosition(m_rearRight.getDrivePosition(), new Rotation2d(m_rearRight.getCancoder())),
+        };
     }
 
     public void setTrajectory(Trajectory traj){
@@ -126,6 +159,7 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     public void resetOdometry(Pose2d pose) {
         m_odometry.resetPosition(Rotation2d.fromDegrees(getGyro()), getPosition(), pose);
+        m_cancoderOdometry.resetPosition(Rotation2d.fromDegrees(getGyro()), getCanCoderPosition(), pose);
     }
 
     /**
