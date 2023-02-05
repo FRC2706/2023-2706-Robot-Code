@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -34,6 +35,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private DoublePublisher xEntry = table.getDoubleTopic("OdometryX").publish(PubSubOption.periodic(0.02));
     private DoublePublisher yEntry = table.getDoubleTopic("OdometryY").publish(PubSubOption.periodic(0.02));
     private DoublePublisher rotEntry = table.getDoubleTopic("OdometryRot").publish(PubSubOption.periodic(0.02));
+    private DoubleSubscriber getRot = table.getDoubleTopic("OdometryRot").subscribe(0);
 
     private DoublePublisher[] cancoderOdometryPubs = new DoublePublisher[] {
         table.getDoubleTopic("cancoderOdometry/X").publish(PubSubOption.periodic(0.02)),
@@ -79,8 +81,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
         m_rearRight = new SwerveModule(Config.CANID.REAR_RIGHT_DRIVE, Config.Swerve.INVERTED_REAR_RIGHT_DRIVE, Config.CANID.REAR_RIGHT_STEERING, Config.Swerve.INVERTED_REAR_RIGHT_STEERING, Config.CANID.REAR_RIGHT_CANCODER, Config.Swerve.RR_ENCODER_OFFSET, "RR");
         m_pigeon = new PigeonIMU(Config.CANID.PIGEON);
-        m_odometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition(), new Pose2d());
-        m_cancoderOdometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getCanCoderPosition(), new Pose2d());
+        m_odometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition(), new Pose2d(0, 0, Rotation2d.fromDegrees(getRot.get())));
+        m_cancoderOdometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getCanCoderPosition(), new Pose2d(0, 0, Rotation2d.fromDegrees(getRot.get())));
 
         SmartDashboard.putData("Field", m_field);
     }
