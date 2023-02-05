@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -34,6 +35,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private DoublePublisher xEntry = table.getDoubleTopic("OdometryX").publish();
     private DoublePublisher yEntry = table.getDoubleTopic("OdometryY").publish();
     private DoublePublisher rotEntry = table.getDoubleTopic("OdometryRot").publish();
+    private DoublePublisher pitchEntry = table.getDoubleTopic("PitchGyro").publish();
     
     // Instance for singleton class
     private static SwerveSubsystem instance;
@@ -93,6 +95,7 @@ public class SwerveSubsystem extends SubsystemBase {
         xEntry.accept(getPose().getX());
         yEntry.accept(getPose().getY());
         rotEntry.accept(getPose().getRotation().getDegrees());
+        pitchEntry.accept(getPitch());
 
         m_field.setRobotPose(getPose());
         

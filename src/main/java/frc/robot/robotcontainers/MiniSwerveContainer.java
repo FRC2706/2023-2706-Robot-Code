@@ -45,7 +45,6 @@ public class MiniSwerveContainer extends RobotContainer{
     configureButtonBindings();
 
     m_autoSelector = new AutoSelector();
-    balanceCommand = new BalanceSwerve();
 
     //use FRC Labview Dashboard
     String[] autoList = {"Test1", "Test2", "Test3", "To add more"};
@@ -65,7 +64,7 @@ public class MiniSwerveContainer extends RobotContainer{
 
     //Do not use Right or Left Bumper already used in separate file
     driver.start().onTrue(new ResetGyroToNearest());
-    driver.back().onTrue(new ResetGyro());
+    //driver.back().onTrue(new ResetGyro());
     driver.b().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
     
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
@@ -73,7 +72,7 @@ public class MiniSwerveContainer extends RobotContainer{
     
     driver.x().whileTrue(new translationCommand(1, 1));
 
-    driver.leftBumper().whileTrue(balanceCommand);
+    driver.back().whileTrue(new BalanceSwerve());
 
   }
 

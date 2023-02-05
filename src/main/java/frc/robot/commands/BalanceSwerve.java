@@ -38,37 +38,37 @@ public class BalanceSwerve extends CommandBase {
        SwerveSubsystem.getInstance().drive(0, 0, 0, false, true);
      }
      else if (SwerveSubsystem.getInstance().getPitchValue() <= initialAngle + 3) {
-       SwerveSubsystem.getInstance().drive(0, balanceSpeedSlow - (SwerveSubsystem.getInstance().getPitch()) / 15, 0, false, true);
+       SwerveSubsystem.getInstance().drive(-balanceSpeedSlow - (SwerveSubsystem.getInstance().getPitch()) / 15, 0, 0, false, true);
      }
      else if (SwerveSubsystem.getInstance().getPitchValue() < initialAngle + 10) {
          if (SwerveSubsystem.getInstance().getPitchValue() > initialAngle) {
-             SwerveSubsystem.getInstance().drive(0, pid.calculate(balanceSpeedSlow), 0, false, true);
+             SwerveSubsystem.getInstance().drive(pid.calculate(-balanceSpeedSlow), 0, 0, false, true);
          }
          else if (SwerveSubsystem.getInstance().getPitchValue() < initialAngle) {
-             SwerveSubsystem.getInstance().drive(0, pid.calculate(-balanceSpeedSlow), 0, false, true);
+             SwerveSubsystem.getInstance().drive(pid.calculate(balanceSpeedSlow), 0, 0, false, true);
          }
      }
       else {
          if (SwerveSubsystem.getInstance().getPitchValue() > initialAngle) {
              while (SwerveSubsystem.getInstance().getPitchValue() > initialAngle + 10) {
-                 SwerveSubsystem.getInstance().drive(0, pid.calculate(balanceSpeed), 0, false, true);
+                 SwerveSubsystem.getInstance().drive(pid.calculate(-balanceSpeed), 0, 0, false, true);
              }
              while (SwerveSubsystem.getInstance().getPitchValue() > initialAngle) {
-                 SwerveSubsystem.getInstance().drive(0, pid.calculate(balanceSpeedSlow), 0, false, true);
+                 SwerveSubsystem.getInstance().drive(pid.calculate(-balanceSpeedSlow), 0, 0, false, true);
              }
              while (SwerveSubsystem.getInstance().getPitchValue() < initialAngle) {
-                 SwerveSubsystem.getInstance().drive(0, pid.calculate(-balanceSpeedSlow), 0, false, true);
+                 SwerveSubsystem.getInstance().drive(pid.calculate(balanceSpeedSlow), 0, 0, false, true);
              }
          }
          else {
              while (SwerveSubsystem.getInstance().getPitchValue() < initialAngle - 10) {
-               SwerveSubsystem.getInstance().drive(0, pid.calculate(-balanceSpeed), 0, false, true);
+               SwerveSubsystem.getInstance().drive(pid.calculate(balanceSpeed), 0, 0, false, true);
              }
              while (SwerveSubsystem.getInstance().getPitchValue() < initialAngle) {
-               SwerveSubsystem.getInstance().drive(0, pid.calculate(-balanceSpeedSlow), 0, false, true);
+               SwerveSubsystem.getInstance().drive(pid.calculate(balanceSpeedSlow), 0, 0, false, true);
              }
              while (SwerveSubsystem.getInstance().getPitchValue() > initialAngle) {
-               SwerveSubsystem.getInstance().drive(0, pid.calculate(balanceSpeedSlow), 0, false, true);
+               SwerveSubsystem.getInstance().drive(pid.calculate(-balanceSpeedSlow), 0, 0, false, true);
              }
          }
        }
