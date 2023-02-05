@@ -17,6 +17,7 @@ import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
 import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.SwerveTeleop;
+import frc.robot.commands.translationCommand;
 import frc.robot.config.Config;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -63,9 +64,11 @@ public class MiniSwerveContainer extends RobotContainer{
     driver.start().onTrue(new ResetGyroToNearest());
     driver.back().onTrue(new ResetGyro());
     driver.b().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
+    
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
     driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
     
+    driver.x().whileTrue(new translationCommand(1, 1));
   }
 
 

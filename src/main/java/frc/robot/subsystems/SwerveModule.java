@@ -91,6 +91,7 @@ public class SwerveModule {
         errREV(m_turningMotor.setSmartCurrentLimit(Config.Swerve.steeringCurrentLimit));
 
         m_driveEncoder = m_driveMotor.getEncoder();
+        errREV(m_driveEncoder.setPositionConversionFactor(Config.Swerve.drivePositionConversionFactor));
         errREV(m_driveEncoder.setVelocityConversionFactor(Config.Swerve.driveVelocityConversionFactor));
         errREV(m_driveEncoder.setPosition(0.0));
 
@@ -219,7 +220,7 @@ public class SwerveModule {
 
         // CODE: Read encoder velocity from drive SparkMax and return m/s. (VelocityConversionFactor set so SparkMax returns m/s))
         
-        return m_driveEncoder.getVelocity();
+        return m_driveEncoder.getPosition();
     }
 
     /**
