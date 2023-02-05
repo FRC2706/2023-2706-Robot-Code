@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.auto.AutoSelector;
+import frc.robot.commands.BalanceSwerve;
 import frc.robot.commands.ModuleAngleFromJoystick;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
@@ -36,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class MiniSwerveContainer extends RobotContainer{
 
   AutoSelector m_autoSelector;
+  Command balanceCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public MiniSwerveContainer() {
@@ -43,6 +45,7 @@ public class MiniSwerveContainer extends RobotContainer{
     configureButtonBindings();
 
     m_autoSelector = new AutoSelector();
+    balanceCommand = new BalanceSwerve();
 
     //use FRC Labview Dashboard
     String[] autoList = {"Test1", "Test2", "Test3", "To add more"};
@@ -69,6 +72,9 @@ public class MiniSwerveContainer extends RobotContainer{
     driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
     
     driver.x().whileTrue(new translationCommand(1, 1));
+
+    driver.leftBumper().whileTrue(balanceCommand);
+
   }
 
 
