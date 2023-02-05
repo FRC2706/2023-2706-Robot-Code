@@ -12,11 +12,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.auto.AutoSelector;
+import frc.robot.commands.ControlRingLight;
 import frc.robot.commands.ModuleAngleFromJoystick;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
 import frc.robot.commands.SwerveTeleop;
 import frc.robot.config.Config;
+import frc.robot.subsystems.RelaySubsystem;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -45,6 +47,10 @@ public class MiniSwerveContainer extends RobotContainer{
     //use FRC Labview Dashboard
     String[] autoList = {"Test1", "Test2", "Test3", "To add more"};
     SmartDashboard.putStringArray("Auto List", autoList );
+
+    //if (Config.robotId == 2) {
+      RelaySubsystem.getInstance();
+ // }
   }
 
   /**
@@ -62,6 +68,14 @@ public class MiniSwerveContainer extends RobotContainer{
     driver.start().onTrue(new ResetGyroToNearest());
     driver.back().onTrue(new ResetGyro());
     driver.y().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
+
+        //Rear small ring light
+        Command controlRearSmallRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_SMALL);
+        driver.a().onTrue(controlRearSmallRinglight);
+        
+        //Rear large ring light
+        Command controlRearLargeRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_LARGE);
+        driver.b().onTrue(controlRearLargeRinglight);
     
   }
 
