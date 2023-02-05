@@ -57,8 +57,8 @@ public class ArmCommand extends CommandBase {
       nodeX = 26;
     }
     else if (level==3) {
-      z = 10;
-      nodeX = 40;
+      z = 35;
+      nodeX = 44;
     }
   }
 
