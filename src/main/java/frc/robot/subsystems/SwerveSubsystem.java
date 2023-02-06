@@ -35,7 +35,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private DoublePublisher xEntry = table.getDoubleTopic("OdometryX").publish();
     private DoublePublisher yEntry = table.getDoubleTopic("OdometryY").publish();
     private DoublePublisher rotEntry = table.getDoubleTopic("OdometryRot").publish();
-    private DoublePublisher pitchEntry = table.getDoubleTopic("PitchGyro").publish();
+    private DoublePublisher rollEntry = table.getDoubleTopic("RollGyro").publish();
     
     // Instance for singleton class
     private static SwerveSubsystem instance;
@@ -95,7 +95,7 @@ public class SwerveSubsystem extends SubsystemBase {
         xEntry.accept(getPose().getX());
         yEntry.accept(getPose().getY());
         rotEntry.accept(getPose().getRotation().getDegrees());
-        pitchEntry.accept(getPitch());
+        rollEntry.accept(getRoll());
 
         m_field.setRobotPose(getPose());
         
@@ -236,13 +236,13 @@ public class SwerveSubsystem extends SubsystemBase {
         m_rearRight.resetLastAngle();
     }
 
-    public double getPitchValue() {
+    public double getRollValue() {
         double[] ypr = new double[3];
         m_pigeon.getYawPitchRoll(ypr);
-        return Math.abs(ypr[1]);
+        return Math.abs(ypr[2]);
     }
-    public double getPitch() {
-        return(m_pigeon.getPitch());
+    public double getRoll() {
+        return(m_pigeon.getRoll());
     }
     public double getYaw() {
         return(m_pigeon.getYaw());
