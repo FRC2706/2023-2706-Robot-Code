@@ -116,6 +116,9 @@ public class Config {
         public static final int FRONT_RIGHT_CANCODER = robotSpecific(-01, -01, -01, -01, 6);
         public static final int REAR_RIGHT_CANCODER = robotSpecific(-01, -01, -01, -01, 7); 
 
+        // for Arm subsystem
+        public static final int TOP_ARM_SPARK_CAN_ID = 18;
+        public static final int BOTTOM_ARM_SPARK_CAN_ID = 19;
 
     }
     
@@ -286,8 +289,6 @@ public class Config {
         public static final double NEO_GEAR_RATIO = 7.67;
         public static final double L1 = 40; //length of arm 1
         public static final double L2 = 40; //length of arm 2
-        public static final int TOP_ARM_SPARK_CAN_ID = 18;
-        public static final int BOTTOM_ARM_SPARK_CAN_ID = 19;
 
     }
     

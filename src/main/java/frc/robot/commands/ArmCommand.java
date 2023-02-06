@@ -44,17 +44,13 @@ public class ArmCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    ArmSubsystem.getInstance().m_pidControllerBottomArm.setPositionPIDWrappingMaxInput(integralMaximum);
-    ArmSubsystem.getInstance().m_pidControllerBottomArm.setPositionPIDWrappingMinInput(integralMinimum);
-    ArmSubsystem.getInstance().m_pidControllerTopArm.setPositionPIDWrappingMaxInput(integralMaximum);
-    ArmSubsystem.getInstance().m_pidControllerTopArm.setPositionPIDWrappingMinInput(integralMinimum);
     if (level==1) {
       z = 4;//constants --> first and second z positions - depends on the height of the node we are going for
       nodeX = 8;//the x positiion of the node we are going for
     } 
     else if(level==2) {
-      z = 10;
-      nodeX = 26;
+      z = 24;
+      nodeX = 27;
     }
     else if (level==3) {
       z = 35;
@@ -75,10 +71,10 @@ public class ArmCommand extends CommandBase {
     targetAngularDistanceTopArm = ArmSubsystem.getInstance().getAngularDistance(angle2, Config.Arm.NEO_GEAR_RATIO);
     
     if (level == 3) {
-      ArmSubsystem.getInstance().setJoint2(angle2);
+      ArmSubsystem.getInstance().setJoint2(angle2); // if level 3 the angle should be 139 degrees, if level 2 the angle should be 74 degrees
     }
     else if (level == 2) {
-      ArmSubsystem.getInstance().setJoint1(angle1);
+      ArmSubsystem.getInstance().setJoint1(angle1); // if level 3 the angle should be 59 degrees, if level 2 angle should be 94 degrees
     }
     // if (ArmSubsystem.getInstance().m_absoluteBottomArmEncoder.getPosition() < targetAngularDistanceBottomArm) {
     //   ArmSubsystem.getInstance().setJoint1(targetAngularDistanceBottomArm);

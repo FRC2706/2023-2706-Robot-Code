@@ -29,17 +29,11 @@ import frc.robot.commands.*;
  */
 public class ArmBotContainer extends RobotContainer{
 
-  Command armCommandlvl3;
-  Command armCommandlvl2;
-
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public ArmBotContainer() {
     // Configure the button bindings
     LiveWindow.enableAllTelemetry();
-
-    armCommandlvl3 = new ArmCommand(3, true);
-    armCommandlvl2 = new ArmCommand(2, true);
 
     configureButtonBindings();
     
@@ -55,8 +49,8 @@ public class ArmBotContainer extends RobotContainer{
     CommandXboxController driver = new CommandXboxController(0);
     CommandXboxController controlStick = new CommandXboxController(1);
 
-    controlStick.b().whileTrue(armCommandlvl3);
-    controlStick.a().whileTrue(armCommandlvl2);
+    controlStick.b().onTrue(new ArmCommand(3, true));
+    controlStick.a().onTrue(new ArmCommand(2, true));
   }
 
 

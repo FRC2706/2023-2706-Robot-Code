@@ -40,8 +40,8 @@ public class ArmSubsystem extends SubsystemBase {
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
-    m_topArm = new CANSparkMax(Config.Arm.TOP_ARM_SPARK_CAN_ID, motorType);
-    m_bottomArm = new CANSparkMax(Config.Arm.BOTTOM_ARM_SPARK_CAN_ID, motorType);
+    m_topArm = new CANSparkMax(Config.CANID.TOP_ARM_SPARK_CAN_ID, motorType);
+    m_bottomArm = new CANSparkMax(Config.CANID.BOTTOM_ARM_SPARK_CAN_ID, motorType);
     CANCoderConfiguration config = new CANCoderConfiguration();
     m_topArm.restoreFactoryDefaults();
     m_bottomArm.restoreFactoryDefaults();
@@ -66,8 +66,8 @@ public class ArmSubsystem extends SubsystemBase {
     kD = 1;
     kIz = 0;
     kFF = 0;
-    kMaxOutput = 1;
-    kMinOutput = -1;
+    kMaxOutput = 0.5;
+    kMinOutput = -0.5;
 
     // setting PID coefficients for top arm
     m_pidControllerTopArm.setP(kP);
@@ -106,9 +106,9 @@ public class ArmSubsystem extends SubsystemBase {
   public double[] calculateAngle(double L1, double L2, double x, double z) {
     double zx = (Math.pow(x,2)+Math.pow(z,2));
     //angle2 --> top arm
-    double angle2 = Math.acos((zx-Math.pow(L1,2)-Math.pow(L2,2))/(-2*L1*L2));
+    double angle2 = Math.acos((zx-Math.pow(L1,2)-Math.pow(L2,2))/(-2*L1*L2)); //gives angle in radians
     //angle1 --> bottom arm
-    double angle1 = (Math.atan(z/x)+Math.acos((Math.pow(L2,2)-zx-Math.pow(L1,2))/(-2*Math.sqrt(zx)*L1)));
+    double angle1 = (Math.atan(z/x)+Math.acos((Math.pow(L2,2)-zx-Math.pow(L1,2))/(-2*Math.sqrt(zx)*L1))); // gives angle in radians
     double[] angles = {angle1,angle2};
     return angles;
   }
@@ -120,10 +120,10 @@ public class ArmSubsystem extends SubsystemBase {
     return angle / gearRatio;
   }
   public void setJoint1(double angle) {
-    m_pidControllerTopArm.setReference(angle, ControlType.kPosition); //this is only for testing will switch to bottom arm
+    m_pidControllerBottomArm.setReference(angle * 0.16, ControlType.kPosition); //this is only for testing will switch to bottom arm
   }
   public void setJoint2(double angle) {
-    m_pidControllerTopArm.setReference(angle, ControlType.kPosition);
+    m_pidControllerTopArm.setReference(angle * 0.16, ControlType.kPosition); // unit conversion 1 radian --> 0.16 rotations
   }
 
 }
