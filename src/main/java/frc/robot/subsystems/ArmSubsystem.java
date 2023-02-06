@@ -108,7 +108,7 @@ public class ArmSubsystem extends SubsystemBase {
     //angle2 --> top arm
     double angle2 = Math.acos((zx-Math.pow(L1,2)-Math.pow(L2,2))/(-2*L1*L2)); //gives angle in radians
     //angle1 --> bottom arm
-    double angle1 = (Math.atan(z/x)+Math.acos((Math.pow(L2,2)-zx-Math.pow(L1,2))/(-2*Math.sqrt(zx)*L1))); // gives angle in radians
+    double angle1 = (Math.atan2(z,x)+Math.acos((Math.pow(L2,2)-zx-Math.pow(L1,2))/(-2*Math.sqrt(zx)*L1))); // gives angle in radians
     double[] angles = {angle1,angle2};
     return angles;
   }
