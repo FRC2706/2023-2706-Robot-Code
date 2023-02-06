@@ -160,6 +160,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @param pose The pose to which to set the odometry.
      */
     public void resetOdometry(Pose2d pose) {
+        resetEncodersFromCanCoder();
         m_odometry.resetPosition(Rotation2d.fromDegrees(getGyro()), getPosition(), pose);
         m_cancoderOdometry.resetPosition(Rotation2d.fromDegrees(getGyro()), getCanCoderPosition(), pose);
     }
@@ -182,10 +183,10 @@ public class SwerveSubsystem extends SubsystemBase {
             swerveModuleStates = Config.Swerve.kSwerveDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(xSpeed, ySpeed, rot));
         }
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Config.Swerve.kMaxAttainableWheelSpeed);
-        m_frontLeft.setDesiredState(swerveModuleStates[0], isOpenLoop);
-        m_frontRight.setDesiredState(swerveModuleStates[1], isOpenLoop);
-        m_rearLeft.setDesiredState(swerveModuleStates[2], isOpenLoop);
-        m_rearRight.setDesiredState(swerveModuleStates[3],isOpenLoop);
+        m_frontLeft.setDesiredState(swerveModuleStates[0], isOpenLoop, true);
+        m_frontRight.setDesiredState(swerveModuleStates[1], isOpenLoop, true);
+        m_rearLeft.setDesiredState(swerveModuleStates[2], isOpenLoop, true);
+        m_rearRight.setDesiredState(swerveModuleStates[3],isOpenLoop, true);
     }
 
     /**
@@ -193,13 +194,13 @@ public class SwerveSubsystem extends SubsystemBase {
      *
      * @param desiredStates The desired SwerveModule states.
      */
-    public void setModuleStates(SwerveModuleState[] desiredStates, boolean isOpenLoop) {
+    public void setModuleStates(SwerveModuleState[] desiredStates, boolean isOpenLoop, boolean anitJitter) {
         SwerveDriveKinematics.desaturateWheelSpeeds(
                 desiredStates, Config.Swerve.kMaxAttainableWheelSpeed);
-        m_frontLeft.setDesiredState(desiredStates[0], isOpenLoop);
-        m_frontRight.setDesiredState(desiredStates[1], isOpenLoop);
-        m_rearLeft.setDesiredState(desiredStates[2], isOpenLoop);
-        m_rearRight.setDesiredState(desiredStates[3], isOpenLoop);
+        m_frontLeft.setDesiredState(desiredStates[0], isOpenLoop, anitJitter);
+        m_frontRight.setDesiredState(desiredStates[1], isOpenLoop, anitJitter);
+        m_rearLeft.setDesiredState(desiredStates[2], isOpenLoop, anitJitter);
+        m_rearRight.setDesiredState(desiredStates[3], isOpenLoop, anitJitter);
     }
 
     /**
