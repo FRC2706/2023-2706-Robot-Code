@@ -4,36 +4,22 @@
 
 package frc.robot.robotcontainers;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.auto.PIDConstants;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
-
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.auto.AutoRoutines;
 import frc.robot.auto.AutoSelector;
-import frc.robot.commands.ModuleAngleFromJoystick;
 import frc.robot.commands.ResetGyro;
+import frc.robot.commands.ResetGyroToNearest;
+import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.SwerveTeleop;
-import frc.robot.config.Config;
-import frc.robot.subsystems.SwerveModule;
+import frc.robot.commands.translationCommand;
 import frc.robot.subsystems.SwerveSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -55,6 +41,10 @@ public class MiniSwerveContainer extends RobotContainer{
 
     m_autoSelector = new AutoSelector();
     routines = new AutoRoutines();
+
+    //use FRC Labview Dashboard
+    String[] autoList = {"Test1", "Test2", "Test3", "To add more"};
+    SmartDashboard.putStringArray("Auto List", autoList );
   }
 
   /**
@@ -64,46 +54,19 @@ public class MiniSwerveContainer extends RobotContainer{
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    Joystick driver = new Joystick(0);
+    CommandXboxController driver = new CommandXboxController(0);
 
-    SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver, Config.Swerve.teleopSpeed, Config.Swerve.teleopAngularSpeed,5.0));
+    SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
+
+    //Do not use Right or Left Bumper already used in separate file
+    driver.start().onTrue(new ResetGyroToNearest());
+    driver.back().onTrue(new ResetGyro());
+    driver.b().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
     
-    new JoystickButton(driver, XboxController.Button.kLeftBumper.value).whenHeld(
-      new SwerveTeleop(driver, Config.Swerve.teleopFastSpeed, Config.Swerve.teleopFastAngularSpeed,5.0));
-
-    new JoystickButton(driver, XboxController.Button.kRightBumper.value).whenHeld(
-      new SwerveTeleop(driver, Config.Swerve.teleopSlowSpeed, Config.Swerve.teleopSlowAngularSpeed,20.0));
-
-    new JoystickButton(driver, XboxController.Button.kStart.value).whenPressed(
-      new InstantCommand(()-> SwerveSubsystem.getInstance().updateModulesPID())
-    );
-
-    new JoystickButton(driver, XboxController.Button.kBack.value).whenPressed(new ResetGyro());
-
-    new JoystickButton(driver, XboxController.Button.kY.value).whenPressed(
-      new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder())
-    );
+    driver.y().whileTrue(new RotateAngleXY(driver, 0));
+    driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
     
-    SwerveModuleState state1 = new SwerveModuleState(0.3, Rotation2d.fromDegrees(0));
-    SwerveModuleState state2 = new SwerveModuleState(0.3, Rotation2d.fromDegrees(90));
-    SwerveModuleState state3 = new SwerveModuleState(0.5, Rotation2d.fromDegrees(0));
-    SwerveModuleState state4 = new SwerveModuleState(-0.5, Rotation2d.fromDegrees(0));
-
-
-    // Command angleSetPoint1 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state1, state1, state1, state1}, true), SwerveSubsystem.getInstance());
-    // new JoystickButton(driver, XboxController.Button.kB.value).whenHeld(angleSetPoint1).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
-
-    // Command angleSetPoint2 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state2, state1, state1, state1}, true), SwerveSubsystem.getInstance());
-    // new JoystickButton(driver, XboxController.Button.kX.value).whenHeld(angleSetPoint2).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
-
-    // Command angleSetPoint3 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state2, state2, state2, state2}, true), SwerveSubsystem.getInstance());
-    // new JoystickButton(driver, XboxController.Button.kA.value).whenHeld(angleSetPoint3).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
-
-    // Command angleSetPoint4 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state3, state3, state3, state3}, true), SwerveSubsystem.getInstance());
-    // new JoystickButton(driver, XboxController.Button.kRightBumper.value).whenHeld(angleSetPoint4).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
-
-    // Command angleSetPoint5 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state4, state4, state4, state4}, true), SwerveSubsystem.getInstance());
-    // new JoystickButton(driver, XboxController.Button.kLeftBumper.value).whenHeld(angleSetPoint5).whenReleased(new InstantCommand(SwerveSubsystem.getInstance() :: stopMotors, SwerveSubsystem.getInstance()));
+    driver.x().whileTrue(new translationCommand(1, 1));
   }
 
 
