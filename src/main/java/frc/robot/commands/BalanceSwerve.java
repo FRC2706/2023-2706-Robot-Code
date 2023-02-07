@@ -28,14 +28,14 @@ public class BalanceSwerve extends CommandBase {
   @Override
   public void initialize() {
     // Find the reset method
-    initialAngle = SwerveSubsystem.getInstance().getPitch().getDegrees();
+    initialAngle = SwerveSubsystem.getInstance().getPitch().getRadians();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     SwerveSubsystem.getInstance().drive(
-      pid.calculate(SwerveSubsystem.getInstance().getPitch().getDegrees(), 0),  //could be x or y
+      pid.calculate(SwerveSubsystem.getInstance().getPitch().getRadians(), 0),  //could be x or y
       0,
       0, 
       true, 
@@ -43,7 +43,12 @@ public class BalanceSwerve extends CommandBase {
     );
 
 
-
+/*
+ * 
+ * This is the other Balance code, which doesn't use PID
+ * 
+ * 
+ */
 //     if (SwerveSubsystem.getInstance().getPitchValue() >= initialAngle - 0.05 && SwerveSubsystem.getInstance().getPitchValue() <= initialAngle + 0.05) {
 //       SwerveSubsystem.getInstance().drive(0, 0, 0, false, true);
 //     }
