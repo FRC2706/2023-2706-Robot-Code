@@ -160,7 +160,6 @@ public class SwerveSubsystem extends SubsystemBase {
      * @param pose The pose to which to set the odometry.
      */
     public void resetOdometry(Pose2d pose) {
-        resetEncodersFromCanCoder();
         m_odometry.resetPosition(Rotation2d.fromDegrees(getGyro()), getPosition(), pose);
         m_cancoderOdometry.resetPosition(Rotation2d.fromDegrees(getGyro()), getCanCoderPosition(), pose);
     }
