@@ -8,14 +8,13 @@ import java.util.ArrayList;
 
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.BooleanTopic;
-//import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.SubsystemChecker;
+import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.config.Config;
 
 /**
@@ -35,6 +34,7 @@ public class RelaySubsystem extends SubsystemBase {
      */
     public static RelaySubsystem getInstance() {
         if (single_instance == null) 
+            SubsystemChecker.subsystemConstructed(SubsystemType.RelaySubsystem);
             single_instance = new RelaySubsystem(); 
   
         return single_instance; 

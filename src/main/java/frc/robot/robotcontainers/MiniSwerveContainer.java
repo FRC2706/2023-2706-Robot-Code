@@ -48,9 +48,9 @@ public class MiniSwerveContainer extends RobotContainer{
     String[] autoList = {"Test1", "Test2", "Test3", "To add more"};
     SmartDashboard.putStringArray("Auto List", autoList );
 
-    //if (Config.robotId == 2) {
-      RelaySubsystem.getInstance();
- // }
+    // Construct relays for MiniSwerve
+    RelaySubsystem.getInstance();
+
   }
 
   /**
