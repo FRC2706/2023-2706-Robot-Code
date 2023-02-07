@@ -389,6 +389,11 @@ public class Config {
     public static final int ARMHIGH_PNEUMATIC_REVERSE_CHANNEL = -1;
 
 
+    public static final String RELAY_NETWORKTABLE = "ControlRelay";
+    public static final int RELAY_RINGLIGHT_REAR_SMALL = 1; // NUMBERS NOT ACCURATELY RELATED TO CAMERAS YET
+    public static final int RELAY_RINGLIGHT_REAR_LARGE = 2;
+    public static final int RELAY_RINGLIGHT_FRONT = 3;
+
 
 
     /**
