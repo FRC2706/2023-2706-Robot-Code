@@ -4,17 +4,19 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveSubsystem;
 
+//TODO: change name to TranslationCommand to maintain Java standards for class names.
 public class translationCommand extends CommandBase {
   ProfiledPIDController pidControlX;
   double currentX;
   double desiredX;
   double deltaX;
+
+  double TOLERANCE = 0.05;
 
 
   ProfiledPIDController pidControlY;
@@ -25,10 +27,10 @@ public class translationCommand extends CommandBase {
   
   /** Creates a new translation. */
   public translationCommand( double deltaX, double deltaY) {
-    pidControlX = new ProfiledPIDController(0.1, 0.0, 0.0, 
-                                           new TrapezoidProfile.Constraints(1, 2));
-    pidControlY = new ProfiledPIDController(0.1, 0.0, 0.0, 
-                                           new TrapezoidProfile.Constraints(1,2));
+    pidControlX = new ProfiledPIDController(1, 0.0, 0.2, 
+                                           new TrapezoidProfile.Constraints(1, 1));
+    pidControlY = new ProfiledPIDController(1, 0.0, 0.2, 
+                                           new TrapezoidProfile.Constraints(1,1));
 
     this.deltaX = deltaX;
     this.deltaY = deltaY;
@@ -47,13 +49,15 @@ public class translationCommand extends CommandBase {
     desiredY = currentY + deltaY;
 
     //set the tolerance
-    pidControlX.setTolerance(0.1, 0.1);
-    pidControlY.setTolerance(0.1, 0.1);
+    pidControlX.setTolerance(TOLERANCE, TOLERANCE);
+    pidControlY.setTolerance(TOLERANCE, TOLERANCE);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    //System.out.println("Current X: " + currentX + ", DesiredX: " + desiredX + ", Position Error: " + pidControlX.getPositionError());
+    System.out.println("Current Y: " + currentY + ", DesiredY: " + desiredY + ", Position Error: " + pidControlY.getPositionError());
     //update the currentX and currentY
     currentX = SwerveSubsystem.getInstance().getPose().getX();
     currentY = SwerveSubsystem.getInstance().getPose().getY();
@@ -61,7 +65,7 @@ public class translationCommand extends CommandBase {
     double x = pidControlX.calculate(currentX, desiredX);
     double y = pidControlY.calculate(currentY, desiredY);
 
-    SwerveSubsystem.getInstance().drive(x, y, 0, true, true);
+    SwerveSubsystem.getInstance().drive(x, y, 0, true, false);
 
   }
 
@@ -75,13 +79,19 @@ public class translationCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(pidControlX.atSetpoint() && pidControlY.atSetpoint())
+    if (Math.abs(currentX - desiredX) < TOLERANCE && Math.abs(currentY - desiredY) < TOLERANCE) {
+      return(true);
+    }
+    else {
+      return(false);
+    }
+    /*if(pidControlX.atSetpoint() && pidControlY.atSetpoint())
     {
       return true;
     }
     else
     {
       return false;
-    }
+    }*/
   }
 }
