@@ -68,14 +68,6 @@ public class MiniSwerveContainer extends RobotContainer{
     driver.start().onTrue(new ResetGyroToNearest());
     driver.back().onTrue(new ResetGyro());
     driver.y().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
-
-        //Rear small ring light
-        Command controlRearSmallRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_SMALL);
-        driver.a().onTrue(controlRearSmallRinglight);
-        
-        //Rear large ring light
-        Command controlRearLargeRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_LARGE);
-        driver.b().onTrue(controlRearLargeRinglight);
     
   }
 
