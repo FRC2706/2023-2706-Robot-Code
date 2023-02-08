@@ -120,10 +120,16 @@ public class ArmSubsystem extends SubsystemBase {
     return angle / gearRatio;
   }
   public void setJoint1(double angle) {
-    m_pidControllerBottomArm.setReference(angle * 0.16, ControlType.kPosition); //this is only for testing will switch to bottom arm
+    m_pidControllerTopArm.setReference(angle * (1/(2*Math.PI)), ControlType.kPosition); //this is only for testing
+    // m_pidControllerBottomArm.setReference(angle * (1/(2*Math.PI)), ControlType.kPosition); 
   }
   public void setJoint2(double angle) {
-    m_pidControllerTopArm.setReference(angle * 0.16, ControlType.kPosition); // unit conversion 1 radian --> 0.16 rotations
+    m_pidControllerTopArm.setReference(angle * (1/(2*Math.PI)), ControlType.kPosition); // unit conversion 1 radian --> 1/2pi
   }
+  public void setDefault(double[] angle) {
+    m_pidControllerTopArm.setReference(angle[0] * (1/(2*Math.PI)), ControlType.kPosition); 
+    // m_pidControllerBottomArm.setReference(angle[1] * (1/(2*Math.PI)), ControlType.kPosition); - only used when 2 motors are involved
+  }
+
 
 }

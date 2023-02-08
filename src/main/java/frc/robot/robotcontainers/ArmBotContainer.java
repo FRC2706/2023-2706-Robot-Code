@@ -49,8 +49,10 @@ public class ArmBotContainer extends RobotContainer{
     CommandXboxController driver = new CommandXboxController(0);
     CommandXboxController controlStick = new CommandXboxController(1);
 
-    controlStick.b().onTrue(new ArmCommand(3, true));
-    controlStick.a().onTrue(new ArmCommand(2, true));
+    controlStick.y().onTrue(new ArmCommand("3", true));
+    controlStick.b().onTrue(new ArmCommand("2", true));
+    controlStick.a().onTrue(new ArmCommand("1", true));
+    controlStick.x().onTrue(new ArmCommand("default", true));
   }
 
 
