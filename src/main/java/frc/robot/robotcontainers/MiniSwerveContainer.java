@@ -24,6 +24,7 @@ import frc.robot.subsystems.ArmDisplay;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -74,7 +75,10 @@ public class MiniSwerveContainer extends RobotContainer{
     
     driver.x().whileTrue(new translationCommand(1, 1));
 
-    operator.a().onTrue(new ArmDisplayCommand(operator));
+    ArmDisplay display = new ArmDisplay(26.2, 37);
+    operator.a().onTrue(new ArmDisplayCommand(operator, display));
+    operator.b().onTrue(Commands.runOnce(() -> display.updateSetpointDisplay(Math.toRadians(45), Math.toRadians(90))));
+    operator.x().onTrue(Commands.runOnce(() -> display.updateSetpointDisplay(Math.toRadians(45), Math.toRadians(135))));
   }
 
 

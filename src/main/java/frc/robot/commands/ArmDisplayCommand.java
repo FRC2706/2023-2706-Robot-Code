@@ -21,10 +21,10 @@ public class ArmDisplayCommand extends CommandBase {
     double z = 0.2;
 
     /** Creates a new ArmDisplayCommand. */
-    public ArmDisplayCommand(CommandXboxController controller) {
+    public ArmDisplayCommand(CommandXboxController controller, ArmDisplay display) {
         this.controller = controller;
 
-        armDisplay = new ArmDisplay(length1, length2);
+        armDisplay = display;
     }
 
     // Called when the command is initially scheduled.
@@ -42,7 +42,7 @@ public class ArmDisplayCommand extends CommandBase {
 
         double[] xz = armDisplay.calculateAngle(length1, length2, x, z);
 
-        armDisplay.updateDisplay(xz[0], xz[1]);
+        armDisplay.updateMeasurementDisplay(xz[0], xz[1]);
 
         System.out.printf("X:%.1f, Z:%.1f\n", x, z);
     }
