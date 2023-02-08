@@ -33,10 +33,10 @@ public class RelaySubsystem extends SubsystemBase {
      * Get Instance of vision subsystem 
      */
     public static RelaySubsystem getInstance() {
-        if (single_instance == null) 
+        if (single_instance == null) {
             SubsystemChecker.subsystemConstructed(SubsystemType.RelaySubsystem);
             single_instance = new RelaySubsystem(); 
-  
+        }
         return single_instance; 
     }
 
