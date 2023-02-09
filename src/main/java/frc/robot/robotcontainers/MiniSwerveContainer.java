@@ -4,8 +4,11 @@
 
 package frc.robot.robotcontainers;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -15,7 +18,9 @@ import frc.robot.auto.AutoSelector;
 import frc.robot.commands.ModuleAngleFromJoystick;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
+import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.RotateAngleXY;
+import frc.robot.commands.RotateXYSupplier;
 import frc.robot.commands.SwerveTeleop;
 import frc.robot.commands.translationCommand;
 import frc.robot.config.Config;
@@ -63,8 +68,12 @@ public class MiniSwerveContainer extends RobotContainer{
     //Do not use Right or Left Bumper already used in separate file
     driver.start().onTrue(new ResetGyroToNearest());
     driver.back().onTrue(new ResetGyro());
-    driver.b().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
+    //driver.b().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
     
+    DoubleSubscriber visionYaw = NetworkTableInstance.getDefault().getDoubleTopic("").subscribe(-99);
+    //driver.b().whileTrue(new RotateXYSupplier(driver, ()-> visionYaw.get()));
+    driver.b().whileTrue(new ResetOdometry(new Pose2d()));
+
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
     driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
     
