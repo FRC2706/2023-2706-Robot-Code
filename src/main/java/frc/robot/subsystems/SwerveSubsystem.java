@@ -125,6 +125,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @param pose The pose to which to set the odometry.
      */
     public void resetOdometry(Pose2d pose) {
+        System.out.println(pose.toString());
         m_odometry.resetPosition(Rotation2d.fromDegrees(getGyro()), getPosition(), pose);
     }
 
@@ -166,6 +167,15 @@ public class SwerveSubsystem extends SubsystemBase {
         m_rearRight.setDesiredState(desiredStates[3], isOpenLoop);
     }
 
+    /**
+     * Sets the swerve ModuleStates in auto. Defaults to closed loop.
+     *
+     * @param desiredStates The desired SwerveModule states.
+     */
+    public void setModuleStatesAuto(SwerveModuleState[] desiredStates) {
+        setModuleStates(desiredStates, false);
+    }
+    
     /**
      * Returns the heading of the robot.
      * 
