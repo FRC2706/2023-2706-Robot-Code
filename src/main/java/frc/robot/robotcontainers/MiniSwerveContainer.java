@@ -43,7 +43,19 @@ public class MiniSwerveContainer extends RobotContainer{
     routines = new AutoRoutines();
 
     //use FRC Labview Dashboard
-    String[] autoList = {"Test1", "Test2", "Test3", "To add more"};
+    String[] autoList = {"null", 
+                         "leave_top",
+                         "leave_middle_through", 
+                         "leave_bottom",
+                         "leave_balance_bottom",
+                         "place_pick_top",
+                         "place_pick_middle_around_",
+                         "place_pick_middle_through_",
+                         "place_pick_bottom",
+                         "place_pick_balance_top",
+                         "place_pick_balance_middle",
+                         "place_pick_balance_bottom",
+                        };
     SmartDashboard.putStringArray("Auto List", autoList );
   }
 
@@ -77,6 +89,51 @@ public class MiniSwerveContainer extends RobotContainer{
    */
   @Override
   public Command getAutonomousCommand(){
-    return routines.getAutonomousCommand(25);
+    int autoId;
+    String autoName = SmartDashboard.getString("Auto Selector", "Now!");
+    switch(autoName)
+    {
+      case "null":
+        autoId = 0;
+        break;
+      case "leave_top":
+        autoId = 1;
+        break;
+      case "leave_middle_through":
+        autoId = 2;
+        break;
+      case "leave_bottom":
+        autoId = 3;
+        break;
+      case "leave_balance_bottom":
+        autoId = 4;
+        break;
+      case "place_pick_top":
+        autoId = 5;
+        break;
+      case "place_pick_middle_around_":
+        autoId = 6;
+        break;
+      case "place_pick_middle_through_":
+        autoId = 7;
+        break;
+      case "place_pick_bottom":
+        autoId = 8;
+        break;
+      case "place_pick_balance_top":
+        autoId = 9;
+        break;
+      case "place_pick_balance_middle":
+        autoId = 10;
+        break;
+      case "place_pick_balance_bottom":
+        autoId = 11;
+        break;
+      default:
+        autoId=0;
+        break;
+      
+    }
+    return routines.getAutonomousCommand(autoId);
   }
 }
