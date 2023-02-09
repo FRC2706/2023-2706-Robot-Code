@@ -286,7 +286,7 @@ public class Config {
     }
     
     public static class Arm {
-        public static final double NEO_GEAR_RATIO = 7.67;
+        public static final double NEO_GEAR_RATIO = 60;
         public static final double L1 = 40; //length of arm 1
         public static final double L2 = 40; //length of arm 2
 

@@ -47,7 +47,6 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArm.restoreFactoryDefaults();
 
     // set units of the CANCoder to radians, with velocity being radians per second
-    config.sensorCoefficient = 2 * Math.PI / 4096.0;
     config.unitString = "rad";
     config.sensorTimeBase = SensorTimeBase.PerSecond;
 
@@ -61,11 +60,11 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerBottomArm = m_bottomArm.getPIDController();
 
     // PID coefficients (probably need to change values and put the values in config)
-    kP = 0.1;
-    kI = 1e-4;
-    kD = 1;
+    kP = 0.02;
+    kI = 0;
+    kD = 2.4;
     kIz = 0;
-    kFF = 0;
+    kFF = 0.1;
     kMaxOutput = 0.5;
     kMinOutput = -0.5;
 
@@ -76,6 +75,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerTopArm.setIZone(kIz);
     m_pidControllerTopArm.setFF(kFF);
     m_pidControllerTopArm.setOutputRange(kMinOutput, kMaxOutput);
+    m_pidControllerTopArm.setSmartMotionMaxAccel(Math.PI/2, 0);
+    m_pidControllerTopArm.setSmartMotionMaxVelocity(Math.PI/2, 0);
     
     m_bottomArm.getEncoder().setPositionConversionFactor(2*Math.PI / Config.Arm.NEO_GEAR_RATIO);
     m_topArm.getEncoder().setPositionConversionFactor(2*Math.PI / Config.Arm.NEO_GEAR_RATIO);
@@ -87,6 +88,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerBottomArm.setIZone(kIz);
     m_pidControllerBottomArm.setFF(kFF);
     m_pidControllerBottomArm.setOutputRange(kMinOutput, kMaxOutput);
+    m_pidControllerBottomArm.setSmartMotionMaxAccel(Math.PI/2, 0);
+    m_pidControllerBottomArm.setSmartMotionMaxVelocity(Math.PI/2, 0);
 
   }
 
@@ -120,15 +123,22 @@ public class ArmSubsystem extends SubsystemBase {
     return angle / gearRatio;
   }
   public void setJoint1(double angle) {
-    m_pidControllerTopArm.setReference(angle * (1/(2*Math.PI)), ControlType.kPosition); //this is only for testing
+    m_pidControllerTopArm.setReference(angle, ControlType.kSmartMotion); //this is only for testing
     // m_pidControllerBottomArm.setReference(angle * (1/(2*Math.PI)), ControlType.kPosition); 
   }
   public void setJoint2(double angle) {
-    m_pidControllerTopArm.setReference(angle * (1/(2*Math.PI)), ControlType.kPosition); // unit conversion 1 radian --> 1/2pi
+    m_pidControllerTopArm.setReference(angle, ControlType.kSmartMotion, 0, calculateFFJoint2()); // unit conversion 1 radian --> 1/2pi
   }
   public void setDefault(double[] angle) {
-    m_pidControllerTopArm.setReference(angle[0] * (1/(2*Math.PI)), ControlType.kPosition); 
+    m_pidControllerTopArm.setReference(angle[0], ControlType.kSmartMotion); 
     // m_pidControllerBottomArm.setReference(angle[1] * (1/(2*Math.PI)), ControlType.kPosition); - only used when 2 motors are involved
+  }
+  public void resetEncoder() {
+    m_topArm.getEncoder().setPosition(0);
+    // m_bottomArm.getEncoder().setPosition(0);
+  }
+  private double calculateFFJoint2() {
+    return 0;
   }
 
 

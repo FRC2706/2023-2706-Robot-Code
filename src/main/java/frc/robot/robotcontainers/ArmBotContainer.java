@@ -13,9 +13,11 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.robot.Robot;
 import frc.robot.auto.AutoSelector;
 import frc.robot.config.Config;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -49,10 +51,17 @@ public class ArmBotContainer extends RobotContainer{
     CommandXboxController driver = new CommandXboxController(0);
     CommandXboxController controlStick = new CommandXboxController(1);
 
-    controlStick.y().onTrue(new ArmCommand("3", true));
-    controlStick.b().onTrue(new ArmCommand("2", true));
-    controlStick.a().onTrue(new ArmCommand("1", true));
-    controlStick.x().onTrue(new ArmCommand("default", true));
+    //controlStick.y().onTrue(new ArmCommand("3", true));
+    //controlStick.b().onTrue(new ArmCommand("2", true));
+    //controlStick.a().onTrue(new ArmCommand("1", true));
+    //controlStick.x().onTrue(new ArmCommand("default", true));
+
+    controlStick.a().onTrue(new SetAngleArm(0));
+    controlStick.b().onTrue(new SetAngleArm(Math.PI/2));
+    controlStick.y().onTrue(new SetAngleArm(Math.PI));
+
+    controlStick.x().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder()));
+
   }
 
 
