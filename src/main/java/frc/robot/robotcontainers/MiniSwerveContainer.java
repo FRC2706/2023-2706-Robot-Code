@@ -18,6 +18,7 @@ import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
 import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.SwerveTeleop;
+import frc.robot.subsystems.RelaySubsystem;
 import frc.robot.commands.TranslationCommand;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -45,6 +46,10 @@ public class MiniSwerveContainer extends RobotContainer{
     //use FRC Labview Dashboard
     String[] autoList = {"Test1", "Test2", "Test3", "To add more"};
     SmartDashboard.putStringArray("Auto List", autoList );
+
+    // Construct relays for MiniSwerve
+    RelaySubsystem.getInstance();
+
   }
 
   /**
