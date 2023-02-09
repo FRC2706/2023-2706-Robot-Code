@@ -9,8 +9,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveSubsystem;
 
-//TODO: change name to TranslationCommand to maintain Java standards for class names.
-public class translationCommand extends CommandBase {
+public class TranslationCommand extends CommandBase {
   ProfiledPIDController pidControlX;
   double currentX;
   double desiredX;
@@ -26,7 +25,7 @@ public class translationCommand extends CommandBase {
 
   
   /** Creates a new translation. */
-  public translationCommand( double deltaX, double deltaY) {
+  public TranslationCommand( double deltaX, double deltaY) {
     pidControlX = new ProfiledPIDController(1, 0.0, 0.2, 
                                            new TrapezoidProfile.Constraints(1, 1));
     pidControlY = new ProfiledPIDController(1, 0.0, 0.2, 
@@ -47,6 +46,10 @@ public class translationCommand extends CommandBase {
 
     desiredX = currentX + deltaX;
     desiredY = currentY + deltaY;
+
+    //reset current positions
+    pidControlX.reset(currentX);
+    pidControlY.reset(currentY);
 
     //set the tolerance
     pidControlX.setTolerance(TOLERANCE, TOLERANCE);
@@ -85,6 +88,7 @@ public class translationCommand extends CommandBase {
     else {
       return(false);
     }
+    //@todo: testing
     /*if(pidControlX.atSetpoint() && pidControlY.atSetpoint())
     {
       return true;
