@@ -165,7 +165,7 @@ public class Config {
 
         public static final double drive_kIZone = 0.0;
         public static final double drive_kFF = 0.0; // These can also be module specific.
-        public static final double drive_kP = 0.1; // Hopefully they won't need to be.
+        public static final double drive_kP = 0.2; // Hopefully they won't need to be.
         public static final double drive_kI = 0.0; // Depends on hardware differences.
         public static final double drive_kD = 0.0;
         
@@ -213,8 +213,8 @@ public class Config {
         public static final double teleopRateLimit = 3;
 
         public static final double driveKS = 0.667;
-        public static final double driveKV = 2.44;
-        public static final double driveKA = 0.27;
+        public static final double driveKV = 2.8;
+        public static final double driveKA = 0.48;
 
         public static DoubleSubscriber sub_kA = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kA").subscribe(driveKA);
         public static DoubleSubscriber sub_kV = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kV").subscribe(driveKV);
@@ -388,6 +388,11 @@ public class Config {
     public static final int ARMHIGH_PNEUMATIC_FORWARD_CHANNEL = -1;
     public static final int ARMHIGH_PNEUMATIC_REVERSE_CHANNEL = -1;
 
+
+    public static final String RELAY_NETWORKTABLE = "ControlRelay";
+    public static final int RELAY_RINGLIGHT_REAR_SMALL = 1; // NUMBERS NOT ACCURATELY RELATED TO CAMERAS YET
+    public static final int RELAY_RINGLIGHT_REAR_LARGE = 2;
+    public static final int RELAY_RINGLIGHT_FRONT = 3;
 
 
 

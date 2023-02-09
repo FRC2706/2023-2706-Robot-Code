@@ -10,11 +10,11 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.Config;
 
-public class armSubsystem extends SubsystemBase {
+public class ArmSubsystem extends SubsystemBase {
   DoubleSolenoid brakeSolenoidLow;
   DoubleSolenoid brakeSolenoidHigh;
   /** Creates a new armSubsystem. */
-  public armSubsystem() {
+  public ArmSubsystem() {
     brakeSolenoidLow = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
                                           PneumaticsModuleType.CTREPCM,
                                           Config.ARMLOW_PNEUMATIC_FORWARD_CHANNEL,

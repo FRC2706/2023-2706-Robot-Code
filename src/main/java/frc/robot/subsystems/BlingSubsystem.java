@@ -18,6 +18,7 @@ import com.ctre.phoenix.led.CANdle.LEDStripType;
 public class BlingSubsystem extends SubsystemBase {
 
   public CANdle candle; 
+  public final double Brightness = 0.5;
   private static BlingSubsystem INSTANCE = null;
   /**
    * Creates a new Bling.
@@ -29,7 +30,7 @@ public class BlingSubsystem extends SubsystemBase {
 
       CANdleConfiguration config = new CANdleConfiguration();
       config.stripType = LEDStripType.RGB; // set the strip type to RGB
-      config.brightnessScalar = 0.5; // dim the LEDs to half brightness
+      config.brightnessScalar = Brightness; // dim the LEDs to half brightness
 
       candle.configAllSettings(config);
     }
@@ -51,6 +52,16 @@ public class BlingSubsystem extends SubsystemBase {
     }
 
     return INSTANCE;
+  }
+
+  public void setBrightness()
+  {
+    candle.configBrightnessScalar(Brightness);
+  }
+
+  public void setDisabled()
+  {
+    candle.configBrightnessScalar(0.0);
   }
 
   public void setPurple()
