@@ -48,15 +48,15 @@ public class ArmCommand extends CommandBase {
   public void initialize() {
     if (level=="1") {
       z = 4;//constants --> first and second z positions - depends on the height of the node we are going for
-      nodeX = 8;//the x positiion of the node we are going for
+      nodeX = 19.382;//the x positiion of the node we are going for
     } 
     else if(level=="2") {
       z = 24;
-      nodeX = 27;
+      nodeX = 37.132;
     }
     else if (level=="3") {
       z = 35;
-      nodeX = 44;
+      nodeX = 54.132;
     }
     else if (level=="default") {
       defaultAngles = new double[]{defaultAngle1, defaultAngle2};
