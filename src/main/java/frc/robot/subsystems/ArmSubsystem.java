@@ -75,7 +75,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerTopArm.setIZone(kIz);
     m_pidControllerTopArm.setFF(kFF);
     m_pidControllerTopArm.setOutputRange(kMinOutput, kMaxOutput);
-    m_pidControllerTopArm.setSmartMotionMaxAccel(Math.PI/2, 0);
+    m_pidControllerTopArm.setSmartMotionMaxAccel(Math.PI/2, 0); // maybe accel and velocity should be in rpm instead of radians/second ?
     m_pidControllerTopArm.setSmartMotionMaxVelocity(Math.PI/2, 0);
     
     m_bottomArm.getEncoder().setPositionConversionFactor(2*Math.PI / Config.Arm.NEO_GEAR_RATIO);
