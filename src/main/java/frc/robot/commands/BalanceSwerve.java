@@ -33,7 +33,14 @@ public class BalanceSwerve extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    // TODO: tune balanceSpeed
+    if (initialAngle >= 0) {
+      SwerveSubsystem.getInstance().drive(Math.sin((SwerveSubsystem.getInstance().getRollValue() - initialAngle)) * balanceSpeed, 0, 0, false, true);
+    }
+    else {
+      SwerveSubsystem.getInstance().drive(Math.sin((SwerveSubsystem.getInstance().getRollValue() + initialAngle)) * balanceSpeed, 0, 0, false, true);
+    }
+/* 
      if (SwerveSubsystem.getInstance().getRollValue() >= initialAngle - 0.05 && SwerveSubsystem.getInstance().getRollValue() <= initialAngle + 0.05) {
        SwerveSubsystem.getInstance().drive(0, 0, 0, false, true);
      }
@@ -74,6 +81,7 @@ public class BalanceSwerve extends CommandBase {
              }
          }
        }
+       */
   }
 
   // Called once the command ends or is interrupted.
