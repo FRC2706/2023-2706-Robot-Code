@@ -34,12 +34,7 @@ public class BalanceSwerve extends CommandBase {
   @Override
   public void execute() {
     // TODO: tune balanceSpeed
-    if (initialAngle >= 0) {
-      SwerveSubsystem.getInstance().drive(Math.sin((SwerveSubsystem.getInstance().getRollValue() - initialAngle)) * balanceSpeed, 0, 0, false, true);
-    }
-    else {
-      SwerveSubsystem.getInstance().drive(Math.sin((SwerveSubsystem.getInstance().getRollValue() + initialAngle)) * balanceSpeed, 0, 0, false, true);
-    }
+    SwerveSubsystem.getInstance().drive(Math.sin((SwerveSubsystem.getInstance().getRollValue() - initialAngle)) * balanceSpeed, 0, 0, false, true);
 /* 
      if (SwerveSubsystem.getInstance().getRollValue() >= initialAngle - 0.05 && SwerveSubsystem.getInstance().getRollValue() <= initialAngle + 0.05) {
        SwerveSubsystem.getInstance().drive(0, 0, 0, false, true);
