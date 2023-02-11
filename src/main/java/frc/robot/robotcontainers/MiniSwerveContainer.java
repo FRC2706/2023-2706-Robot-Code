@@ -45,8 +45,12 @@ public class MiniSwerveContainer extends RobotContainer{
     //use FRC Labview Dashboard
     String[] autoList = {"null", 
                          "leave_top",
-                         "leave_middle_through", 
+                         "leave_middle_around_",
+                         "leave_middle_through_", 
                          "leave_bottom",
+                         "leave_balance_top",
+                         "leave_balance_middle_around_",
+                         "leave_balance_middle_through_",
                          "leave_balance_bottom",
                          "place_pick_top",
                          "place_pick_middle_around_",
@@ -55,6 +59,17 @@ public class MiniSwerveContainer extends RobotContainer{
                          "place_pick_balance_top",
                          "place_pick_balance_middle",
                          "place_pick_balance_bottom",
+                         "place_pick_place_balance_top",
+                         "place_pick_place_balance_middle",
+                         "place_pick_place_balance_bottom",
+                         "place_pick_place_top",
+                         "place_pick_place_middle",
+                         "place_pick_place_bottom",
+                         "place_pick_place_pick_place_top",
+                         "place_pick_place_pick_place_middle",
+                         "place_pick_place_pick_place_bottom",
+                         "Practice1",
+                         "Practice2"
                         };
     SmartDashboard.putStringArray("Auto List", autoList );
   }
@@ -87,10 +102,11 @@ public class MiniSwerveContainer extends RobotContainer{
    *
    * @return the command to run in autonomous
    */
+ 
   @Override
   public Command getAutonomousCommand(){
     int autoId;
-    String autoName = SmartDashboard.getString("Auto Selector", "Now!");
+    String autoName = SmartDashboard.getString("Auto Selector", "null");
     switch(autoName)
     {
       case "null":
@@ -99,38 +115,84 @@ public class MiniSwerveContainer extends RobotContainer{
       case "leave_top":
         autoId = 1;
         break;
-      case "leave_middle_through":
+      case "leave_middle_around_":
         autoId = 2;
         break;
-      case "leave_bottom":
+      case "leave_middle_through":
         autoId = 3;
         break;
-      case "leave_balance_bottom":
+      case "leave_bottom":
         autoId = 4;
         break;
-      case "place_pick_top":
+      case "leave_balance_top":
         autoId = 5;
         break;
-      case "place_pick_middle_around_":
+      case "leave_balance_middle_around_":
         autoId = 6;
         break;
-      case "place_pick_middle_through_":
+      case "leave_balance_middle_through_":
         autoId = 7;
         break;
-      case "place_pick_bottom":
+      case "leave_balance_bottom":
         autoId = 8;
         break;
-      case "place_pick_balance_top":
+      case "place_pick_top":
         autoId = 9;
         break;
-      case "place_pick_balance_middle":
+
+      case "place_pick_middle_around_":
         autoId = 10;
         break;
-      case "place_pick_balance_bottom":
+      case "place_pick_middle_through_":
         autoId = 11;
         break;
+      case "place_pick_bottom":
+        autoId = 12;
+        break;
+      case "place_pick_balance_top":
+        autoId = 13;
+        break;
+      case "place_pick_balance_middle":
+        autoId = 14;
+        break;
+      case "place_pick_balance_bottom":
+        autoId = 15;
+        break;
+      case "place_pick_place_balance_top":
+        autoId = 16;
+        break;
+      case "place_pick_place_balance_middle":
+        autoId = 17;
+        break;
+      case "place_pick_place_balance_bottom":
+        autoId = 18;
+        break;
+      case "place_pick_place_top":
+        autoId = 19;
+        break;
+      case "place_pick_place_middle":
+        autoId = 20;
+        break;
+      case "place_pick_place_bottom":
+        autoId = 21;
+        break;
+      case "place_pick_place_pick_place_top":
+        autoId = 22;
+        break;
+      case "place_pick_place_pick_place_middle":
+        autoId = 23;
+        break;
+      case "place_pick_place_pick_place_bottom":
+        autoId = 24;
+        break;
+      case "Practice1":
+        autoId = 25;
+        break;
+      case "Practice2":
+        autoId = 26;
+        break;
       default:
-        autoId=0;
+        autoId = 0;
         break;
       
     }
