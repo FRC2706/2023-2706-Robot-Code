@@ -4,28 +4,41 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.commands.poseEstimator;
+import frc.robot.subsystems.SwerveSubsystem;
 
 /** Add your docs here. */
 public class PoseEstimator {
-    public static DoubleSubscriber distance;
-    public static DoubleSubscriber yaw;
-    public static DoubleSubscriber imageTimestamp;
-    public static IntegerSubscriber aprilTagID;
-    public static NetworkTable aprilTagTable;
+    public DoubleSubscriber distance;
+    public DoubleSubscriber yaw;
+    public DoubleSubscriber imageTimestamp;
+    public IntegerSubscriber aprilTagID;
+    public NetworkTable aprilTagTable;
+    public double prevImageTimeStamp;
+    public AprilTagFieldLayout aprilTagFieldLayout;
+    public Rotation2d m_getHeading;
+    public final Pose2d m_cameraPose;
 
     public PoseEstimator(){
         aprilTagTable = NetworkTableInstance.getDefault().getTable("AprilTagTable");
-        distance = aprilTagTable.getDoubleTopic("Distance: ").subscribe();
-
+        distance = aprilTagTable.getDoubleTopic("Distance").subscribe(-99);
+        yaw = aprilTagTable.getDoubleTopic("yaw").subscribe(-99);
+        imageTimestamp = aprilTagTable.getDoubleTopic("Image Timestamp").subscribe(-99);
+        aprilTagID = aprilTagTable.getIntegerTopic("April Tag ID").subscribe(-99); 
+        m_getHeading = SwerveSubsystem.getInstance().getHeading();
+        m_cameraPose = null;
     }
 
-
-    public static void update(){
+    public void update(){
         if(distance.get(-99) == -99){
             return;
         }
@@ -39,6 +52,30 @@ public class PoseEstimator {
             return;
         }
 
+        double currentImageTimeStamp = imageTimestamp.get();
 
+        if(currentImageTimeStamp != prevImageTimeStamp){
+            prevImageTimeStamp = currentImageTimeStamp;
+        }
+
+
+        Optional<Pose3d> fieldToTarget = aprilTagFieldLayout.getTagPose((int)aprilTagID.get());
+        if (fieldToTarget.isPresent() == false) {
+            // AprilTag ID is not in AprilTagFieldLayout
+            return;
+        }
+
+        Pose2d newPoseEstimate = distAndYawToRobotPose(
+                    distance,
+                    yaw,
+                    m_getHeading,
+                    fieldToTarget.get(),
+                    m_cameraPose);
+
+
+        
+
+        
+                    
     }
 }
