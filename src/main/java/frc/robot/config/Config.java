@@ -1,9 +1,13 @@
 package frc.robot.config;
 
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.RobotBase;
+import java.io.BufferedReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -12,15 +16,11 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Robot;
-
-import java.io.BufferedReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.revrobotics.CANSparkMax.IdleMode;
 
 /**
  * Config manager for the robot
@@ -72,10 +72,10 @@ public class Config {
      */
     public static Double DRIVER_JOYSTICK_DEADBAND = 0.1; // TODO: Investigate if this can be better tuned
         
-    public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.1016, 0.1524); // Diameter of wheel is 0.1524
+    public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.0986536, 0.1524); // Diameter of wheel is 0.1524
 
-    public static final double kWheelBase = robotSpecific(-0.0, -0.0, -0.0, -0.0, 0.65, -0.0);
-    public static final double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, 0.518, 0.51762);
+    public static final double kWheelBase = robotSpecific(-0.0, -0.0, -0.0, -0.0, 0.655, -0.0);
+    public static final double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, 0.52, 0.51762);
     public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
 
     public static final int DIFF_SLOTID_DRIVER = 0;
@@ -156,8 +156,9 @@ public class Config {
         public static double ENCODER_SYNCING_PERIOD = 0.2; // seconds
         public static int ENCODER_SYNCING_TIMEOUT = 20; // seconds
 
+        public static final double MK4_L1_GEAR_RATIO = (50.0/14.0)*(19.0/25.0)*(45.0/15.0);
         public static final double turningEncoderConstant = (2*Math.PI)/12.8;
-        public static final double drivePositionConversionFactor = drivetrainWheelDiameter * Math.PI / 8.14;
+        public static final double drivePositionConversionFactor = drivetrainWheelDiameter * Math.PI / MK4_L1_GEAR_RATIO;
         public static final double driveVelocityConversionFactor = drivePositionConversionFactor / 60.0;
 
         public static final IdleMode defaultDriveIdleMode = IdleMode.kBrake;
@@ -165,7 +166,7 @@ public class Config {
 
         public static final double drive_kIZone = 0.0;
         public static final double drive_kFF = 0.0; // These can also be module specific.
-        public static final double drive_kP = 0.1; // Hopefully they won't need to be.
+        public static final double drive_kP = 0.2; // Hopefully they won't need to be.
         public static final double drive_kI = 0.0; // Depends on hardware differences.
         public static final double drive_kD = 0.0;
         
@@ -213,8 +214,8 @@ public class Config {
         public static final double teleopRateLimit = 3;
 
         public static final double driveKS = 0.667;
-        public static final double driveKV = 2.44;
-        public static final double driveKA = 0.27;
+        public static final double driveKV = 2.8;
+        public static final double driveKA = 0.48;
 
         public static DoubleSubscriber sub_kA = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kA").subscribe(driveKA);
         public static DoubleSubscriber sub_kV = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kV").subscribe(driveKV);
@@ -388,6 +389,11 @@ public class Config {
     public static final int ARMHIGH_PNEUMATIC_FORWARD_CHANNEL = -1;
     public static final int ARMHIGH_PNEUMATIC_REVERSE_CHANNEL = -1;
 
+
+    public static final String RELAY_NETWORKTABLE = "ControlRelay";
+    public static final int RELAY_RINGLIGHT_REAR_SMALL = 1; // NUMBERS NOT ACCURATELY RELATED TO CAMERAS YET
+    public static final int RELAY_RINGLIGHT_REAR_LARGE = 2;
+    public static final int RELAY_RINGLIGHT_FRONT = 3;
 
 
 
