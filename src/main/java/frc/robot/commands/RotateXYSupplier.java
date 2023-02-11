@@ -9,6 +9,9 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.DoubleTopic;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -29,6 +32,10 @@ public class RotateXYSupplier extends SwerveTeleop {
     pid.enableContinuousInput(-Math.PI, Math.PI);
   }
 
+  public RotateXYSupplier(CommandXboxController driverStick, DoubleSubscriber subscriber){
+    this(driverStick, ()-> subscriber.getAsDouble()); 
+  }
+
   @Override
   public void initialize() {
     super.initialize();
@@ -39,7 +46,7 @@ public class RotateXYSupplier extends SwerveTeleop {
   @Override
   public double calculateRot() {
     if (m_supplier.getAsDouble() != -99) {
-      setpoint = SwerveSubsystem.getInstance().getHeading().getRadians() + m_supplier.getAsDouble();
+      setpoint = SwerveSubsystem.getInstance().getHeading().getRadians() + Math.toRadians(m_supplier.getAsDouble()*-1);
     }
     return(pid.calculate(SwerveSubsystem.getInstance().getHeading().getRadians(), setpoint));
   }
