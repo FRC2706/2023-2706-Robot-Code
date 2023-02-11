@@ -4,6 +4,9 @@
 
 package frc.robot.robotcontainers;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -16,6 +19,7 @@ import frc.robot.auto.AutoRoutines;
 import frc.robot.auto.AutoSelector;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
+import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.SwerveTeleop;
 import frc.robot.subsystems.RelaySubsystem;
@@ -66,8 +70,9 @@ public class MiniSwerveContainer extends RobotContainer{
     //Do not use Right or Left Bumper already used in separate file
     driver.start().onTrue(new ResetGyroToNearest());
     driver.back().onTrue(new ResetGyro());
-    driver.b().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
-    
+    //driver.b().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
+    driver.b().onTrue(new ResetOdometry(new Pose2d()));
+
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
     driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
     
