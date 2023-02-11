@@ -36,7 +36,7 @@ public class ArmSubsystem extends SubsystemBase {
   public final CANSparkMax m_bottomArm;
   public SparkMaxPIDController m_pidControllerTopArm;
   public SparkMaxPIDController m_pidControllerBottomArm;
-  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+  public double kP = 0.02, kI = 0, kD = 2.4, kIz = 0, kFF = 0.1, kMaxOutput = 0.5, kMinOutput = -0.5;
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
@@ -59,15 +59,6 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerTopArm = m_topArm.getPIDController();
     m_pidControllerBottomArm = m_bottomArm.getPIDController();
 
-    // PID coefficients (probably need to change values and put the values in config)
-    kP = 0.02;
-    kI = 0;
-    kD = 2.4;
-    kIz = 0;
-    kFF = 0.1;
-    kMaxOutput = 0.5;
-    kMinOutput = -0.5;
-
     // setting PID coefficients for top arm
     m_pidControllerTopArm.setP(kP);
     m_pidControllerTopArm.setI(kI);
@@ -75,8 +66,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerTopArm.setIZone(kIz);
     m_pidControllerTopArm.setFF(kFF);
     m_pidControllerTopArm.setOutputRange(kMinOutput, kMaxOutput);
-    m_pidControllerTopArm.setSmartMotionMaxAccel(Math.PI/2, 0); // maybe accel and velocity should be in rpm instead of radians/second ?
-    m_pidControllerTopArm.setSmartMotionMaxVelocity(Math.PI/2, 0);
+    m_pidControllerTopArm.setSmartMotionMaxAccel(Math.PI/4, 0); // maybe accel and velocity should be in rpm instead of radians/second ?
+    m_pidControllerTopArm.setSmartMotionMaxVelocity(Math.PI/4, 0);
     
     m_bottomArm.getEncoder().setPositionConversionFactor(2*Math.PI / Config.Arm.NEO_GEAR_RATIO);
     m_topArm.getEncoder().setPositionConversionFactor(2*Math.PI / Config.Arm.NEO_GEAR_RATIO);
@@ -88,8 +79,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerBottomArm.setIZone(kIz);
     m_pidControllerBottomArm.setFF(kFF);
     m_pidControllerBottomArm.setOutputRange(kMinOutput, kMaxOutput);
-    m_pidControllerBottomArm.setSmartMotionMaxAccel(Math.PI/2, 0);
-    m_pidControllerBottomArm.setSmartMotionMaxVelocity(Math.PI/2, 0);
+    m_pidControllerBottomArm.setSmartMotionMaxAccel(Math.PI/4, 0);
+    m_pidControllerBottomArm.setSmartMotionMaxVelocity(Math.PI/4, 0);
 
   }
 
@@ -127,7 +118,7 @@ public class ArmSubsystem extends SubsystemBase {
     // m_pidControllerBottomArm.setReference(angle * (1/(2*Math.PI)), ControlType.kPosition); 
   }
   public void setJoint2(double angle) {
-    m_pidControllerTopArm.setReference(angle, ControlType.kSmartMotion, 0, calculateFFJoint2()); // unit conversion 1 radian --> 1/2pi
+    m_pidControllerTopArm.setReference(angle, ControlType.kSmartMotion, 0, calculateFFJoint2(angle)); // unit conversion 1 radian --> 1/2pi
   }
   public void setDefault(double[] angle) {
     m_pidControllerTopArm.setReference(angle[0], ControlType.kSmartMotion); 
@@ -137,8 +128,9 @@ public class ArmSubsystem extends SubsystemBase {
     m_topArm.getEncoder().setPosition(0);
     // m_bottomArm.getEncoder().setPosition(0);
   }
-  private double calculateFFJoint2() {
-    return 0;
+  private double calculateFFJoint2(double angle) {
+    double ff = Config.Arm.HORIZONTAL_VOLTAGE * Math.cos(angle);
+    return ff;
   }
 
 

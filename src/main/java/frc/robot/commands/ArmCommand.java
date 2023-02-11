@@ -19,7 +19,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 import java.util.Arrays;
 
 public class ArmCommand extends CommandBase {
-  String level;
+  int level;
   boolean isTop;
   double integralMinimum = -0.5;
   double integralMaximum = 0.5;
@@ -34,7 +34,7 @@ public class ArmCommand extends CommandBase {
 
   /** Creates a new ArmExtend. */
   
-  public ArmCommand(String level, boolean isTop) {
+  public ArmCommand(int level, boolean isTop) {
     this.level = level;
     this.isTop = isTop;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -46,22 +46,20 @@ public class ArmCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (level=="1") {
-      z = 4;//constants --> first and second z positions - depends on the height of the node we are going for
-      nodeX = 19.382;//the x positiion of the node we are going for
-    } 
-    else if(level=="2") {
-      z = 24;
-      nodeX = 37.132;
-    }
-    else if (level=="3") {
-      z = 35;
-      nodeX = 54.132;
-    }
-    else if (level=="default") {
-      defaultAngles = new double[]{defaultAngle1, defaultAngle2};
-      z = 0;
-      nodeX = 0;
+    switch(level) {
+      case 0:
+        defaultAngles = new double[]{defaultAngle1, defaultAngle2};
+        z = 0;
+        nodeX = 0;
+      case 1:
+        z = 4;//constants --> first and second z positions - depends on the height of the node we are going for
+        nodeX = 19.382;//the x positiion of the node we are going for
+      case 2:
+        z = 24;
+        nodeX = 37.132;
+      case 3:
+        z = 35;
+        nodeX = 54.132;
     }
   }
 
@@ -78,37 +76,18 @@ public class ArmCommand extends CommandBase {
     targetAngularDistanceTopArm = ArmSubsystem.getInstance().getAngularDistance(angle2, Config.Arm.NEO_GEAR_RATIO);
     
     switch(level){
-      case "1":
-        ArmSubsystem.getInstance().setJoint1(angle2);
-      case "2":
-        ArmSubsystem.getInstance().setJoint1(angle2);// if level 3 the angle should be 59 degrees, if level 2 angle should be 94 degrees
-        // ArmSubsystem.getInstance().setJoint2(angle2); - only used when two motors are involved (testing only)
-      case "3":
+      case 0:
+        ArmSubsystem.getInstance().setDefault(defaultAngles);
+      case 1:
+        // ArmSubsystem.getInstance().setJoint1(angle1);
+        ArmSubsystem.getInstance().setJoint2(angle2);
+      case 2:
+        // ArmSubsystem.getInstance().setJoint1(angle1);// if level 3 the angle should be 59 degrees, if level 2 angle should be 94 degrees
+        ArmSubsystem.getInstance().setJoint2(angle2); // - only used when two motors are involved (testing only)
+      case 3:
       // ArmSubsystem.getInstance().setJoint1(angle1); - only used when two motors are involved (testing only)
         ArmSubsystem.getInstance().setJoint2(angle2);// if level 3 the angle should be 139 degrees, if level 2 the angle should be 74 degrees
-      default:
-        ArmSubsystem.getInstance().setDefault(defaultAngles);
     }
-    // if (ArmSubsystem.getInstance().m_absoluteBottomArmEncoder.getPosition() < targetAngularDistanceBottomArm) {
-    //   ArmSubsystem.getInstance().setJoint1(targetAngularDistanceBottomArm);
-    // }
-    // else {
-    //   ArmSubsystem.getInstance().m_bottomArm.set(0);
-    // }
-
-    // if (ArmSubsystem.getInstance().m_absoluteTopArmEncoder.getPosition() < targetAngularDistanceTopArm) {
-    //   ArmSubsystem.getInstance().setJoint2(targetAngularDistanceTopArm);
-    // }
-    // else {
-    //   ArmSubsystem.getInstance().m_topArm.set(0);
-    // }
-
-    System.out.println(Arrays.toString(angles));
-    System.out.println(targetAngularDistanceBottomArm);
-    System.out.println(ArmSubsystem.getInstance().m_topArm.getEncoder().getPosition());
-    System.out.println(targetAngularDistanceTopArm);
-    System.out.println(ArmSubsystem.getInstance().m_bottomArm.getEncoder().getPosition());
-
   }
 
   // Called once the command ends or is interrupted.

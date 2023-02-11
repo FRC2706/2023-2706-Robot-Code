@@ -22,7 +22,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.*;
+import frc.robot.commands.ArmCommand;
+import frc.robot.commands.SetAngleArm;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -51,10 +52,10 @@ public class ArmBotContainer extends RobotContainer{
     CommandXboxController driver = new CommandXboxController(0);
     CommandXboxController controlStick = new CommandXboxController(1);
 
-    //controlStick.y().onTrue(new ArmCommand("3", true));
-    //controlStick.b().onTrue(new ArmCommand("2", true));
-    //controlStick.a().onTrue(new ArmCommand("1", true));
-    //controlStick.x().onTrue(new ArmCommand("default", true));
+    //controlStick.y().onTrue(new ArmCommand(3, true));
+    //controlStick.b().onTrue(new ArmCommand(2, true));
+    //controlStick.a().onTrue(new ArmCommand(1, true));
+    //controlStick.x().onTrue(new ArmCommand(0, true));
 
     controlStick.a().onTrue(new SetAngleArm(0));
     controlStick.b().onTrue(new SetAngleArm(Math.PI/2));
