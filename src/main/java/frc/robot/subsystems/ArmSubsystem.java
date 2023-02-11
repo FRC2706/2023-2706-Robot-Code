@@ -36,7 +36,13 @@ public class ArmSubsystem extends SubsystemBase {
   public final CANSparkMax m_bottomArm;
   public SparkMaxPIDController m_pidControllerTopArm;
   public SparkMaxPIDController m_pidControllerBottomArm;
-  public double kP = 0.02, kI = 0, kD = 2.4, kIz = 0, kFF = 0.1, kMaxOutput = 0.5, kMinOutput = -0.5;
+  public final double kP = 0.6;
+  public final double kI = 0;
+  public final double kD = 0; 
+  public final double kIz = 0;
+  public final double kFF = 0;
+  public final double kMaxOutput = 0.5;
+  public final double kMinOutput = -0.5;
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
@@ -45,6 +51,8 @@ public class ArmSubsystem extends SubsystemBase {
     CANCoderConfiguration config = new CANCoderConfiguration();
     m_topArm.restoreFactoryDefaults();
     m_bottomArm.restoreFactoryDefaults();
+    // m_topArm.setInverted(true);
+    // m_bottomArm.setInverted(true);
 
     // set units of the CANCoder to radians, with velocity being radians per second
     config.unitString = "rad";
@@ -66,8 +74,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerTopArm.setIZone(kIz);
     m_pidControllerTopArm.setFF(kFF);
     m_pidControllerTopArm.setOutputRange(kMinOutput, kMaxOutput);
-    m_pidControllerTopArm.setSmartMotionMaxAccel(Math.PI/4, 0); // maybe accel and velocity should be in rpm instead of radians/second ?
-    m_pidControllerTopArm.setSmartMotionMaxVelocity(Math.PI/4, 0);
+    m_pidControllerTopArm.setSmartMotionMaxAccel(Math.PI/6, 0); // maybe accel and velocity should be in rpm instead of radians/second ?
+    m_pidControllerTopArm.setSmartMotionMaxVelocity(Math.PI/6, 0);
     
     m_bottomArm.getEncoder().setPositionConversionFactor(2*Math.PI / Config.Arm.NEO_GEAR_RATIO);
     m_topArm.getEncoder().setPositionConversionFactor(2*Math.PI / Config.Arm.NEO_GEAR_RATIO);
@@ -79,8 +87,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerBottomArm.setIZone(kIz);
     m_pidControllerBottomArm.setFF(kFF);
     m_pidControllerBottomArm.setOutputRange(kMinOutput, kMaxOutput);
-    m_pidControllerBottomArm.setSmartMotionMaxAccel(Math.PI/4, 0);
-    m_pidControllerBottomArm.setSmartMotionMaxVelocity(Math.PI/4, 0);
+    m_pidControllerBottomArm.setSmartMotionMaxAccel(Math.PI/6, 0);
+    m_pidControllerBottomArm.setSmartMotionMaxVelocity(Math.PI/6, 0);
 
   }
 
@@ -100,7 +108,7 @@ public class ArmSubsystem extends SubsystemBase {
   public double[] calculateAngle(double L1, double L2, double x, double z) {
     double zx = (Math.pow(x,2)+Math.pow(z,2));
     //angle2 --> top arm
-    double angle2 = Math.acos((zx-Math.pow(L1,2)-Math.pow(L2,2))/(-2*L1*L2)); //gives angle in radians
+    double angle2 = Math.acos((Math.pow(L1,2)+Math.pow(L2,2) - zx)/(2*L1*L2)); //gives angle in radians
     //angle1 --> bottom arm
     double angle1 = (Math.atan2(z,x)+Math.acos((Math.pow(L2,2)-zx-Math.pow(L1,2))/(-2*Math.sqrt(zx)*L1))); // gives angle in radians
     double[] angles = {angle1,angle2};
@@ -114,22 +122,22 @@ public class ArmSubsystem extends SubsystemBase {
     return angle / gearRatio;
   }
   public void setJoint1(double angle) {
-    m_pidControllerTopArm.setReference(angle, ControlType.kSmartMotion); //this is only for testing
+    m_pidControllerTopArm.setReference(angle, ControlType.kPosition); //this is only for testing
     // m_pidControllerBottomArm.setReference(angle * (1/(2*Math.PI)), ControlType.kPosition); 
   }
   public void setJoint2(double angle) {
-    m_pidControllerTopArm.setReference(angle, ControlType.kSmartMotion, 0, calculateFFJoint2(angle)); // unit conversion 1 radian --> 1/2pi
+    m_pidControllerTopArm.setReference(angle, ControlType.kPosition);//, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition())); // unit conversion 1 radian --> 1/2pi
   }
   public void setDefault(double[] angle) {
-    m_pidControllerTopArm.setReference(angle[0], ControlType.kSmartMotion); 
+    m_pidControllerTopArm.setReference(angle[0], ControlType.kPosition); 
     // m_pidControllerBottomArm.setReference(angle[1] * (1/(2*Math.PI)), ControlType.kPosition); - only used when 2 motors are involved
   }
   public void resetEncoder() {
     m_topArm.getEncoder().setPosition(0);
     // m_bottomArm.getEncoder().setPosition(0);
   }
-  private double calculateFFJoint2(double angle) {
-    double ff = Config.Arm.HORIZONTAL_VOLTAGE * Math.cos(angle);
+  private double calculateFFJoint2(double encoderAngle) {
+    double ff = Config.Arm.HORIZONTAL_VOLTAGE * Math.cos(encoderAngle);
     return ff;
   }
 
