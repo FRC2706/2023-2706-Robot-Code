@@ -77,19 +77,17 @@ public class ArmCommand extends CommandBase {
     targetAngularDistanceBottomArm = ArmSubsystem.getInstance().getAngularDistance(angle1, Config.Arm.NEO_GEAR_RATIO);
     targetAngularDistanceTopArm = ArmSubsystem.getInstance().getAngularDistance(angle2, Config.Arm.NEO_GEAR_RATIO);
     
-    if (level == "3") {
+    switch(level){
+      case "1":
+        ArmSubsystem.getInstance().setJoint1(angle2);
+      case "2":
+        ArmSubsystem.getInstance().setJoint1(angle2);// if level 3 the angle should be 59 degrees, if level 2 angle should be 94 degrees
+        // ArmSubsystem.getInstance().setJoint2(angle2); - only used when two motors are involved (testing only)
+      case "3":
       // ArmSubsystem.getInstance().setJoint1(angle1); - only used when two motors are involved (testing only)
-      ArmSubsystem.getInstance().setJoint2(angle2); // if level 3 the angle should be 139 degrees, if level 2 the angle should be 74 degrees
-    }
-    else if (level == "2") {
-      ArmSubsystem.getInstance().setJoint1(angle2); // if level 3 the angle should be 59 degrees, if level 2 angle should be 94 degrees
-      // ArmSubsystem.getInstance().setJoint2(angle2); - only used when two motors are involved (testing only)
-    }
-    else if (level == "1") {
-      ArmSubsystem.getInstance().setJoint1(angle2);
-    }
-    else if (level == "default") {
-      ArmSubsystem.getInstance().setDefault(defaultAngles);
+        ArmSubsystem.getInstance().setJoint2(angle2);// if level 3 the angle should be 139 degrees, if level 2 the angle should be 74 degrees
+      default:
+        ArmSubsystem.getInstance().setDefault(defaultAngles);
     }
     // if (ArmSubsystem.getInstance().m_absoluteBottomArmEncoder.getPosition() < targetAngularDistanceBottomArm) {
     //   ArmSubsystem.getInstance().setJoint1(targetAngularDistanceBottomArm);

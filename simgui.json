@@ -2,6 +2,8 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Auto/Routines": "String Chooser",
+      "/Shuffleboard/BasicDebugging/CommandScheduler": "Scheduler",
       "/SmartDashboard/Field": "Field2d"
     }
   }
