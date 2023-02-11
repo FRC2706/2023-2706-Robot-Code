@@ -23,6 +23,7 @@ public class SubsystemChecker {
         PneumaticShooterSubsystem,
         IndexerSubsystem,
         ArmSubsystem,
+        RelaySubsystem,
     };
 
     /**
@@ -58,6 +59,7 @@ public class SubsystemChecker {
     // RobotID: 4, 2022 Fall Half-scale swerve robot, unnamed
     private static SubsystemType[] miniSwerveId4 = new SubsystemType[] {
         SubsystemType.SwerveSubsystem, // Chassis
+        SubsystemType.RelaySubsystem,
     };
 
     // RobotID: 5, 2022 Fall Half-scale Neo Differential drive robot, unnamed
