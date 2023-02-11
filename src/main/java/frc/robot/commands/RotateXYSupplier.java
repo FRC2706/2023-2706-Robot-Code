@@ -45,8 +45,9 @@ public class RotateXYSupplier extends SwerveTeleop {
 
   @Override
   public double calculateRot() {
-    if (m_supplier.getAsDouble() != -99) {
-      setpoint = SwerveSubsystem.getInstance().getHeading().getRadians() + Math.toRadians(m_supplier.getAsDouble()*-1);
+    double value = m_supplier.getAsDouble();
+    if (value != -99 && Math.abs(value) < 30) {
+      setpoint = SwerveSubsystem.getInstance().getHeading().getRadians() + Math.toRadians(value*-1);
     }
     return(pid.calculate(SwerveSubsystem.getInstance().getHeading().getRadians(), setpoint));
   }

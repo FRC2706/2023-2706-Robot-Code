@@ -22,6 +22,7 @@ import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.RotateXYSupplier;
 import frc.robot.commands.SwerveTeleop;
 import frc.robot.commands.TranslationCommand;
+import frc.robot.config.Config;
 import frc.robot.subsystems.RelaySubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -109,6 +110,8 @@ public class MiniSwerveContainer extends RobotContainer{
     driver.leftTrigger().whileTrue(new RotateXYSupplier(driver,
       NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("YawToTarget").subscribe(-99)
     ));
+
+    RelaySubsystem.getInstance().setRelay(Config.RELAY_RINGLIGHT_REAR_LARGE, true);
   }
 
 
