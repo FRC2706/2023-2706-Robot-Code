@@ -1,9 +1,13 @@
 package frc.robot.config;
 
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.RobotBase;
+import java.io.BufferedReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -12,15 +16,11 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Robot;
-
-import java.io.BufferedReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.revrobotics.CANSparkMax.IdleMode;
 
 /**
  * Config manager for the robot
@@ -156,8 +156,9 @@ public class Config {
         public static double ENCODER_SYNCING_PERIOD = 0.2; // seconds
         public static int ENCODER_SYNCING_TIMEOUT = 20; // seconds
 
+        public static final double MK4_L1_GEAR_RATIO = (50.0/14.0)*(19.0/25.0)*(45.0/15.0);
         public static final double turningEncoderConstant = (2*Math.PI)/12.8;
-        public static final double drivePositionConversionFactor = drivetrainWheelDiameter * Math.PI / 8.14;
+        public static final double drivePositionConversionFactor = drivetrainWheelDiameter * Math.PI / MK4_L1_GEAR_RATIO;
         public static final double driveVelocityConversionFactor = drivePositionConversionFactor / 60.0;
 
         public static final IdleMode defaultDriveIdleMode = IdleMode.kBrake;
