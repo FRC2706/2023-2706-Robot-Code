@@ -39,7 +39,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "Bling Rainbow"
+          "Bling Red"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
