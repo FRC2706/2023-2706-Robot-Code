@@ -15,6 +15,7 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.commands.SetBlingCommand;
 import frc.robot.config.Config;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -56,6 +57,10 @@ public class AutoRoutines {
         Map<String, Command> eventMap = new HashMap<String, Command>();
 
         eventMap.put("intake", new InstantCommand());
+        eventMap.put("Bling Purple", new SetBlingCommand(1));
+        eventMap.put("Bling Blue", new SetBlingCommand(2));
+        eventMap.put("Bling Red", new SetBlingCommand(3));
+        eventMap.put("Bling Honeydew", new SetBlingCommand(4));
 
         autoBuilder = new SwerveAutoBuilder(
                 SwerveSubsystem.getInstance()::getPose,
