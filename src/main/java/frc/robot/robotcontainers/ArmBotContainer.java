@@ -4,6 +4,8 @@
 
 package frc.robot.robotcontainers;
 
+import java.lang.System.Logger.Level;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -57,9 +59,9 @@ public class ArmBotContainer extends RobotContainer{
     //controlStick.a().onTrue(new ArmCommand(1, true));
     //controlStick.x().onTrue(new ArmCommand(0, true));
 
-    controlStick.a().onTrue(new ArmCommand(2, true));
-    controlStick.b().onTrue(new ArmCommand(3, true));
-    controlStick.y().onTrue(new ArmCommand(1, true));
+    controlStick.a().onTrue(new ArmCommand(ArmCommand.Level.MEDIUM, true));
+    controlStick.b().onTrue(new ArmCommand(ArmCommand.Level.HIGH, true));
+    controlStick.y().onTrue(new ArmCommand(ArmCommand.Level.LOW, true));
 
     controlStick.x().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder()));
 

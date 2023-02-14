@@ -19,7 +19,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 import java.util.Arrays;
 
 public class ArmCommand extends CommandBase {
-  int level = 0;
+  Level level = Level.LOW;
   boolean isTop;
   double integralMinimum = -0.5;
   double integralMaximum = 0.5;
@@ -34,10 +34,16 @@ public class ArmCommand extends CommandBase {
   double[] angles;
   double angle1;
   double angle2;
+  public enum Level {
+    DEFAULT,
+    LOW,
+    MEDIUM,
+    HIGH
+  }
 
   /** Creates a new ArmExtend. */
   
-  public ArmCommand(int level, boolean isTop) {
+  public ArmCommand(Level level, boolean isTop) {
     this.level = level;
     this.isTop = isTop;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -52,20 +58,20 @@ public class ArmCommand extends CommandBase {
     nodeX = 0;
     z = 0;
     switch(level) {
-      case 0:
+      case DEFAULT:
         defaultAngles = new double[]{defaultAngle1, defaultAngle2};
         z = 0;
         nodeX = 0;
         break;
-      case 1:
+      case LOW:
         z = 4;//constants --> first and second z positions - depends on the height of the node we are going for
         nodeX = 19.382;//the x positiion of the node we are going for
         break;
-      case 2:
+      case MEDIUM:
         z = 24;
         nodeX = 37.132;
         break;
-      case 3:
+      case HIGH:
         z = 35;
         nodeX = 54.132;
         break;
@@ -85,23 +91,23 @@ public class ArmCommand extends CommandBase {
     targetAngularDistanceTopArm = ArmSubsystem.getInstance().getAngularDistance(angle2, Config.Arm.NEO_GEAR_RATIO);
     
     switch(level){
-      case 0:
+      case DEFAULT:
         ArmSubsystem.getInstance().setDefault(defaultAngles);
-      case 1:
+      case LOW:
         if (isTop) {
           ArmSubsystem.getInstance().setJoint2(angle2);
         }
         else {
           ArmSubsystem.getInstance().setJoint1(angle1);
         }
-      case 2:
+      case MEDIUM:
       if (isTop) {
         ArmSubsystem.getInstance().setJoint2(angle2); // - only used when two motors are involved (testing only)
       }
       else {
         ArmSubsystem.getInstance().setJoint1(angle1);// if level 3 the angle should be 59 degrees, if level 2 angle should be 94 degrees
       }
-      case 3:
+      case HIGH:
       if (isTop) {
         ArmSubsystem.getInstance().setJoint2(angle2);// if level 3 the angle should be 139 degrees, if level 2 the angle should be 74 degrees
       }
