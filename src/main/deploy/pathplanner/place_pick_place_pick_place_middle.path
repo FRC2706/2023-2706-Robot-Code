@@ -16,7 +16,9 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "Bling Red"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -39,12 +41,14 @@
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "Bling Honeydew"
+        ],
         "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "waitBehavior": "after",
+        "waitTime": 0.3
       }
     },
     {
@@ -64,12 +68,14 @@
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "Bling Red"
+        ],
         "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "waitBehavior": "after",
+        "waitTime": 0.3
       }
     },
     {
@@ -89,11 +95,13 @@
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "Bling Honeydew"
+        ],
         "executionBehavior": "parallel",
-        "waitBehavior": "none",
+        "waitBehavior": "after",
         "waitTime": 0
       }
     },
@@ -113,7 +121,9 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "Bling Red"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0

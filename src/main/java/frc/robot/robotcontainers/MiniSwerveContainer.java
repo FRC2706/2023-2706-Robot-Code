@@ -5,14 +5,11 @@
 package frc.robot.robotcontainers;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.auto.AutoRoutines;
@@ -22,8 +19,8 @@ import frc.robot.commands.ResetGyroToNearest;
 import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.SwerveTeleop;
-import frc.robot.subsystems.RelaySubsystem;
 import frc.robot.commands.TranslationCommand;
+import frc.robot.subsystems.RelaySubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -48,33 +45,33 @@ public class MiniSwerveContainer extends RobotContainer{
     routines = new AutoRoutines();
 
     //use FRC Labview Dashboard
-    String[] autoList = {"null", 
-                         "leave_top",
-                         "leave_middle_around_",
-                         "leave_middle_through_", 
-                         "leave_bottom",
-                         "leave_balance_top",
-                         "leave_balance_middle_around_",
-                         "leave_balance_middle_through_",
-                         "leave_balance_bottom",
-                         "place_pick_top",
-                         "place_pick_middle_around_",
-                         "place_pick_middle_through_",
-                         "place_pick_bottom",
-                         "place_pick_balance_top",
-                         "place_pick_balance_middle",
-                         "place_pick_balance_bottom",
-                         "place_pick_place_balance_top",
-                         "place_pick_place_balance_middle",
-                         "place_pick_place_balance_bottom",
-                         "place_pick_place_top",
-                         "place_pick_place_middle",
-                         "place_pick_place_bottom",
-                         "place_pick_place_pick_place_top",
-                         "place_pick_place_pick_place_middle",
-                         "place_pick_place_pick_place_bottom",
-                         "Practice1",
-                         "Practice2"
+    String[] autoList = {"Id0_null", 
+                         "Id1_leave_top",
+                         "Id2_leave_middle_around_",
+                         "Id3_leave_middle_through_", 
+                         "Id4_leave_bottom",
+                         "Id5_leave_balance_top",
+                         "Id6_leave_balance_middle_around_",
+                         "Id7_leave_balance_middle_through_",
+                         "Id8_leave_balance_bottom",
+                         "Id9_place_pick_top",
+                         "Id10_place_pick_middle_around_",
+                         "Id11_place_pick_middle_through_",
+                         "Id12_place_pick_bottom",
+                         "Id13_place_pick_balance_top",
+                         "Id14_place_pick_balance_middle",
+                         "Id15_place_pick_balance_bottom",
+                         "Id16_place_pick_place_balance_top",
+                         "Id17_place_pick_place_balance_middle",
+                         "Id18_place_pick_place_balance_bottom",
+                         "Id19_place_pick_place_top",
+                         "Id20_place_pick_place_middle",
+                         "Id21_place_pick_place_bottom",
+                         "Id22_place_pick_place_pick_place_top",
+                         "Id23_place_pick_place_pick_place_middle",
+                         "Id24_place_pick_place_pick_place_bottom",
+                         "Id25_Practice1",
+                         "Id26_Practice2"
                         };
     SmartDashboard.putStringArray("Auto List", autoList );
 
@@ -103,7 +100,7 @@ public class MiniSwerveContainer extends RobotContainer{
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
     driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
     
-    driver.x().whileTrue(new TranslationCommand(1, 1));
+    driver.x().whileTrue(new TranslationCommand(3.5, 0));
   }
 
 
@@ -119,86 +116,86 @@ public class MiniSwerveContainer extends RobotContainer{
     String autoName = SmartDashboard.getString("Auto Selector", "null");
     switch(autoName)
     {
-      case "null":
+      case "Id0_null":
         autoId = 0;
         break;
-      case "leave_top":
+      case "Id1_leave_top":
         autoId = 1;
         break;
-      case "leave_middle_around_":
+      case "Id2_leave_middle_around_":
         autoId = 2;
         break;
-      case "leave_middle_through":
+      case "Id3_leave_middle_through":
         autoId = 3;
         break;
-      case "leave_bottom":
+      case "Id4_leave_bottom":
         autoId = 4;
         break;
-      case "leave_balance_top":
+      case "Id5_leave_balance_top":
         autoId = 5;
         break;
-      case "leave_balance_middle_around_":
+      case "Id6_leave_balance_middle_around_":
         autoId = 6;
         break;
-      case "leave_balance_middle_through_":
+      case "Id7_leave_balance_middle_through_":
         autoId = 7;
         break;
-      case "leave_balance_bottom":
+      case "Id8_leave_balance_bottom":
         autoId = 8;
         break;
-      case "place_pick_top":
+      case "Id9_place_pick_top":
         autoId = 9;
         break;
 
-      case "place_pick_middle_around_":
+      case "Id10_place_pick_middle_around_":
         autoId = 10;
         break;
-      case "place_pick_middle_through_":
+      case "Id11_place_pick_middle_through_":
         autoId = 11;
         break;
-      case "place_pick_bottom":
+      case "Id12_place_pick_bottom":
         autoId = 12;
         break;
-      case "place_pick_balance_top":
+      case "Id13_place_pick_balance_top":
         autoId = 13;
         break;
-      case "place_pick_balance_middle":
+      case "Id14_place_pick_balance_middle":
         autoId = 14;
         break;
-      case "place_pick_balance_bottom":
+      case "Id15_place_pick_balance_bottom":
         autoId = 15;
         break;
-      case "place_pick_place_balance_top":
+      case "Id16_place_pick_place_balance_top":
         autoId = 16;
         break;
-      case "place_pick_place_balance_middle":
+      case "Id17_place_pick_place_balance_middle":
         autoId = 17;
         break;
-      case "place_pick_place_balance_bottom":
+      case "Id18_place_pick_place_balance_bottom":
         autoId = 18;
         break;
-      case "place_pick_place_top":
+      case "Id19_place_pick_place_top":
         autoId = 19;
         break;
-      case "place_pick_place_middle":
+      case "Id20_place_pick_place_middle":
         autoId = 20;
         break;
-      case "place_pick_place_bottom":
+      case "Id21_place_pick_place_bottom":
         autoId = 21;
         break;
-      case "place_pick_place_pick_place_top":
+      case "Id22_place_pick_place_pick_place_top":
         autoId = 22;
         break;
-      case "place_pick_place_pick_place_middle":
+      case "Id23_place_pick_place_pick_place_middle":
         autoId = 23;
         break;
-      case "place_pick_place_pick_place_bottom":
+      case "Id24_place_pick_place_pick_place_bottom":
         autoId = 24;
         break;
-      case "Practice1":
+      case "Id25_Practice1":
         autoId = 25;
         break;
-      case "Practice2":
+      case "Id26_Practice2":
         autoId = 26;
         break;
       default:
