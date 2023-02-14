@@ -19,7 +19,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 import java.util.Arrays;
 
 public class ArmCommand extends CommandBase {
-  int level;
+  int level = 0;
   boolean isTop;
   double integralMinimum = -0.5;
   double integralMaximum = 0.5;
@@ -31,6 +31,9 @@ public class ArmCommand extends CommandBase {
   double[] defaultAngles;
   double targetAngularDistanceBottomArm;
   double targetAngularDistanceTopArm;
+  double[] angles;
+  double angle1;
+  double angle2;
 
   /** Creates a new ArmExtend. */
   
@@ -46,20 +49,26 @@ public class ArmCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    nodeX = 0;
+    z = 0;
     switch(level) {
       case 0:
         defaultAngles = new double[]{defaultAngle1, defaultAngle2};
         z = 0;
         nodeX = 0;
+        break;
       case 1:
         z = 4;//constants --> first and second z positions - depends on the height of the node we are going for
         nodeX = 19.382;//the x positiion of the node we are going for
+        break;
       case 2:
         z = 24;
         nodeX = 37.132;
+        break;
       case 3:
         z = 35;
         nodeX = 54.132;
+        break;
     }
   }
 
@@ -68,9 +77,9 @@ public class ArmCommand extends CommandBase {
   public void execute() {
 
     double x = ArmSubsystem.getInstance().setx(0,nodeX);
-    double[] angles = ArmSubsystem.getInstance().calculateAngle(Config.Arm.L1, Config.Arm.L2, x, z);
-    double angle1 = angles[0];
-    double angle2 = angles[1];
+    angles = ArmSubsystem.getInstance().calculateAngle(Config.Arm.L1, Config.Arm.L2, x, z);
+    angle1 = angles[0];
+    angle2 = angles[1];
 
     targetAngularDistanceBottomArm = ArmSubsystem.getInstance().getAngularDistance(angle1, Config.Arm.NEO_GEAR_RATIO);
     targetAngularDistanceTopArm = ArmSubsystem.getInstance().getAngularDistance(angle2, Config.Arm.NEO_GEAR_RATIO);
@@ -79,17 +88,26 @@ public class ArmCommand extends CommandBase {
       case 0:
         ArmSubsystem.getInstance().setDefault(defaultAngles);
       case 1:
-        // ArmSubsystem.getInstance().setJoint1(angle1);
-        System.out.println(angle2);
-        ArmSubsystem.getInstance().setJoint2(angle2);
+        if (isTop) {
+          ArmSubsystem.getInstance().setJoint2(angle2);
+        }
+        else {
+          ArmSubsystem.getInstance().setJoint1(angle1);
+        }
       case 2:
-        // ArmSubsystem.getInstance().setJoint1(angle1);// if level 3 the angle should be 59 degrees, if level 2 angle should be 94 degrees
-        System.out.println(angle2);
+      if (isTop) {
         ArmSubsystem.getInstance().setJoint2(angle2); // - only used when two motors are involved (testing only)
+      }
+      else {
+        ArmSubsystem.getInstance().setJoint1(angle1);// if level 3 the angle should be 59 degrees, if level 2 angle should be 94 degrees
+      }
       case 3:
-        // ArmSubsystem.getInstance().setJoint1(angle1); - only used when two motors are involved (testing only)
-        System.out.println(angle2);
+      if (isTop) {
         ArmSubsystem.getInstance().setJoint2(angle2);// if level 3 the angle should be 139 degrees, if level 2 the angle should be 74 degrees
+      }
+      else {
+        ArmSubsystem.getInstance().setJoint1(angle1); // - only used when two motors are involved (testing only)
+      }
     }
   }
 
@@ -103,22 +121,11 @@ public class ArmCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (isTop == true) {
-      if (Math.abs(targetAngularDistanceTopArm - ArmSubsystem.getInstance().m_topArm.getEncoder().getPosition()) < Math.toRadians(1) ) {
-        return true;
-      }
-      else {
-        return false;
-      }
+    if (Math.abs(angle2 - ArmSubsystem.getInstance().m_topArm.getEncoder().getPosition()) < Math.toRadians(1) ) {
+      return true;
     }
     else {
-      if (Math.abs(targetAngularDistanceBottomArm - ArmSubsystem.getInstance().m_topArm.getEncoder().getPosition()) < Math.toRadians(1) ) {
-        return true;
-      }
-      else {
-        return false;
-      }
+      return false;
     }
-    
   }
 }

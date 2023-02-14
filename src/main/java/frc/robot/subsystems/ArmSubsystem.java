@@ -122,14 +122,14 @@ public class ArmSubsystem extends SubsystemBase {
     return angle / gearRatio;
   }
   public void setJoint1(double angle) {
-    m_pidControllerTopArm.setReference(angle, ControlType.kPosition); //this is only for testing
+    m_pidControllerTopArm.setReference(angle, ControlType.kPosition, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition())); //this is only for testing
     // m_pidControllerBottomArm.setReference(angle * (1/(2*Math.PI)), ControlType.kPosition); 
   }
   public void setJoint2(double angle) {
-    m_pidControllerTopArm.setReference(angle, ControlType.kPosition);//, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition())); // unit conversion 1 radian --> 1/2pi
+    m_pidControllerTopArm.setReference(angle, ControlType.kPosition, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition()));//, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition())); // unit conversion 1 radian --> 1/2pi
   }
   public void setDefault(double[] angle) {
-    m_pidControllerTopArm.setReference(angle[0], ControlType.kPosition); 
+    m_pidControllerTopArm.setReference(angle[0], ControlType.kPosition, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition())); 
     // m_pidControllerBottomArm.setReference(angle[1] * (1/(2*Math.PI)), ControlType.kPosition); - only used when 2 motors are involved
   }
   public void resetEncoder() {
