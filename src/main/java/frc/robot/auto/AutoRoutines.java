@@ -15,7 +15,9 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.SetBlingCommand;
+import frc.robot.commands.TranslationCommand;
 import frc.robot.config.Config;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -153,8 +155,10 @@ public class AutoRoutines {
 
                 //test this case
             case 15:
-                return (autoBuilder.fullAuto(place_pick_balance_bottom));
-
+                return new SequentialCommandGroup(
+                    autoBuilder.fullAuto(place_pick_balance_bottom),
+                    new TranslationCommand(-2.7,0)
+                );
             case 16:
                 return (autoBuilder.fullAuto(place_pick_place_balance_top));
 
