@@ -36,11 +36,11 @@ public class ArmSubsystem extends SubsystemBase {
   public final CANSparkMax m_bottomArm;
   public SparkMaxPIDController m_pidControllerTopArm;
   public SparkMaxPIDController m_pidControllerBottomArm;
-  public final double kP = 0.6;
+  public final double kP = 0.2;
   public final double kI = 0;
   public final double kD = 0; 
   public final double kIz = 0;
-  public final double kFF = 0;
+  public final double kFF = 0.4;
   public final double kMaxOutput = 0.5;
   public final double kMinOutput = -0.5;
 
@@ -124,14 +124,14 @@ public class ArmSubsystem extends SubsystemBase {
     return angle / gearRatio;
   }
   public void setBottomJoint(double angle) {
-    m_pidControllerTopArm.setReference(angle, ControlType.kPosition, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition())); //this is only for testing
+    m_pidControllerTopArm.setReference(angle, ControlType.kSmartMotion, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition())); //this is only for testing
     // m_pidControllerBottomArm.setReference(angle * (1/(2*Math.PI)), ControlType.kPosition); 
   }
   public void setTopJoint(double angle) {
-    m_pidControllerTopArm.setReference(angle, ControlType.kPosition, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition()));//, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition())); // unit conversion 1 radian --> 1/2pi
+    m_pidControllerTopArm.setReference(angle, ControlType.kSmartMotion, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition()));//, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition())); // unit conversion 1 radian --> 1/2pi
   }
   public void setDefault(double[] angle) {
-    m_pidControllerTopArm.setReference(angle[0], ControlType.kPosition, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition())); 
+    m_pidControllerTopArm.setReference(angle[0], ControlType.kSmartMotion, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition())); 
     // m_pidControllerBottomArm.setReference(angle[1] * (1/(2*Math.PI)), ControlType.kPosition); - only used when 2 motors are involved
   }
   public void resetEncoder() {
@@ -139,7 +139,7 @@ public class ArmSubsystem extends SubsystemBase {
     // m_bottomArm.getEncoder().setPosition(0);
   }
   private double calculateFFJoint2(double encoderAngle) {
-    double ff = Config.Arm.HORIZONTAL_VOLTAGE * Math.cos(encoderAngle);
+    double ff = Config.Arm.HORIZONTAL_VOLTAGE * Math.sin(encoderAngle);
     return ff;
   }
 

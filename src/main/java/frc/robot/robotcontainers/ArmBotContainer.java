@@ -59,9 +59,9 @@ public class ArmBotContainer extends RobotContainer{
     //controlStick.a().onTrue(new ArmCommand(1, true));
     //controlStick.x().onTrue(new ArmCommand(0, true));
 
-    controlStick.a().onTrue(new ArmCommand(ArmCommand.Level.MEDIUM, true));
-    controlStick.b().onTrue(new ArmCommand(ArmCommand.Level.HIGH, true));
-    controlStick.y().onTrue(new ArmCommand(ArmCommand.Level.LOW, true));
+    controlStick.b().onTrue(new ArmCommand(ArmCommand.Level.MEDIUM, true));
+    controlStick.y().onTrue(new ArmCommand(ArmCommand.Level.HIGH, true));
+    controlStick.a().onTrue(new ArmCommand(ArmCommand.Level.LOW, true));
 
     controlStick.x().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder()));
 

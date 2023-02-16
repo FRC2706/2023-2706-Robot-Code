@@ -26,7 +26,7 @@ public class SetAngleArm extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    ArmSubsystem.getInstance().setJoint2(angle);
+    ArmSubsystem.getInstance().setTopJoint(angle);
   }
 
   // Called once the command ends or is interrupted.
