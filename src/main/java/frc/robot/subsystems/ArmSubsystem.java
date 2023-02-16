@@ -77,8 +77,10 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerTopArm.setSmartMotionMaxAccel(Math.PI/6, 0); // maybe accel and velocity should be in rpm instead of radians/second ?
     m_pidControllerTopArm.setSmartMotionMaxVelocity(Math.PI/6, 0);
     
-    m_bottomArm.getEncoder().setPositionConversionFactor(2*Math.PI / Config.Arm.NEO_GEAR_RATIO);
-    m_topArm.getEncoder().setPositionConversionFactor(2*Math.PI / Config.Arm.NEO_GEAR_RATIO);
+    m_bottomArm.getEncoder().setPositionConversionFactor(Config.Arm.armPositionConversionFactor);
+    m_topArm.getEncoder().setPositionConversionFactor(Config.Arm.armPositionConversionFactor);
+    m_topArm.getEncoder().setVelocityConversionFactor(Config.Arm.armVelocityConversionFactor);
+    m_bottomArm.getEncoder().setVelocityConversionFactor(Config.Arm.armVelocityConversionFactor);
 
     // setting PID coefficients for bottom arm
     m_pidControllerBottomArm.setP(kP);
@@ -121,11 +123,11 @@ public class ArmSubsystem extends SubsystemBase {
   public double getAngularDistance(double angle, double gearRatio) {
     return angle / gearRatio;
   }
-  public void setJoint1(double angle) {
+  public void setBottomJoint(double angle) {
     m_pidControllerTopArm.setReference(angle, ControlType.kPosition, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition())); //this is only for testing
     // m_pidControllerBottomArm.setReference(angle * (1/(2*Math.PI)), ControlType.kPosition); 
   }
-  public void setJoint2(double angle) {
+  public void setTopJoint(double angle) {
     m_pidControllerTopArm.setReference(angle, ControlType.kPosition, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition()));//, 0, calculateFFJoint2(m_topArm.getEncoder().getPosition())); // unit conversion 1 radian --> 1/2pi
   }
   public void setDefault(double[] angle) {

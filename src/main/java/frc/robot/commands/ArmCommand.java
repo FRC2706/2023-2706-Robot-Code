@@ -95,24 +95,24 @@ public class ArmCommand extends CommandBase {
         ArmSubsystem.getInstance().setDefault(defaultAngles);
       case LOW:
         if (isTop) {
-          ArmSubsystem.getInstance().setJoint2(angle2);
+          ArmSubsystem.getInstance().setTopJoint(angle2);
         }
         else {
-          ArmSubsystem.getInstance().setJoint1(angle1);
+          ArmSubsystem.getInstance().setBottomJoint(angle1);
         }
       case MEDIUM:
       if (isTop) {
-        ArmSubsystem.getInstance().setJoint2(angle2); // - only used when two motors are involved (testing only)
+        ArmSubsystem.getInstance().setTopJoint(angle2); // - only used when two motors are involved (testing only)
       }
       else {
-        ArmSubsystem.getInstance().setJoint1(angle1);// if level 3 the angle should be 59 degrees, if level 2 angle should be 94 degrees
+        ArmSubsystem.getInstance().setBottomJoint(angle1);// if level 3 the angle should be 59 degrees, if level 2 angle should be 94 degrees
       }
       case HIGH:
       if (isTop) {
-        ArmSubsystem.getInstance().setJoint2(angle2);// if level 3 the angle should be 139 degrees, if level 2 the angle should be 74 degrees
+        ArmSubsystem.getInstance().setTopJoint(angle2);// if level 3 the angle should be 139 degrees, if level 2 the angle should be 74 degrees
       }
       else {
-        ArmSubsystem.getInstance().setJoint1(angle1); // - only used when two motors are involved (testing only)
+        ArmSubsystem.getInstance().setBottomJoint(angle1); // - only used when two motors are involved (testing only)
       }
     }
   }

@@ -291,6 +291,10 @@ public class Config {
         public static final double L2 = 40; //length of arm 2
         public static final double HORIZONTAL_VOLTAGE = 0.7;
 
+        public static final double armPositionConversionFactor = 2 * Math.PI / NEO_GEAR_RATIO;
+        public static final double armVelocityConversionFactor = armPositionConversionFactor / 60.0;
+
+
     }
     
         
