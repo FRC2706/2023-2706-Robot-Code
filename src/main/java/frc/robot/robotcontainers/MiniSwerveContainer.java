@@ -4,6 +4,7 @@
 
 package frc.robot.robotcontainers;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -15,6 +16,7 @@ import frc.robot.auto.AutoSelector;
 import frc.robot.commands.ModuleAngleFromJoystick;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
+import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.SwerveTeleop;
 import frc.robot.commands.translationCommand;
@@ -65,10 +67,12 @@ public class MiniSwerveContainer extends RobotContainer{
     driver.back().onTrue(new ResetGyro());
     driver.b().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
     
-    driver.y().whileTrue(new RotateAngleXY(driver, 0));
+    //driver.y().whileTrue(new RotateAngleXY(driver, 0));
+    driver.y().whileTrue(new ResetOdometry(new Pose2d()));
+
     driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
     
-    driver.x().whileTrue(new translationCommand(1, 1));
+    driver.x().whileTrue(new translationCommand(0, 5));
   }
 
 

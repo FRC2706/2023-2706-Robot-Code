@@ -72,10 +72,10 @@ public class Config {
      */
     public static Double DRIVER_JOYSTICK_DEADBAND = 0.1; // TODO: Investigate if this can be better tuned
         
-    public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.1016, 0.1524); // Diameter of wheel is 0.1524
+    public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.0986536+0.0001, 0.1524); // Diameter of wheel is 0.1524
 
-    public static final double kWheelBase = robotSpecific(-0.0, -0.0, -0.0, -0.0, 0.65, -0.0);
-    public static final double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, 0.518, 0.51762);
+    public static final double kWheelBase = robotSpecific(-0.0, -0.0, -0.0, -0.0, 0.655, -0.0);
+    public static final double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, 0.52, 0.51762);
     public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
 
     public static final int DIFF_SLOTID_DRIVER = 0;
@@ -156,8 +156,9 @@ public class Config {
         public static double ENCODER_SYNCING_PERIOD = 0.2; // seconds
         public static int ENCODER_SYNCING_TIMEOUT = 20; // seconds
 
+        public static final double MK4_L1_GEAR_RATIO = (50.0/14.0)*(19.0/25.0)*(45.0/15.0);
         public static final double turningEncoderConstant = (2*Math.PI)/12.8;
-        public static final double drivePositionConversionFactor = drivetrainWheelDiameter * Math.PI / 8.14;
+        public static final double drivePositionConversionFactor = drivetrainWheelDiameter * Math.PI / MK4_L1_GEAR_RATIO;
         public static final double driveVelocityConversionFactor = drivePositionConversionFactor / 60.0;
 
         public static final IdleMode defaultDriveIdleMode = IdleMode.kBrake;
