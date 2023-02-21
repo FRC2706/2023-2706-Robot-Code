@@ -80,6 +80,8 @@ public class Config {
     public static final int DIFF_SLOTID_DRIVER = 0;
     public static final int DIFF_SLOTID_RAMSETE = 1;
 
+    public static final double allowableVisionError = 1;
+
     
 
     /**
@@ -244,6 +246,9 @@ public class Config {
                         
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
             kMaxAutoAngularSpeed, kMaxAutoAngularAcceleration);
+
+        public static final double fieldLength = 16.54;
+        public static final double fieldWidth = 8.02;
     }   
     /**
      * Differential Drive Constants

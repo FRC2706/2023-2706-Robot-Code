@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -20,6 +21,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.CalculatePoseEstimator;
 import frc.robot.SubsystemChecker;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.config.Config;
@@ -46,7 +48,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final PigeonIMU m_pigeon; 
 
     // Odometry class for tracking robot pose
-    SwerveDriveOdometry m_odometry;
+    SwerveDrivePoseEstimator m_poseEstimator;
 
     /** Get instance of singleton class */
     public static SwerveSubsystem getInstance() {
@@ -68,7 +70,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         m_rearRight = new SwerveModule(Config.CANID.REAR_RIGHT_DRIVE, Config.Swerve.INVERTED_REAR_RIGHT_DRIVE, Config.CANID.REAR_RIGHT_STEERING, Config.Swerve.INVERTED_REAR_RIGHT_STEERING, Config.CANID.REAR_RIGHT_CANCODER, Config.Swerve.RR_ENCODER_OFFSET, "RR");
         m_pigeon = new PigeonIMU(Config.CANID.PIGEON);
-        m_odometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition());
+        m_poseEstimator = new SwerveDrivePoseEstimator(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition(), new Pose2d());
         SmartDashboard.putData("Field", m_field);
     }
 
@@ -83,7 +85,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
         // Update the odometry in the periodic block
-        m_odometry.update(
+        m_poseEstimator.update(
                 Rotation2d.fromDegrees(currentGyro),
                 getPosition()
         );
@@ -115,7 +117,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @return The pose.
      */
     public Pose2d getPose() {
-        return m_odometry.getPoseMeters();
+        return m_poseEstimator.getEstimatedPosition();
     }
 
     /**
@@ -124,7 +126,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @param pose The pose to which to set the odometry.
      */
     public void resetOdometry(Pose2d pose) {
-        m_odometry.resetPosition(Rotation2d.fromDegrees(getGyro()), getPosition(), pose);
+        m_poseEstimator.resetPosition(Rotation2d.fromDegrees(getGyro()), getPosition(), pose);
     }
 
     /**
@@ -185,7 +187,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @return the robot's heading in degrees, from -180 to 180
      */
     public Rotation2d getHeading() {
-        return m_odometry.getPoseMeters().getRotation();
+        return m_poseEstimator.getEstimatedPosition().getRotation();
     }
 
     /**
@@ -232,5 +234,8 @@ public class SwerveSubsystem extends SubsystemBase {
         m_rearRight.resetLastAngle();
     }
 
+    public void newVisionMeasurement(Pose2d pose, double timestamp){
+        m_poseEstimator.addVisionMeasurement(pose, timestamp);
+    }
 
 }
