@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.robot.Robot;
 import frc.robot.auto.AutoSelector;
 import frc.robot.config.Config;
+import frc.robot.config.ArmConfig;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -59,9 +60,9 @@ public class ArmBotContainer extends RobotContainer{
     //controlStick.a().onTrue(new ArmCommand(1, true));
     //controlStick.x().onTrue(new ArmCommand(0, true));
 
-    controlStick.b().onTrue(new ArmCommand(ArmCommand.Level.MEDIUM, true));
-    controlStick.y().onTrue(new ArmCommand(ArmCommand.Level.HIGH, true));
-    controlStick.a().onTrue(new ArmCommand(ArmCommand.Level.LOW, true));
+    controlStick.b().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.MEDIUM, true));
+    controlStick.y().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.HIGH, true));
+    controlStick.a().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.LOW, true));
 
     controlStick.x().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder()));
 
