@@ -11,10 +11,12 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.auto.AutoRoutines;
 import frc.robot.auto.AutoSelector;
+import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
 import frc.robot.commands.ResetOdometry;
@@ -100,7 +102,7 @@ public class MiniSwerveContainer extends RobotContainer{
     //driver.b().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
     
     //driver.b().whileTrue(new RotateXYSupplier(driver, ()-> visionYaw.get()));
-    driver.b().whileTrue(new ResetOdometry(new Pose2d()));
+    //driver.b().whileTrue(new ResetOdometry(new Pose2d()));
     driver.b().onTrue(new ResetOdometry(new Pose2d()));
 
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
@@ -109,6 +111,19 @@ public class MiniSwerveContainer extends RobotContainer{
     driver.x().whileTrue(new TranslationCommand(1, 1));
     driver.leftTrigger().whileTrue(new RotateXYSupplier(driver,
       NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("YawToTarget").subscribe(-99)
+    ));
+
+    driver.rightTrigger().whileTrue(Commands.sequence(
+      new AlignToTargetVision(driver,
+        NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("YawToTarget").subscribe(-99),
+        NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("DistanceToTarget").subscribe(-99),
+        2.0,
+        0.3),
+      new AlignToTargetVision(driver,
+        NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("YawToTarget").subscribe(-99),
+        NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("DistanceToTarget").subscribe(-99),
+        1.5,
+        0.03)
     ));
 
     RelaySubsystem.getInstance().setRelay(Config.RELAY_RINGLIGHT_REAR_LARGE, true);
