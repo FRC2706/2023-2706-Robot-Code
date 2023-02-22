@@ -9,9 +9,13 @@ public class ArmConfig {
 
     public enum ArmSetpoint {
         DEFAULT(2.467484468, 2.467484468),
-        LOW(4, 19.382),
+        CONE_PICKUP(4, 6),
+        CUBE_PICKUP(4, 4.5),
+        LOW(8, 19.382),
         MEDIUM(24, 37.132),
-        HIGH(35, 54.132);
+        MEDIUM_RELEASE(24, 33.132),
+        HIGH(35, 54.132),
+        HIGH_RELEASE(35, 50.132);
 
         private double x;
         private double z;
