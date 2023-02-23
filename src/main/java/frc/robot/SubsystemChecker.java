@@ -24,6 +24,7 @@ public class SubsystemChecker {
         IndexerSubsystem,
         ArmSubsystem,
         RelaySubsystem,
+        VisionNetworkTables
     };
 
     /**
@@ -60,6 +61,7 @@ public class SubsystemChecker {
     private static SubsystemType[] miniSwerveId4 = new SubsystemType[] {
         SubsystemType.SwerveSubsystem, // Chassis
         SubsystemType.RelaySubsystem,
+        SubsystemType.VisionNetworkTables,
     };
 
     // RobotID: 5, 2022 Fall Half-scale Neo Differential drive robot, unnamed

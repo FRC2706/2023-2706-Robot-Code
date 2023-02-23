@@ -118,12 +118,16 @@ public class MiniSwerveContainer extends RobotContainer{
         NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("YawToTarget").subscribe(-99),
         NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("DistanceToTarget").subscribe(-99),
         2.0,
-        0.3),
+        0.3,
+        1.5,
+        1.5),
       new AlignToTargetVision(driver,
         NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("YawToTarget").subscribe(-99),
         NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("DistanceToTarget").subscribe(-99),
         1.5,
-        0.03)
+        0.03,
+        1,
+        0.5)
     ));
 
     RelaySubsystem.getInstance().setRelay(Config.RELAY_RINGLIGHT_REAR_LARGE, true);

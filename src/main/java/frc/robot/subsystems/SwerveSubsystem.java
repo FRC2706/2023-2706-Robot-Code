@@ -47,7 +47,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final PigeonIMU m_pigeon; 
 
     // Odometry class for tracking robot pose
-    SwerveDriveOdometry m_odometry;
+    private SwerveDriveOdometry m_odometry;
 
     /** Get instance of singleton class */
     public static SwerveSubsystem getInstance() {
