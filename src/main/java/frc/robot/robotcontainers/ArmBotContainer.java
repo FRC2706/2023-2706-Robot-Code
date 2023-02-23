@@ -4,29 +4,18 @@
 
 package frc.robot.robotcontainers;
 
-import java.lang.System.Logger.Level;
-
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
-import frc.robot.auto.AutoSelector;
-import frc.robot.config.Config;
+import frc.robot.commands.ArmCommand;
+import frc.robot.commands.ArmFFTestCommand;
 import frc.robot.config.ArmConfig;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.SwerveModule;
-import frc.robot.subsystems.SwerveSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.ArmCommand;
-import frc.robot.commands.SetAngleArm;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -60,11 +49,20 @@ public class ArmBotContainer extends RobotContainer{
     //controlStick.a().onTrue(new ArmCommand(1, true));
     //controlStick.x().onTrue(new ArmCommand(0, true));
 
-    controlStick.b().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.MEDIUM, true));
-    controlStick.y().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.HIGH, true));
+    controlStick.b().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.MEDIUM, false));
+    controlStick.y().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.HIGH, false));
     controlStick.a().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.LOW, true));
+    controlStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder()));
 
-    controlStick.x().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder()));
+    Command topArmFF = new ArmFFTestCommand(driver, 2);
+
+    controlStick.leftBumper().onTrue(Commands.runOnce(() -> topArmFF.schedule()));
+    controlStick.back().onTrue(Commands.sequence(
+            Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()),
+            Commands.runOnce(() -> ArmSubsystem.getInstance().stopMotors())
+        ));
+
+    controlStick.rightBumper().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().updatePIDSettings()));
 
   }
 
