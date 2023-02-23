@@ -9,6 +9,8 @@ import frc.robot.subsystems.BlingSubsystem;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.FireAnimation;
 import com.ctre.phoenix.led.RainbowAnimation;
+import com.ctre.phoenix.led.RgbFadeAnimation;
+import com.ctre.phoenix.led.StrobeAnimation;
 import frc.robot.commands.SetBlingCommand;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -57,7 +59,13 @@ public class SetBlingCommand extends InstantCommand {
           setRainbow();
           break;
         case 6: 
-           setFire();
+          setFire();
+          break;
+        case 7:
+          setStrobe();
+          break;
+        case 8:
+          setRgbFade();
           break;
         default:
           break;
@@ -71,7 +79,7 @@ public class SetBlingCommand extends InstantCommand {
     // - max brightness
     // - half speed
     // - 64 LEDs
-    RainbowAnimation rainbowAnim = new RainbowAnimation(1, 0.5, 64);
+    RainbowAnimation rainbowAnim = new RainbowAnimation(1, 0.01, 64);
 
     bling.candle.animate(rainbowAnim);
 
@@ -79,9 +87,23 @@ public class SetBlingCommand extends InstantCommand {
 
   public void setFire()
   {
-    FireAnimation fireAnimation = new FireAnimation(1, 0.5, 64, 0.8, 0.4);
+    FireAnimation fireAnimation = new FireAnimation(1, 0.000001, 64, 0.8, 0.4);
 
     bling.candle.animate(fireAnimation);
+  }
+
+  public void setStrobe()
+  {
+    StrobeAnimation strobeAnimation = new StrobeAnimation(255, 255, 255, 255, 0.8, 64);
+
+    bling.candle.animate(strobeAnimation);
+  }
+
+  public void setRgbFade()
+  {
+    RgbFadeAnimation rgbFadeAnimation = new RgbFadeAnimation(0.7, 0.1, 64);
+
+    bling.candle.animate(rgbFadeAnimation);
   }
 
 }
