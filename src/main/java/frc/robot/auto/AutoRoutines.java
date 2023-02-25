@@ -54,6 +54,7 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> place_pick_place_pick_place_middle;
     List<PathPlannerTrajectory> place_pick_place_pick_place_bottom;
     List<PathPlannerTrajectory> place_pick_place_pick_place_bottom_new;
+    List<PathPlannerTrajectory> place_pick_bottom_charge_new;
 
 
 
@@ -104,6 +105,7 @@ public class AutoRoutines {
         place_pick_place_pick_place_middle = PathPlanner.loadPathGroup("place_pick_place_pick_place_middle", 2.5, 3);
         place_pick_place_pick_place_bottom = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom", 2.5, 3);
         place_pick_place_pick_place_bottom_new = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2", 3, 4);// 2.5, 3);
+        place_pick_bottom_charge_new = PathPlanner.loadPathGroup("place_pick_bottom2_charge_new", 3, 4);// 2.5, 3);
 
     }
 
@@ -198,6 +200,9 @@ public class AutoRoutines {
 
             case 27:
                 return autoBuilder.fullAuto(place_pick_place_pick_place_bottom_new);
+               
+            case 28:
+                return autoBuilder.fullAuto(place_pick_bottom_charge_new);
 
         }
         return new InstantCommand();

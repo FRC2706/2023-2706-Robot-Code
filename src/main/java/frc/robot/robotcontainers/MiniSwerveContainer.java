@@ -73,6 +73,7 @@ public class MiniSwerveContainer extends RobotContainer{
                          "Id25_Practice1",
                          "Id26_Practice2",
                          "Id27_place_pick_place_pick_place_bottom_new",
+                         "Id28_place_pick_bottom_charge_new",
                         };
     SmartDashboard.putStringArray("Auto List", autoList );
 
