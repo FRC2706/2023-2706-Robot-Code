@@ -28,21 +28,21 @@ public class VisionNetworkTables extends SubsystemBase{
     public final Pose2d TAPE_CAMERA_LOCATION = new Pose2d(-0.1, -0.1, Rotation2d.fromDegrees(180));
     public final double TIME_FOR_BAD_DATA = 1;
 
-    private NetworkTable table = NetworkTableInstance.getDefault().getTable("pipelineTape21");
+    private NetworkTable table = NetworkTableInstance.getDefault().getTable("MergeVisionPipelinePi21");
     private DoubleSubscriber tapeX;
     private DoubleSubscriber tapeY;
 
     private Timer tapeTimer = new Timer();
 
-    private double calcTapeTargetX  = DISTANCE_ERROR_CODE;
-    private double calcTapeTargetY = DISTANCE_ERROR_CODE;
+    private double calcTapeTargetX  = ANGLE_ERROR_CODE;
+    private double calcTapeTargetY = ANGLE_ERROR_CODE;
 
     LinearFilter linearTapeFilterX = LinearFilter.movingAverage(10);
     LinearFilter linearTapeFilterY = LinearFilter.movingAverage(10);  
 
     public VisionNetworkTables(){
-        tapeX = table.getDoubleTopic("").subscribe(DISTANCE_ERROR_CODE);
-        tapeY = table.getDoubleTopic("").subscribe(DISTANCE_ERROR_CODE);
+        tapeX = table.getDoubleTopic("PoseY").subscribe(ANGLE_ERROR_CODE);
+        tapeY = table.getDoubleTopic("PoseX").subscribe(ANGLE_ERROR_CODE);
         
         tapeTimer.restart();
     }
@@ -57,7 +57,7 @@ public class VisionNetworkTables extends SubsystemBase{
 
     public Translation2d calculateTapeTarget() {
         //Tape target
-        if(tapeX.get() != DISTANCE_ERROR_CODE || tapeY.get() != DISTANCE_ERROR_CODE){
+        if(tapeX.get() != ANGLE_ERROR_CODE || tapeY.get() != ANGLE_ERROR_CODE){
             double visionDistanceX = Units.feetToMeters(tapeX.getAsDouble()) * FLIP_X;
             double visionDistanceY = Units.feetToMeters(tapeY.getAsDouble()) * FLIP_Y;
 
