@@ -75,6 +75,7 @@ public class MiniSwerveContainer extends RobotContainer{
                          "Id27_place_pick_place_pick_place_bottom_new",
                          "Id28_place_pick_bottom_charge_new",
                          "Id29_place_pick_top_charge_new",
+                         "Id30_place_pick_place_pick_place_top2",
                         };
     SmartDashboard.putStringArray("Auto List", autoList );
 
@@ -212,6 +213,10 @@ public class MiniSwerveContainer extends RobotContainer{
       
       case "Id29_place_pick_top_charge_new":
         autoId = 29;
+        break;
+      
+      case "Id30_place_pick_place_pick_place_top2":
+        autoId = 30;
         break;
 
       default:
