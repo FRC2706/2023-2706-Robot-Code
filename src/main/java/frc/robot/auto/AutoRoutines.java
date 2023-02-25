@@ -14,6 +14,7 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.SetBlingCommand;
@@ -52,6 +53,7 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> place_pick_place_pick_place_top;
     List<PathPlannerTrajectory> place_pick_place_pick_place_middle;
     List<PathPlannerTrajectory> place_pick_place_pick_place_bottom;
+    List<PathPlannerTrajectory> place_pick_place_pick_place_bottom_new;
 
 
 
@@ -101,6 +103,7 @@ public class AutoRoutines {
         place_pick_place_pick_place_top = PathPlanner.loadPathGroup("place_pick_place_pick_place_top", 2.5, 3);
         place_pick_place_pick_place_middle = PathPlanner.loadPathGroup("place_pick_place_pick_place_middle", 2.5, 3);
         place_pick_place_pick_place_bottom = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom", 2.5, 3);
+        place_pick_place_pick_place_bottom_new = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2", 3, 4);// 2.5, 3);
 
     }
 
@@ -191,6 +194,11 @@ public class AutoRoutines {
                 
             case 26:
                 return (autoBuilder.fullAuto(Practice2));
+
+
+            case 27:
+                return autoBuilder.fullAuto(place_pick_place_pick_place_bottom_new);
+
         }
         return new InstantCommand();
     }
