@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmFFTestCommand;
+import frc.robot.commands.SetAngleArm;
 import frc.robot.config.ArmConfig;
 import frc.robot.subsystems.ArmSubsystem;
 /**
@@ -49,12 +50,12 @@ public class ArmBotContainer extends RobotContainer{
     //controlStick.a().onTrue(new ArmCommand(1, true));
     //controlStick.x().onTrue(new ArmCommand(0, true));
 
-    controlStick.b().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.MEDIUM, false));
-    controlStick.y().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.HIGH, false));
-    controlStick.a().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.LOW, true));
+    controlStick.b().onTrue(new SetAngleArm(-1 * Math.PI/2, false));
+    controlStick.y().onTrue(new SetAngleArm(0, false));
+    controlStick.a().onTrue(new SetAngleArm(Math.PI/8, false));
     controlStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder()));
 
-    Command topArmFF = new ArmFFTestCommand(driver, 2);
+    Command topArmFF = new ArmFFTestCommand(controlStick, 2);
 
     controlStick.leftBumper().onTrue(Commands.runOnce(() -> topArmFF.schedule()));
     controlStick.back().onTrue(Commands.sequence(

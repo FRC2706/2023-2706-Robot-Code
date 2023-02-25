@@ -42,4 +42,15 @@ public class ArmConfig {
       public static final double armPositionConversionFactor = 2 * Math.PI / NEO_GEAR_RATIO;
       public static final double armVelocityConversionFactor = armPositionConversionFactor / 60.0;
 
+      public static final double top_arm_kP = 0.8;
+      public static final double top_arm_kI = 0.0005;
+      public static final double top_arm_kD = 0;
+      public static final double top_arm_kIz = 0.07;
+      public static final double top_arm_kFF = 0;
+
+      public static final double bottom_arm_kP = 0.8;
+      public static final double bottom_arm_kI = 0.0005;
+      public static final double bottom_arm_kD = 0;
+      public static final double bottom_arm_kIz = 0.07;
+      public static final double bottom_arm_kFF = 0;
 }

@@ -285,18 +285,6 @@ public class Config {
         public static double BRAKE_IN_DISABLE_TIME = 2.0;
     }
     
-    public static class Arm {
-        public static final double NEO_GEAR_RATIO = 60;
-        public static final double L1 = 40; //length of arm 1
-        public static final double L2 = 40; //length of arm 2
-        public static final double HORIZONTAL_VOLTAGE = 1.0;
-
-        public static final double armPositionConversionFactor = 2 * Math.PI / NEO_GEAR_RATIO;
-        public static final double armVelocityConversionFactor = armPositionConversionFactor / 60.0;
-
-
-    }
-    
         
     /**
      * Clutch (Id: 1) specific constants

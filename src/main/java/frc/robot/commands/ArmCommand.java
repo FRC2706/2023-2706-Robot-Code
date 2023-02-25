@@ -41,36 +41,12 @@ public class ArmCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    angles = ArmSubsystem.getInstance().calculateAngle(ArmConfig.L1, ArmConfig.L2, armSetpoint.getX(), armSetpoint.getZ());
+    angles = ArmSubsystem.getInstance().inverseKinematics(ArmConfig.L1, ArmConfig.L2, armSetpoint.getX(), armSetpoint.getZ());
     angle1 = angles[0];
     angle2 = angles[1];
-        
-    switch(armSetpoint){
-      case DEFAULT:
-        ArmSubsystem.getInstance().setTopJoint(angle2);
-        // ArmSubsystem.getInstance().setBottomJoint(angle1);
-      case LOW:
-        ArmSubsystem.getInstance().setTopJoint(angle2);
-        // ArmSubsystem.getInstance().setBottomJoint(angle1);
-      case MEDIUM:
-        ArmSubsystem.getInstance().setTopJoint(angle2); 
-        // ArmSubsystem.getInstance().setBottomJoint(angle1);
-      case HIGH:
-        ArmSubsystem.getInstance().setTopJoint(angle2);
-        // ArmSubsystem.getInstance().setBottomJoint(angle1);
-      case HIGH_RELEASE:
-        ArmSubsystem.getInstance().setTopJoint(angle2);
-        // ArmSubsystem.getInstance().setBottomJoint(angle1);
-      case MEDIUM_RELEASE:
-        ArmSubsystem.getInstance().setTopJoint(angle2);
-        // ArmSubsystem.getInstance().setBottomJoint(angle1);
-      case CONE_PICKUP:
-        ArmSubsystem.getInstance().setTopJoint(angle2);
-        // ArmSubsystem.getInstance().setBottomJoint(angle1);
-      case CUBE_PICKUP:
-        ArmSubsystem.getInstance().setTopJoint(angle2);
-        // ArmSubsystem.getInstance().setBottomJoint(angle1);
-    }
+
+    ArmSubsystem.getInstance().setTopJoint(angle2);
+    // ArmSubsystem.getInstance().setBottomJoint(angle1);
   }
 
   // Called once the command ends or is interrupted.

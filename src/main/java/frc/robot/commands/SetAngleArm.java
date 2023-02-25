@@ -10,10 +10,13 @@ import frc.robot.subsystems.ArmSubsystem;
 public class SetAngleArm extends CommandBase {
 
   double angle;
+  boolean m_slowerAcceleration;
   /** Creates a new SetAngleArm. */
-  public SetAngleArm(double angle) {
+  public SetAngleArm(double angle, boolean m_slowerAcceleration) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.angle = angle;
+    this.m_slowerAcceleration = m_slowerAcceleration;
+
 
     addRequirements(ArmSubsystem.getInstance());
   }
@@ -21,6 +24,8 @@ public class SetAngleArm extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    ArmSubsystem.getInstance().setConstraints(m_slowerAcceleration);
+    ArmSubsystem.getInstance().resetMotionProfile();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -32,7 +37,7 @@ public class SetAngleArm extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    ArmSubsystem.getInstance().m_bottomArm.stopMotor();
+    // ArmSubsystem.getInstance().m_bottomArm.stopMotor();
     ArmSubsystem.getInstance().m_topArm.stopMotor();
   }
 
