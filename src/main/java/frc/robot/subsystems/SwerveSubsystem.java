@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
@@ -33,7 +34,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private DoublePublisher gyroEntry = table.getDoubleTopic("RawGyro").publish();
     private DoublePublisher xEntry = table.getDoubleTopic("OdometryX").publish();
     private DoublePublisher yEntry = table.getDoubleTopic("OdometryY").publish();
-    private DoublePublisher rotEntry = table.getDoubleTopic("OdometryRot").publish();
+    private DoubleEntry rotEntry = table.getDoubleTopic("OdometryRot").getEntry(0);
     
     // Instance for singleton class
     private static SwerveSubsystem instance;
@@ -69,7 +70,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         m_rearRight = new SwerveModule(Config.CANID.REAR_RIGHT_DRIVE, Config.Swerve.INVERTED_REAR_RIGHT_DRIVE, Config.CANID.REAR_RIGHT_STEERING, Config.Swerve.INVERTED_REAR_RIGHT_STEERING, Config.CANID.REAR_RIGHT_CANCODER, Config.Swerve.RR_ENCODER_OFFSET, "RR");
         m_pigeon = new PigeonIMU(Config.CANID.PIGEON);
-        m_odometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition(), new Pose2d());
+        m_odometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition(), new Pose2d(0, 0, Rotation2d.fromDegrees(rotEntry.get())));
         SmartDashboard.putData("Field", m_field);
     }
 
