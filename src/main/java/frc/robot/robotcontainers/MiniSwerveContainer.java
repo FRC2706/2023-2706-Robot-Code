@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.auto.AutoRoutines;
@@ -19,6 +20,7 @@ import frc.robot.commands.ResetGyroToNearest;
 import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.SwerveTeleop;
+import frc.robot.commands.TestChargeStationFeedforward;
 import frc.robot.commands.TranslationCommand;
 import frc.robot.subsystems.RelaySubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -88,6 +90,8 @@ public class MiniSwerveContainer extends RobotContainer{
    */
   private void configureButtonBindings() {
     CommandXboxController driver = new CommandXboxController(0);
+    CommandXboxController operator = new CommandXboxController(1);
+    CommandXboxController testJoystick = new CommandXboxController(2);
 
     SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
 
@@ -101,6 +105,13 @@ public class MiniSwerveContainer extends RobotContainer{
     driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
     
     driver.x().whileTrue(new TranslationCommand(3.5, 0));
+
+
+    testJoystick.leftTrigger().whileTrue(new TestChargeStationFeedforward(testJoystick));
+    testJoystick.rightTrigger().onTrue(
+      Commands.run(() -> SwerveSubsystem.getInstance().getPitch()).alongWith(
+      Commands.run(() -> SwerveSubsystem.getInstance().getRoll())
+    ));
   }
 
 

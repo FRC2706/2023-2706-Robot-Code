@@ -224,6 +224,8 @@ public class Config {
         
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
             kMaxAutoAngularSpeed, kMaxAutoAngularAcceleration);
+
+        public static final double chargeStationFFMultiplier = 0;
     }   
     /**
      * Differential Drive Constants

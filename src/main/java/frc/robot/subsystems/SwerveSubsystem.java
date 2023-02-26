@@ -34,6 +34,9 @@ public class SwerveSubsystem extends SubsystemBase {
     private DoublePublisher xEntry = table.getDoubleTopic("OdometryX").publish();
     private DoublePublisher yEntry = table.getDoubleTopic("OdometryY").publish();
     private DoublePublisher rotEntry = table.getDoubleTopic("OdometryRot").publish();
+
+    private DoublePublisher m_rollPub = table.getDoubleTopic("Roll").publish();
+    private DoublePublisher m_pitchPub = table.getDoubleTopic("Pitch").publish();
     
     // Instance for singleton class
     private static SwerveSubsystem instance;
@@ -197,6 +200,28 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     public Rotation2d getHeading() {
         return m_odometry.getPoseMeters().getRotation();
+    }
+
+    /**
+     * Returns the current pitch of the robot
+     * 
+     * @return Pitch in degrees
+     */
+    public double getPitch() {
+        double pitch = m_pigeon.getPitch();
+        m_pitchPub.accept(pitch);
+        return pitch;
+    }
+
+    /**
+     * Returns the current roll of the robot
+     * 
+     * @return Roll in degrees
+     */
+    public double getRoll() {
+        double roll = m_pigeon.getRoll();
+        m_rollPub.accept(roll);
+        return roll;
     }
 
     /**
