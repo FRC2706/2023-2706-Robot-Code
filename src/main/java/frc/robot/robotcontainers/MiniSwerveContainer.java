@@ -93,7 +93,7 @@ public class MiniSwerveContainer extends RobotContainer{
     CommandXboxController operator = new CommandXboxController(1);
     CommandXboxController testJoystick = new CommandXboxController(2);
 
-    SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
+    SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(testJoystick));
 
     //Do not use Right or Left Bumper already used in separate file
     driver.start().onTrue(new ResetGyroToNearest());
@@ -107,6 +107,7 @@ public class MiniSwerveContainer extends RobotContainer{
     driver.x().whileTrue(new TranslationCommand(3.5, 0));
 
 
+    testJoystick.back().onTrue(new ResetGyro());
     testJoystick.leftTrigger().whileTrue(new TestChargeStationFeedforward(testJoystick));
     testJoystick.rightTrigger().onTrue(
       Commands.run(() -> SwerveSubsystem.getInstance().getPitch()).alongWith(

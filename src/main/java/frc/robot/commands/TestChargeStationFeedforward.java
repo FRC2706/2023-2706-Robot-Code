@@ -40,7 +40,7 @@ public class TestChargeStationFeedforward extends SwerveTeleop {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        startingAngle = SwerveSubsystem.getInstance().getPitch();
+        startingAngle = SwerveSubsystem.getInstance().getRoll();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -60,9 +60,9 @@ public class TestChargeStationFeedforward extends SwerveTeleop {
         x *= Config.Swerve.teleopSpeed;
 
         double pitch = SwerveSubsystem.getInstance().getPitch() - startingAngle;
-        double roll = SwerveSubsystem.getInstance().getRoll();
+        double roll = SwerveSubsystem.getInstance().getRoll() - startingAngle;
 
-        double FF = m_speedMultipler.getAsDouble() * Math.cos(pitch);
+        double FF = m_speedMultipler.getAsDouble() * Math.sin(Math.toRadians(roll));
 
         return x + FF;
     }
