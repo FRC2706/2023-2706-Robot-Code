@@ -11,8 +11,6 @@ import frc.robot.config.Config;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleConfiguration;
-import com.ctre.phoenix.led.RainbowAnimation;
-import com.ctre.phoenix.led.FireAnimation;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 
 public class BlingSubsystem extends SubsystemBase {
@@ -82,24 +80,6 @@ public class BlingSubsystem extends SubsystemBase {
   public void setHoneydew()
   {
     candle.setLEDs(240, 255, 240);
-  }
-
-  public void setRainbow()
-  {
-    // create a rainbow animation:
-    // - max brightness
-    // - half speed
-    // - 64 LEDs
-    RainbowAnimation rainbowAnim = new RainbowAnimation(1, 0.9, 64);
-
-    candle.animate(rainbowAnim);
-
-  }
-
-  public void setFire()
-  {
-    FireAnimation fireAnimation = new FireAnimation(0.5, 0.7, 6, 0.7, 0.5);
-    candle.animate(fireAnimation);
   }
 
   @Override
