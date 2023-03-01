@@ -69,7 +69,7 @@ public class AutoRoutines {
         eventMap.put("Bling Blue", new SetBlingCommand(2));
         eventMap.put("Bling Red", new SetBlingCommand(3));
         eventMap.put("Bling Honeydew", new SetBlingCommand(4));
-        eventMap.put("charge", new TranslationCommand(-2.0, 0).andThen(
+        eventMap.put("charge", new TranslationCommand(-1.9, 0).andThen(
             Commands.run(() -> SwerveSubsystem.getInstance().setModuleStatesAuto(new SwerveModuleState[]{
                 new SwerveModuleState(0.1, Rotation2d.fromDegrees(-45)),
                 new SwerveModuleState(0.1, Rotation2d.fromDegrees(45)),

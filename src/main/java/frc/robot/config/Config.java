@@ -74,8 +74,8 @@ public class Config {
         
     public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.0986536, 0.1524); // Diameter of wheel is 0.1524
 
-    public static final double kWheelBase = robotSpecific(-0.0, -0.0, -0.0, -0.0, 0.52, -0.0);
-    public static final double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, 0.655, 0.51762);
+    public static final double kWheelBase = robotSpecific(-0.0, -0.0, -0.0, -0.0, 0.655, -0.0);
+    public static final double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, 0.52, 0.51762);
     public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
 
     public static final int DIFF_SLOTID_DRIVER = 0;
@@ -138,10 +138,10 @@ public class Config {
         public static final double kPYController = 1;
         public static final double kPThetaController = 1.35;
 
-        public static final double FL_ENCODER_OFFSET = 90.73+90;
-        public static final double FR_ENCODER_OFFSET = 204.3+90;
-        public static final double RL_ENCODER_OFFSET = 168.9+90;
-        public static final double RR_ENCODER_OFFSET = -5.5+90; 
+        public static final double FL_ENCODER_OFFSET = 90.73;
+        public static final double FR_ENCODER_OFFSET = 204.3;
+        public static final double RL_ENCODER_OFFSET = 168.9;
+        public static final double RR_ENCODER_OFFSET = -5.5; 
 
         public static boolean INVERTED_FRONT_LEFT_DRIVE = robotSpecific(false);
         public static boolean INVERTED_REAR_LEFT_DRIVE =  robotSpecific(false);
@@ -192,10 +192,10 @@ public class Config {
         // Distance between centers of right and left wheels on robot
 
         public static final SwerveDriveKinematics kSwerveDriveKinematics = new SwerveDriveKinematics(
+            new Translation2d(kWheelBase / 2, kTrackWidth / 2),
+            new Translation2d(kWheelBase / 2, -kTrackWidth / 2),   
             new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
-            new Translation2d(kWheelBase / 2, kTrackWidth / 2),   
-            new Translation2d(-kWheelBase / 2, -kTrackWidth / 2),
-            new Translation2d(kWheelBase / 2, -kTrackWidth / 2));
+            new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
         public static final double teleopFastSpeed = 3.0;
         public static final double teleopFastAngularSpeed = Math.PI*3.0;
