@@ -52,18 +52,21 @@ public class SetBlingCommand extends InstantCommand {
           bling.setRed();
           break;
         case 4:
+          bling.setYellow();
+          break;
+        case 5:
           bling.setHoneydew();
           break;
-        case 5: 
+        case 6: 
           setRainbow();
           break;
-        case 6: 
+        case 7: 
           setFire();
           break;
-        case 7:
+        case 8:
           setStrobe();
           break;
-        case 8:
+        case 9:
           setRgbFade();
           break;
         default:
