@@ -5,8 +5,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.config.ArmConfig;
 import frc.robot.config.ArmConfig.ArmSetpoint;
+import frc.robot.subsystems.ArmDisplay;
 import frc.robot.subsystems.ArmSubsystem;
 
 public class ArmCommand extends CommandBase {
@@ -18,6 +20,13 @@ public class ArmCommand extends CommandBase {
   double angle1;
   double angle2;
   private final boolean m_slowerAcceleration;
+
+  // arm simulation variables
+  CommandXboxController controller;
+  ArmDisplay armDisplay;
+
+  double x = 0.2;
+  double z = 0.2;
   
 
   /** Creates a new ArmExtend. */
@@ -47,6 +56,8 @@ public class ArmCommand extends CommandBase {
 
     ArmSubsystem.getInstance().setTopJoint(angle2);
     // ArmSubsystem.getInstance().setBottomJoint(angle1);
+
+    armDisplay.updateMeasurementDisplay(angle1, angle2);
   }
 
   // Called once the command ends or is interrupted.

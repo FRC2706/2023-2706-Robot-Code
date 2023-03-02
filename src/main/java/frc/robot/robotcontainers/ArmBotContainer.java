@@ -16,6 +16,7 @@ import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmFFTestCommand;
 import frc.robot.commands.SetAngleArm;
 import frc.robot.config.ArmConfig;
+import frc.robot.subsystems.ArmDisplay;
 import frc.robot.subsystems.ArmSubsystem;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -65,6 +66,11 @@ public class ArmBotContainer extends RobotContainer{
 
     controlStick.rightBumper().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().updatePIDSettings()));
 
+
+    ArmDisplay display = new ArmDisplay(ArmConfig.L1, ArmConfig.L2);
+    driver.a().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.LOW, false));
+    driver.b().onTrue(Commands.runOnce(() -> display.updateSetpointDisplay(Math.toRadians(45), Math.toRadians(90))));
+    driver.x().onTrue(Commands.runOnce(() -> display.updateSetpointDisplay(Math.toRadians(45), Math.toRadians(135))));
   }
 
 

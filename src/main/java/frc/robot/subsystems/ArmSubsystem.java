@@ -36,6 +36,8 @@ import frc.robot.config.Config;
 
 public class ArmSubsystem extends SubsystemBase {
 
+  private ArmDisplay armDisplay;
+
   private static final MotorType motorType = MotorType.kBrushless;
   private static final SparkMaxAbsoluteEncoder.Type encAbsType = SparkMaxAbsoluteEncoder.Type.kDutyCycle;
   
@@ -117,6 +119,8 @@ public class ArmSubsystem extends SubsystemBase {
     config.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
     config.magnetOffsetDegrees = 0;
     config.sensorDirection = true;
+
+    armDisplay = new ArmDisplay(ArmConfig.L1, ArmConfig.L2);
 
     m_absoluteTopArmEncoder = new CANCoder(16);
     m_absoluteBottomArmEncoder = new CANCoder(17);

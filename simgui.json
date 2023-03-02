@@ -6,5 +6,14 @@
       "/Shuffleboard/BasicDebugging/CommandScheduler": "Scheduler",
       "/SmartDashboard/Field": "Field2d"
     }
+  },
+  "NetworkTables Info": {
+    "Server": {
+      "Publishers": {
+        "open": true
+      },
+      "open": true
+    },
+    "visible": true
   }
 }
