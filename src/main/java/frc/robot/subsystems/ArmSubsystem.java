@@ -113,10 +113,10 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArm = new CANSparkMax(Config.CANID.BOTTOM_ARM_SPARK_CAN_ID, motorType);
     m_topArm.restoreFactoryDefaults();
     m_bottomArm.restoreFactoryDefaults();
-    m_topArm.setSmartCurrentLimit(40);
-    m_bottomArm.setSmartCurrentLimit(40);
-    m_topArm.setInverted(false);
-    m_bottomArm.setInverted(false);
+    m_topArm.setSmartCurrentLimit(ArmConfig.CURRENT_LIMIT);
+    m_bottomArm.setSmartCurrentLimit(ArmConfig.CURRENT_LIMIT);
+    m_topArm.setInverted(ArmConfig.SET_INVERTED);
+    m_bottomArm.setInverted(ArmConfig.SET_INVERTED);
     m_topArm.setIdleMode(IdleMode.kBrake);
     m_bottomArm.setIdleMode(IdleMode.kBrake);
     
@@ -129,8 +129,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     armDisplay = new ArmDisplay(ArmConfig.L1, ArmConfig.L2);
 
-    m_absoluteTopArmEncoder = new CANCoder(16);
-    m_absoluteBottomArmEncoder = new CANCoder(17);
+    m_absoluteTopArmEncoder = new CANCoder(Config.CANID.TOP_CANCODER_CAN_ID);
+    m_absoluteBottomArmEncoder = new CANCoder(Config.CANID.BOTTOM_CANCODER_CAN_ID);
 
     brakeSolenoidLow = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
                                           PneumaticsModuleType.CTREPCM,
@@ -153,10 +153,11 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomEncoder = m_bottomArm.getEncoder();
     m_topEncoder = m_topArm.getEncoder();
     
-    m_bottomEncoder.setPositionConversionFactor(ArmConfig.armPositionConversionFactor);
-    m_topEncoder.setPositionConversionFactor(ArmConfig.armPositionConversionFactor);
-    m_topEncoder.setVelocityConversionFactor(ArmConfig.armVelocityConversionFactor);
-    m_bottomEncoder.setVelocityConversionFactor(ArmConfig.armVelocityConversionFactor);
+    m_bottomEncoder.setPositionConversionFactor(ArmConfig.bottomArmPositionConversionFactor);
+    m_topEncoder.setPositionConversionFactor(ArmConfig.topArmPositionConversionFactor);
+
+    m_topEncoder.setVelocityConversionFactor(ArmConfig.topArmVelocityConversionFactor);
+    m_bottomEncoder.setVelocityConversionFactor(ArmConfig.bottomArmVelocityConversionFactor);
 
     NetworkTable topArmTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTableTop);
     m_topArmPSubs = topArmTuningTable.getDoubleTopic("P").getEntry(ArmConfig.top_arm_kP);
@@ -195,7 +196,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_topArmSetpointPub = topArmDataTable.getDoubleTopic("SetpointAngle").publish(PubSubOption.periodic(0.02));
     m_topArmVelPub = topArmDataTable.getDoubleTopic("Vel").publish(PubSubOption.periodic(0.02));
     m_topArmVoltsAtHorizontal = topArmDataTable.getDoubleTopic("VoltsAtHorizontal").getEntry(0);
-    m_topArmVoltsAtHorizontal.accept(0.8);
+    m_topArmVoltsAtHorizontal.accept(ArmConfig.TOP_HORIZONTAL_VOLTAGE);
 
     m_topArmFFTestingVolts = topArmDataTable.getDoubleTopic("VoltageSetInFFTesting").publish();
 
@@ -204,7 +205,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArmSetpointPub = bottomArmDataTable.getDoubleTopic("SetpointAngle").publish(PubSubOption.periodic(0.02));
     m_bottomArmVelPub = bottomArmDataTable.getDoubleTopic("Vel").publish(PubSubOption.periodic(0.02));
     m_bottomArmVoltsAtHorizontal = bottomArmDataTable.getDoubleTopic("VoltsAtHorizontal").getEntry(0);
-    m_bottomArmVoltsAtHorizontal.accept(0.8);
+    m_bottomArmVoltsAtHorizontal.accept(ArmConfig.BOTTOM_HORIZONTAL_VOLTAGE);
 
     m_bottomArmFFTestingVolts = bottomArmDataTable.getDoubleTopic("VoltageSetInFFTesting").publish();
 
@@ -221,8 +222,6 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerTopArm.setD(m_topArmDSubs.get());
     m_pidControllerTopArm.setIZone(m_topArmIzSubs.get()); 
     m_pidControllerTopArm.setOutputRange(kMinOutput, kMaxOutput);
-    m_pidControllerTopArm.setSmartMotionMaxAccel(Math.PI/6, 0);
-    m_pidControllerTopArm.setSmartMotionMaxVelocity(Math.PI/6, 0);
 
     // setting PID constants for bottom spark max
     m_pidControllerBottomArm.setFF(m_bottomArmFFSubs.get());
@@ -231,17 +230,19 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerBottomArm.setD(m_bottomArmDSubs.get());
     m_pidControllerBottomArm.setIZone(m_bottomArmIzSubs.get()); 
     m_pidControllerBottomArm.setOutputRange(kMinOutput, kMaxOutput);
-    m_pidControllerBottomArm.setSmartMotionMaxAccel(Math.PI/6, 0);
-    m_pidControllerBottomArm.setSmartMotionMaxVelocity(Math.PI/6, 0);
 }
 
   @Override
   public void periodic() {
-    m_topArmPosPub.accept(Math.toDegrees(m_topEncoder.getPosition()));
+    double topPosition = m_topEncoder.getPosition();
+    double bottomPosition = m_bottomEncoder.getPosition();
+
+    m_topArmPosPub.accept(Math.toDegrees(topPosition));
     m_topArmVelPub.accept(m_topEncoder.getVelocity());
-    m_bottomArmPosPub.accept(Math.toDegrees(m_bottomEncoder.getPosition()));
+    m_bottomArmPosPub.accept(Math.toDegrees(bottomPosition));
     m_bottomArmVelPub.accept(m_bottomEncoder.getVelocity());
 
+    armDisplay.updateMeasurementDisplay(topPosition, bottomPosition);
     /* 
     if (m_topEncoder.getVelocity() > 2) {
         m_topPID.setConstraints(new Constraints(2.2, Math.PI * 0.9));
@@ -254,11 +255,11 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void setConstraints(boolean slowerAcceleration) {
     if (slowerAcceleration) {
-        m_topPID.setConstraints(new Constraints(2.2, Math.PI * 0.9));
-        m_bottomPID.setConstraints(new Constraints(2.2, Math.PI * 0.9));
+        m_topPID.setConstraints(new Constraints(ArmConfig.TOP_SLOW_ACCEL_MAX_VEL, ArmConfig.TOP_SLOW_ACCEL_MAX_ACCEL));
+        m_bottomPID.setConstraints(new Constraints(ArmConfig.BOTTOM_SLOW_ACCEL_MAX_VEL, ArmConfig.BOTTOM_SLOW_ACCEL_MAX_ACCEL));
     } else {
-        m_topPID.setConstraints(new Constraints(3, Math.PI * 2));
-        m_bottomPID.setConstraints(new Constraints(3, Math.PI * 2));
+        m_topPID.setConstraints(new Constraints(ArmConfig.TOP_MAX_VEL, ArmConfig.TOP_MAX_ACCEL));
+        m_bottomPID.setConstraints(new Constraints(ArmConfig.BOTTOM_MAX_VEL, ArmConfig.BOTTOM_MAX_ACCEL));
     }
   }
 
@@ -276,6 +277,7 @@ public class ArmSubsystem extends SubsystemBase {
     double[] angles = {angle1,angle2};
     return angles;
   }
+
   public void setBottomJoint(double angle) { // only for testing will switch to bottom arm
     double pidSetpoint = m_topPID.getPIDSetpoint(angle); 
     m_pidControllerTopArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFTop()); 
@@ -284,15 +286,18 @@ public class ArmSubsystem extends SubsystemBase {
     // m_pidControllerBottomArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFBottom()); 
     // m_bottomArmSetpointPub.accept(Math.toDegrees(angle));
   }
+
   public void setTopJoint(double angle) {
     double pidSetpoint = m_topPID.getPIDSetpoint(angle); 
     m_pidControllerTopArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFTop());
     m_topArmSetpointPub.accept(Math.toDegrees(angle));
   }
+
   public void resetEncoder() {
-    m_topArm.getEncoder().setPosition(Math.toRadians(-90));
-    // m_bottomArm.getEncoder().setPosition(Math.toRadians(-90));
+    m_topArm.getEncoder().setPosition(ArmConfig.RESET_ENCODER_POSITION);
+    // m_bottomArm.getEncoder().setPosition(ArmConfig.RESET_ENCODER_POSITION);
   }
+
   private double calculateFFTop() {
     return m_topArmVoltsAtHorizontal.get() * Math.cos(m_topEncoder.getPosition());
   }
@@ -364,5 +369,25 @@ public class ArmSubsystem extends SubsystemBase {
     else {
       brakeSolenoidHigh.set(Value.kReverse);
     }
+  }
+
+  public void updateSetpointDisplay(double setpoint1, double setpoint2) {
+    armDisplay.updateSetpointDisplay(setpoint1, setpoint2);
+  }
+
+  public double getTopPosition() {
+    return m_topEncoder.getPosition();
+  }
+
+  public double getBottomPosition() {
+    return m_bottomEncoder.getPosition();
+  }
+
+  public double getTopVel() {
+    return m_topEncoder.getVelocity();
+  }
+
+  public double getBottomVel() {
+    return m_bottomEncoder.getVelocity();
   }
 }

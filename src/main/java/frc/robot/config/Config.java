@@ -120,6 +120,8 @@ public class Config {
         // for Arm subsystem
         public static final int TOP_ARM_SPARK_CAN_ID = 18;
         public static final int BOTTOM_ARM_SPARK_CAN_ID = 19;
+        public static final int TOP_CANCODER_CAN_ID = 16;
+        public static final int BOTTOM_CANCODER_CAN_ID = 17;
 
     }
     

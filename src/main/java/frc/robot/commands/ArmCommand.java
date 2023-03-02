@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.config.ArmConfig;
 import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.subsystems.ArmDisplay;
@@ -22,11 +21,7 @@ public class ArmCommand extends CommandBase {
   private final boolean m_slowerAcceleration;
 
   // arm simulation variables
-  CommandXboxController controller;
   ArmDisplay armDisplay;
-
-  double x = 0.2;
-  double z = 0.2;
   
 
   /** Creates a new ArmExtend. */
@@ -45,6 +40,8 @@ public class ArmCommand extends CommandBase {
   public void initialize() {
     ArmSubsystem.getInstance().setConstraints(m_slowerAcceleration);
     ArmSubsystem.getInstance().resetMotionProfile();
+    ArmSubsystem.getInstance().controlTopArmBrake(false);
+    ArmSubsystem.getInstance().controlBottomArmBrake(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -54,21 +51,33 @@ public class ArmCommand extends CommandBase {
     angle1 = angles[0];
     angle2 = angles[1];
 
+    ArmSubsystem.getInstance().updateSetpointDisplay(angle1, angle2);
+
     ArmSubsystem.getInstance().setTopJoint(angle2);
     // ArmSubsystem.getInstance().setBottomJoint(angle1);
-
-    armDisplay.updateMeasurementDisplay(angle1, angle2);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     ArmSubsystem.getInstance().stopMotors();
+    if (interrupted = false) {
+      ArmSubsystem.getInstance().controlTopArmBrake(true);
+      ArmSubsystem.getInstance().controlBottomArmBrake(true);
+    }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if (Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle1) < ArmConfig.positionTolerance &&
+     Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle2) < ArmConfig.positionTolerance &&
+     Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.velocityTolerance &&
+      Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance) {
+        return true;
+      }
+    else {
+      return false;
+    }
   }
 }

@@ -34,20 +34,44 @@ public class ArmConfig {
         }
       }
     
-      public static final double NEO_GEAR_RATIO = 60;
+      public static final double TOP_NEO_GEAR_RATIO = 23.5;
+      public static final double BOTTOM_NEO_GEAR_RATIO = 62.5; 
       public static final double L1 = 40; //length of arm 1
       public static final double L2 = 40; //length of arm 2
-      public static final double HORIZONTAL_VOLTAGE = 1.0;
+      public static final double TOP_HORIZONTAL_VOLTAGE = 0.8;
+      public static final double BOTTOM_HORIZONTAL_VOLTAGE = 0.8;
+      public static final boolean SET_INVERTED = false;
+      public static final int CURRENT_LIMIT = 40;
 
-      public static final double armPositionConversionFactor = 2 * Math.PI / NEO_GEAR_RATIO;
-      public static final double armVelocityConversionFactor = armPositionConversionFactor / 60.0;
+      // constants for arm constraints
+      public static final double TOP_SLOW_ACCEL_MAX_VEL = 2.2;
+      public static final double BOTTOM_SLOW_ACCEL_MAX_VEL = 2.2;
+      public static final double TOP_SLOW_ACCEL_MAX_ACCEL = Math.PI * 0.9;
+      public static final double BOTTOM_SLOW_ACCEL_MAX_ACCEL = Math.PI * 0.9;
+      public static final double TOP_MAX_VEL = 3;
+      public static final double BOTTOM_MAX_VEL = 3;
+      public static final double TOP_MAX_ACCEL = Math.PI * 2;
+      public static final double BOTTOM_MAX_ACCEL = Math.PI * 2;
 
+      public static final double RESET_ENCODER_POSITION = Math.toRadians(-90);
+
+
+      public static final double topArmPositionConversionFactor = 2 * Math.PI / TOP_NEO_GEAR_RATIO;
+      public static final double topArmVelocityConversionFactor = topArmPositionConversionFactor / 60.0;
+      public static final double bottomArmPositionConversionFactor = 2 * Math.PI / BOTTOM_NEO_GEAR_RATIO;
+      public static final double bottomArmVelocityConversionFactor = bottomArmPositionConversionFactor / 60.0;
+
+      public static final double positionTolerance = Math.toRadians(1);
+      public static final double velocityTolerance = Math.toRadians(3);
+
+      // PID constants for top arm
       public static final double top_arm_kP = 0.8;
       public static final double top_arm_kI = 0.0005;
       public static final double top_arm_kD = 0;
       public static final double top_arm_kIz = 0.07;
       public static final double top_arm_kFF = 0;
 
+      // PID constants for bottom arm
       public static final double bottom_arm_kP = 0.8;
       public static final double bottom_arm_kI = 0.0005;
       public static final double bottom_arm_kD = 0;
