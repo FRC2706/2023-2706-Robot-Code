@@ -1,8 +1,13 @@
 package frc.robot.config;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.RobotBase;
+import java.io.BufferedReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -11,15 +16,11 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Robot;
-
-import java.io.BufferedReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.revrobotics.CANSparkMax.IdleMode;
 
 /**
  * Config manager for the robot
@@ -71,10 +72,10 @@ public class Config {
      */
     public static Double DRIVER_JOYSTICK_DEADBAND = 0.1; // TODO: Investigate if this can be better tuned
         
-    public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.1016, 0.1524); // Diameter of wheel is 0.1524
+    public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.0986536, 0.1524); // Diameter of wheel is 0.1524
 
-    public static final double kWheelBase = robotSpecific(-0.0, -0.0, -0.0, -0.0, 0.65, -0.0);
-    public static final double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, 0.518, 0.51762);
+    public static final double kWheelBase = robotSpecific(-0.0, -0.0, -0.0, -0.0, 0.655, -0.0);
+    public static final double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, 0.52, 0.51762);
     public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
 
     public static final int DIFF_SLOTID_DRIVER = 0;
@@ -98,7 +99,7 @@ public class Config {
     
         public static int PIGEON = robotSpecific(27, 27, 27, 27, 30);
     
-        public static int CANDLE = robotSpecific(-01, 15, -1, 15);
+        public static int CANDLE = robotSpecific(-01, 15, -1, 15, 15);
         public static int CTRE_PCM = robotSpecific(-01, 1, -1, -1);
 
         public static final int FRONT_LEFT_DRIVE = robotSpecific(-01, -01, -01, -01, 24);
@@ -158,8 +159,9 @@ public class Config {
         public static double ENCODER_SYNCING_PERIOD = 0.2; // seconds
         public static int ENCODER_SYNCING_TIMEOUT = 20; // seconds
 
+        public static final double MK4_L1_GEAR_RATIO = (50.0/14.0)*(19.0/25.0)*(45.0/15.0);
         public static final double turningEncoderConstant = (2*Math.PI)/12.8;
-        public static final double drivePositionConversionFactor = drivetrainWheelDiameter * Math.PI / 8.14;
+        public static final double drivePositionConversionFactor = drivetrainWheelDiameter * Math.PI / MK4_L1_GEAR_RATIO;
         public static final double driveVelocityConversionFactor = drivePositionConversionFactor / 60.0;
 
         public static final IdleMode defaultDriveIdleMode = IdleMode.kBrake;
@@ -167,26 +169,15 @@ public class Config {
 
         public static final double drive_kIZone = 0.0;
         public static final double drive_kFF = 0.0; // These can also be module specific.
-        public static final double drive_kP = 0.1; // Hopefully they won't need to be.
+        public static final double drive_kP = 0.2; // Hopefully they won't need to be.
         public static final double drive_kI = 0.0; // Depends on hardware differences.
         public static final double drive_kD = 0.0;
         
-        public static FluidConstant<Double> fluid_drive_kFF = new FluidConstant<>("Drive kFF", drive_kFF, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID"));
-
-        public static FluidConstant<Double> fluid_drive_kP = new FluidConstant<>("Drive kP", drive_kP, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID"));
-
-        public static FluidConstant<Double> fluid_drive_kI = new FluidConstant<>("Drive kI", drive_kI, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID"));
-
-
-        public static FluidConstant<Double> fluid_drive_kD = new FluidConstant<>("Drive kD", drive_kD, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID"));
-
-        public static FluidConstant<Double> fluid_drive_kIZone = new FluidConstant<>("Drive kIZone", drive_kIZone, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID"));
-
+        public static DoubleSubscriber sub_drive_kFF = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kFF").subscribe(drive_kFF);
+        public static DoubleSubscriber sub_drive_kP = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kP").subscribe(drive_kP);
+        public static DoubleSubscriber sub_drive_kI = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kI").subscribe(drive_kI);
+        public static DoubleSubscriber sub_drive_kD = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kD").subscribe(drive_kD);
+        public static DoubleSubscriber sub_drive_kIZone = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kIzone").subscribe(drive_kIZone);
     
 
         public static final double steering_kFF = 0.0;
@@ -195,20 +186,11 @@ public class Config {
         public static final double steering_kD = 0.1;
         public static final double steering_kIZone = 0.0; //5 degrees
 
-        public static FluidConstant<Double> fluid_steering_kFF = new FluidConstant<>("Steering kFF", steering_kFF, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/SteeringPID"));
-
-        public static FluidConstant<Double> fluid_steering_kP = new FluidConstant<>("Steering kP", steering_kP, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/SteeringPID"));
-
-        public static FluidConstant<Double> fluid_steering_kI = new FluidConstant<>("Steering kI", steering_kI, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/SteeringPID"));
-
-        public static FluidConstant<Double> fluid_steering_kD = new FluidConstant<>("Steering kD", steering_kD, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/SteeringPID"));
-                        
-        public static FluidConstant<Double> fluid_steering_kIZone = new FluidConstant<>("Steering kIZone", steering_kIZone, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/SteeringPID"));
+        public static DoubleSubscriber sub_steering_kFF = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Steering kFF").subscribe(steering_kFF);
+        public static DoubleSubscriber sub_steering_kP = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Steering kP").subscribe(steering_kP);
+        public static DoubleSubscriber sub_steering_kI = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Steering kI").subscribe(steering_kI);
+        public static DoubleSubscriber sub_steering_kD = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Steering kD").subscribe(steering_kD);
+        public static DoubleSubscriber sub_steering_kIZone = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Steering kIzone").subscribe(steering_kIZone);
 
         // Distance between centers of right and left wheels on robot
 
@@ -232,19 +214,17 @@ public class Config {
         public static final double kMaxAutoAngularSpeed = Math.PI *3; // rad/s
         public static final double kMaxAutoAngularAcceleration = Math.PI * 3; // rad/s/s
 
+        public static final double teleopRateLimit = 3;
+
         public static final double driveKS = 0.667;
-        public static final double driveKV = 2.44;
-        public static final double driveKA = 0.27;
+        public static final double driveKV = 2.8;
+        public static final double driveKA = 0.48;
 
-        public static FluidConstant<Double> fluid_kA = new FluidConstant<>("Drive kA", driveKA, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DriveFF")); 
+        public static DoubleSubscriber sub_kA = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kA").subscribe(driveKA);
+        public static DoubleSubscriber sub_kV = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kV").subscribe(driveKV);
+        public static DoubleSubscriber sub_kS = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kS").subscribe(driveKS);
+
         
-        public static FluidConstant<Double> fluid_kV = new FluidConstant<>("Drive kV", driveKV, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DriveFF"));
-
-        public static FluidConstant<Double> fluid_kS = new FluidConstant<>("Drive kS", driveKS, true)
-                        .registerToTable(NetworkTableInstance.getDefault().getTable("SwerveChassis/DriveFF"));     
-                        
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
             kMaxAutoAngularSpeed, kMaxAutoAngularAcceleration);
     }   
@@ -394,10 +374,27 @@ public class Config {
     public static TrajectoryConfig trajectoryConfig = new TrajectoryConfig(kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared)
         .setKinematics(kDriveKinematics).addConstraint(autoVoltageConstraint);
     
+    // PCM Can ID
+    public static final int CTRE_PCM_CAN_ID = -1;
+    
+    //For intake pneumatics
+    public static final int INTAKE2_PNEUMATIC_FORWARD_CHANNEL = -1;
+    public static final int INTAKE2_PNEUMATIC_REVERSE_CHANNEL = -1;
+    public static final int INTAKE1_PNEUMATIC_FORWARD_CHANNEL = -1;
+    public static final int INTAKE1_PNEUMATIC_REVERSE_CHANNEL = -1;
+    
 
-   
+    // Constants for arm pneumatics
+    public static final int ARMLOW_PNEUMATIC_FORWARD_CHANNEL = -1;
+    public static final int ARMLOW_PNEUMATIC_REVERSE_CHANNEL = -1;
+    public static final int ARMHIGH_PNEUMATIC_FORWARD_CHANNEL = -1;
+    public static final int ARMHIGH_PNEUMATIC_REVERSE_CHANNEL = -1;
 
 
+    public static final String RELAY_NETWORKTABLE = "ControlRelay";
+    public static final int RELAY_RINGLIGHT_REAR_SMALL = 1; // NUMBERS NOT ACCURATELY RELATED TO CAMERAS YET
+    public static final int RELAY_RINGLIGHT_REAR_LARGE = 2;
+    public static final int RELAY_RINGLIGHT_FRONT = 3;
 
 
 

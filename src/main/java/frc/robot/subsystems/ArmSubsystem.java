@@ -26,6 +26,9 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ProfileExternalPIDController;
 import frc.robot.SubsystemChecker;
@@ -92,6 +95,10 @@ public class ArmSubsystem extends SubsystemBase {
   private DoublePublisher m_bottomArmFFTestingVolts;
   private DoubleSubscriber m_bottomArmOffset;
 
+  // for arm pneumatic brakes
+  DoubleSolenoid brakeSolenoidLow;
+  DoubleSolenoid brakeSolenoidHigh;
+
   public static ArmSubsystem getInstance() {
     if (instance == null) {
       SubsystemChecker.subsystemConstructed(SubsystemType.ArmSubsystem);
@@ -124,6 +131,15 @@ public class ArmSubsystem extends SubsystemBase {
 
     m_absoluteTopArmEncoder = new CANCoder(16);
     m_absoluteBottomArmEncoder = new CANCoder(17);
+
+    brakeSolenoidLow = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
+                                          PneumaticsModuleType.CTREPCM,
+                                          Config.ARMLOW_PNEUMATIC_FORWARD_CHANNEL,
+                                          Config.ARMLOW_PNEUMATIC_REVERSE_CHANNEL);
+    brakeSolenoidHigh = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
+                                          PneumaticsModuleType.CTREPCM,
+                                          Config.ARMHIGH_PNEUMATIC_FORWARD_CHANNEL,
+                                          Config.ARMHIGH_PNEUMATIC_REVERSE_CHANNEL);
 
     m_absoluteTopArmEncoder.configAllSettings(config);
     m_absoluteBottomArmEncoder.configAllSettings(config);
@@ -325,8 +341,28 @@ public class ArmSubsystem extends SubsystemBase {
   public void updateFromCancoderBottom() {
     errREV(m_bottomEncoder.setPosition(getCancoderBottom()));
   }
-  
 
-
-
+  public void controlBottomArmBrake( boolean bBrakeOn) {
+    if (bBrakeOn == true) {
+      //set brake on the arm
+      brakeSolenoidLow.set(Value.kForward);
+    }
+    else {
+      brakeSolenoidLow.set(Value.kReverse);
+    }
+  }
+  /*
+   * This method will control the Top Arm Brake
+   * @param bBrakeon true: set brake mode
+   *                 false: remove brake mode
+   */
+  public void controlTopArmBrake( boolean bBrakeOn) {
+    if (bBrakeOn == true) {
+      //set brake on the arm
+      brakeSolenoidHigh.set(Value.kForward);
+    }
+    else {
+      brakeSolenoidHigh.set(Value.kReverse);
+    }
+  }
 }

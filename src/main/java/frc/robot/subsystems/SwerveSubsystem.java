@@ -15,8 +15,10 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,10 +31,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
     private NetworkTable table = NetworkTableInstance.getDefault().getTable("DriveTrain");
-    private NetworkTableEntry gyroEntry = table.getEntry("RawGyro");
-    private NetworkTableEntry xEntry = table.getEntry("OdometryX");
-    private NetworkTableEntry yEntry = table.getEntry("OdometryY");
-    private NetworkTableEntry rotEntry = table.getEntry("OdometryRot");
+    private DoublePublisher gyroEntry = table.getDoubleTopic("RawGyro").publish();
+    private DoublePublisher xEntry = table.getDoubleTopic("OdometryX").publish();
+    private DoublePublisher yEntry = table.getDoubleTopic("OdometryY").publish();
+    private DoubleEntry rotEntry = table.getDoubleTopic("OdometryRot").getEntry(0);
     
     // Instance for singleton class
     private static SwerveSubsystem instance;
@@ -68,7 +70,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         m_rearRight = new SwerveModule(Config.CANID.REAR_RIGHT_DRIVE, Config.Swerve.INVERTED_REAR_RIGHT_DRIVE, Config.CANID.REAR_RIGHT_STEERING, Config.Swerve.INVERTED_REAR_RIGHT_STEERING, Config.CANID.REAR_RIGHT_CANCODER, Config.Swerve.RR_ENCODER_OFFSET, "RR");
         m_pigeon = new PigeonIMU(Config.CANID.PIGEON);
-        m_odometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition());
+        m_odometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition(), new Pose2d(0, 0, Rotation2d.fromDegrees(rotEntry.get())));
         SmartDashboard.putData("Field", m_field);
     }
 
@@ -88,10 +90,10 @@ public class SwerveSubsystem extends SubsystemBase {
                 getPosition()
         );
         
-        gyroEntry.setDouble(currentGyro);
-        xEntry.setDouble(getPose().getX());
-        yEntry.setDouble(getPose().getY());
-        rotEntry.setDouble(getPose().getRotation().getDegrees());
+        gyroEntry.accept(currentGyro);
+        xEntry.accept(getPose().getX());
+        yEntry.accept(getPose().getY());
+        rotEntry.accept(getPose().getRotation().getDegrees());
 
         m_field.setRobotPose(getPose());
         
@@ -124,6 +126,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @param pose The pose to which to set the odometry.
      */
     public void resetOdometry(Pose2d pose) {
+        System.out.println(pose.toString());
         m_odometry.resetPosition(Rotation2d.fromDegrees(getGyro()), getPosition(), pose);
     }
 
@@ -165,6 +168,15 @@ public class SwerveSubsystem extends SubsystemBase {
         m_rearRight.setDesiredState(desiredStates[3], isOpenLoop);
     }
 
+    /**
+     * Sets the swerve ModuleStates in auto. Defaults to closed loop.
+     *
+     * @param desiredStates The desired SwerveModule states.
+     */
+    public void setModuleStatesAuto(SwerveModuleState[] desiredStates) {
+        setModuleStates(desiredStates, false);
+    }
+    
     /**
      * Returns the heading of the robot.
      * 
