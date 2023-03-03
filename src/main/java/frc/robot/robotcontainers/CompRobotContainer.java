@@ -20,6 +20,13 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class CompRobotContainer extends RobotContainer {
 
+  public enum RobotState {
+    NoGamePiece,
+    Cone,
+    Cube;
+  }
+  private RobotState m_robotState=RobotState.NoGamePiece;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public CompRobotContainer() {
     // Configure the button bindings
@@ -45,5 +52,12 @@ public class CompRobotContainer extends RobotContainer {
   @Override
   public Command getAutonomousCommand() {
     return new InstantCommand(); 
+
+  }
+  public RobotState getRobotState() {
+    return m_robotState;
+  }
+  public void setRobotState(RobotState state) {
+    m_robotState=state;
   }
 }

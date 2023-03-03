@@ -203,11 +203,11 @@ public class MiniSwerveContainer extends RobotContainer{
         autoId = 26;
         break;
 
-      case "Id27_place_pick_place_pick_place_bottom_new":
+      case "Id27_place_pick_place_pick_place_bottom_new": //2.5_bottom_new
         autoId = 27;
         break;
       
-      case "Id28_place_pick_bottom_charge_new":
+      case "Id28_place_pick_bottom_charge_new": //1_
         autoId = 28;
         break;
       
