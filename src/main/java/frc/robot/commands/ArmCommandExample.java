@@ -9,14 +9,14 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.robotcontainers.CompRobotContainer.RobotGamePieceState;
 
-public class ArmCommand extends CommandBase {
+public class ArmCommandExample extends CommandBase {
   RobotGamePieceState m_robotState;
   /** Creates a new ArmCommand. */
   //position: top, middle, bottom
   //0: top
   //1: middle
   //2: bottom
-  public ArmCommand(Supplier<RobotGamePieceState> robotState, int position) {
+  public ArmCommandExample(Supplier<RobotGamePieceState> robotState, int position) {
     //get the current robotState: from container
     m_robotState = robotState.get();
     // Use addRequirements() here to declare subsystem dependencies.
