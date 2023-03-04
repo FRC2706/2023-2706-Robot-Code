@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Robot;
-import frc.robot.commands.ArmCommand;
+import frc.robot.commands.ArmCommandExample;
 import frc.robot.commands.IntakeCommand;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -52,9 +52,9 @@ public class CompRobotContainer extends RobotContainer {
     Consumer<RobotGamePieceState> setState = a ->setRobotGamePieceState(a);
 
     //examples 
-    ArmCommand armTomCmd = new ArmCommand (getState,  0);
-    ArmCommand armMiddleCmd = new ArmCommand(getState,  1);
-    ArmCommand armBottomCmd = new ArmCommand(getState, 2);
+    ArmCommandExample armTomCmd = new ArmCommandExample (getState,  0);
+    ArmCommandExample armMiddleCmd = new ArmCommandExample(getState,  1);
+    ArmCommandExample armBottomCmd = new ArmCommandExample(getState, 2);
 
     IntakeCommand intakeCmd = new IntakeCommand (0,setState);
  }
