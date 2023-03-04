@@ -72,10 +72,10 @@ public class Config {
      */
     public static Double DRIVER_JOYSTICK_DEADBAND = 0.1; // TODO: Investigate if this can be better tuned
         
-    public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.0986536, 0.1524); // Diameter of wheel is 0.1524
+    public static double drivetrainWheelDiameter = robotSpecific(0.0986536,0.1524, 0.1016, 0.1524, 0.01524, 0.1524); // Diameter of wheel is 0.1524
 
-    public static final double kWheelBase = robotSpecific(-0.0, -0.0, -0.0, -0.0, 0.655, -0.0);
-    public static final double kTrackWidth = robotSpecific(0.6, 1.2267, 0.3136, 0.569, 0.52, 0.51762);
+    public static final double kWheelBase = robotSpecific(0.655, -0.0, -0.0, -0.0, -0.0, -0.0);
+    public static final double kTrackWidth = robotSpecific(0.52, 1.2267, 0.3136, 0.569, 0.52, 0.51762);
     public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
 
     public static final int DIFF_SLOTID_DRIVER = 0;
@@ -97,25 +97,25 @@ public class Config {
         public static int CLIMBER = robotSpecific(-01, 4, -1, -1);
         public static int INDEXER = robotSpecific(-01, 7, 7, -1);
     
-        public static int PIGEON = robotSpecific(27, 27, 27, 27, 30);
+        public static int PIGEON = robotSpecific(30, 27, 27, 27, 30);
     
         public static int CANDLE = robotSpecific(-01, 15, -1, 15);
         public static int CTRE_PCM = robotSpecific(-01, 1, -1, -1);
 
-        public static final int FRONT_LEFT_DRIVE = robotSpecific(-01, -01, -01, -01, 24);
-        public static final int REAR_LEFT_DRIVE = robotSpecific(-01, -01, -01, -01, 20);
-        public static final int FRONT_RIGHT_DRIVE = robotSpecific(-01, -01, -01, -01, 21);
-        public static final int REAR_RIGHT_DRIVE = robotSpecific(-01, -01, -01, -01, 27);
+        public static final int FRONT_LEFT_DRIVE = robotSpecific(24, -01, -01, -01, -01);
+        public static final int REAR_LEFT_DRIVE = robotSpecific(20, -01, -01, -01, -01);
+        public static final int FRONT_RIGHT_DRIVE = robotSpecific(21, -01, -01, -01, -01);
+        public static final int REAR_RIGHT_DRIVE = robotSpecific(27, -01, -01, -01, -01);
 
-        public static final int FRONT_LEFT_STEERING = robotSpecific(-01, -01, -01, -01, 23);
-        public static final int REAR_LEFT_STEERING = robotSpecific(-01, -01, -01, -01, 26);
-        public static final int FRONT_RIGHT_STEERING = robotSpecific(-01, -01, -01, -01, 25);
-        public static final int REAR_RIGHT_STEERING = robotSpecific(-01, -01, -01, -01, 22);
+        public static final int FRONT_LEFT_STEERING = robotSpecific(23, -01, -01, -01, -01);
+        public static final int REAR_LEFT_STEERING = robotSpecific(26, -01, -01, -01, -01);
+        public static final int FRONT_RIGHT_STEERING = robotSpecific(25, -01, -01, -01, -01);
+        public static final int REAR_RIGHT_STEERING = robotSpecific(22, -01, -01, -01, -01);
 
-        public static final int FRONT_LEFT_CANCODER = robotSpecific(-01, -01, -01, -01, 9);
-        public static final int REAR_LEFT_CANCODER = robotSpecific(-01, -01, -01, -01, 8);
-        public static final int FRONT_RIGHT_CANCODER = robotSpecific(-01, -01, -01, -01, 6);
-        public static final int REAR_RIGHT_CANCODER = robotSpecific(-01, -01, -01, -01, 7); 
+        public static final int FRONT_LEFT_CANCODER = robotSpecific(9, -01, -01, -01, -01);
+        public static final int REAR_LEFT_CANCODER = robotSpecific(8, -01, -01, -01, -01);
+        public static final int FRONT_RIGHT_CANCODER = robotSpecific(6, -01, -01, -01, -01);
+        public static final int REAR_RIGHT_CANCODER = robotSpecific(7, -01, -01, -01, -01); 
 
 
     }
