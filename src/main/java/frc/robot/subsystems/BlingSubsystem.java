@@ -87,6 +87,11 @@ public class BlingSubsystem extends SubsystemBase {
     candle.setLEDs(255, 255, 0);
   }
 
+  public void setOrange()
+  {
+    candle.setLEDs(255, 165, 0, 127, 1, 10); //test to see how many leds this is and if it works cuz the white is 127
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
