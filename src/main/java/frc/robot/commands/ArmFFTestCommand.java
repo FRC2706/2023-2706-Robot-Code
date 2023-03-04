@@ -27,7 +27,7 @@ public class ArmFFTestCommand extends CommandBase {
   @Override
   public void initialize() {
     ArmSubsystem.getInstance().setTopArmIdleMode(IdleMode.kCoast);
-    // ArmSubsystem.getInstance().setBottomArmIdleMode(IdleMode.kCoast);
+    ArmSubsystem.getInstance().setBottomArmIdleMode(IdleMode.kCoast);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -40,17 +40,16 @@ public class ArmFFTestCommand extends CommandBase {
     joystickValueBottom = MathUtil.applyDeadband(joystickValueBottom, 0.15);
 
     ArmSubsystem.getInstance().testFeedForwardTop(joystickValueTop * m_maxExtraVolts);
-    // ArmSubsystem.getInstance().testFeedForwardBottom(joystickValueBottom * m_maxExtraVolts);
+    ArmSubsystem.getInstance().testFeedForwardBottom(joystickValueBottom * m_maxExtraVolts);
     
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    ArmSubsystem.getInstance().m_topArm.stopMotor();
+    ArmSubsystem.getInstance().stopMotors();
     ArmSubsystem.getInstance().setTopArmIdleMode(IdleMode.kBrake);
-    // ArmSubsystem.getInstance().m_bottomArm.stopMotor();
-    // ArmSubsystem.getInstance().setBottomArmIdleMode(IdleMode.kBrake);
+    ArmSubsystem.getInstance().setBottomArmIdleMode(IdleMode.kBrake);
   }
 
   // Returns true when the command should end.

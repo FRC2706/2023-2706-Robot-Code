@@ -11,11 +11,13 @@ public class SetAngleArm extends CommandBase {
 
   double angle;
   boolean m_slowerAcceleration;
+  boolean isTop;
   /** Creates a new SetAngleArm. */
-  public SetAngleArm(double angle, boolean m_slowerAcceleration) {
+  public SetAngleArm(double degAngle, boolean m_slowerAcceleration, boolean isTop) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.angle = angle;
+    this.angle = Math.toRadians(degAngle);
     this.m_slowerAcceleration = m_slowerAcceleration;
+    this.isTop = isTop;
 
 
     addRequirements(ArmSubsystem.getInstance());
@@ -31,14 +33,18 @@ public class SetAngleArm extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    ArmSubsystem.getInstance().setTopJoint(angle);
+    if (isTop) {
+      ArmSubsystem.getInstance().setTopJoint(angle);
+    }
+    else {
+      ArmSubsystem.getInstance().setBottomJoint(angle);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // ArmSubsystem.getInstance().m_bottomArm.stopMotor();
-    ArmSubsystem.getInstance().m_topArm.stopMotor();
+    ArmSubsystem.getInstance().stopMotors();
   }
 
   // Returns true when the command should end.

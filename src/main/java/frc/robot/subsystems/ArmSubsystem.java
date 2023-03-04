@@ -14,6 +14,7 @@ import com.ctre.phoenix.sensors.SensorTimeBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
@@ -81,6 +82,7 @@ public class ArmSubsystem extends SubsystemBase {
   private DoubleEntry m_topArmVoltsAtHorizontal;
   private DoublePublisher m_topArmFFTestingVolts;
   private DoubleSubscriber m_topArmOffset;
+  private DoublePublisher m_topCANCoderValue;
 
   // network table entries for bottom arm
   private DoubleEntry m_bottomArmPSubs;
@@ -94,6 +96,7 @@ public class ArmSubsystem extends SubsystemBase {
   private DoubleEntry m_bottomArmVoltsAtHorizontal;
   private DoublePublisher m_bottomArmFFTestingVolts;
   private DoubleSubscriber m_bottomArmOffset;
+  private DoublePublisher m_bottomCANCoderValue;
 
   // for arm pneumatic brakes
   DoubleSolenoid brakeSolenoidLow;
@@ -115,10 +118,18 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArm.restoreFactoryDefaults();
     m_topArm.setSmartCurrentLimit(ArmConfig.CURRENT_LIMIT);
     m_bottomArm.setSmartCurrentLimit(ArmConfig.CURRENT_LIMIT);
-    m_topArm.setInverted(ArmConfig.SET_INVERTED);
-    m_bottomArm.setInverted(ArmConfig.SET_INVERTED);
+    m_topArm.setInverted(ArmConfig.TOP_SET_INVERTED);
+    m_bottomArm.setInverted(ArmConfig.BOTTOM_SET_INVERTED);
     m_topArm.setIdleMode(IdleMode.kBrake);
     m_bottomArm.setIdleMode(IdleMode.kBrake);
+    m_topArm.setSoftLimit(SoftLimitDirection.kForward, ArmConfig.top_arm_forward_limit);
+    m_topArm.setSoftLimit(SoftLimitDirection.kReverse, ArmConfig.top_arm_reverse_limit);
+    m_bottomArm.setSoftLimit(SoftLimitDirection.kForward, ArmConfig.bottom_arm_forward_limit);
+    m_bottomArm.setSoftLimit(SoftLimitDirection.kReverse, ArmConfig.bottom_arm_reverse_limit);
+    m_topArm.enableSoftLimit(SoftLimitDirection.kForward, true);
+    m_topArm.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    m_bottomArm.enableSoftLimit(SoftLimitDirection.kForward, true);
+    m_bottomArm.enableSoftLimit(SoftLimitDirection.kReverse, true);
     
     CANCoderConfiguration config = new CANCoderConfiguration();
     config.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
@@ -197,6 +208,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_topArmVelPub = topArmDataTable.getDoubleTopic("Vel").publish(PubSubOption.periodic(0.02));
     m_topArmVoltsAtHorizontal = topArmDataTable.getDoubleTopic("VoltsAtHorizontal").getEntry(0);
     m_topArmVoltsAtHorizontal.accept(ArmConfig.TOP_HORIZONTAL_VOLTAGE);
+    m_topCANCoderValue = topArmDataTable.getDoubleTopic("CANCoder Value").publish(PubSubOption.periodic(0.02));
 
     m_topArmFFTestingVolts = topArmDataTable.getDoubleTopic("VoltageSetInFFTesting").publish();
 
@@ -205,13 +217,14 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArmSetpointPub = bottomArmDataTable.getDoubleTopic("SetpointAngle").publish(PubSubOption.periodic(0.02));
     m_bottomArmVelPub = bottomArmDataTable.getDoubleTopic("Vel").publish(PubSubOption.periodic(0.02));
     m_bottomArmVoltsAtHorizontal = bottomArmDataTable.getDoubleTopic("VoltsAtHorizontal").getEntry(0);
-    m_bottomArmVoltsAtHorizontal.accept(ArmConfig.BOTTOM_HORIZONTAL_VOLTAGE);
+    m_bottomArmVoltsAtHorizontal.accept(ArmConfig.BOTTOM_MOMENT_TO_VOLTAGE);
+    m_bottomCANCoderValue = bottomArmDataTable.getDoubleTopic("CANCoder Value").publish(PubSubOption.periodic(0.02));
 
     m_bottomArmFFTestingVolts = bottomArmDataTable.getDoubleTopic("VoltageSetInFFTesting").publish();
 
     updatePIDSettings();
     updateFromCancoderTop();
-    // updateFromCancoderBottom();
+    updateFromCancoderBottom();
   }
 
   public void updatePIDSettings() {
@@ -241,16 +254,10 @@ public class ArmSubsystem extends SubsystemBase {
     m_topArmVelPub.accept(m_topEncoder.getVelocity());
     m_bottomArmPosPub.accept(Math.toDegrees(bottomPosition));
     m_bottomArmVelPub.accept(m_bottomEncoder.getVelocity());
+    m_topCANCoderValue.accept(getCancoderTop());
+    m_bottomCANCoderValue.accept(getCancoderBottom());
 
     armDisplay.updateMeasurementDisplay(topPosition, bottomPosition);
-    /* 
-    if (m_topEncoder.getVelocity() > 2) {
-        m_topPID.setConstraints(new Constraints(2.2, Math.PI * 0.9));
-    }
-    if (m_bottomEncoder.getVelocity() > 2) {
-      m_bottomPID.setConstraints(new Constraints(2.2, Math.PI * 0.9));
-  }
-  */
   }
 
   public void setConstraints(boolean slowerAcceleration) {
@@ -278,13 +285,10 @@ public class ArmSubsystem extends SubsystemBase {
     return angles;
   }
 
-  public void setBottomJoint(double angle) { // only for testing will switch to bottom arm
-    double pidSetpoint = m_topPID.getPIDSetpoint(angle); 
-    m_pidControllerTopArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFTop()); 
-    m_topArmSetpointPub.accept(Math.toDegrees(angle));
-    // double pidSetpoint = m_bottomPID.getPIDSetpoint(angle); 
-    // m_pidControllerBottomArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFBottom()); 
-    // m_bottomArmSetpointPub.accept(Math.toDegrees(angle));
+  public void setBottomJoint(double angle) { 
+    double pidSetpoint = m_bottomPID.getPIDSetpoint(angle); 
+    m_pidControllerBottomArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFBottom()); 
+    m_bottomArmSetpointPub.accept(Math.toDegrees(angle));
   }
 
   public void setTopJoint(double angle) {
@@ -295,7 +299,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void resetEncoder() {
     m_topArm.getEncoder().setPosition(ArmConfig.RESET_ENCODER_POSITION);
-    // m_bottomArm.getEncoder().setPosition(ArmConfig.RESET_ENCODER_POSITION);
+    m_bottomArm.getEncoder().setPosition(ArmConfig.RESET_ENCODER_POSITION);
   }
 
   private double calculateFFTop() {
@@ -328,7 +332,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void stopMotors() {
     m_topArm.stopMotor();
-    // m_bottomArm.stopMotor();
+    m_bottomArm.stopMotor();
 }
 
   public double getCancoderTop() {

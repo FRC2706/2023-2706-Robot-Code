@@ -38,7 +38,7 @@ public class ArmCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    ArmSubsystem.getInstance().setConstraints(m_slowerAcceleration);
+    ArmSubsystem.getInstance().setConstraints(armSetpoint.getSlowAccel());
     ArmSubsystem.getInstance().resetMotionProfile();
     ArmSubsystem.getInstance().controlTopArmBrake(false);
     ArmSubsystem.getInstance().controlBottomArmBrake(false);
@@ -54,14 +54,14 @@ public class ArmCommand extends CommandBase {
     ArmSubsystem.getInstance().updateSetpointDisplay(angle1, angle2);
 
     ArmSubsystem.getInstance().setTopJoint(angle2);
-    // ArmSubsystem.getInstance().setBottomJoint(angle1);
+    ArmSubsystem.getInstance().setBottomJoint(angle1);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     ArmSubsystem.getInstance().stopMotors();
-    if (interrupted = false) {
+    if (interrupted == false) {
       ArmSubsystem.getInstance().controlTopArmBrake(true);
       ArmSubsystem.getInstance().controlBottomArmBrake(true);
     }
@@ -70,8 +70,8 @@ public class ArmCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle1) < ArmConfig.positionTolerance &&
-     Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle2) < ArmConfig.positionTolerance &&
+    if (Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.positionTolerance &&
+     Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.positionTolerance &&
      Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.velocityTolerance &&
       Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance) {
         return true;

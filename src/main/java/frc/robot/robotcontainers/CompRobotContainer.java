@@ -7,10 +7,15 @@ package frc.robot.robotcontainers;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.Robot;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Robot;
+import frc.robot.commands.ArmFFTestCommand;
+import frc.robot.commands.SetAngleArm;
+import frc.robot.subsystems.ArmSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -33,8 +38,25 @@ public class CompRobotContainer extends RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    boolean isTop = true;
+
     Joystick driverStick = new Joystick(0);
     Joystick controlStick = new Joystick(1);
+    CommandXboxController armStick = new CommandXboxController(3);
+
+    armStick.a().onTrue(new SetAngleArm(30, false, isTop));
+    armStick.b().onTrue(new SetAngleArm(60, false, isTop));
+    armStick.y().onTrue(new SetAngleArm(90, false, isTop));
+    armStick.x().onTrue(new SetAngleArm(120, false, isTop));
+
+    Command armFF = new ArmFFTestCommand(armStick, 2);
+
+    armStick.leftBumper().onTrue(Commands.runOnce(() -> armFF.schedule()));
+    armStick.back().onTrue(Commands.sequence(
+            Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()),
+            Commands.runOnce(() -> ArmSubsystem.getInstance().stopMotors())
+        ));
+      
  }
 
   /**
