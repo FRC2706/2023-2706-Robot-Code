@@ -4,13 +4,19 @@
 
 package frc.robot.robotcontainers;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Robot;
+import frc.robot.commands.ArmCommand;
+import frc.robot.commands.IntakeCommand;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -19,6 +25,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class CompRobotContainer extends RobotContainer {
+  public enum RobotGamePieceState {
+    NoGamePiece,
+    HasCone,
+    HasCube
+  }
+  private RobotGamePieceState m_robotState = RobotGamePieceState.NoGamePiece;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public CompRobotContainer() {
@@ -35,6 +47,16 @@ public class CompRobotContainer extends RobotContainer {
   private void configureButtonBindings() {
     Joystick driverStick = new Joystick(0);
     Joystick controlStick = new Joystick(1);
+
+    Supplier<RobotGamePieceState> getState = ()-> getRobotGamePieceState();
+    Consumer<RobotGamePieceState> setState = a ->setRobotGamePieceState(a);
+
+    //examples 
+    ArmCommand armTomCmd = new ArmCommand (getState,  0);
+    ArmCommand armMiddleCmd = new ArmCommand(getState,  1);
+    ArmCommand armBottomCmd = new ArmCommand(getState, 2);
+
+    IntakeCommand intakeCmd = new IntakeCommand (0,setState);
  }
 
   /**
@@ -45,5 +67,11 @@ public class CompRobotContainer extends RobotContainer {
   @Override
   public Command getAutonomousCommand() {
     return new InstantCommand(); 
+  }
+  public RobotGamePieceState getRobotGamePieceState() {
+    return m_robotState;
+  }
+  public void setRobotGamePieceState(RobotGamePieceState state) {
+    m_robotState=state;
   }
 }
