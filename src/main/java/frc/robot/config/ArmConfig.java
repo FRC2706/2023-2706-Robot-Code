@@ -115,8 +115,8 @@ public class ArmConfig {
       public static final double bottom_arm_kFF = 0;
 
       // soft limit constants for top arm
-      public static final float top_arm_forward_limit = (float)Math.toRadians(180);
-      public static final float top_arm_reverse_limit = (float)Math.toRadians(30);
+      public static final float top_arm_forward_limit = (float)Math.toRadians(30); //180 for comp
+      public static final float top_arm_reverse_limit = (float)Math.toRadians(-110); //30 for comp
     
       // soft limit constants for bottom arm
       public static final float bottom_arm_forward_limit = (float)Math.toRadians(90);
