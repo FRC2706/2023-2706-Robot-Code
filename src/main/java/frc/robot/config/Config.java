@@ -379,7 +379,7 @@ public class Config {
         .setKinematics(kDriveKinematics).addConstraint(autoVoltageConstraint);
     
     // PCM Can ID
-    public static final int CTRE_PCM_CAN_ID = 2;
+    public static final int CTRE_PCM_CAN_ID = 1;
     
     //For intake pneumatics
     public static final int INTAKE2_PNEUMATIC_FORWARD_CHANNEL = 5;

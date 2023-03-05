@@ -148,7 +148,7 @@ public class CompRobotContainer extends RobotContainer {
       () -> ArmSubsystem.getInstance().controlTopArmBrake(true), 
       () -> ArmSubsystem.getInstance().controlTopArmBrake(false)));
 
-    Command armFF = new ArmFFTestCommand(armStick, 2, false, true);
+    Command armFF = new ArmFFTestCommand(armStick, 7, true, true);
 
     armStick.leftBumper().onTrue(Commands.runOnce(() -> armFF.schedule()));
     armStick.back().onTrue(Commands.sequence(

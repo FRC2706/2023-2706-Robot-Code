@@ -6,7 +6,9 @@ package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -38,12 +40,18 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
   private BrakeModeDisabled brakeModeDisabledCommand = null;
 
+  Compressor pcmCompressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
+
+
+
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
+    pcmCompressor.enableDigital();
     PathPlannerServer.startServer(5811);
     // Instantiate the RobotContainer based on the Robot ID.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
