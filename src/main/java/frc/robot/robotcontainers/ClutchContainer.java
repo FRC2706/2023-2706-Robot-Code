@@ -12,6 +12,7 @@ import frc.robot.commands.ArcadeDrive;
 import frc.robot.subsystems.DiffTalonSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -34,12 +35,12 @@ public class ClutchContainer extends RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    Joystick driverStick = new Joystick(0);
-    Joystick controlStick = new Joystick(1);
+    CommandXboxController driver = new CommandXboxController(0);
+    CommandXboxController operator = new CommandXboxController(1);
 
 
     DiffTalonSubsystem.getInstance().setDefaultCommand(
-      new ArcadeDrive(driverStick, XboxController.Axis.kLeftY.value, XboxController.Axis.kRightX.value));
+      new ArcadeDrive(driver, XboxController.Axis.kLeftY.value, XboxController.Axis.kRightX.value));
   }
 
   /**
