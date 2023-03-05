@@ -17,12 +17,14 @@ public class TranslationCommand extends CommandBase {
 
   double TOLERANCE = 0.05;
 
-
   ProfiledPIDController pidControlY;
   double currentY;
   double desiredY;
   double deltaY;
 
+  ProfiledPIDController pidControlTheta;
+  double currentTheta;
+  double desiredTheta;
   
   /** Creates a new translation. */
   public TranslationCommand( double deltaX, double deltaY) {
@@ -30,6 +32,8 @@ public class TranslationCommand extends CommandBase {
                                            new TrapezoidProfile.Constraints(1, 1));
     pidControlY = new ProfiledPIDController(1, 0.0, 0.2, 
                                            new TrapezoidProfile.Constraints(1,1));
+    pidControlTheta = new ProfiledPIDController(5.0,0, 0.4,
+                                           new TrapezoidProfile.Constraints(4*Math.PI, 8*Math.PI));
 
     this.deltaX = deltaX;
     this.deltaY = deltaY;
@@ -43,17 +47,22 @@ public class TranslationCommand extends CommandBase {
     //from odometry get currentX and currentY
     currentX = SwerveSubsystem.getInstance().getPose().getX();
     currentY = SwerveSubsystem.getInstance().getPose().getY();
+    currentTheta = SwerveSubsystem.getInstance().getHeading().getRadians();
 
     desiredX = currentX + deltaX;
     desiredY = currentY + deltaY;
+    //keep the current angle
+    desiredTheta = currentTheta; 
 
     //reset current positions
     pidControlX.reset(currentX);
     pidControlY.reset(currentY);
+    pidControlTheta.reset(currentTheta);
 
     //set the tolerance
     pidControlX.setTolerance(TOLERANCE, TOLERANCE);
     pidControlY.setTolerance(TOLERANCE, TOLERANCE);
+    pidControlTheta.setTolerance(TOLERANCE, TOLERANCE);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -64,11 +73,13 @@ public class TranslationCommand extends CommandBase {
     //update the currentX and currentY
     currentX = SwerveSubsystem.getInstance().getPose().getX();
     currentY = SwerveSubsystem.getInstance().getPose().getY();
+    currentTheta = SwerveSubsystem.getInstance().getHeading().getRadians();
 
     double x = pidControlX.calculate(currentX, desiredX);
     double y = pidControlY.calculate(currentY, desiredY);
+    double theta = pidControlTheta.calculate(currentTheta, desiredTheta);
 
-    SwerveSubsystem.getInstance().drive(x, y, 0, true, false);
+    SwerveSubsystem.getInstance().drive(x, y, theta, true, false);
 
   }
 
@@ -76,13 +87,17 @@ public class TranslationCommand extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     SwerveSubsystem.getInstance().stopMotors();
+    //todo: set the wheel angles
     //todo: set brake mode
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Math.abs(currentX - desiredX) < TOLERANCE && Math.abs(currentY - desiredY) < TOLERANCE) {
+    if (Math.abs(currentX - desiredX) < TOLERANCE 
+    && Math.abs(currentY - desiredY) < TOLERANCE
+    && Math.abs(currentTheta - desiredTheta) < TOLERANCE)
+    {
       return(true);
     }
     else {

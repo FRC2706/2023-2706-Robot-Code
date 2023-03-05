@@ -13,8 +13,14 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.SetBlingCommand;
+import frc.robot.commands.TranslationCommand;
 import frc.robot.config.Config;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -49,20 +55,34 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> place_pick_place_pick_place_top;
     List<PathPlannerTrajectory> place_pick_place_pick_place_middle;
     List<PathPlannerTrajectory> place_pick_place_pick_place_bottom;
-
+    List<PathPlannerTrajectory> place_pick_place_pick_place_bottom_new;
+    List<PathPlannerTrajectory> place_pick_bottom_charge_new;
+    List<PathPlannerTrajectory> place_pick_top_charge_new;
+    List<PathPlannerTrajectory> place_pick_place_pick_place_top2;
 
 
     public AutoRoutines() {
         Map<String, Command> eventMap = new HashMap<String, Command>();
 
         eventMap.put("intake", new InstantCommand());
+        eventMap.put("Bling Purple", new SetBlingCommand(1));
+        eventMap.put("Bling Blue", new SetBlingCommand(2));
+        eventMap.put("Bling Red", new SetBlingCommand(3));
+        eventMap.put("Bling Honeydew", new SetBlingCommand(4));
+        eventMap.put("charge", new TranslationCommand(-1.9, 0).andThen(
+            Commands.run(() -> SwerveSubsystem.getInstance().setModuleStatesAuto(new SwerveModuleState[]{
+                new SwerveModuleState(0.1, Rotation2d.fromDegrees(-45)),
+                new SwerveModuleState(0.1, Rotation2d.fromDegrees(45)),
+                new SwerveModuleState(-0.1, Rotation2d.fromDegrees(45)),
+                new SwerveModuleState(-0.1, Rotation2d.fromDegrees(-45)),
+            })).withTimeout(0.4)));
 
         autoBuilder = new SwerveAutoBuilder(
                 SwerveSubsystem.getInstance()::getPose,
                 SwerveSubsystem.getInstance()::resetOdometry,
                 Config.Swerve.kSwerveDriveKinematics,
                 new PIDConstants(5, 0, 0),
-                new PIDConstants(3, 0, 0.1),
+                new PIDConstants(5, 0, 0.2),
                 SwerveSubsystem.getInstance()::setModuleStatesAuto,
                 eventMap,
                 true,
@@ -94,7 +114,10 @@ public class AutoRoutines {
         place_pick_place_pick_place_top = PathPlanner.loadPathGroup("place_pick_place_pick_place_top", 2.5, 3);
         place_pick_place_pick_place_middle = PathPlanner.loadPathGroup("place_pick_place_pick_place_middle", 2.5, 3);
         place_pick_place_pick_place_bottom = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom", 2.5, 3);
-
+        place_pick_place_pick_place_bottom_new = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2", 2.5, 3);// 2.5, 3);
+        place_pick_bottom_charge_new = PathPlanner.loadPathGroup("place_pick_bottom2_charge_new", 2.5, 3);// 2.5, 3);
+        place_pick_top_charge_new = PathPlanner.loadPathGroup("place_pick_top_charge_new", 2.5, 3);// 2.5, 3);
+        place_pick_place_pick_place_top2 = PathPlanner.loadPathGroup("place_pick_place_pick_place_top2", 2.5, 3);// 2.5, 3);
     }
 
     public Command getAutonomousCommand(int selectAuto) {
@@ -148,8 +171,10 @@ public class AutoRoutines {
 
                 //test this case
             case 15:
-                return (autoBuilder.fullAuto(place_pick_balance_bottom));
-
+                return new SequentialCommandGroup(
+                    autoBuilder.fullAuto(place_pick_balance_bottom),
+                    new TranslationCommand(-2.7,0)
+                );
             case 16:
                 return (autoBuilder.fullAuto(place_pick_place_balance_top));
 
@@ -182,6 +207,14 @@ public class AutoRoutines {
                 
             case 26:
                 return (autoBuilder.fullAuto(Practice2));
+
+
+            case 27:
+                return autoBuilder.fullAuto(place_pick_place_pick_place_bottom_new);
+               
+            case 28:
+                return autoBuilder.fullAuto(place_pick_bottom_charge_new);
+
         }
         return new InstantCommand();
     }

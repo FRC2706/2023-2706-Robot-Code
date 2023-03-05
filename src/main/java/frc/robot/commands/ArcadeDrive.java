@@ -6,13 +6,10 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.revrobotics.CANSparkMax.IdleMode;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.config.Config;
 import frc.robot.subsystems.DiffNeoSubsystem;
 import frc.robot.subsystems.DiffTalonSubsystem;
@@ -53,10 +50,10 @@ public class ArcadeDrive extends CommandBase {
      * @param steeringAxis id of the axis for steering
      * @param subsystem The DriveSubsystem
      */
-    public ArcadeDrive(Joystick driverStick, int forwardAxis, int steeringAxis) {
+    public ArcadeDrive(CommandXboxController driverStick, int forwardAxis, int steeringAxis) {
         this(
             () -> -1 * MathUtil.applyDeadband(driverStick.getRawAxis(forwardAxis), Config.DRIVER_JOYSTICK_DEADBAND),
-            () -> MathUtil.applyDeadband(driverStick.getRawAxis(steeringAxis), Config.DRIVER_JOYSTICK_DEADBAND)
+            () -> -1 * MathUtil.applyDeadband(driverStick.getRawAxis(steeringAxis), Config.DRIVER_JOYSTICK_DEADBAND)
         );
     }
 

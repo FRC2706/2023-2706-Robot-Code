@@ -60,7 +60,7 @@ public class Config {
      * ID 3: Cosmobot (Deep Space)
      * ID 4: MiniSwerve (Small swerve chassis)
      * ID 5: NeoBeetle (Small Neo tank drive)
-     * ID 6: 
+     * ID 6: ArmBot (Arm Bot)
      * 
      *  ...
      * 
@@ -99,7 +99,7 @@ public class Config {
     
         public static int PIGEON = robotSpecific(30, 27, 27, 27, 30);
     
-        public static int CANDLE = robotSpecific(15, 15, -1, 15);
+        public static int CANDLE = robotSpecific(15, 15, -1, 15, 15);
         public static int CTRE_PCM = robotSpecific(-01, 1, -1, -1);
 
         public static final int FRONT_LEFT_DRIVE = robotSpecific(24, -01, -01, -01, -01);
@@ -117,6 +117,11 @@ public class Config {
         public static final int FRONT_RIGHT_CANCODER = robotSpecific(6, -01, -01, -01, -01);
         public static final int REAR_RIGHT_CANCODER = robotSpecific(7, -01, -01, -01, -01); 
 
+        // for Arm subsystem
+        public static final int TOP_ARM_SPARK_CAN_ID = 18;
+        public static final int BOTTOM_ARM_SPARK_CAN_ID = 19;
+        public static final int TOP_CANCODER_CAN_ID = 16;
+        public static final int BOTTOM_CANCODER_CAN_ID = 17;
 
     }
     
@@ -261,8 +266,6 @@ public class Config {
 
         public static double BRAKE_IN_DISABLE_TIME = 2.0;
     }
-    
-    
     
         
     /**

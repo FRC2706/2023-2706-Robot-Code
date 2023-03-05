@@ -1165,12 +1165,114 @@
           }
         }
       }
+    },
+    {
+      "title": "Tab 8",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {
+          "6,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Graph",
+              "_source0": "network_table:///SwerveChassis/SwerveModuleFR/Desired angle 360 range",
+              "_source1": "network_table:///SwerveChassis/SwerveModuleFR/Current angle 360 range",
+              "_title": "SwerveChassis/SwerveModuleFR/Current angle 360 range",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Graph/Visible time": 30.0,
+              "Graph/X-axis auto scrolling": true,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
+              "Y-axis/Unit": "ul",
+              "Visible data/SwerveChassis/SwerveModuleFR/Current angle 360 range": true,
+              "Visible data/SwerveChassis/SwerveModuleFR/Desired angle 360 range": true
+            }
+          },
+          "1,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Graph",
+              "_source0": "network_table:///SwerveChassis/SwerveModuleRL/Current angle 360 range",
+              "_source1": "network_table:///SwerveChassis/SwerveModuleRL/Desired angle 360 range",
+              "_title": "SwerveChassis/SwerveModuleRL/Current angle 360 range",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Graph/Visible time": 30.0,
+              "Graph/X-axis auto scrolling": true,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
+              "Y-axis/Unit": "ul",
+              "Visible data/SwerveChassis/SwerveModuleRL/Current angle 360 range": true,
+              "Visible data/SwerveChassis/SwerveModuleRL/Desired angle 360 range": true
+            }
+          },
+          "4,2": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Graph",
+              "_source0": "network_table:///SwerveChassis/SwerveModuleRR/Current angle 360 range",
+              "_source1": "network_table:///SwerveChassis/SwerveModuleRR/Desired angle 360 range",
+              "_title": "SwerveChassis/SwerveModuleRR/Current angle 360 range",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Graph/Visible time": 30.0,
+              "Graph/X-axis auto scrolling": true,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
+              "Y-axis/Unit": "ul",
+              "Visible data/SwerveChassis/SwerveModuleRR/Current angle 360 range": true,
+              "Visible data/SwerveChassis/SwerveModuleRR/Desired angle 360 range": true
+            }
+          },
+          "3,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Graph",
+              "_source0": "network_table:///SwerveChassis/SwerveModuleFL/Desired angle 360 range",
+              "_source1": "network_table:///SwerveChassis/SwerveModuleFL/Current angle 360 range",
+              "_title": "SwerveChassis/SwerveModuleFL/Current angle 360 range",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Graph/Visible time": 30.0,
+              "Graph/X-axis auto scrolling": true,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
+              "Y-axis/Unit": "ul",
+              "Visible data/SwerveChassis/SwerveModuleFL/Current angle 360 range": true,
+              "Visible data/SwerveChassis/SwerveModuleFL/Desired angle 360 range": true
+            }
+          }
+        }
+      }
     }
   ],
   "windowGeometry": {
-    "x": -7.199999809265137,
-    "y": -7.199999809265137,
-    "width": 1550.4000244140625,
-    "height": 830.4000244140625
+    "x": -7.333333492279053,
+    "y": -7.333333492279053,
+    "width": 1294.6666259765625,
+    "height": 694.6666870117188
   }
 }
