@@ -4,28 +4,27 @@
 
 package frc.robot.robotcontainers;
 
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Robot;
-import frc.robot.auto.AutoSelector;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.auto.AutoRoutines;
 import frc.robot.auto.AutoSelector;
+import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
 import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.RotateAngleXY;
+import frc.robot.commands.RotateXYSupplier;
 import frc.robot.commands.SwerveTeleop;
 import frc.robot.commands.TranslationCommand;
+import frc.robot.config.Config;
 import frc.robot.subsystems.RelaySubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -110,13 +109,39 @@ public class MiniSwerveContainer extends RobotContainer{
     driver.start().onTrue(new ResetGyroToNearest());
     driver.back().onTrue(new ResetGyro());
     //driver.b().onTrue(new InstantCommand(()-> SwerveSubsystem.getInstance().resetEncodersFromCanCoder()));
+    
+    //driver.b().whileTrue(new RotateXYSupplier(driver, ()-> visionYaw.get()));
+    //driver.b().whileTrue(new ResetOdometry(new Pose2d()));
     driver.b().onTrue(new ResetOdometry(new Pose2d()));
 
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
     driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
     
-    driver.x().whileTrue(new TranslationCommand(3.5, 0));
+    driver.x().whileTrue(new TranslationCommand(1, 1));
+    driver.leftTrigger().whileTrue(new RotateXYSupplier(driver,
+      NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("YawToTarget").subscribe(-99)
+    ));
+
+    driver.rightTrigger().whileTrue(Commands.sequence(
+      new AlignToTargetVision(driver,
+        NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("YawToTarget").subscribe(-99),
+        NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("DistanceToTarget").subscribe(-99),
+        2.0,
+        0.3,
+        1.5,
+        1.5),
+      new AlignToTargetVision(driver,
+        NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("YawToTarget").subscribe(-99),
+        NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("DistanceToTarget").subscribe(-99),
+        1.5,
+        0.03,
+        1,
+        0.5)
+    ));
+
+    RelaySubsystem.getInstance().setRelay(Config.RELAY_RINGLIGHT_REAR_LARGE, true);
   }
+
 
 
   /**

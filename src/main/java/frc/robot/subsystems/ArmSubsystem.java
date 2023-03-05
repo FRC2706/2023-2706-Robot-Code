@@ -133,8 +133,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArm.setSoftLimit(SoftLimitDirection.kReverse, ArmConfig.bottom_arm_reverse_limit);
     m_topArm.enableSoftLimit(SoftLimitDirection.kForward, true);
     m_topArm.enableSoftLimit(SoftLimitDirection.kReverse, true);
-    m_bottomArm.enableSoftLimit(SoftLimitDirection.kForward, true);
-    m_bottomArm.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    m_bottomArm.enableSoftLimit(SoftLimitDirection.kForward, false);
+    m_bottomArm.enableSoftLimit(SoftLimitDirection.kReverse, false);
     
     CANCoderConfiguration config = new CANCoderConfiguration();
     config.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
@@ -152,6 +152,7 @@ public class ArmSubsystem extends SubsystemBase {
                                           PneumaticsModuleType.CTREPCM,
                                           Config.ARMLOW_PNEUMATIC_FORWARD_CHANNEL,
                                           Config.ARMLOW_PNEUMATIC_REVERSE_CHANNEL);
+
     brakeSolenoidHigh = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
                                           PneumaticsModuleType.CTREPCM,
                                           Config.ARMHIGH_PNEUMATIC_FORWARD_CHANNEL,

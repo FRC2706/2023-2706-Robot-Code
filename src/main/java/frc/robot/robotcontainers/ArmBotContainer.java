@@ -57,7 +57,7 @@ public class ArmBotContainer extends RobotContainer{
 
     controlStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder()));
 
-    Command topArmFF = new ArmFFTestCommand(controlStick, 2);
+    Command topArmFF = new ArmFFTestCommand(controlStick, 2, false, true);
 
     controlStick.leftBumper().onTrue(Commands.runOnce(() -> topArmFF.schedule()));
     controlStick.back().onTrue(Commands.sequence(

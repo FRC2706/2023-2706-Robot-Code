@@ -22,7 +22,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
     else
     {
-    doubleSolenoid1 = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID, 
+    doubleSolenoid1 = new DoubleSolenoid(Config.CANID.CTRE_PCM, 
                                                PneumaticsModuleType.CTREPCM,
                                                Config.INTAKE1_PNEUMATIC_FORWARD_CHANNEL,
                                                Config.INTAKE1_PNEUMATIC_REVERSE_CHANNEL);
@@ -36,7 +36,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
     else
     {
-      doubleSolenoid2 = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID, 
+      doubleSolenoid2 = new DoubleSolenoid(Config.CANID.CTRE_PCM, 
                                               PneumaticsModuleType.CTREPCM,
                                               Config.INTAKE2_PNEUMATIC_FORWARD_CHANNEL,
                                               Config.INTAKE2_PNEUMATIC_REVERSE_CHANNEL);
