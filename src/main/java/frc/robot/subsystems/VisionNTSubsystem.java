@@ -19,8 +19,8 @@ import frc.robot.SubsystemChecker;
 import frc.robot.SubsystemChecker.SubsystemType;
 
 /** Add your docs here. */
-public class VisionNetworkTables extends SubsystemBase{
-    public static VisionNetworkTables instance;
+public class VisionNTSubsystem extends SubsystemBase{
+    public static VisionNTSubsystem instance;
     public final double ANGLE_ERROR_CODE = -99;
     public final double DISTANCE_ERROR_CODE = -1;
     public final double FLIP_Y = -1;
@@ -40,17 +40,17 @@ public class VisionNetworkTables extends SubsystemBase{
     LinearFilter linearTapeFilterX = LinearFilter.movingAverage(10);
     LinearFilter linearTapeFilterY = LinearFilter.movingAverage(10);  
 
-    public VisionNetworkTables(){
+    private VisionNTSubsystem(){
         tapeX = table.getDoubleTopic("PoseY").subscribe(ANGLE_ERROR_CODE);
         tapeY = table.getDoubleTopic("PoseX").subscribe(ANGLE_ERROR_CODE);
         
         tapeTimer.restart();
     }
 
-    public static VisionNetworkTables getInstance(){
+    public static VisionNTSubsystem getInstance(){
         if(instance == null){
-            SubsystemChecker.subsystemConstructed(SubsystemType.VisionNetworkTables);
-            instance = new VisionNetworkTables();
+            SubsystemChecker.subsystemConstructed(SubsystemType.VisionNTSubsystem);
+            instance = new VisionNTSubsystem();
         }
         return instance;
     }

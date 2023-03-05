@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.VisionNetworkTables;
+import frc.robot.subsystems.VisionNTSubsystem;
 
 public class AlignToTargetVision extends CommandBase {
 
@@ -88,7 +88,7 @@ public class AlignToTargetVision extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Translation2d visionTarget = VisionNetworkTables.getInstance().calculateTapeTarget();
+    Translation2d visionTarget = VisionNTSubsystem.getInstance().calculateTapeTarget();
 
     if(visionTarget != null){
       xSetpoint =  visionTarget.getX();
