@@ -66,8 +66,8 @@ public class CompRobotContainer extends RobotContainer {
    */
   private void configureButtonBindings() {
     // CommandXboxController
-    CommandXboxController driverStick = new CommandXboxController(0);
-    CommandXboxController controlStick = new CommandXboxController(1);
+    CommandXboxController driver = new CommandXboxController(0);
+    CommandXboxController operator = new CommandXboxController(1);
     CommandXboxController testStick = new CommandXboxController(2);
     CommandXboxController armStick = new CommandXboxController(3);
 
@@ -80,29 +80,30 @@ public class CompRobotContainer extends RobotContainer {
     SwerveModuleState state3 =  new SwerveModuleState(-1.5, Rotation2d.fromDegrees(0));
     SwerveModuleState state4 =  new SwerveModuleState(1.5, Rotation2d.fromDegrees(0));
 
-    SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driverStick));
+    // Driver joystick
+    SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
 
-    driverStick.start().onTrue(new ResetGyroToNearest());
-    driverStick.back().onTrue(new ResetGyro());
-    driverStick.b().onTrue(new ResetOdometry(new Pose2d()));
+    driver.start().onTrue(new ResetGyroToNearest());
+    driver.back().onTrue(new ResetGyro());
+    driver.b().onTrue(new ResetOdometry(new Pose2d()));
 
-    driverStick.y().whileTrue(new RotateAngleXY(driverStick, 0));
-    driverStick.a().whileTrue(new RotateAngleXY(driverStick, Math.PI));
+    driver.y().whileTrue(new RotateAngleXY(driver, 0));
+    driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
     
-    driverStick.x().whileTrue(new TranslationCommand(1, 1));
-    driverStick.leftTrigger().whileTrue(new RotateXYSupplier(driverStick,
+    driver.x().whileTrue(new TranslationCommand(1, 1));
+    driver.leftTrigger().whileTrue(new RotateXYSupplier(driver,
       NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("YawToTarget").subscribe(-99)
     ));
 
-    driverStick.rightTrigger().whileTrue(Commands.sequence(
-      new AlignToTargetVision(driverStick,
+    driver.rightTrigger().whileTrue(Commands.sequence(
+      new AlignToTargetVision(driver,
         NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("YawToTarget").subscribe(-99),
         NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("DistanceToTarget").subscribe(-99),
         2.0,
         0.3,
         1.5,
         1.5),
-      new AlignToTargetVision(driverStick,
+      new AlignToTargetVision(driver,
         NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("YawToTarget").subscribe(-99),
         NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("DistanceToTarget").subscribe(-99),
         1.5,
@@ -111,7 +112,12 @@ public class CompRobotContainer extends RobotContainer {
         0.5)
     ));
 
-    RelaySubsystem.getInstance().setRelay(Config.RELAY_RINGLIGHT_REAR_LARGE, true);
+
+    // Operator Joystick
+    operator.rightBumper().whileTrue(new IntakeCommand(1, setState));
+    operator.back().whileTrue(new IntakeCommand(3, setState));
+    operator.start().whileTrue(new IntakeCommand(2, setState));
+
 
     
     Command angleSetPoint1 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state1, state1, state1, state1}, true), SwerveSubsystem.getInstance());
@@ -129,27 +135,29 @@ public class CompRobotContainer extends RobotContainer {
 
     boolean isTop = true;
 
-
-
-    //examples 
-    ArmCommandExample armTomCmd = new ArmCommandExample (getState,  0);
-    ArmCommandExample armMiddleCmd = new ArmCommandExample(getState,  1);
-    ArmCommandExample armBottomCmd = new ArmCommandExample(getState, 2);
-
-    IntakeCommand intakeCmd = new IntakeCommand (0,setState);
-
     armStick.a().onTrue(new SetAngleArm(30, false, isTop));
     armStick.b().onTrue(new SetAngleArm(60, false, isTop));
     armStick.y().onTrue(new SetAngleArm(90, false, isTop));
     armStick.x().onTrue(new SetAngleArm(120, false, isTop));
 
-    Command armFF = new ArmFFTestCommand(armStick, 2);
+    armStick.rightTrigger().toggleOnTrue(Commands.startEnd(
+      () -> ArmSubsystem.getInstance().controlBottomArmBrake(true), 
+      () -> ArmSubsystem.getInstance().controlBottomArmBrake(false)));
+
+    armStick.leftTrigger().toggleOnTrue(Commands.startEnd(
+      () -> ArmSubsystem.getInstance().controlTopArmBrake(true), 
+      () -> ArmSubsystem.getInstance().controlTopArmBrake(false)));
+
+    Command armFF = new ArmFFTestCommand(armStick, 2, false, true);
 
     armStick.leftBumper().onTrue(Commands.runOnce(() -> armFF.schedule()));
     armStick.back().onTrue(Commands.sequence(
             Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()),
             Commands.runOnce(() -> ArmSubsystem.getInstance().stopMotors())
         ));
+
+    // Construct the RelaySubsystem so the NTRelays are constructed
+    RelaySubsystem.getInstance();
  }
 
   /**

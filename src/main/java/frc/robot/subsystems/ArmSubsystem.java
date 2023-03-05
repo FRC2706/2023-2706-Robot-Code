@@ -147,6 +147,7 @@ public class ArmSubsystem extends SubsystemBase {
                                           PneumaticsModuleType.CTREPCM,
                                           Config.ARMLOW_PNEUMATIC_FORWARD_CHANNEL,
                                           Config.ARMLOW_PNEUMATIC_REVERSE_CHANNEL);
+                                          
     brakeSolenoidHigh = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
                                           PneumaticsModuleType.CTREPCM,
                                           Config.ARMHIGH_PNEUMATIC_FORWARD_CHANNEL,

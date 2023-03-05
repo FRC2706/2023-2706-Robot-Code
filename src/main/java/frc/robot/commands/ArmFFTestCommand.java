@@ -15,19 +15,27 @@ import frc.robot.subsystems.ArmSubsystem;
 public class ArmFFTestCommand extends CommandBase {
   private CommandXboxController m_joystick;
   private double m_maxExtraVolts;
+  private boolean m_enableTop;
+  private boolean m_enableBot;
 
   /** Creates a new ArmFFTestCommand. */
-  public ArmFFTestCommand(CommandXboxController joystick, double maxExtraVolts) {
+  public ArmFFTestCommand(CommandXboxController joystick, double maxExtraVolts, boolean enableBottom, boolean enableTop) {
     this.m_joystick = joystick;
     this.m_maxExtraVolts = maxExtraVolts;
+    m_enableTop = enableTop;
+    m_enableBot = enableBottom;
     addRequirements(ArmSubsystem.getInstance());
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    ArmSubsystem.getInstance().setTopArmIdleMode(IdleMode.kCoast);
-    ArmSubsystem.getInstance().setBottomArmIdleMode(IdleMode.kCoast);
+    if (m_enableBot) {
+      ArmSubsystem.getInstance().setBottomArmIdleMode(IdleMode.kCoast);
+    }
+    if (m_enableTop) {
+      ArmSubsystem.getInstance().setTopArmIdleMode(IdleMode.kCoast);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,9 +47,12 @@ public class ArmFFTestCommand extends CommandBase {
     double joystickValueBottom = m_joystick.getRawAxis(XboxController.Axis.kLeftX.value);
     joystickValueBottom = MathUtil.applyDeadband(joystickValueBottom, 0.15);
 
-    ArmSubsystem.getInstance().testFeedForwardTop(joystickValueTop * m_maxExtraVolts);
-    ArmSubsystem.getInstance().testFeedForwardBottom(joystickValueBottom * m_maxExtraVolts);
-    
+    if (m_enableBot) {
+      ArmSubsystem.getInstance().testFeedForwardBottom(joystickValueBottom * m_maxExtraVolts);
+    }
+    if (m_enableTop) {
+      ArmSubsystem.getInstance().testFeedForwardTop(joystickValueTop * m_maxExtraVolts);
+    }
   }
 
   // Called once the command ends or is interrupted.

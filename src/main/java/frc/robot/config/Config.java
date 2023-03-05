@@ -86,43 +86,45 @@ public class Config {
     /**
      * CAN IDs, ports, channels, etc.
      */
-    public static class CANID {
+    public static class CANID {   
+        public static int PIGEON = robotSpecific(30, 27, 27, 27, 30);
+    
+        public static int CANDLE = robotSpecific(15, 15, -1, 15, 15);
+        public static int CTRE_PCM = robotSpecific(1, 1, -1, -1);
+
+        // Swerve Drive
+        public static final int FRONT_LEFT_DRIVE = 24;
+        public static final int REAR_LEFT_DRIVE = 20;
+        public static final int FRONT_RIGHT_DRIVE = 21;
+        public static final int REAR_RIGHT_DRIVE = 27;
+
+        public static final int FRONT_LEFT_STEERING = 23;
+        public static final int REAR_LEFT_STEERING = 26;
+        public static final int FRONT_RIGHT_STEERING = 25;
+        public static final int REAR_RIGHT_STEERING = 22;
+
+        public static final int FRONT_LEFT_CANCODER = 9;
+        public static final int REAR_LEFT_CANCODER = 8;
+        public static final int FRONT_RIGHT_CANCODER = 6;
+        public static final int REAR_RIGHT_CANCODER = 7;
+
+        // Arm Subsystem
+        public static final int TOP_ARM_SPARK_CAN_ID = 5;
+        public static final int BOTTOM_ARM_SPARK_CAN_ID = 4;
+        public static final int TOP_CANCODER_CAN_ID = 3;
+        public static final int BOTTOM_CANCODER_CAN_ID = 2;
+
+        // Differential Drive CAN IDs
         public static int DIFF_LEADER_LEFT = robotSpecific(-01, 6, 2, 5, -01, 35);
         public static int DIFF_LEADER_RIGHT = robotSpecific(-01, 3, 1, 3, -01, 33);
         public static int DIFF_FOLLOWER_LEFT = robotSpecific(-01, 5, -1, 7, -01, 37);
         public static int DIFF_FOLLOWER_RIGHT = robotSpecific(-01, 2, -1, 9, -01, 39);
     
+        // Clutch CAN IDs
         public static int INTAKE = robotSpecific(-01, 8, -1, -1);
         public static int SHOOTER = robotSpecific(-01, 11, 5, -1);
         public static int CLIMBER = robotSpecific(-01, 4, -1, -1);
         public static int INDEXER = robotSpecific(-01, 7, 7, -1);
-    
-        public static int PIGEON = robotSpecific(30, 27, 27, 27, 30);
-    
-        public static int CANDLE = robotSpecific(15, 15, -1, 15, 15);
-        public static int CTRE_PCM = robotSpecific(-01, 1, -1, -1);
-
-        public static final int FRONT_LEFT_DRIVE = robotSpecific(24, -01, -01, -01, -01);
-        public static final int REAR_LEFT_DRIVE = robotSpecific(20, -01, -01, -01, -01);
-        public static final int FRONT_RIGHT_DRIVE = robotSpecific(21, -01, -01, -01, -01);
-        public static final int REAR_RIGHT_DRIVE = robotSpecific(27, -01, -01, -01, -01);
-
-        public static final int FRONT_LEFT_STEERING = robotSpecific(23, -01, -01, -01, -01);
-        public static final int REAR_LEFT_STEERING = robotSpecific(26, -01, -01, -01, -01);
-        public static final int FRONT_RIGHT_STEERING = robotSpecific(25, -01, -01, -01, -01);
-        public static final int REAR_RIGHT_STEERING = robotSpecific(22, -01, -01, -01, -01);
-
-        public static final int FRONT_LEFT_CANCODER = robotSpecific(9, -01, -01, -01, -01);
-        public static final int REAR_LEFT_CANCODER = robotSpecific(8, -01, -01, -01, -01);
-        public static final int FRONT_RIGHT_CANCODER = robotSpecific(6, -01, -01, -01, -01);
-        public static final int REAR_RIGHT_CANCODER = robotSpecific(7, -01, -01, -01, -01); 
-
-        // for Arm subsystem
-        public static final int TOP_ARM_SPARK_CAN_ID = 18;
-        public static final int BOTTOM_ARM_SPARK_CAN_ID = 19;
-        public static final int TOP_CANCODER_CAN_ID = 16;
-        public static final int BOTTOM_CANCODER_CAN_ID = 17;
-
     }
     
     public static int ANALOG_SELECTOR_PORT_ONE = robotSpecific(-01, 0, 0, -1);
@@ -377,20 +379,20 @@ public class Config {
         .setKinematics(kDriveKinematics).addConstraint(autoVoltageConstraint);
     
     // PCM Can ID
-    public static final int CTRE_PCM_CAN_ID = -1;
+    public static final int CTRE_PCM_CAN_ID = 2;
     
     //For intake pneumatics
-    public static final int INTAKE2_PNEUMATIC_FORWARD_CHANNEL = -1;
-    public static final int INTAKE2_PNEUMATIC_REVERSE_CHANNEL = -1;
-    public static final int INTAKE1_PNEUMATIC_FORWARD_CHANNEL = -1;
-    public static final int INTAKE1_PNEUMATIC_REVERSE_CHANNEL = -1;
+    public static final int INTAKE2_PNEUMATIC_FORWARD_CHANNEL = 5;
+    public static final int INTAKE2_PNEUMATIC_REVERSE_CHANNEL = 7;
+    public static final int INTAKE1_PNEUMATIC_FORWARD_CHANNEL = 4;
+    public static final int INTAKE1_PNEUMATIC_REVERSE_CHANNEL = 6;
     
 
     // Constants for arm pneumatics
-    public static final int ARMLOW_PNEUMATIC_FORWARD_CHANNEL = -1;
-    public static final int ARMLOW_PNEUMATIC_REVERSE_CHANNEL = -1;
-    public static final int ARMHIGH_PNEUMATIC_FORWARD_CHANNEL = -1;
-    public static final int ARMHIGH_PNEUMATIC_REVERSE_CHANNEL = -1;
+    public static final int ARMLOW_PNEUMATIC_FORWARD_CHANNEL = 0;
+    public static final int ARMLOW_PNEUMATIC_REVERSE_CHANNEL = 1;
+    public static final int ARMHIGH_PNEUMATIC_FORWARD_CHANNEL = 2;
+    public static final int ARMHIGH_PNEUMATIC_REVERSE_CHANNEL = 3;
 
 
     public static final String RELAY_NETWORKTABLE = "ControlRelay";
