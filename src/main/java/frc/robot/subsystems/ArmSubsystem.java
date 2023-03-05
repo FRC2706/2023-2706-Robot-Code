@@ -93,10 +93,14 @@ public class ArmSubsystem extends SubsystemBase {
   private DoublePublisher m_bottomArmPosPub;
   private DoublePublisher m_bottomArmSetpointPub;   
   private DoublePublisher m_bottomArmVelPub;
-  private DoubleEntry m_bottomArmVoltsAtHorizontal;
+  private DoubleEntry m_bottomArmMomentToVoltage;
   private DoublePublisher m_bottomArmFFTestingVolts;
   private DoubleSubscriber m_bottomArmOffset;
   private DoublePublisher m_bottomCANCoderValue;
+
+  // for bottom arm ff
+  private DoubleSubscriber momentToVoltageConversion;
+  private double m_bottomVoltageConversion;
 
   // for arm pneumatic brakes
   DoubleSolenoid brakeSolenoidLow;
@@ -184,7 +188,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArmDSubs = bottomArmTuningTable.getDoubleTopic("D").getEntry(ArmConfig.bottom_arm_kD);
     m_bottomArmIzSubs = bottomArmTuningTable.getDoubleTopic("IZone").getEntry(ArmConfig.bottom_arm_kIz);
     m_bottomArmFFSubs = bottomArmTuningTable.getDoubleTopic("FF").getEntry(ArmConfig.bottom_arm_kFF);
-    m_bottomArmOffset = topArmTuningTable.getDoubleTopic("Offset").subscribe(m_bottomArmEncoderOffset);
+    m_bottomArmOffset = bottomArmTuningTable.getDoubleTopic("Offset").subscribe(m_bottomArmEncoderOffset);
+    momentToVoltageConversion = bottomArmTuningTable.getDoubleTopic("VoltageConversion").subscribe(m_bottomVoltageConversion);
 
     // if (m_topArmPSubs.getAtomic().timestamp == 0) {
         m_topArmFFSubs.accept(ArmConfig.top_arm_kFF);
@@ -216,8 +221,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArmPosPub = bottomArmDataTable.getDoubleTopic("MeasuredAngle").publish(PubSubOption.periodic(0.02));
     m_bottomArmSetpointPub = bottomArmDataTable.getDoubleTopic("SetpointAngle").publish(PubSubOption.periodic(0.02));
     m_bottomArmVelPub = bottomArmDataTable.getDoubleTopic("Vel").publish(PubSubOption.periodic(0.02));
-    m_bottomArmVoltsAtHorizontal = bottomArmDataTable.getDoubleTopic("VoltsAtHorizontal").getEntry(0);
-    m_bottomArmVoltsAtHorizontal.accept(ArmConfig.BOTTOM_MOMENT_TO_VOLTAGE);
+    m_bottomArmMomentToVoltage = bottomArmDataTable.getDoubleTopic("VoltsAtHorizontal").getEntry(0);
+    m_bottomArmMomentToVoltage.accept(ArmConfig.BOTTOM_MOMENT_TO_VOLTAGE);
     m_bottomCANCoderValue = bottomArmDataTable.getDoubleTopic("CANCoder Value").publish(PubSubOption.periodic(0.02));
 
     m_bottomArmFFTestingVolts = bottomArmDataTable.getDoubleTopic("VoltageSetInFFTesting").publish();
@@ -287,7 +292,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void setBottomJoint(double angle) { 
     double pidSetpoint = m_bottomPID.getPIDSetpoint(angle); 
-    m_pidControllerBottomArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFBottom()); 
+    m_pidControllerBottomArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFBottom(m_bottomEncoder.getPosition(), m_topEncoder.getPosition(), true)); 
     m_bottomArmSetpointPub.accept(Math.toDegrees(angle));
   }
 
@@ -306,8 +311,17 @@ public class ArmSubsystem extends SubsystemBase {
     return m_topArmVoltsAtHorizontal.get() * Math.cos(m_topEncoder.getPosition());
   }
 
-  private double calculateFFBottom() {
-    return m_bottomArmVoltsAtHorizontal.get() * Math.cos(m_bottomEncoder.getPosition());
+  private double calculateFFBottom(double encoder1Rad, double encoder2Rad, boolean haveCone) {
+    double enc2AtHorizontal = encoder2Rad - (Math.PI - encoder1Rad);
+    double bottomArmMoment = ArmConfig.BOTTOM_ARM_FORCE * (ArmConfig.LENGTH_BOTTOM_ARM_TO_COG*Math.cos(encoder1Rad));
+    double topArmMoment = ArmConfig.TOP_ARM_FORCE * (ArmConfig.L1*Math.cos(encoder1Rad) + ArmConfig.LENGTH_TOP_ARM_TO_COG*Math.cos(enc2AtHorizontal));
+    if (haveCone == false) {
+        return (bottomArmMoment + topArmMoment) * momentToVoltageConversion.get();
+    } 
+    else {
+        double coneMoment = ArmConfig.CONE_ARM_FORCE * (ArmConfig.L1*Math.cos(encoder1Rad) + ArmConfig.L2*Math.cos(enc2AtHorizontal));
+        return (bottomArmMoment + topArmMoment + coneMoment) * momentToVoltageConversion.get();
+    }
   }
 
   public void setTopArmIdleMode(IdleMode mode) {
@@ -325,7 +339,7 @@ public class ArmSubsystem extends SubsystemBase {
 }
 
   public void testFeedForwardBottom(double additionalVoltage) {
-    double voltage = additionalVoltage + calculateFFBottom();
+    double voltage = additionalVoltage + calculateFFBottom(m_bottomEncoder.getPosition(), m_topEncoder.getPosition(), true);
     m_pidControllerBottomArm.setReference(voltage, ControlType.kVoltage);
     m_bottomArmFFTestingVolts.accept(voltage);
   }

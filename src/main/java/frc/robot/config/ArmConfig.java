@@ -70,7 +70,9 @@ public class ArmConfig {
       public static final double TOP_NEO_GEAR_RATIO = 23.5;
       public static final double BOTTOM_NEO_GEAR_RATIO = 62.5; 
       public static final double L1 = 27.38; //length of arm 1 in inches
-      public static final double L2 = 40; //length of arm 2 in inches (need to get value from hardware)
+      public static final double L2 = 38.6; //length of arm 2 in inches 
+      public static final double LENGTH_BOTTOM_ARM_TO_COG = 14.56;
+      public static final double LENGTH_TOP_ARM_TO_COG = 28.22;
       public static final double TOP_HORIZONTAL_VOLTAGE = 0;
       public static final double BOTTOM_MOMENT_TO_VOLTAGE = 0;
       public static final boolean TOP_SET_INVERTED = false;
@@ -119,5 +121,11 @@ public class ArmConfig {
       // soft limit constants for bottom arm
       public static final float bottom_arm_forward_limit = (float)Math.toRadians(90);
       public static final float bottom_arm_reverse_limit = (float)Math.toRadians(45);
+
+      // ff calculation for bottom arm
+      public static final double gravitationalConstant = 389.0886; // inches/s/s  which is equal to 9.81 m/s/s
+      public static final double BOTTOM_ARM_FORCE = 11.29 * gravitationalConstant; // 11.29 lb
+      public static final double TOP_ARM_FORCE = 7.77 * gravitationalConstant; // 7.77 lb
+      public static final double CONE_ARM_FORCE = 1.21 * gravitationalConstant; // 1.21 lb
 
 }
