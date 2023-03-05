@@ -11,11 +11,13 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -55,11 +57,11 @@ public class ArmSubsystem extends SubsystemBase {
   public ProfileExternalPIDController m_topPID;
   public ProfileExternalPIDController m_bottomPID;
   private RelativeEncoder m_bottomEncoder;
-  private RelativeEncoder m_topEncoder;
+  private AbsoluteEncoder m_topEncoder;
   public final double kMaxOutput = 1;
   public final double kMinOutput = -1;
 
-  private double m_topArmEncoderOffset;
+  private double m_topArmEncoderOffset = Math.toRadians(277.5);
   private double m_bottomArmEncoderOffset;
 
   // for top arm
@@ -131,8 +133,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_topArm.setSoftLimit(SoftLimitDirection.kReverse, ArmConfig.top_arm_reverse_limit);
     m_bottomArm.setSoftLimit(SoftLimitDirection.kForward, ArmConfig.bottom_arm_forward_limit);
     m_bottomArm.setSoftLimit(SoftLimitDirection.kReverse, ArmConfig.bottom_arm_reverse_limit);
-    m_topArm.enableSoftLimit(SoftLimitDirection.kForward, true);
-    m_topArm.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    m_topArm.enableSoftLimit(SoftLimitDirection.kForward, false);
+    m_topArm.enableSoftLimit(SoftLimitDirection.kReverse, false);
     m_bottomArm.enableSoftLimit(SoftLimitDirection.kForward, false);
     m_bottomArm.enableSoftLimit(SoftLimitDirection.kReverse, false);
     
@@ -168,13 +170,17 @@ public class ArmSubsystem extends SubsystemBase {
     setConstraints(true);
 
     m_bottomEncoder = m_bottomArm.getEncoder();
-    m_topEncoder = m_topArm.getEncoder();
-    
+    m_topEncoder = m_topArm.getAbsoluteEncoder(Type.kDutyCycle);
+    m_topEncoder.setInverted(ArmConfig.TOP_ENCODER_SET_INVERTED);
+    m_pidControllerTopArm.setFeedbackDevice(m_topEncoder);
+    m_pidControllerTopArm.setPositionPIDWrappingEnabled(true);
+    m_pidControllerTopArm.setPositionPIDWrappingMinInput(ArmConfig.TOP_WRAPPING_MIN);
+    m_pidControllerTopArm.setPositionPIDWrappingMaxInput(ArmConfig.TOP_WRAPPING_MAX);
     m_bottomEncoder.setPositionConversionFactor(ArmConfig.bottomArmPositionConversionFactor);
     m_topEncoder.setPositionConversionFactor(ArmConfig.topArmPositionConversionFactor);
-
     m_topEncoder.setVelocityConversionFactor(ArmConfig.topArmVelocityConversionFactor);
     m_bottomEncoder.setVelocityConversionFactor(ArmConfig.bottomArmVelocityConversionFactor);
+    m_topEncoder.setZeroOffset(m_topArmEncoderOffset);
 
     NetworkTable topArmTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTableTop);
     m_topArmPSubs = topArmTuningTable.getDoubleTopic("P").getEntry(ArmConfig.top_arm_kP);
@@ -360,7 +366,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void updateFromCancoderTop() {
-    errREV(m_topEncoder.setPosition(getCancoderTop()));
+    // errREV(m_topEncoder.setPosition(getCancoderTop()));
   }
 
   public void updateFromCancoderBottom() {

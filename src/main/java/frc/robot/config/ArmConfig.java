@@ -68,7 +68,7 @@ public class ArmConfig {
         }
       }
     
-      public static final double TOP_NEO_GEAR_RATIO = Config.robotSpecific(23.5, 0.0, 0.0, 0.0, 0.0, 60.0, 60.0); //comp --> 23.5
+      public static final double TOP_NEO_GEAR_RATIO = Config.robotSpecific(1.0, 0.0, 0.0, 0.0, 0.0, 60.0, 60.0); //comp --> 23.5
       public static final double BOTTOM_NEO_GEAR_RATIO = 62.5;  
       public static final double L1 = 27.38; //length of arm 1 in inches
       public static final double L2 = 38.6; //length of arm 2 in inches 
@@ -77,6 +77,7 @@ public class ArmConfig {
       public static final double TOP_HORIZONTAL_VOLTAGE = 0.2;
       public static final double BOTTOM_MOMENT_TO_VOLTAGE = 0;
       public static final boolean TOP_SET_INVERTED = true;
+      public static final boolean TOP_ENCODER_SET_INVERTED = true;
       public static final boolean BOTTOM_SET_INVERTED = false;
       public static final int CURRENT_LIMIT = 40;
 
@@ -128,5 +129,9 @@ public class ArmConfig {
       public static final double BOTTOM_ARM_FORCE = 11.29 * gravitationalConstant; // 11.29 lb
       public static final double TOP_ARM_FORCE = 7.77 * gravitationalConstant; // 7.77 lb
       public static final double CONE_ARM_FORCE = 1.21 * gravitationalConstant; // 1.21 lb
+
+      // wrapping pid controller
+      public static final double TOP_WRAPPING_MIN = 0;
+      public static final double TOP_WRAPPING_MAX = topArmPositionConversionFactor;
 
 }
