@@ -4,6 +4,9 @@
 
 package frc.robot.robotcontainers;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -13,9 +16,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
+import frc.robot.commands.ArmCommandExample;
 import frc.robot.commands.ArmFFTestCommand;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.SetAngleArm;
 import frc.robot.subsystems.ArmSubsystem;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -24,6 +30,12 @@ import frc.robot.subsystems.ArmSubsystem;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class CompRobotContainer extends RobotContainer {
+  public enum RobotGamePieceState {
+    NoGamePiece,
+    HasCone,
+    HasCube
+  }
+  private RobotGamePieceState m_robotState = RobotGamePieceState.NoGamePiece;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public CompRobotContainer() {
@@ -42,7 +54,18 @@ public class CompRobotContainer extends RobotContainer {
 
     Joystick driverStick = new Joystick(0);
     Joystick controlStick = new Joystick(1);
+
     CommandXboxController armStick = new CommandXboxController(3);
+
+    Supplier<RobotGamePieceState> getState = ()-> getRobotGamePieceState();
+    Consumer<RobotGamePieceState> setState = a ->setRobotGamePieceState(a);
+
+    //examples 
+    ArmCommandExample armTomCmd = new ArmCommandExample (getState,  0);
+    ArmCommandExample armMiddleCmd = new ArmCommandExample(getState,  1);
+    ArmCommandExample armBottomCmd = new ArmCommandExample(getState, 2);
+
+    IntakeCommand intakeCmd = new IntakeCommand (0,setState);
 
     armStick.a().onTrue(new SetAngleArm(30, false, isTop));
     armStick.b().onTrue(new SetAngleArm(60, false, isTop));
@@ -67,5 +90,11 @@ public class CompRobotContainer extends RobotContainer {
   @Override
   public Command getAutonomousCommand() {
     return new InstantCommand(); 
+  }
+  public RobotGamePieceState getRobotGamePieceState() {
+    return m_robotState;
+  }
+  public void setRobotGamePieceState(RobotGamePieceState state) {
+    m_robotState=state;
   }
 }
