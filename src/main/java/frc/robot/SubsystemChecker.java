@@ -24,7 +24,9 @@ public class SubsystemChecker {
         IndexerSubsystem,
         ArmSubsystem,
         RelaySubsystem,
+        VisionNTSubsystem,
         BlingSubsystem,
+        GripperSubsystem,
     };
 
     /**
@@ -33,6 +35,10 @@ public class SubsystemChecker {
     // RobotID: 0, 2023 Competition robot, unnamed
     private static SubsystemType[] compBotId0 = new SubsystemType[] {
         SubsystemType.SwerveSubsystem,  // Chassis unknown
+        SubsystemType.ArmSubsystem,
+        SubsystemType.RelaySubsystem,
+        SubsystemType.VisionNTSubsystem,
+        SubsystemType.GripperSubsystem,
     };
 
     // RobotID: 1, 2022 robot, RapidReact, Clutch
@@ -63,6 +69,7 @@ public class SubsystemChecker {
     private static SubsystemType[] miniSwerveId4 = new SubsystemType[] {
         SubsystemType.SwerveSubsystem, // Chassis
         SubsystemType.RelaySubsystem,
+        SubsystemType.VisionNTSubsystem,
     };
 
     // RobotID: 5, 2022 Fall Half-scale Neo Differential drive robot, unnamed

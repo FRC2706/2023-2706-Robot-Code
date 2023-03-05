@@ -70,7 +70,7 @@ public class ArmConfig {
       public static final double TOP_NEO_GEAR_RATIO = 23.5;
       public static final double BOTTOM_NEO_GEAR_RATIO = 62.5; 
       public static final double L1 = 27.38; //length of arm 1 in inches
-      public static final double L2 = 40; //length of arm 2 in inches (need to get value from hardware)
+      public static final double L2 = 38.6; //length of arm 2 in inches
       public static final double TOP_HORIZONTAL_VOLTAGE = 0;
       public static final double BOTTOM_MOMENT_TO_VOLTAGE = 0;
       public static final boolean TOP_SET_INVERTED = false;
