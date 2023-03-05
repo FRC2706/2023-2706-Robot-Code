@@ -16,6 +16,7 @@ import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.commands.BrakeModeDisabled;
 import frc.robot.commands.SyncSteerEncoders;
 import frc.robot.config.Config;
+import frc.robot.robotcontainers.ArmBotContainer;
 import frc.robot.robotcontainers.BeetleContainer;
 import frc.robot.robotcontainers.ClutchContainer;
 import frc.robot.robotcontainers.CompRobotContainer;
@@ -64,6 +65,9 @@ public class Robot extends TimedRobot {
 
       case 5:
         m_robotContainer = new MiniNeoDiffContainer(); break;
+      
+      case 6:
+        m_robotContainer = new ArmBotContainer(); break;
 
       default:
         m_robotContainer = new CompRobotContainer();
