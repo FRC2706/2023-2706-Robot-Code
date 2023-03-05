@@ -99,7 +99,7 @@ public class Config {
     
         public static int PIGEON = robotSpecific(30, 27, 27, 27, 30);
     
-        public static int CANDLE = robotSpecific(-01, 15, -1, 15);
+        public static int CANDLE = robotSpecific(15, 15, -1, 15);
         public static int CTRE_PCM = robotSpecific(-01, 1, -1, -1);
 
         public static final int FRONT_LEFT_DRIVE = robotSpecific(24, -01, -01, -01, -01);
