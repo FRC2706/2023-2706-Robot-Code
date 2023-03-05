@@ -101,6 +101,7 @@ public class ArmSubsystem extends SubsystemBase {
   // for bottom arm ff
   private DoubleSubscriber momentToVoltageConversion;
   private double m_bottomVoltageConversion;
+  private boolean m_hasCone = true;
 
   // for arm pneumatic brakes
   DoubleSolenoid brakeSolenoidLow;
@@ -292,7 +293,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void setBottomJoint(double angle) { 
     double pidSetpoint = m_bottomPID.getPIDSetpoint(angle); 
-    m_pidControllerBottomArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFBottom(m_bottomEncoder.getPosition(), m_topEncoder.getPosition(), true)); 
+    m_pidControllerBottomArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFBottom(m_bottomEncoder.getPosition(), m_topEncoder.getPosition(), setHasCone())); 
     m_bottomArmSetpointPub.accept(Math.toDegrees(angle));
   }
 
@@ -339,7 +340,7 @@ public class ArmSubsystem extends SubsystemBase {
 }
 
   public void testFeedForwardBottom(double additionalVoltage) {
-    double voltage = additionalVoltage + calculateFFBottom(m_bottomEncoder.getPosition(), m_topEncoder.getPosition(), true);
+    double voltage = additionalVoltage + calculateFFBottom(m_bottomEncoder.getPosition(), m_topEncoder.getPosition(), setHasCone());
     m_pidControllerBottomArm.setReference(voltage, ControlType.kVoltage);
     m_bottomArmFFTestingVolts.accept(voltage);
   }
@@ -407,5 +408,9 @@ public class ArmSubsystem extends SubsystemBase {
 
   public double getBottomVel() {
     return m_bottomEncoder.getVelocity();
+  }
+
+  public boolean setHasCone() {
+    return m_hasCone;
   }
 }
