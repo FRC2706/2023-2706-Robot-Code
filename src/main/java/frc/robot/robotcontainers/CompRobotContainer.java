@@ -4,6 +4,9 @@
 
 package frc.robot.robotcontainers;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -18,7 +21,9 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.commands.AlignToTargetVision;
+import frc.robot.commands.ArmCommandExample;
 import frc.robot.commands.ArmFFTestCommand;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
 import frc.robot.commands.ResetOdometry;
@@ -32,6 +37,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.RelaySubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -39,6 +45,12 @@ import frc.robot.subsystems.SwerveSubsystem;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class CompRobotContainer extends RobotContainer {
+  public enum RobotGamePieceState {
+    NoGamePiece,
+    HasCone,
+    HasCube
+  }
+  private RobotGamePieceState m_robotState = RobotGamePieceState.NoGamePiece;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public CompRobotContainer() {
@@ -53,9 +65,15 @@ public class CompRobotContainer extends RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    // CommandXboxController
     CommandXboxController driverStick = new CommandXboxController(0);
     CommandXboxController controlStick = new CommandXboxController(1);
     CommandXboxController testStick = new CommandXboxController(2);
+    CommandXboxController armStick = new CommandXboxController(3);
+
+    // getState and setState for commands managing the RobotGamePieceState
+    Supplier<RobotGamePieceState> getState = ()-> getRobotGamePieceState();
+    Consumer<RobotGamePieceState> setState = a ->setRobotGamePieceState(a);
 
     SwerveModuleState state1 =  new SwerveModuleState(0, Rotation2d.fromDegrees(0));
     SwerveModuleState state2 =  new SwerveModuleState(0, Rotation2d.fromDegrees(90));
@@ -110,7 +128,15 @@ public class CompRobotContainer extends RobotContainer {
   
 
     boolean isTop = true;
-    CommandXboxController armStick = new CommandXboxController(3);
+
+
+
+    //examples 
+    ArmCommandExample armTomCmd = new ArmCommandExample (getState,  0);
+    ArmCommandExample armMiddleCmd = new ArmCommandExample(getState,  1);
+    ArmCommandExample armBottomCmd = new ArmCommandExample(getState, 2);
+
+    IntakeCommand intakeCmd = new IntakeCommand (0,setState);
 
     armStick.a().onTrue(new SetAngleArm(30, false, isTop));
     armStick.b().onTrue(new SetAngleArm(60, false, isTop));
@@ -134,5 +160,11 @@ public class CompRobotContainer extends RobotContainer {
   @Override
   public Command getAutonomousCommand() {
     return new InstantCommand(); 
+  }
+  public RobotGamePieceState getRobotGamePieceState() {
+    return m_robotState;
+  }
+  public void setRobotGamePieceState(RobotGamePieceState state) {
+    m_robotState=state;
   }
 }
