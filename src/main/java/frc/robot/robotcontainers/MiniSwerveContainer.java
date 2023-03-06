@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.auto.AutoRoutines;
-import frc.robot.auto.AutoSelector;
 import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
@@ -41,7 +40,6 @@ public class MiniSwerveContainer extends RobotContainer{
 
 
   Command armCommand;
-  AutoSelector m_autoSelector;
 
 
   AutoRoutines routines;
@@ -51,7 +49,6 @@ public class MiniSwerveContainer extends RobotContainer{
     // Configure the button bindings
     configureButtonBindings();
 
-    m_autoSelector = new AutoSelector();
     routines = new AutoRoutines();
 
     //use FRC Labview Dashboard
