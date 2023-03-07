@@ -29,6 +29,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ProfileExternalPIDController;
@@ -56,8 +57,6 @@ public class ArmSubsystem extends SubsystemBase {
   public ProfileExternalPIDController m_bottomPID;
   private RelativeEncoder m_bottomEncoder;
   private RelativeEncoder m_topEncoder;
-  public final double kMaxOutput = 1;
-  public final double kMinOutput = -1;
 
   private double m_topArmEncoderOffset;
   private double m_bottomArmEncoderOffset;
@@ -81,7 +80,7 @@ public class ArmSubsystem extends SubsystemBase {
   private DoublePublisher m_topArmVelPub;
   private DoubleEntry m_topArmVoltsAtHorizontal;
   private DoublePublisher m_topArmFFTestingVolts;
-  private DoubleSubscriber m_topArmOffset;
+  private DoubleEntry m_topArmOffset;
   private DoublePublisher m_topCANCoderValue;
 
   // network table entries for bottom arm
@@ -107,6 +106,9 @@ public class ArmSubsystem extends SubsystemBase {
   DoubleSolenoid brakeSolenoidLow;
   DoubleSolenoid brakeSolenoidHigh;
 
+  // duty cycle encoder
+  private DutyCycleEncoder m_topDutyCycleEncoder;
+
   public static ArmSubsystem getInstance() {
     if (instance == null) {
       SubsystemChecker.subsystemConstructed(SubsystemType.ArmSubsystem);
@@ -131,10 +133,13 @@ public class ArmSubsystem extends SubsystemBase {
     m_topArm.setSoftLimit(SoftLimitDirection.kReverse, ArmConfig.top_arm_reverse_limit);
     m_bottomArm.setSoftLimit(SoftLimitDirection.kForward, ArmConfig.bottom_arm_forward_limit);
     m_bottomArm.setSoftLimit(SoftLimitDirection.kReverse, ArmConfig.bottom_arm_reverse_limit);
-    m_topArm.enableSoftLimit(SoftLimitDirection.kForward, true);
-    m_topArm.enableSoftLimit(SoftLimitDirection.kReverse, true);
-    m_bottomArm.enableSoftLimit(SoftLimitDirection.kForward, false);
-    m_bottomArm.enableSoftLimit(SoftLimitDirection.kReverse, false);
+    m_topArm.enableSoftLimit(SoftLimitDirection.kForward, ArmConfig.TOP_SOFT_LIMIT_ENABLE);
+    m_topArm.enableSoftLimit(SoftLimitDirection.kReverse, ArmConfig.TOP_SOFT_LIMIT_ENABLE);
+    m_bottomArm.enableSoftLimit(SoftLimitDirection.kForward, ArmConfig.BOTTOM_SOFT_LIMIT_ENABLE);
+    m_bottomArm.enableSoftLimit(SoftLimitDirection.kReverse, ArmConfig.BOTTOM_SOFT_LIMIT_ENABLE);
+
+    m_topDutyCycleEncoder = new DutyCycleEncoder(ArmConfig.top_duty_cycle_channel);
+    m_topDutyCycleEncoder.setDistancePerRotation(360);
     
     CANCoderConfiguration config = new CANCoderConfiguration();
     config.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
@@ -182,7 +187,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_topArmDSubs = topArmTuningTable.getDoubleTopic("D").getEntry(ArmConfig.top_arm_kD);
     m_topArmIzSubs = topArmTuningTable.getDoubleTopic("IZone").getEntry(ArmConfig.top_arm_kIz);
     m_topArmFFSubs = topArmTuningTable.getDoubleTopic("FF").getEntry(ArmConfig.top_arm_kFF);
-    m_topArmOffset = topArmTuningTable.getDoubleTopic("Offset").subscribe(m_topArmEncoderOffset);
+    m_topArmOffset = topArmTuningTable.getDoubleTopic("Offset").getEntry(ArmConfig.top_arm_offset);
     
     NetworkTable bottomArmTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTableBottom);
     m_bottomArmPSubs = bottomArmTuningTable.getDoubleTopic("P").getEntry(ArmConfig.bottom_arm_kP);
@@ -199,6 +204,7 @@ public class ArmSubsystem extends SubsystemBase {
         m_topArmISubs.accept(ArmConfig.top_arm_kI);
         m_topArmDSubs.accept(ArmConfig.top_arm_kD);
         m_topArmIzSubs.accept(ArmConfig.top_arm_kIz);
+        m_topArmOffset.accept(ArmConfig.top_arm_offset);
     // }
 
     // if (m_bottomArmPSubs.getAtomic().timestamp == 0) {
@@ -241,7 +247,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerTopArm.setI(m_topArmISubs.get());
     m_pidControllerTopArm.setD(m_topArmDSubs.get());
     m_pidControllerTopArm.setIZone(m_topArmIzSubs.get()); 
-    m_pidControllerTopArm.setOutputRange(kMinOutput, kMaxOutput);
+    m_pidControllerTopArm.setOutputRange(ArmConfig.min_output, ArmConfig.max_output);
 
     // setting PID constants for bottom spark max
     m_pidControllerBottomArm.setFF(m_bottomArmFFSubs.get());
@@ -249,7 +255,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerBottomArm.setI(m_bottomArmISubs.get());
     m_pidControllerBottomArm.setD(m_bottomArmDSubs.get());
     m_pidControllerBottomArm.setIZone(m_bottomArmIzSubs.get()); 
-    m_pidControllerBottomArm.setOutputRange(kMinOutput, kMaxOutput);
+    m_pidControllerBottomArm.setOutputRange(ArmConfig.min_output, ArmConfig.max_output);
 }
 
   @Override
@@ -300,13 +306,15 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void setTopJoint(double angle) {
     double pidSetpoint = m_topPID.getPIDSetpoint(angle); 
-    m_pidControllerTopArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFTop());
+    m_pidControllerTopArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFTop() );//+ m_topSimpleFF.calculate(m_topPID.getSetpoint().velocity, acceleration));
     m_topArmSetpointPub.accept(Math.toDegrees(angle));
+
+
   }
 
-  public void resetEncoder() {
-    m_topArm.getEncoder().setPosition(ArmConfig.RESET_ENCODER_POSITION);
-    m_bottomArm.getEncoder().setPosition(ArmConfig.RESET_ENCODER_POSITION);
+  public void resetEncoder(double bottom_position, double top_position) {
+    m_topArm.getEncoder().setPosition(top_position);
+    m_bottomArm.getEncoder().setPosition(bottom_position);
   }
 
   private double calculateFFTop() {
@@ -352,7 +360,7 @@ public class ArmSubsystem extends SubsystemBase {
 }
 
   public double getCancoderTop() {
-    return Math.toRadians(m_absoluteTopArmEncoder.getAbsolutePosition() + m_topArmOffset.get());
+    return Math.toRadians(m_topDutyCycleEncoder.getAbsolutePosition() * 360 + m_topArmOffset.get());
   }
 
   public double getCancoderBottom() {

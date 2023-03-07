@@ -55,7 +55,7 @@ public class ArmBotContainer extends RobotContainer{
     controlStick.y().onTrue(new SetAngleArm(0, false, true));
     controlStick.a().onTrue(new SetAngleArm(Math.PI/8, false, true));
 
-    controlStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder()));
+    controlStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder(100, Math.toRadians(-90))));
 
     Command topArmFF = new ArmFFTestCommand(controlStick, 2, false, true);
 

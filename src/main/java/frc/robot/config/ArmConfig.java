@@ -70,24 +70,24 @@ public class ArmConfig {
     
       public static final double TOP_NEO_GEAR_RATIO = Config.robotSpecific(23.5, 0.0, 0.0, 0.0, 0.0, 60.0, 60.0); //comp --> 23.5
       public static final double BOTTOM_NEO_GEAR_RATIO = 62.5;  
-      public static final double L1 = 27.38; //length of arm 1 in inches
+      public static final double L1 = 27.75; //length of arm 1 in inches
       public static final double L2 = 38.6; //length of arm 2 in inches 
       public static final double LENGTH_BOTTOM_ARM_TO_COG = 14.56;
       public static final double LENGTH_TOP_ARM_TO_COG = 28.22;
-      public static final double TOP_HORIZONTAL_VOLTAGE = 0.2;
+      public static final double TOP_HORIZONTAL_VOLTAGE = 1.3;
       public static final double BOTTOM_MOMENT_TO_VOLTAGE = 0;
       public static final boolean TOP_SET_INVERTED = true;
       public static final boolean BOTTOM_SET_INVERTED = false;
       public static final int CURRENT_LIMIT = 40;
 
       // constants for arm constraints
-      public static final double TOP_SLOW_ACCEL_MAX_VEL = 1;
+      public static final double TOP_SLOW_ACCEL_MAX_VEL = Math.PI * 3;
+      public static final double TOP_SLOW_ACCEL_MAX_ACCEL = Math.PI * 1.5; // radians/sec
+      public static final double TOP_MAX_VEL = Math.PI * 3;
+      public static final double TOP_MAX_ACCEL = Math.PI * 3;
       public static final double BOTTOM_SLOW_ACCEL_MAX_VEL = 0.5;
-      public static final double TOP_SLOW_ACCEL_MAX_ACCEL = Math.PI * 0.9; // radians/sec
       public static final double BOTTOM_SLOW_ACCEL_MAX_ACCEL = Math.PI * 0.4;
-      public static final double TOP_MAX_VEL = 3;
       public static final double BOTTOM_MAX_VEL = 1;
-      public static final double TOP_MAX_ACCEL = Math.PI * 2;
       public static final double BOTTOM_MAX_ACCEL = Math.PI * 0.7;
 
       public static final double RESET_ENCODER_POSITION = Math.toRadians(-90);
@@ -102,10 +102,10 @@ public class ArmConfig {
       public static final double velocityTolerance = Math.toRadians(3);
 
       // PID constants for top arm
-      public static final double top_arm_kP = 0;
-      public static final double top_arm_kI = 0;
-      public static final double top_arm_kD = 0;
-      public static final double top_arm_kIz = 0;
+      public static final double top_arm_kP = 0.2; 
+      public static final double top_arm_kI = 0.0005;
+      public static final double top_arm_kD = 1;
+      public static final double top_arm_kIz = 0.2;
       public static final double top_arm_kFF = 0;
 
       // PID constants for bottom arm
@@ -116,17 +116,29 @@ public class ArmConfig {
       public static final double bottom_arm_kFF = 0;
 
       // soft limit constants for top arm
-      public static final float top_arm_forward_limit = (float)Math.toRadians(180); 
-      public static final float top_arm_reverse_limit = (float)Math.toRadians(-30); 
+      public static final float top_arm_forward_limit = (float)Math.toRadians(30); 
+      public static final float top_arm_reverse_limit = (float)Math.toRadians(-95); 
+      public static final boolean TOP_SOFT_LIMIT_ENABLE = true;
     
       // soft limit constants for bottom arm
       public static final float bottom_arm_forward_limit = (float)Math.toRadians(90);
       public static final float bottom_arm_reverse_limit = (float)Math.toRadians(45);
+      public static final boolean BOTTOM_SOFT_LIMIT_ENABLE = true;
 
       // ff calculation for bottom arm
       public static final double gravitationalConstant = 389.0886; // inches/s/s  which is equal to 9.81 m/s/s
       public static final double BOTTOM_ARM_FORCE = 11.29 * gravitationalConstant; // 11.29 lb
       public static final double TOP_ARM_FORCE = 7.77 * gravitationalConstant; // 7.77 lb
       public static final double CONE_ARM_FORCE = 1.21 * gravitationalConstant; // 1.21 lb
+
+      // pid controller constants
+      public static final double min_output = -1;
+      public static final double max_output = 1;
+
+      // duty cycle encoders
+      public static final int top_duty_cycle_channel = 9;
+
+      // arm offsets
+      public static final double top_arm_offset = -443.000000;
 
 }

@@ -135,10 +135,10 @@ public class CompRobotContainer extends RobotContainer {
 
     boolean isTop = true;
 
-    armStick.a().onTrue(new SetAngleArm(30, false, isTop));
-    armStick.b().onTrue(new SetAngleArm(60, false, isTop));
-    armStick.y().onTrue(new SetAngleArm(90, false, isTop));
-    armStick.x().onTrue(new SetAngleArm(120, false, isTop));
+    armStick.a().onTrue(new SetAngleArm(-90, true, isTop));
+    armStick.b().onTrue(new SetAngleArm(-30, false, isTop));
+    armStick.y().onTrue(new SetAngleArm(0, false, isTop));
+    armStick.x().onTrue(new SetAngleArm(15, false, isTop));
 
     armStick.rightTrigger().toggleOnTrue(Commands.startEnd(
       () -> ArmSubsystem.getInstance().controlBottomArmBrake(true), 
@@ -148,13 +148,16 @@ public class CompRobotContainer extends RobotContainer {
       () -> ArmSubsystem.getInstance().controlTopArmBrake(true), 
       () -> ArmSubsystem.getInstance().controlTopArmBrake(false)));
 
-    Command armFF = new ArmFFTestCommand(armStick, 7, true, true);
+    Command armFF = new ArmFFTestCommand(armStick, 7, false, true);
 
     armStick.leftBumper().onTrue(Commands.runOnce(() -> armFF.schedule()));
+    armStick.rightBumper().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().updatePIDSettings()));
     armStick.back().onTrue(Commands.sequence(
             Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()),
             Commands.runOnce(() -> ArmSubsystem.getInstance().stopMotors())
         ));
+    // armStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder(100, Math.toRadians(-90)))); // 100 is an arbitrary number
+    armStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().updateFromCancoderTop()));
 
     // Construct the RelaySubsystem so the NTRelays are constructed
     RelaySubsystem.getInstance();
