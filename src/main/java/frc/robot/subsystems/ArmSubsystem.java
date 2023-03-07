@@ -422,4 +422,15 @@ public class ArmSubsystem extends SubsystemBase {
   public boolean setHasCone() {
     return m_hasCone;
   }
+
+  /**
+   * Checks if the Neo encoder is synced with the Absolute Encoder
+   * 
+   * @return Whether the encoders are synced or not
+   */
+  public boolean areEncodersSynced() {
+    return Math.abs(getCancoderBottom() - getBottomPosition()) < ArmConfig.ENCODER_SYNCING_TOLARANCE &&
+           Math.abs(getCancoderTop() - getTopPosition()) < ArmConfig.ENCODER_SYNCING_TOLARANCE;
+
+  }
 }

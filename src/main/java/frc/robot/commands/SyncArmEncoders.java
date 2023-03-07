@@ -8,16 +8,16 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.config.Config;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.ArmSubsystem;
 
-public class SyncSteerEncoders extends CommandBase {
+public class SyncArmEncoders extends CommandBase {
     private Timer m_smallTimer = new Timer();
     private Timer m_permanantTimer = new Timer();
     private boolean m_needsSyncing = false;
 
     /** Creates a new SyncSteerEncoders. */
-    public SyncSteerEncoders() {
-        addRequirements(SwerveSubsystem.getInstance());
+    public SyncArmEncoders() {
+        addRequirements(ArmSubsystem.getInstance());
     }
 
     // Called when the command is initially scheduled.
@@ -33,12 +33,14 @@ public class SyncSteerEncoders extends CommandBase {
         if (m_smallTimer.get() > Config.Swerve.ENCODER_SYNCING_PERIOD) {
             m_smallTimer.reset();
 
-            if (SwerveSubsystem.getInstance().checkSteeringEncoders() == false) {
+            if (ArmSubsystem.getInstance().areEncodersSynced() == false) {
                 m_needsSyncing = true;
                 DriverStation.reportWarning(
-                    String.format("Steering encoders are not synced, attempting to sync them... (%.1fs)", m_permanantTimer.get()),
+                    String.format("Arm encoders are not synced, attempting to sync them... (%.1fs)", m_permanantTimer.get()),
                     false);
-                SwerveSubsystem.getInstance().resetEncodersFromCanCoder();
+                ArmSubsystem.getInstance().updateFromCancoderBottom();
+                ArmSubsystem.getInstance().updateFromCancoderTop();
+
             } 
         }
     }
@@ -48,7 +50,7 @@ public class SyncSteerEncoders extends CommandBase {
     public void end(boolean interrupted) {
         if (m_needsSyncing) {
             DriverStation.reportWarning(
-                        String.format("Steering encoders are synced (%.1f) \n", m_permanantTimer.get()),
+                        String.format("Arm encoders are synced (%.1f) \n", m_permanantTimer.get()),
                         false);
         }
 
@@ -61,18 +63,23 @@ public class SyncSteerEncoders extends CommandBase {
     public boolean isFinished() {
         if (m_permanantTimer.get() > Config.Swerve.ENCODER_SYNCING_TIMEOUT) {
             DriverStation.reportError(
-                String.format("Steering encoders are not synced. SyncSteerEncoders spent %.1fs trying to sync them and has timed out",
+                String.format("Arm encoders are not synced. SyncArmEncoders spent %.1fs trying to sync them and has timed out",
                 m_permanantTimer.get()),
                 false);
 
             return true;
         }
 
-        return SwerveSubsystem.getInstance().checkSteeringEncoders();
+        return ArmSubsystem.getInstance().areEncodersSynced();
     }
 
     @Override
     public boolean runsWhenDisabled() {
         return true;
+    }
+
+    @Override
+    public InterruptionBehavior getInterruptionBehavior() {
+        return InterruptionBehavior.kCancelIncoming;
     }
 }

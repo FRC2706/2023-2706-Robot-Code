@@ -141,4 +141,9 @@ public class ArmConfig {
       // arm offsets
       public static final double top_arm_offset = -443.000000;
 
+      // Syncing encoders
+      public static double ENCODER_SYNCING_PERIOD = 0.2; // seconds
+      public static int ENCODER_SYNCING_TIMEOUT = 20; // seconds
+      public static double ENCODER_SYNCING_TOLARANCE = 0.0017; // radians
+
 }
