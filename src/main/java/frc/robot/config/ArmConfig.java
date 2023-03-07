@@ -66,6 +66,11 @@ public class ArmConfig {
             return z;
         }
       }
+      public enum ArmPosition {
+        GAME_PIECE_TOP,
+        GAME_PIECE_MIDDLE,
+        GAME_PIECE_BOTTOM
+      }
     
       public static final double TOP_NEO_GEAR_RATIO = 23.5;
       public static final double BOTTOM_NEO_GEAR_RATIO = 62.5; 
