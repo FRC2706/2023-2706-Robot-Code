@@ -149,8 +149,10 @@ public class ArmConfig {
 
       // duty cycle encoders
       public static final int top_duty_cycle_channel = 9;
+      public static final int bottom_duty_cycle_channel = 10;
 
       // arm offsets
       public static final double top_arm_offset = -443.000000;
+      public static final double bottom_arm_offset = -443.000000;
 
 }

@@ -81,7 +81,7 @@ public class ArmSubsystem extends SubsystemBase {
   private DoubleEntry m_topArmVoltsAtHorizontal;
   private DoublePublisher m_topArmFFTestingVolts;
   private DoubleEntry m_topArmOffset;
-  private DoublePublisher m_topCANCoderValue;
+  private DoublePublisher m_topAbsoluteEncoder;
 
   // network table entries for bottom arm
   private DoubleEntry m_bottomArmPSubs;
@@ -94,8 +94,8 @@ public class ArmSubsystem extends SubsystemBase {
   private DoublePublisher m_bottomArmVelPub;
   private DoubleEntry m_bottomArmMomentToVoltage;
   private DoublePublisher m_bottomArmFFTestingVolts;
-  private DoubleSubscriber m_bottomArmOffset;
-  private DoublePublisher m_bottomCANCoderValue;
+  private DoubleEntry m_bottomArmOffset;
+  private DoublePublisher m_bottomAbsoluteEncoder;
 
   // for bottom arm ff
   private DoubleSubscriber momentToVoltageConversion;
@@ -108,6 +108,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   // duty cycle encoder
   private DutyCycleEncoder m_topDutyCycleEncoder;
+  private DutyCycleEncoder m_bottomDutyCycleEncoder;
 
   public static ArmSubsystem getInstance() {
     if (instance == null) {
@@ -140,6 +141,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     m_topDutyCycleEncoder = new DutyCycleEncoder(ArmConfig.top_duty_cycle_channel);
     m_topDutyCycleEncoder.setDistancePerRotation(360);
+    m_bottomDutyCycleEncoder = new DutyCycleEncoder(ArmConfig.bottom_duty_cycle_channel);
+    m_bottomDutyCycleEncoder.setDistancePerRotation(360);
     
     CANCoderConfiguration config = new CANCoderConfiguration();
     config.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
@@ -195,7 +198,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArmDSubs = bottomArmTuningTable.getDoubleTopic("D").getEntry(ArmConfig.bottom_arm_kD);
     m_bottomArmIzSubs = bottomArmTuningTable.getDoubleTopic("IZone").getEntry(ArmConfig.bottom_arm_kIz);
     m_bottomArmFFSubs = bottomArmTuningTable.getDoubleTopic("FF").getEntry(ArmConfig.bottom_arm_kFF);
-    m_bottomArmOffset = bottomArmTuningTable.getDoubleTopic("Offset").subscribe(m_bottomArmEncoderOffset);
+    m_bottomArmOffset = bottomArmTuningTable.getDoubleTopic("Offset").getEntry(ArmConfig.bottom_arm_offset);
     momentToVoltageConversion = bottomArmTuningTable.getDoubleTopic("VoltageConversion").subscribe(m_bottomVoltageConversion);
 
     // if (m_topArmPSubs.getAtomic().timestamp == 0) {
@@ -213,6 +216,7 @@ public class ArmSubsystem extends SubsystemBase {
       m_bottomArmISubs.accept(ArmConfig.bottom_arm_kI);
       m_bottomArmDSubs.accept(ArmConfig.bottom_arm_kD);
       m_bottomArmIzSubs.accept(ArmConfig.bottom_arm_kIz);
+      m_bottomArmOffset.accept(ArmConfig.bottom_arm_offset);
   // }
 
     NetworkTable topArmDataTable = NetworkTableInstance.getDefault().getTable(m_dataTableTop);
@@ -221,7 +225,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_topArmVelPub = topArmDataTable.getDoubleTopic("Vel").publish(PubSubOption.periodic(0.02));
     m_topArmVoltsAtHorizontal = topArmDataTable.getDoubleTopic("VoltsAtHorizontal").getEntry(0);
     m_topArmVoltsAtHorizontal.accept(ArmConfig.TOP_HORIZONTAL_VOLTAGE);
-    m_topCANCoderValue = topArmDataTable.getDoubleTopic("CANCoder Value").publish(PubSubOption.periodic(0.02));
+    m_topAbsoluteEncoder = topArmDataTable.getDoubleTopic("Absolute Encoder").publish(PubSubOption.periodic(0.02));
 
     m_topArmFFTestingVolts = topArmDataTable.getDoubleTopic("VoltageSetInFFTesting").publish();
 
@@ -231,13 +235,13 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArmVelPub = bottomArmDataTable.getDoubleTopic("Vel").publish(PubSubOption.periodic(0.02));
     m_bottomArmMomentToVoltage = bottomArmDataTable.getDoubleTopic("VoltsAtHorizontal").getEntry(0);
     m_bottomArmMomentToVoltage.accept(ArmConfig.BOTTOM_MOMENT_TO_VOLTAGE);
-    m_bottomCANCoderValue = bottomArmDataTable.getDoubleTopic("CANCoder Value").publish(PubSubOption.periodic(0.02));
+    m_bottomAbsoluteEncoder = bottomArmDataTable.getDoubleTopic("Absolute Encoder").publish(PubSubOption.periodic(0.02));
 
     m_bottomArmFFTestingVolts = bottomArmDataTable.getDoubleTopic("VoltageSetInFFTesting").publish();
 
     updatePIDSettings();
-    updateFromCancoderTop();
-    updateFromCancoderBottom();
+    updateFromAbsoluteTop();
+    updateFromAbsoluteBottom();
   }
 
   public void updatePIDSettings() {
@@ -267,8 +271,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_topArmVelPub.accept(m_topEncoder.getVelocity());
     m_bottomArmPosPub.accept(Math.toDegrees(bottomPosition));
     m_bottomArmVelPub.accept(m_bottomEncoder.getVelocity());
-    m_topCANCoderValue.accept(getCancoderTop());
-    m_bottomCANCoderValue.accept(getCancoderBottom());
+    m_topAbsoluteEncoder.accept(getAbsoluteTop());
+    m_bottomAbsoluteEncoder.accept(getAbsoluteBottom());
 
     armDisplay.updateMeasurementDisplay(topPosition, bottomPosition);
   }
@@ -359,20 +363,20 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArm.stopMotor();
 }
 
-  public double getCancoderTop() {
+  public double getAbsoluteTop() {
     return Math.toRadians(m_topDutyCycleEncoder.getAbsolutePosition() * 360 + m_topArmOffset.get());
   }
 
-  public double getCancoderBottom() {
-    return Math.toRadians(m_absoluteBottomArmEncoder.getAbsolutePosition() + m_bottomArmOffset.get());
+  public double getAbsoluteBottom() {
+    return Math.toRadians(m_bottomDutyCycleEncoder.getAbsolutePosition() * 360 + m_bottomArmOffset.get());
   }
 
-  public void updateFromCancoderTop() {
-    errREV(m_topEncoder.setPosition(getCancoderTop()));
+  public void updateFromAbsoluteTop() {
+    errREV(m_topEncoder.setPosition(getAbsoluteTop()));
   }
 
-  public void updateFromCancoderBottom() {
-    errREV(m_bottomEncoder.setPosition(getCancoderBottom()));
+  public void updateFromAbsoluteBottom() {
+    errREV(m_bottomEncoder.setPosition(getAbsoluteBottom()));
   }
 
   public void controlBottomArmBrake( boolean bBrakeOn) {

@@ -157,7 +157,7 @@ public class CompRobotContainer extends RobotContainer {
             Commands.runOnce(() -> ArmSubsystem.getInstance().stopMotors())
         ));
     // armStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder(100, Math.toRadians(-90)))); // 100 is an arbitrary number
-    armStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().updateFromCancoderTop()));
+    armStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().updateFromAbsoluteTop()));
 
     // Construct the RelaySubsystem so the NTRelays are constructed
     RelaySubsystem.getInstance();
