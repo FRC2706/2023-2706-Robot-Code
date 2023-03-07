@@ -15,13 +15,17 @@ public class ArmCommandSelector extends CommandBase {
   RobotGamePieceState m_robotState;
   ArmPosition m_Position;
   ArmSetpoint m_ArmSetPoint;
+  boolean m_slowerAcceleration;
   ArmCommand m_ArmCommand;
   
   /** Creates a new ArmCommand. */
-  public ArmCommandSelector(Supplier<RobotGamePieceState> robotState, ArmPosition position) {
+  public ArmCommandSelector(Supplier<RobotGamePieceState> robotState, 
+                            ArmPosition position,
+                            boolean slowerAcceleration ) {
     //get the current robotState: from container
     m_robotState = robotState.get();
-    m_Position=position;
+    m_Position = position;
+    m_slowerAcceleration = slowerAcceleration;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -64,7 +68,7 @@ public class ArmCommandSelector extends CommandBase {
         m_ArmSetPoint = ArmSetpoint.HOME_WITH_GAMEPIECE;
       break;
     }
-    m_ArmCommand = new ArmCommand (m_ArmSetPoint, false);
+    m_ArmCommand = new ArmCommand (m_ArmSetPoint, m_slowerAcceleration);
     m_ArmCommand.schedule();
 
   }
