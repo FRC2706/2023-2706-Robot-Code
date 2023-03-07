@@ -4,8 +4,10 @@
 
 package frc.robot.config;
 
+import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.config.Config;
 
 /** Add your docs here. */
 public class ArmConfig {
@@ -16,6 +18,10 @@ public class ArmConfig {
     public static final double z_upper = 60;
     public static final double homeX = 6;
     public static final double homeZ = 8;
+
+    public DoubleEntry x_entry;
+    public DoubleEntry z_entry;
+    public final String m_tuningTableSetpoints = "Arm/Setpoints";
 
     public enum ArmSetpoint {
         HOME_WITH_GAMEPIECE(6, 8), //can also be used for default position
@@ -36,6 +42,12 @@ public class ArmConfig {
         private double x;
         private double z;
         private boolean slowAcceleration;
+
+        NetworkTable setpointsTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTableSetpoints);
+        
+        x_entry = setpointsTuningTable.getDoubleTopic("X").getEntry(x);
+
+        x_entry.accept(x);
 
 
         private ArmSetpoint(double x, double z, boolean slowAcceleration) {
@@ -60,11 +72,11 @@ public class ArmConfig {
         }
 
         public double getX() {
-            return x;
+            return x_entry.get();
         }
 
         public double getZ() {
-            return z;
+            return z_entry.get();
         }
       }
     
