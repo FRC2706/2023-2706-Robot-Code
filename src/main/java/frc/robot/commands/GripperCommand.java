@@ -29,7 +29,7 @@ public class GripperCommand extends InstantCommand {
     gripper = GripperSubsystem.getInstance();
     if (gripper!=null){
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(gripper[]);
+        addRequirements(gripper);
     }
   }
 
