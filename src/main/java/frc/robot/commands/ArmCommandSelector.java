@@ -12,7 +12,7 @@ import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.robotcontainers.CompRobotContainer.RobotGamePieceState;
 
 public class ArmCommandSelector extends CommandBase {
-  RobotGamePieceState m_robotState;
+  Supplier<RobotGamePieceState> m_robotState;
   ArmPosition m_Position;
   ArmSetpoint m_ArmSetPoint;
   boolean m_slowerAcceleration;
@@ -23,7 +23,7 @@ public class ArmCommandSelector extends CommandBase {
                             ArmPosition position,
                             boolean slowerAcceleration ) {
     //get the current robotState: from container
-    m_robotState = robotState.get();
+    m_robotState = robotState;
     m_Position = position;
     m_slowerAcceleration = slowerAcceleration;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -32,9 +32,11 @@ public class ArmCommandSelector extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    switch (m_robotState) {
+    //get the current robotState: from container
+    RobotGamePieceState robotState = m_robotState.get();
+    switch (robotState) {
       case NoGamePiece: 
-        m_ArmSetPoint = ArmSetpoint.HOME_WITH_GAMEPIECE;
+        m_ArmSetPoint = ArmSetpoint.CONE_PICKUP;
       break;
       case HasCone:
         if (m_Position == ArmPosition.GAME_PIECE_BOTTOM) {
