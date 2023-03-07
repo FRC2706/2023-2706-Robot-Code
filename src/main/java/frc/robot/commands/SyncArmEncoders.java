@@ -7,13 +7,16 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.config.Config;
+import frc.robot.config.ArmConfig;
 import frc.robot.subsystems.ArmSubsystem;
 
 public class SyncArmEncoders extends CommandBase {
     private Timer m_smallTimer = new Timer();
     private Timer m_permanantTimer = new Timer();
-    private boolean m_needsSyncing = false;
+    private boolean m_needsSyncing = true;
+    private int m_numSamples = 0;
+    private double m_sumBotSamples = 0;
+    private double m_sumTopSamples = 0;
 
     /** Creates a new SyncSteerEncoders. */
     public SyncArmEncoders() {
@@ -25,33 +28,50 @@ public class SyncArmEncoders extends CommandBase {
     public void initialize() {
         m_smallTimer.restart();
         m_permanantTimer.restart();
+        m_numSamples = 0;
+        m_sumBotSamples = 0;
+        m_sumTopSamples = 0;
+        m_needsSyncing = true;
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (m_smallTimer.get() > Config.Swerve.ENCODER_SYNCING_PERIOD) {
+        if (m_smallTimer.get() > ArmConfig.ENCODER_SYNCING_PERIOD) {
             m_smallTimer.reset();
 
-            if (ArmSubsystem.getInstance().areEncodersSynced() == false) {
-                m_needsSyncing = true;
-                DriverStation.reportWarning(
-                    String.format("Arm encoders are not synced, attempting to sync them... (%.1fs)", m_permanantTimer.get()),
-                    false);
-                ArmSubsystem.getInstance().updateFromCancoderBottom();
-                ArmSubsystem.getInstance().updateFromCancoderTop();
-
-            } 
+            if (m_needsSyncing) {
+                if (ArmSubsystem.getInstance().areEncodersSynced() == false) {
+                    m_needsSyncing = true;
+                    DriverStation.reportWarning(
+                        String.format("Arm encoders are not synced, attempting to sync them... (%.1fs)", m_permanantTimer.get()),
+                        false);
+                    ArmSubsystem.getInstance().updateFromCancoderBottom();
+                    ArmSubsystem.getInstance().updateFromCancoderTop();
+                } else {
+                    m_needsSyncing = false;
+                }
+            }
+        }
+        if (m_needsSyncing == false) {
+            m_sumBotSamples += ArmSubsystem.getInstance().getCancoderBottom();
+            m_sumTopSamples += ArmSubsystem.getInstance().getCancoderTop();
+            m_numSamples++;
         }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        if (m_needsSyncing) {
+        if (m_needsSyncing && m_numSamples > 2) {
             DriverStation.reportWarning(
                         String.format("Arm encoders are synced (%.1f) \n", m_permanantTimer.get()),
                         false);
+
+            ArmSubsystem.getInstance().resetEncoder(
+                m_sumBotSamples / m_numSamples,
+                m_sumTopSamples / m_numSamples
+            );
         }
 
         m_permanantTimer.stop();
@@ -61,7 +81,7 @@ public class SyncArmEncoders extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        if (m_permanantTimer.get() > Config.Swerve.ENCODER_SYNCING_TIMEOUT) {
+        if (m_permanantTimer.get() > ArmConfig.ENCODER_SYNCING_TIMEOUT) {
             DriverStation.reportError(
                 String.format("Arm encoders are not synced. SyncArmEncoders spent %.1fs trying to sync them and has timed out",
                 m_permanantTimer.get()),
@@ -70,7 +90,7 @@ public class SyncArmEncoders extends CommandBase {
             return true;
         }
 
-        return ArmSubsystem.getInstance().areEncodersSynced();
+        return ArmSubsystem.getInstance().areEncodersSynced() && m_numSamples > ArmConfig.NUM_SYNCING_SAMPLES;
     }
 
     @Override
@@ -80,6 +100,8 @@ public class SyncArmEncoders extends CommandBase {
 
     @Override
     public InterruptionBehavior getInterruptionBehavior() {
+        DriverStation.reportWarning("Another ArmSubsystem command was scheduled while " +
+                "SyncArmEncoders is still running. Cancelling the incoming command.", false);
         return InterruptionBehavior.kCancelIncoming;
     }
 }

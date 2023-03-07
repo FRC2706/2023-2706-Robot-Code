@@ -75,4 +75,11 @@ public class SyncSteerEncoders extends CommandBase {
     public boolean runsWhenDisabled() {
         return true;
     }
+
+    @Override
+    public InterruptionBehavior getInterruptionBehavior() {
+        DriverStation.reportWarning("Another SwerveSubsystem command was scheduled while " +
+                "SyncSteerEncoders is still running. Cancelling the incoming command.", false);
+        return InterruptionBehavior.kCancelIncoming;
+    }
 }
