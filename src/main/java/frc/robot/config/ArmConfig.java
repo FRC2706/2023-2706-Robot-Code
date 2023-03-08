@@ -47,10 +47,12 @@ public class ArmConfig {
         private ArmSetpoint(double x, double z, boolean slowAcceleration) {
             this.slowAcceleration = slowAcceleration;
 
-            if (x < x_lower || x > x_upper || z < z_lower || z > z_upper) {
+            if (x < x_lower || x > x_upper || z < z_lower || z > z_upper ||
+                Math.hypot(x, z) > L1 + L2 - 0.3
+            ) {
                 x = homeX;
                 z = homeZ;
-                DriverStation.reportError("Armsetpoint outside of bounds. Name of setpoint is: " + this.name(), false);
+                DriverStation.reportError("Armsetpoint outside of bounds. Name of setpoint is: " + this.name(), true);
             }
 
             x_entry = setpointsTuningTable.getDoubleTopic(this.name() + "X").getEntry(x);

@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.config.ArmConfig;
 import frc.robot.subsystems.ArmSubsystem;
 
@@ -85,6 +86,29 @@ public class SyncArmEncoders extends CommandBase {
 
         m_permanantTimer.stop();
         m_smallTimer.stop();
+
+        if (ArmSubsystem.getInstance().getBottomPosition() < ArmConfig.bottom_arm_reverse_limit ||
+            ArmSubsystem.getInstance().getBottomPosition() > ArmConfig.bottom_arm_forward_limit ||
+            ArmSubsystem.getInstance().getTopPosition() < ArmConfig.top_arm_reverse_limit ||
+            ArmSubsystem.getInstance().getTopPosition() > ArmConfig.top_arm_forward_limit ||
+            
+            /** Temporary checks for current encoder setup. TODO: Remove once encoder wrapping is solved.*/
+            ArmSubsystem.getInstance().getBottomPosition() < 70 ||
+            ArmSubsystem.getInstance().getBottomPosition() > 100 ||
+            ArmSubsystem.getInstance().getTopPosition() < 10 ||
+            ArmSubsystem.getInstance().getTopPosition() > 35 
+            ) {
+            
+            DriverStation.reportError("Arm encoders were reset outside the proper range. " +
+                    " Disabling the arm to prevent damage." +
+                    " Make sure the code boots up with the arm in the reset position.", true);
+
+            // This line below will prevent any commands from being scheduled to the ArmSubsystem.
+            // This line is temporary while we haven't properly setup the absolute encoders properly yet.
+            // If it's blocking you from using the arm, you just need to put the arm in the reset position
+            //    and reboot the code (which will properly reset the NEO encoders the absolute encoders).
+            Commands.run(() -> ArmSubsystem.getInstance(), ArmSubsystem.getInstance()).withInterruptBehavior(InterruptionBehavior.kCancelIncoming).schedule();
+        }
     }
 
     // Returns true when the command should end.
