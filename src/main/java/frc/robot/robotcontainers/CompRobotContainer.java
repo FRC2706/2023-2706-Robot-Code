@@ -135,10 +135,11 @@ public class CompRobotContainer extends RobotContainer {
 
     boolean isTop = true;
 
-    armStick.a().onTrue(new SetAngleArm(-90, true, isTop));
-    armStick.b().onTrue(new SetAngleArm(-30, false, isTop));
-    armStick.y().onTrue(new SetAngleArm(0, false, isTop));
-    armStick.x().onTrue(new SetAngleArm(15, false, isTop));
+    armStick.a().onTrue(new SetAngleArm(85, false, false).alongWith(new SetAngleArm(20, true, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
+    armStick.b().onTrue(new SetAngleArm(60, false, false).alongWith(new SetAngleArm(55, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
+    armStick.y().onTrue(new SetAngleArm(70, false, false).alongWith(new SetAngleArm(105, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
+    armStick.x().onTrue(new SetAngleArm(45, false, false).alongWith(new SetAngleArm(180, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
+
 
     armStick.rightTrigger().toggleOnTrue(Commands.startEnd(
       () -> ArmSubsystem.getInstance().controlBottomArmBrake(true), 
@@ -148,7 +149,7 @@ public class CompRobotContainer extends RobotContainer {
       () -> ArmSubsystem.getInstance().controlTopArmBrake(true), 
       () -> ArmSubsystem.getInstance().controlTopArmBrake(false)));
 
-    Command armFF = new ArmFFTestCommand(armStick, 7, false, true);
+    Command armFF = new ArmFFTestCommand(armStick, 7, true, true);
 
     armStick.leftBumper().onTrue(Commands.runOnce(() -> armFF.schedule()));
     armStick.rightBumper().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().updatePIDSettings()));

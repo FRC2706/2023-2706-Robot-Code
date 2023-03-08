@@ -20,13 +20,18 @@ public class SetAngleArm extends CommandBase {
     this.isTop = isTop;
 
 
-    addRequirements(ArmSubsystem.getInstance());
+    // addRequirements(ArmSubsystem.getInstance());
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    ArmSubsystem.getInstance().setConstraints(m_slowerAcceleration);
+    if (isTop) {
+      ArmSubsystem.getInstance().setConstraintsTop(m_slowerAcceleration);
+    }
+    else {
+      ArmSubsystem.getInstance().setConstraintsBottom(m_slowerAcceleration);
+    }
     ArmSubsystem.getInstance().resetMotionProfile();
   }
 

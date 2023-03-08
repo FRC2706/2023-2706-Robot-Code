@@ -49,7 +49,6 @@ public class ArmFFTestCommand extends CommandBase {
     joystickValueBottom = MathUtil.applyDeadband(joystickValueBottom, 0.15);
 
     if (m_enableBot) {
-      System.out.println(joystickValueBottom);
       ArmSubsystem.getInstance().testFeedForwardBottom(joystickValueBottom * m_maxExtraVolts);
     }
     if (m_enableTop) {

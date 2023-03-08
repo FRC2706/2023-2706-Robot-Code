@@ -38,7 +38,7 @@ public class ArmCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    ArmSubsystem.getInstance().setConstraints(armSetpoint.getSlowAccel());
+    ArmSubsystem.getInstance().setConstraintsTop(armSetpoint.getSlowAccel());
     ArmSubsystem.getInstance().resetMotionProfile();
     ArmSubsystem.getInstance().controlTopArmBrake(false);
     ArmSubsystem.getInstance().controlBottomArmBrake(false);

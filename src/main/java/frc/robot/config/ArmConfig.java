@@ -84,20 +84,20 @@ public class ArmConfig {
       public static final double LENGTH_BOTTOM_ARM_TO_COG = 14.56;
       public static final double LENGTH_TOP_ARM_TO_COG = 28.22;
       public static final double TOP_HORIZONTAL_VOLTAGE = 1.3;
-      public static final double BOTTOM_MOMENT_TO_VOLTAGE = 0;
+      public static final double BOTTOM_MOMENT_TO_VOLTAGE = 0.000005;
       public static final boolean TOP_SET_INVERTED = true;
-      public static final boolean BOTTOM_SET_INVERTED = false;
+      public static final boolean BOTTOM_SET_INVERTED = true;
       public static final int CURRENT_LIMIT = 40;
 
       // constants for arm constraints
       public static final double TOP_SLOW_ACCEL_MAX_VEL = Math.PI * 3;
       public static final double TOP_SLOW_ACCEL_MAX_ACCEL = Math.PI * 1.5; // radians/sec
-      public static final double TOP_MAX_VEL = Math.PI * 3;
-      public static final double TOP_MAX_ACCEL = Math.PI * 3;
-      public static final double BOTTOM_SLOW_ACCEL_MAX_VEL = 0.5;
-      public static final double BOTTOM_SLOW_ACCEL_MAX_ACCEL = Math.PI * 0.4;
-      public static final double BOTTOM_MAX_VEL = 1;
-      public static final double BOTTOM_MAX_ACCEL = Math.PI * 0.7;
+      public static final double TOP_MAX_VEL = Math.PI * 12;
+      public static final double TOP_MAX_ACCEL = Math.PI * 12;
+      public static final double BOTTOM_SLOW_ACCEL_MAX_VEL = Math.PI;
+      public static final double BOTTOM_SLOW_ACCEL_MAX_ACCEL = Math.PI * 0.5;
+      public static final double BOTTOM_MAX_VEL = Math.PI * 2;
+      public static final double BOTTOM_MAX_ACCEL = Math.PI * 2;
 
       public static final double RESET_ENCODER_POSITION = Math.toRadians(-90);
 
@@ -112,26 +112,26 @@ public class ArmConfig {
 
       // PID constants for top arm
       public static final double top_arm_kP = 0.2; 
-      public static final double top_arm_kI = 0.0005;
-      public static final double top_arm_kD = 1;
-      public static final double top_arm_kIz = 0.2;
+      public static final double top_arm_kI = 0;
+      public static final double top_arm_kD = 0;
+      public static final double top_arm_kIz = 0;
       public static final double top_arm_kFF = 0;
 
       // PID constants for bottom arm
-      public static final double bottom_arm_kP = 0;
+      public static final double bottom_arm_kP = 0.900000;
       public static final double bottom_arm_kI = 0;
-      public static final double bottom_arm_kD = 0;
+      public static final double bottom_arm_kD = 0.900000;
       public static final double bottom_arm_kIz = 0;
       public static final double bottom_arm_kFF = 0;
 
       // soft limit constants for top arm
-      public static final float top_arm_forward_limit = (float)Math.toRadians(30); 
-      public static final float top_arm_reverse_limit = (float)Math.toRadians(-95); 
+      public static final float top_arm_forward_limit = (float)Math.toRadians(190); 
+      public static final float top_arm_reverse_limit = (float)Math.toRadians(15); 
       public static final boolean TOP_SOFT_LIMIT_ENABLE = true;
     
       // soft limit constants for bottom arm
-      public static final float bottom_arm_forward_limit = (float)Math.toRadians(90);
-      public static final float bottom_arm_reverse_limit = (float)Math.toRadians(45);
+      public static final float bottom_arm_forward_limit = (float)Math.toRadians(95);
+      public static final float bottom_arm_reverse_limit = (float)Math.toRadians(40);
       public static final boolean BOTTOM_SOFT_LIMIT_ENABLE = true;
 
       // ff calculation for bottom arm
@@ -146,11 +146,11 @@ public class ArmConfig {
 
       // duty cycle encoders
       public static final int top_duty_cycle_channel = 9;
-      public static final int bottom_duty_cycle_channel = 10;
+      public static final int bottom_duty_cycle_channel = 7;
 
       // arm offsets
-      public static final double top_arm_offset = -443.000000;
-      public static final double bottom_arm_offset = -443.000000;
+      public static final double top_arm_offset = -282.000000;
+      public static final double bottom_arm_offset = 307.800000;
 
       // Syncing encoders
       public static double ENCODER_SYNCING_PERIOD = 0.2; // seconds

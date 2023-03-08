@@ -173,7 +173,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerBottomArm = m_bottomArm.getPIDController();
     m_topPID = new ProfileExternalPIDController(new Constraints(0, 0));
     m_bottomPID = new ProfileExternalPIDController(new Constraints(0, 0));
-    setConstraints(true);
+    setConstraintsTop(true);
+    setConstraintsBottom(true);
 
     m_bottomEncoder = m_bottomArm.getEncoder();
     m_topEncoder = m_topArm.getEncoder();
@@ -233,7 +234,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArmPosPub = bottomArmDataTable.getDoubleTopic("MeasuredAngle").publish(PubSubOption.periodic(0.02));
     m_bottomArmSetpointPub = bottomArmDataTable.getDoubleTopic("SetpointAngle").publish(PubSubOption.periodic(0.02));
     m_bottomArmVelPub = bottomArmDataTable.getDoubleTopic("Vel").publish(PubSubOption.periodic(0.02));
-    m_bottomArmMomentToVoltage = bottomArmDataTable.getDoubleTopic("VoltsAtHorizontal").getEntry(0);
+    m_bottomArmMomentToVoltage = bottomArmDataTable.getDoubleTopic("MomentVoltage").getEntry(0);
     m_bottomArmMomentToVoltage.accept(ArmConfig.BOTTOM_MOMENT_TO_VOLTAGE);
     m_bottomAbsoluteEncoder = bottomArmDataTable.getDoubleTopic("Absolute Encoder").publish(PubSubOption.periodic(0.02));
 
@@ -271,18 +272,26 @@ public class ArmSubsystem extends SubsystemBase {
     m_topArmVelPub.accept(m_topEncoder.getVelocity());
     m_bottomArmPosPub.accept(Math.toDegrees(bottomPosition));
     m_bottomArmVelPub.accept(m_bottomEncoder.getVelocity());
-    m_topAbsoluteEncoder.accept(getAbsoluteTop());
-    m_bottomAbsoluteEncoder.accept(getAbsoluteBottom());
+    m_topAbsoluteEncoder.accept(Math.toDegrees(getAbsoluteTop()));
+    m_bottomAbsoluteEncoder.accept(Math.toDegrees(getAbsoluteBottom()));
 
     armDisplay.updateMeasurementDisplay(topPosition, bottomPosition);
+
+    System.out.println(calculateFFBottom(getBottomPosition(), getTopPosition(), m_hasCone));
   }
 
-  public void setConstraints(boolean slowerAcceleration) {
+  public void setConstraintsTop(boolean slowerAcceleration) {
     if (slowerAcceleration) {
         m_topPID.setConstraints(new Constraints(ArmConfig.TOP_SLOW_ACCEL_MAX_VEL, ArmConfig.TOP_SLOW_ACCEL_MAX_ACCEL));
-        m_bottomPID.setConstraints(new Constraints(ArmConfig.BOTTOM_SLOW_ACCEL_MAX_VEL, ArmConfig.BOTTOM_SLOW_ACCEL_MAX_ACCEL));
     } else {
         m_topPID.setConstraints(new Constraints(ArmConfig.TOP_MAX_VEL, ArmConfig.TOP_MAX_ACCEL));
+    }
+  }
+
+  public void setConstraintsBottom(boolean slowerAcceleration) {
+    if (slowerAcceleration) {
+        m_bottomPID.setConstraints(new Constraints(ArmConfig.BOTTOM_SLOW_ACCEL_MAX_VEL, ArmConfig.BOTTOM_SLOW_ACCEL_MAX_ACCEL));
+    } else {
         m_bottomPID.setConstraints(new Constraints(ArmConfig.BOTTOM_MAX_VEL, ArmConfig.BOTTOM_MAX_ACCEL));
     }
   }
@@ -331,11 +340,11 @@ public class ArmSubsystem extends SubsystemBase {
     double bottomArmMoment = ArmConfig.BOTTOM_ARM_FORCE * (ArmConfig.LENGTH_BOTTOM_ARM_TO_COG*Math.cos(encoder1Rad));
     double topArmMoment = ArmConfig.TOP_ARM_FORCE * (ArmConfig.L1*Math.cos(encoder1Rad) + ArmConfig.LENGTH_TOP_ARM_TO_COG*Math.cos(enc2AtHorizontal));
     if (haveCone == false) {
-        return (bottomArmMoment + topArmMoment) * momentToVoltageConversion.get();
+        return (bottomArmMoment + topArmMoment) * m_bottomArmMomentToVoltage.get();
     } 
     else {
         double coneMoment = ArmConfig.CONE_ARM_FORCE * (ArmConfig.L1*Math.cos(encoder1Rad) + ArmConfig.L2*Math.cos(enc2AtHorizontal));
-        return (bottomArmMoment + topArmMoment + coneMoment) * momentToVoltageConversion.get();
+        return (bottomArmMoment + topArmMoment + coneMoment) * m_bottomArmMomentToVoltage.get();
     }
   }
 
@@ -369,7 +378,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public double getAbsoluteBottom() {
-    return Math.toRadians(m_bottomDutyCycleEncoder.getAbsolutePosition() * 360 + m_bottomArmOffset.get());
+    return Math.toRadians(m_bottomDutyCycleEncoder.getAbsolutePosition() * -360 + m_bottomArmOffset.get());
   }
 
   public void updateFromAbsoluteTop() {
@@ -434,8 +443,8 @@ public class ArmSubsystem extends SubsystemBase {
    * @return Whether the encoders are synced or not
    */
   public boolean areEncodersSynced() {
-    return Math.abs(getCancoderBottom() - getBottomPosition()) < ArmConfig.ENCODER_SYNCING_TOLARANCE &&
-           Math.abs(getCancoderTop() - getTopPosition()) < ArmConfig.ENCODER_SYNCING_TOLARANCE;
+    return Math.abs(getAbsoluteBottom() - getBottomPosition()) < ArmConfig.ENCODER_SYNCING_TOLARANCE &&
+           Math.abs(getAbsoluteTop() - getTopPosition()) < ArmConfig.ENCODER_SYNCING_TOLARANCE;
 
   }
 }

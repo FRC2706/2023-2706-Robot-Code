@@ -46,16 +46,16 @@ public class SyncArmEncoders extends CommandBase {
                     DriverStation.reportWarning(
                         String.format("Arm encoders are not synced, attempting to sync them... (%.1fs)", m_permanantTimer.get()),
                         false);
-                    ArmSubsystem.getInstance().updateFromCancoderBottom();
-                    ArmSubsystem.getInstance().updateFromCancoderTop();
+                    ArmSubsystem.getInstance().updateFromAbsoluteBottom();
+                    ArmSubsystem.getInstance().updateFromAbsoluteTop();
                 } else {
                     m_needsSyncing = false;
                 }
             }
         }
         if (m_needsSyncing == false) {
-            m_sumBotSamples += ArmSubsystem.getInstance().getCancoderBottom();
-            m_sumTopSamples += ArmSubsystem.getInstance().getCancoderTop();
+            m_sumBotSamples += ArmSubsystem.getInstance().getAbsoluteBottom();
+            m_sumTopSamples += ArmSubsystem.getInstance().getAbsoluteTop();
             m_numSamples++;
         }
     }
