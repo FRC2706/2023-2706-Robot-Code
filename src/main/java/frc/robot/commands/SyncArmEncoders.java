@@ -108,7 +108,7 @@ public class SyncArmEncoders extends CommandBase {
             // This line is temporary while we haven't properly setup the absolute encoders properly yet.
             // If it's blocking you from using the arm, you just need to put the arm in the reset position
             //    and reboot the code (which will properly reset the NEO encoders the absolute encoders).
-            Commands.run(() -> ArmSubsystem.getInstance(), ArmSubsystem.getInstance()).withInterruptBehavior(InterruptionBehavior.kCancelIncoming).schedule();
+            Commands.run(() -> ArmSubsystem.getInstance(), ArmSubsystem.getInstance()).withInterruptBehavior(InterruptionBehavior.kCancelIncoming).ignoringDisable(true).schedule();
         }
     }
 
