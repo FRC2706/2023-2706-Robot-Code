@@ -276,8 +276,6 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomAbsoluteEncoder.accept(Math.toDegrees(getAbsoluteBottom()));
 
     armDisplay.updateMeasurementDisplay(topPosition, bottomPosition);
-
-    System.out.println(calculateFFBottom(getBottomPosition(), getTopPosition(), m_hasCone));
   }
 
   public void setConstraintsTop(boolean slowerAcceleration) {

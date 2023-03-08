@@ -52,6 +52,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    DriverStation.silenceJoystickConnectionWarning(true);
     pcmCompressor.enableDigital();
     PathPlannerServer.startServer(5811);
     // Instantiate the RobotContainer based on the Robot ID.  This will perform all our button bindings, and put our
