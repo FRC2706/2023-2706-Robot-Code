@@ -8,28 +8,28 @@ import java.util.function.Consumer;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.robotcontainers.CompRobotContainer.RobotGamePieceState;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.GripperSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class IntakeCommand extends InstantCommand {  
+public class GripperCommand extends InstantCommand {  
   int position;
 
   Consumer <RobotGamePieceState> newRobotState;
-  IntakeSubsystem intake;
+  GripperSubsystem gripper;
 
   /** Creates a new IntakeCommand. */
   //PositionId -1 means using intake vision
   //PositionId 1 means open
   //position id 2 means take cone
   //position id 3 means take cube
-  public IntakeCommand(int positionId, Consumer<RobotGamePieceState> robotState) {
+  public GripperCommand(int positionId, Consumer<RobotGamePieceState> robotState) {
     position = positionId;
     newRobotState = robotState;
-    intake = IntakeSubsystem.getInstance();
-    if (intake!=null){
+    gripper = GripperSubsystem.getInstance();
+    if (gripper!=null){
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(intake);
+        addRequirements(gripper);
     }
   }
 
@@ -55,17 +55,17 @@ public class IntakeCommand extends InstantCommand {
   }
 
   public void open (){
-   if (intake!=null)
-    intake.noPressure();
+   if (gripper!=null)
+    gripper.noPressure();
   }
 
   public void takeCone(){
-   if (intake!=null)
-    intake.highPressure();
+   if (gripper!=null)
+    gripper.highPressure();
 }
 
   public void takeCube(){
-   if (intake!=null)
-    intake.lowPressure();
+   if (gripper!=null)
+    gripper.lowPressure();
   }
 }

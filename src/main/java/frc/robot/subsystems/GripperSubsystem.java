@@ -5,13 +5,13 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.Config;
-public class IntakeSubsystem extends SubsystemBase {
+public class GripperSubsystem extends SubsystemBase {
   DoubleSolenoid doubleSolenoid1;
   DoubleSolenoid doubleSolenoid2;
-  private static final IntakeSubsystem Claw_PNEUMATIC_SUBSYSTEM = new IntakeSubsystem();
+  private static final GripperSubsystem Claw_PNEUMATIC_SUBSYSTEM = new GripperSubsystem();
 
   /** Creates a new ClawPneumaticSubsystem. */
-  public IntakeSubsystem() 
+  public GripperSubsystem() 
   {
     
     if (Config.CTRE_PCM_CAN_ID == -1 
@@ -57,7 +57,7 @@ public class IntakeSubsystem extends SubsystemBase {
    /**
    * Returns the singleton instance for the ClawSubsystem
    */
-  public static IntakeSubsystem getInstance()
+  public static GripperSubsystem getInstance()
   {
     if (Claw_PNEUMATIC_SUBSYSTEM.isActive())
       return Claw_PNEUMATIC_SUBSYSTEM;
