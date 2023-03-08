@@ -23,11 +23,8 @@ public class SyncSteerEncoders extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        m_smallTimer.reset();
-        m_permanantTimer.reset();
-
-        m_smallTimer.start();
-        m_permanantTimer.start();
+        m_smallTimer.restart();
+        m_permanantTimer.restart();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -77,5 +74,12 @@ public class SyncSteerEncoders extends CommandBase {
     @Override
     public boolean runsWhenDisabled() {
         return true;
+    }
+
+    @Override
+    public InterruptionBehavior getInterruptionBehavior() {
+        DriverStation.reportWarning("Another SwerveSubsystem command was scheduled while " +
+                "SyncSteerEncoders is still running. Cancelling the incoming command.", false);
+        return InterruptionBehavior.kCancelIncoming;
     }
 }

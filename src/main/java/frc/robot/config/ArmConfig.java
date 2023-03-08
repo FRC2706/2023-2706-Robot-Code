@@ -152,4 +152,10 @@ public class ArmConfig {
       public static final double top_arm_offset = -443.000000;
       public static final double bottom_arm_offset = -443.000000;
 
+      // Syncing encoders
+      public static double ENCODER_SYNCING_PERIOD = 0.2; // seconds
+      public static int ENCODER_SYNCING_TIMEOUT = 20; // seconds
+      public static double ENCODER_SYNCING_TOLARANCE = 0.0017; // radians
+      public static int NUM_SYNCING_SAMPLES = 20; // num of samples needed to average
+
 }
