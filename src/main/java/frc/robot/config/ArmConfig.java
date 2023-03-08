@@ -19,9 +19,10 @@ public class ArmConfig {
     public static final double homeX = 6;
     public static final double homeZ = 8;
 
-    public DoubleEntry x_entry;
-    public DoubleEntry z_entry;
-    public final String m_tuningTableSetpoints = "Arm/Setpoints";
+    public static String m_tuningTableSetpoints = "Arm/Setpoints";
+
+    public static NetworkTable setpointsTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTableSetpoints);
+    // NetworkTable setpointsTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTableSetpoints); 
 
     public enum ArmSetpoint {
         HOME_WITH_GAMEPIECE(6, 8), //can also be used for default position
@@ -39,20 +40,11 @@ public class ArmConfig {
         HIGH_CONE_RELEASE(35, 50.132),
         HUMAN_PLAYER_PICKUP(20, 50.132);
 
-        private double x;
-        private double z;
         private boolean slowAcceleration;
-
-        NetworkTable setpointsTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTableSetpoints);
-        
-        x_entry = setpointsTuningTable.getDoubleTopic("X").getEntry(x);
-
-        x_entry.accept(x);
-
+        public DoubleEntry x_entry;
+        public DoubleEntry z_entry;
 
         private ArmSetpoint(double x, double z, boolean slowAcceleration) {
-            this.x = x;
-            this.z = z;
             this.slowAcceleration = slowAcceleration;
 
             if (x < x_lower || x > x_upper || z < z_lower || z > z_upper) {
@@ -60,6 +52,11 @@ public class ArmConfig {
                 z = homeZ;
                 DriverStation.reportError("Armsetpoint outside of bounds. Name of setpoint is: " + this.name(), false);
             }
+
+            x_entry = setpointsTuningTable.getDoubleTopic(this.name() + "X").getEntry(x);
+            x_entry.accept(x);
+            z_entry = setpointsTuningTable.getDoubleTopic(this.name() + "Z").getEntry(z);
+            z_entry.accept(z);
 
         }
 

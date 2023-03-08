@@ -36,6 +36,7 @@ public class ArmFFTestCommand extends CommandBase {
     if (m_enableTop) {
       ArmSubsystem.getInstance().setTopArmIdleMode(IdleMode.kCoast);
     }
+    ArmSubsystem.getInstance().setHasCone(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

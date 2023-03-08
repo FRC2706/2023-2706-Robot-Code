@@ -304,7 +304,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void setBottomJoint(double angle) { 
     double pidSetpoint = m_bottomPID.getPIDSetpoint(angle); 
-    m_pidControllerBottomArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFBottom(m_bottomEncoder.getPosition(), m_topEncoder.getPosition(), setHasCone())); 
+    m_pidControllerBottomArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFBottom(m_bottomEncoder.getPosition(), m_topEncoder.getPosition(), m_hasCone)); 
     m_bottomArmSetpointPub.accept(Math.toDegrees(angle));
   }
 
@@ -322,7 +322,8 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   private double calculateFFTop() {
-    return m_topArmVoltsAtHorizontal.get() * Math.cos(m_topEncoder.getPosition());
+    double enc2AtHorizontal = getTopPosition() - (Math.PI - getBottomPosition());
+    return m_topArmVoltsAtHorizontal.get() * Math.cos(enc2AtHorizontal);
   }
 
   private double calculateFFBottom(double encoder1Rad, double encoder2Rad, boolean haveCone) {
@@ -353,7 +354,7 @@ public class ArmSubsystem extends SubsystemBase {
 }
 
   public void testFeedForwardBottom(double additionalVoltage) {
-    double voltage = additionalVoltage + calculateFFBottom(m_bottomEncoder.getPosition(), m_topEncoder.getPosition(), setHasCone());
+    double voltage = additionalVoltage + calculateFFBottom(m_bottomEncoder.getPosition(), m_topEncoder.getPosition(), m_hasCone);
     m_pidControllerBottomArm.setReference(voltage, ControlType.kVoltage);
     m_bottomArmFFTestingVolts.accept(voltage);
   }
@@ -423,7 +424,7 @@ public class ArmSubsystem extends SubsystemBase {
     return m_bottomEncoder.getVelocity();
   }
 
-  public boolean setHasCone() {
-    return m_hasCone;
+  public void setHasCone(boolean hasCone) {
+    m_hasCone = hasCone;
   }
 }
