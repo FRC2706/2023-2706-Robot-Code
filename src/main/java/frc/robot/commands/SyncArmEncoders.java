@@ -96,7 +96,8 @@ public class SyncArmEncoders extends CommandBase {
             ArmSubsystem.getInstance().getBottomPosition() < 70 ||
             ArmSubsystem.getInstance().getBottomPosition() > 100 ||
             ArmSubsystem.getInstance().getTopPosition() < 10 ||
-            ArmSubsystem.getInstance().getTopPosition() > 35 
+            ArmSubsystem.getInstance().getTopPosition() > 35 ||
+            m_commandState != 99
             ) {
             
             DriverStation.reportError("Arm encoders were reset outside the proper range. " +

@@ -70,7 +70,7 @@ public class ArmBotContainer extends RobotContainer{
 
     ArmDisplay display = new ArmDisplay(ArmConfig.L1, ArmConfig.L2);
 
-    driver.a().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.LOW_CONE, false));
+    driver.a().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.BOTTOM_CONE, false));
 
     driver.b().onTrue(Commands.runOnce(() -> display.updateSetpointDisplay(Math.toRadians(45), Math.toRadians(90))));
     driver.x().onTrue(Commands.runOnce(() -> display.updateSetpointDisplay(Math.toRadians(45), Math.toRadians(135))));

@@ -25,20 +25,22 @@ public class ArmConfig {
     // NetworkTable setpointsTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTableSetpoints); 
 
     public enum ArmSetpoint {
-        HOME_WITH_GAMEPIECE(6, 8), //can also be used for default position
-        CONE_PICKUP(8, 6, true),
-        CUBE_PICKUP(8, 4.5, true),
-        CONE_PICKUP_OUTSIDE(16, 6),
-        CUBE_PICKUP_OUTSIDE(16, 6),
-        LOW_CONE(10, 19.382),
-        LOW_CUBE(10, 17.382),
-        MEDIUM_CONE(24, 37.132),
-        MEDIUM_CUBE(24, 35.132),
-        MEDIUM_CONE_RELEASE(24, 33.132),
-        HIGH_CONE(35, 54.132),
-        HIGH_CUBE(35, 52.132),
-        HIGH_CONE_RELEASE(35, 50.132),
-        HUMAN_PLAYER_PICKUP(20, 50.132);
+        HOME_WITH_GAMEPIECE(6.6, -11.92+2), // Default position
+        PICKUP(5.5, -11.92, true),
+        // CUBE_PICKUP(8.2, -9.95, true),
+        PICKUP_OUTSIDE_FRAME(23.55, -9.66),
+        HUMAN_PLAYER_PICKUP(21.375, 40),
+
+        BOTTOM_CONE(21.375, -5.7),
+        MIDDLE_CONE(36, 28.03),
+        MIDDLE_CONE_RELEASE(36, 28.03-7),
+        TOP_CONE(53, 39),
+        TOP_CONE_RELEASE(53, 39-7),
+
+        BOTTOM_CUBE(21.375, -7),
+        MIDDLE_CUBE(36, 15.5),
+        TOP_CUBE(53.03, 27.8);
+        
 
         private boolean slowAcceleration;
         public DoubleEntry x_entry;
@@ -48,7 +50,7 @@ public class ArmConfig {
             this.slowAcceleration = slowAcceleration;
 
             if (x < x_lower || x > x_upper || z < z_lower || z > z_upper ||
-                Math.hypot(x, z) > L1 + L2 - 0.3
+                Math.hypot(x, z) > L1 + L2 //66.35
             ) {
                 x = homeX;
                 z = homeZ;
