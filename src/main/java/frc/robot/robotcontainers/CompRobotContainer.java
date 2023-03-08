@@ -135,7 +135,9 @@ public class CompRobotContainer extends RobotContainer {
 
     boolean isTop = true;
 
-    armStick.a().onTrue(new SetAngleArm(85, false, false).alongWith(new SetAngleArm(20, true, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
+    armStick.a().onTrue(new SetAngleArm(85, false, false).alongWith(new SetAngleArm(20, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
+              //  .andThen((new SetAngleArm(85, false, false)).alongWith(new SetAngleArm(20, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance()))));
+
     armStick.b().onTrue(new SetAngleArm(60, false, false).alongWith(new SetAngleArm(55, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
     armStick.y().onTrue(new SetAngleArm(70, false, false).alongWith(new SetAngleArm(105, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
     armStick.x().onTrue(new SetAngleArm(45, false, false).alongWith(new SetAngleArm(180, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));

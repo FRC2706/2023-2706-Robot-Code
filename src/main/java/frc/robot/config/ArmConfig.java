@@ -107,19 +107,19 @@ public class ArmConfig {
       public static final double bottomArmPositionConversionFactor = 2 * Math.PI / BOTTOM_NEO_GEAR_RATIO;
       public static final double bottomArmVelocityConversionFactor = bottomArmPositionConversionFactor / 60.0;
 
-      public static final double positionTolerance = Math.toRadians(1);
-      public static final double velocityTolerance = Math.toRadians(3);
+      public static final double positionTolerance = Math.toRadians(2);
+      public static final double velocityTolerance = Math.toRadians(5);
 
       // PID constants for top arm
-      public static final double top_arm_kP = 0.2; 
-      public static final double top_arm_kI = 0;
+      public static final double top_arm_kP = 0.23; 
+      public static final double top_arm_kI = 0.0001;
       public static final double top_arm_kD = 0;
-      public static final double top_arm_kIz = 0;
+      public static final double top_arm_kIz = 0.3;
       public static final double top_arm_kFF = 0;
 
       // PID constants for bottom arm
       public static final double bottom_arm_kP = 0.900000;
-      public static final double bottom_arm_kI = 0;
+      public static final double bottom_arm_kI = 0.0;
       public static final double bottom_arm_kD = 0.900000;
       public static final double bottom_arm_kIz = 0;
       public static final double bottom_arm_kFF = 0;
@@ -155,7 +155,7 @@ public class ArmConfig {
       // Syncing encoders
       public static double ENCODER_SYNCING_PERIOD = 0.2; // seconds
       public static int ENCODER_SYNCING_TIMEOUT = 20; // seconds
-      public static double ENCODER_SYNCING_TOLARANCE = 0.0017; // radians
+      public static double ENCODER_SYNCING_TOLARANCE = 0.008; // radians
       public static int NUM_SYNCING_SAMPLES = 20; // num of samples needed to average
 
 }

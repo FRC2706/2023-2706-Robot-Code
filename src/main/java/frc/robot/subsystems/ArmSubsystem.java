@@ -316,11 +316,22 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setTopJoint(double angle) {
+    if (angle < 25 && getTopVel() < -1.5) {
+      angle = 24;
+    }
+
     double pidSetpoint = m_topPID.getPIDSetpoint(angle); 
-    m_pidControllerTopArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFTop() );//+ m_topSimpleFF.calculate(m_topPID.getSetpoint().velocity, acceleration));
+
+    double slowDownVoltage = 0;
+    if (getTopVel() < -2.2) {
+      slowDownVoltage += 0.6;
+    }
+    if (getTopPosition() < 40 && getTopVel() < -1.3) {
+      slowDownVoltage += getTopVel() * -0.8;
+    }
+
+    m_pidControllerTopArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFTop() + slowDownVoltage);//+ m_topSimpleFF.calculate(m_topPID.getSetpoint().velocity, acceleration));
     m_topArmSetpointPub.accept(Math.toDegrees(angle));
-
-
   }
 
   public void resetEncoder(double bottom_position, double top_position) {
