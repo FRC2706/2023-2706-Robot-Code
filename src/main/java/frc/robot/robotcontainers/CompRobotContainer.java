@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.commands.AlignToTargetVision;
-import frc.robot.commands.ArmCommandExample;
+import frc.robot.commands.ArmCommandSelector;
 import frc.robot.commands.ArmFFTestCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ResetGyro;
