@@ -118,6 +118,18 @@ public class CompRobotContainer extends RobotContainer {
     operator.back().whileTrue(new IntakeCommand(3, setState));
     operator.start().whileTrue(new IntakeCommand(2, setState));
 
+    // Temporary operator brake control for hardware to test (REMOVE LATER)
+    operator.leftTrigger().toggleOnTrue(Commands.startEnd(
+      () -> ArmSubsystem.getInstance().controlBottomArmBrake(true), 
+      () -> ArmSubsystem.getInstance().controlBottomArmBrake(false)));
+
+    // Temporary operator brake control for hardware to test (REMOVE LATER)
+    operator.rightTrigger().toggleOnTrue(Commands.startEnd(
+      () -> ArmSubsystem.getInstance().controlTopArmBrake(true), 
+      () -> ArmSubsystem.getInstance().controlTopArmBrake(false)));
+
+
+
 
     
     Command angleSetPoint1 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state1, state1, state1, state1}, true), SwerveSubsystem.getInstance());
