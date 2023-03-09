@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.commands.AlignToTargetVision;
-import frc.robot.commands.ArmCommandExample;
+import frc.robot.commands.ArmCommandSelector;
 import frc.robot.commands.ArmFFTestCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ResetGyro;
@@ -117,6 +117,18 @@ public class CompRobotContainer extends RobotContainer {
     operator.rightBumper().whileTrue(new IntakeCommand(1, setState));
     operator.back().whileTrue(new IntakeCommand(3, setState));
     operator.start().whileTrue(new IntakeCommand(2, setState));
+
+    // Temporary operator brake control for hardware to test (REMOVE LATER)
+    operator.leftTrigger().toggleOnTrue(Commands.startEnd(
+      () -> ArmSubsystem.getInstance().controlBottomArmBrake(true), 
+      () -> ArmSubsystem.getInstance().controlBottomArmBrake(false)));
+
+    // Temporary operator brake control for hardware to test (REMOVE LATER)
+    operator.rightTrigger().toggleOnTrue(Commands.startEnd(
+      () -> ArmSubsystem.getInstance().controlTopArmBrake(true), 
+      () -> ArmSubsystem.getInstance().controlTopArmBrake(false)));
+
+
 
 
     

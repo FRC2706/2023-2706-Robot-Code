@@ -80,6 +80,11 @@ public class ArmConfig {
             return z_entry.get();
         }
       }
+      public enum ArmPosition {
+        GAME_PIECE_TOP,
+        GAME_PIECE_MIDDLE,
+        GAME_PIECE_BOTTOM
+      }
     
       public static final double TOP_NEO_GEAR_RATIO = Config.robotSpecific(23.5, 0.0, 0.0, 0.0, 0.0, 60.0, 60.0); //comp --> 23.5
       public static final double BOTTOM_NEO_GEAR_RATIO = 62.5;  
