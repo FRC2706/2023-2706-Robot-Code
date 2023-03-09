@@ -64,10 +64,22 @@ public class SetBlingCommand extends InstantCommand {
           setFire();
           break;
         case 8:
-          setStrobe();
+          setRgbFade();
           break;
         case 9:
-          setRgbFade();
+          setWhiteStrobe();
+          break;
+        case 10:
+          setRedStrobe();
+          break;
+        case 11:
+          setYellowStrobe();
+          break;
+        case 12:
+          setBlueStrobe();
+          break;
+        case 13:
+          setPurpleStrobe();
           break;
         default:
           break;
@@ -94,9 +106,37 @@ public class SetBlingCommand extends InstantCommand {
     bling.candle.animate(fireAnimation);
   }
 
-  public void setStrobe()
+  public void setWhiteStrobe()
   {
     StrobeAnimation strobeAnimation = new StrobeAnimation(255, 255, 255, 255, 0.8, 64);
+
+    bling.candle.animate(strobeAnimation);
+  }
+
+  public void setPurpleStrobe()
+  {
+    StrobeAnimation strobeAnimation = new StrobeAnimation(138, 43, 226, 127, 0.001, 64); //TODO: test all of the rgbw bling values
+
+    bling.candle.animate(strobeAnimation);
+  }
+
+  public void setRedStrobe()
+  {
+    StrobeAnimation strobeAnimation = new StrobeAnimation(255, 0, 0, 127, 0.001, 64);
+
+    bling.candle.animate(strobeAnimation);
+  }
+
+  public void setBlueStrobe()
+  {
+    StrobeAnimation strobeAnimation = new StrobeAnimation(0, 0, 255, 127, 0.001, 64);
+
+    bling.candle.animate(strobeAnimation);
+  }
+
+  public void setYellowStrobe()
+  {
+    StrobeAnimation strobeAnimation = new StrobeAnimation(255, 255, 0, 127, 0.001, 64);
 
     bling.candle.animate(strobeAnimation);
   }
