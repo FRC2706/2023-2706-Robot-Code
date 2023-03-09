@@ -18,7 +18,6 @@ public class ArmCommand extends CommandBase {
   double[] angles;
   double angle1;
   double angle2;
-  private final boolean m_slowerAcceleration;
 
   // arm simulation variables
   ArmDisplay armDisplay;
@@ -26,9 +25,8 @@ public class ArmCommand extends CommandBase {
 
   /** Creates a new ArmExtend. */
   
-  public ArmCommand(ArmSetpoint armSetpoint, boolean slowerAcceleration) {
+  public ArmCommand(ArmSetpoint armSetpoint) {
     this.armSetpoint = armSetpoint;
-    this.m_slowerAcceleration = slowerAcceleration;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(ArmSubsystem.getInstance());
   }
@@ -54,7 +52,7 @@ public class ArmCommand extends CommandBase {
     ArmSubsystem.getInstance().updateSetpointDisplay(angle1, angle2);
 
     ArmSubsystem.getInstance().setTopJoint(angle2);
-    ArmSubsystem.getInstance().setBottomJoint(angle1);
+    ArmSubsystem.getInstance().setBottomJoint(angle1, angle2);
   }
 
   // Called once the command ends or is interrupted.

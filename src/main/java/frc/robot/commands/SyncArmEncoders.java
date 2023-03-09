@@ -87,16 +87,18 @@ public class SyncArmEncoders extends CommandBase {
         m_permanantTimer.stop();
         m_smallTimer.stop();
 
-        if (ArmSubsystem.getInstance().getBottomPosition() < ArmConfig.bottom_arm_reverse_limit ||
-            ArmSubsystem.getInstance().getBottomPosition() > ArmConfig.bottom_arm_forward_limit ||
-            ArmSubsystem.getInstance().getTopPosition() < ArmConfig.top_arm_reverse_limit ||
-            ArmSubsystem.getInstance().getTopPosition() > ArmConfig.top_arm_forward_limit ||
+        if (
+            // ((float) ArmSubsystem.getInstance().getBottomPosition() )< Math.toRadians(40) ||
+            // ((float) ArmSubsystem.getInstance().getBottomPosition() )> ArmConfig.bottom_arm_forward_limit ||
+            // ((float) ArmSubsystem.getInstance().getTopPosition() )< ArmConfig.top_arm_reverse_limit ||
+            // ((float) ArmSubsystem.getInstance().getTopPosition() )> ArmConfig.top_arm_forward_limit ||
             
             /** Temporary checks for current encoder setup. TODO: Remove once encoder wrapping is solved.*/
-            ArmSubsystem.getInstance().getBottomPosition() < 70 ||
-            ArmSubsystem.getInstance().getBottomPosition() > 100 ||
-            ArmSubsystem.getInstance().getTopPosition() < 10 ||
-            ArmSubsystem.getInstance().getTopPosition() > 35 ||
+            ArmSubsystem.getInstance().getBottomPosition() < Math.toRadians(70) ||
+            ArmSubsystem.getInstance().getBottomPosition() > Math.toRadians(100) ||
+            ArmSubsystem.getInstance().getTopPosition() < Math.toRadians(10) ||
+            ArmSubsystem.getInstance().getTopPosition() > Math.toRadians(35) ||
+            ArmSubsystem.getInstance().areEncodersSynced() == false ||
             m_commandState != 99
             ) {
             

@@ -275,7 +275,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_topAbsoluteEncoder.accept(Math.toDegrees(getAbsoluteTop()));
     m_bottomAbsoluteEncoder.accept(Math.toDegrees(getAbsoluteBottom()));
 
-    armDisplay.updateMeasurementDisplay(topPosition, bottomPosition);
+    armDisplay.updateMeasurementDisplay(bottomPosition, topPosition);
   }
 
   public void setConstraintsTop(boolean slowerAcceleration) {
@@ -309,15 +309,18 @@ public class ArmSubsystem extends SubsystemBase {
     return angles;
   }
 
-  public void setBottomJoint(double angle) { 
-    double pidSetpoint = m_bottomPID.getPIDSetpoint(angle); 
+  public void setBottomJoint(double angle_bottom, double angle_top) { 
+    if (angle_top > Math.toRadians(20) && getTopPosition() < Math.toRadians(20)) {
+      angle_bottom = Math.toRadians(95);
+    }
+    double pidSetpoint = m_bottomPID.getPIDSetpoint(angle_bottom); 
     m_pidControllerBottomArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFBottom(m_bottomEncoder.getPosition(), m_topEncoder.getPosition(), m_hasCone)); 
-    m_bottomArmSetpointPub.accept(Math.toDegrees(angle));
+    m_bottomArmSetpointPub.accept(Math.toDegrees(angle_bottom));
   }
 
   public void setTopJoint(double angle) {
-    if (angle < 25 && getTopVel() < -1.5) {
-      angle = 24;
+    if (angle < Math.toRadians(25) && getTopVel() < -1.5) {
+      angle = Math.toRadians(24);
     }
 
     double pidSetpoint = m_topPID.getPIDSetpoint(angle); 

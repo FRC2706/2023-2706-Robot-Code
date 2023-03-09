@@ -52,7 +52,7 @@ public class SetAngleArm extends CommandBase {
       ArmSubsystem.getInstance().setTopJoint(angle);
     }
     else {
-      ArmSubsystem.getInstance().setBottomJoint(angle);
+      ArmSubsystem.getInstance().setBottomJoint(angle, 0);
     }
   }
 

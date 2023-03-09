@@ -21,18 +21,17 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.commands.AlignToTargetVision;
-import frc.robot.commands.ArmCommandSelector;
+import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmFFTestCommand;
-import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.GripperCommand;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
 import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.RotateXYSupplier;
-import frc.robot.commands.SetAngleArm;
 import frc.robot.commands.SwerveTeleop;
 import frc.robot.commands.TranslationCommand;
-import frc.robot.config.Config;
+import frc.robot.config.ArmConfig;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.RelaySubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -114,9 +113,9 @@ public class CompRobotContainer extends RobotContainer {
 
 
     // Operator Joystick
-    operator.rightBumper().whileTrue(new IntakeCommand(1, setState));
-    operator.back().whileTrue(new IntakeCommand(3, setState));
-    operator.start().whileTrue(new IntakeCommand(2, setState));
+    operator.rightBumper().whileTrue(new GripperCommand(1, setState));
+    operator.back().whileTrue(new GripperCommand(3, setState));
+    operator.start().whileTrue(new GripperCommand(2, setState));
 
     // Temporary operator brake control for hardware to test (REMOVE LATER)
     operator.leftTrigger().toggleOnTrue(Commands.startEnd(
@@ -147,12 +146,18 @@ public class CompRobotContainer extends RobotContainer {
 
     boolean isTop = true;
 
-    armStick.a().onTrue(new SetAngleArm(85, false, false).alongWith(new SetAngleArm(20, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
-              //  .andThen((new SetAngleArm(85, false, false)).alongWith(new SetAngleArm(20, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance()))));
+    // armStick.a().onTrue(new SetAngleArm(85, false, false).alongWith(new SetAngleArm(20, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
+    //           //  .andThen((new SetAngleArm(85, false, false)).alongWith(new SetAngleArm(20, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance()))));
 
-    armStick.b().onTrue(new SetAngleArm(60, false, false).alongWith(new SetAngleArm(55, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
-    armStick.y().onTrue(new SetAngleArm(70, false, false).alongWith(new SetAngleArm(105, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
-    armStick.x().onTrue(new SetAngleArm(45, false, false).alongWith(new SetAngleArm(180, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
+    // armStick.b().onTrue(new SetAngleArm(60, false, false).alongWith(new SetAngleArm(55, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
+    // armStick.y().onTrue(new SetAngleArm(70, false, false).alongWith(new SetAngleArm(105, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
+    // armStick.x().onTrue(new SetAngleArm(45, false, false).alongWith(new SetAngleArm(180, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
+    
+    operator.a().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.BOTTOM_CONE));
+    operator.b().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.MIDDLE_CONE));
+    operator.y().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.TOP_CONE));
+    operator.x().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.PICKUP));
+    
 
 
     armStick.rightTrigger().toggleOnTrue(Commands.startEnd(
