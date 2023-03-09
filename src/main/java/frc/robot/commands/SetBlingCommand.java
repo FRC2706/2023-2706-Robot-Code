@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.BlingSubsystem;
 import com.ctre.phoenix.led.FireAnimation;
@@ -69,6 +71,21 @@ public class SetBlingCommand extends InstantCommand {
         case 9:
           setRgbFade();
           break;
+        case 10: //TODO: for testing purposes, may add to robot
+          bling.setOrange(); //Special set (only a certain amount of LEDs light up)
+          break; //remove break?
+        case 11:
+          setBlueStrobe();
+          break;
+        case 12: 
+          setYellowStrobe();
+          break;
+        case 13: 
+          setRedStrobe();
+          break;
+        case 14: 
+          setPurpleStrobe();
+          break;
         default:
           break;
       }
@@ -89,14 +106,35 @@ public class SetBlingCommand extends InstantCommand {
 
   public void setFire()
   {
-    FireAnimation fireAnimation = new FireAnimation(1, 0.000001, 64, 0.8, 0.4);
+    FireAnimation fireAnimation = new FireAnimation(1, 0.000001, 64, 3, 1);
 
     bling.candle.animate(fireAnimation);
   }
 
-  public void setStrobe()
+  public void setPurpleStrobe()
   {
-    StrobeAnimation strobeAnimation = new StrobeAnimation(255, 255, 255, 255, 0.8, 64);
+    StrobeAnimation strobeAnimation = new StrobeAnimation(138, 43, 226, 127, 0.001, 64); //TODO: test all of the rgbw bling values
+
+    bling.candle.animate(strobeAnimation);
+  }
+
+  public void setRedStrobe()
+  {
+    StrobeAnimation strobeAnimation = new StrobeAnimation(255, 0, 0, 127, 0.001, 64);
+
+    bling.candle.animate(strobeAnimation);
+  }
+
+  public void setBlueStrobe()
+  {
+    StrobeAnimation strobeAnimation = new StrobeAnimation(0, 0, 255, 127, 0.001, 64);
+
+    bling.candle.animate(strobeAnimation);
+  }
+
+  public void setYellowStrobe()
+  {
+    StrobeAnimation strobeAnimation = new StrobeAnimation(255, 255, 0, 127, 0.001, 64);
 
     bling.candle.animate(strobeAnimation);
   }
@@ -106,6 +144,22 @@ public class SetBlingCommand extends InstantCommand {
     RgbFadeAnimation rgbFadeAnimation = new RgbFadeAnimation(0.7, 0.1, 64);
 
     bling.candle.animate(rgbFadeAnimation);
+  }
+
+  PowerDistribution pd = new PowerDistribution(0, ModuleType.kCTRE);
+
+  boolean checkBatteryVoltageConstantly = true;
+
+  // Get the voltage going into the PDP, in Volts.
+  // The PDP returns the voltage in increments of 0.05 Volts.
+  double voltage = PowerDistribution.ModuleType.class.m_pdp.getVoltage();
+  SmartDashboard.putNumber("Voltage", voltage);
+
+  while (checkBatteryVoltageConstantly = true) {
+    if (voltage <= 12.50); { //TODO:  Using 12.50 Volts for now, may change later 
+      bling.setOrange(); //Test to see if this replaces a current bling colour or not
+      checkBatteryVoltageConstantly = false; //TODO: Check if its ok that: putting this basically means it will be low voltage once below or equal to 12.50 V all the way until the robot is turned off (because then the battery would be changed)
+    }
   }
 
 }
