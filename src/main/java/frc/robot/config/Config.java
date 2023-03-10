@@ -127,8 +127,7 @@ public class Config {
         public static int INDEXER = robotSpecific(-01, 7, 7, -1);
     }
     
-    public static int ANALOG_SELECTOR_PORT_ONE = robotSpecific(-01, 0, 0, -1);
-    public static int ANALOG_SELECTOR_PORT_TWO = robotSpecific(-01, -1, -1, -1);
+    public static int ANALOG_SELECTOR_PORT = robotSpecific(0, -1, -1, -1, -1);
     
     /**
      * Swerve Drive Constants
