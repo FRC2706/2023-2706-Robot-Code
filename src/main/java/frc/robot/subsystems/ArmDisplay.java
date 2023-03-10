@@ -5,9 +5,10 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -36,6 +37,10 @@ public class ArmDisplay extends SubsystemBase {
 
     m_mech2d = new Mechanism2d(windowX, windowY);
 
+    MechanismRoot2d m_arm1PivotPoint = m_mech2d.getRoot("ArmBumperPoint", pivot1X+13.4, pivot1Y-14.7+3);
+    m_arm1PivotPoint.append(new MechanismLigament2d("ArmBumperRectangle", Units.metersToInches(1), -180, 35, new Color8Bit(Color.kBlue)));
+        
+
     m_setpointDisplay = new DoubleJointArmDisplay(m_mech2d, 3, new Color8Bit(Color.kGreen), "Setpoint");
     m_measurementDisplay = new DoubleJointArmDisplay(m_mech2d, 12, new Color8Bit(Color.kRed), "Measurement");
 
@@ -56,7 +61,7 @@ public class ArmDisplay extends SubsystemBase {
 
     private DoubleJointArmDisplay(Mechanism2d mech2d, double lineWidth, Color8Bit color, String name) {
         MechanismRoot2d m_arm1PivotPoint = mech2d.getRoot(name+"Arm1Pivot", pivot1X, pivot1Y);
-        m_arm1PivotPoint.append(new MechanismLigament2d(name+"ArmTower", 15, -90, 20, new Color8Bit(Color.kBlue)));
+        m_arm1PivotPoint.append(new MechanismLigament2d(name+"ArmTower", 13, -90, 20, new Color8Bit(Color.kBlue)));
         
         m_arm1Line = new MechanismLigament2d(name+"Arm1Line", length1, 80, lineWidth, color);
         m_arm1PivotPoint.append(m_arm1Line);

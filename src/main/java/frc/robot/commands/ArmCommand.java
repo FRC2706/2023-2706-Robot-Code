@@ -40,7 +40,12 @@ public class ArmCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    index = 0;
+    if (armSetpoint.getWaypoint().length == 0) {
+      index = 99;
+    } else {
+      index = 0;
+    }
+    
     ArmSubsystem.getInstance().resetMotionProfile();
     ArmSubsystem.getInstance().controlTopArmBrake(false);
     ArmSubsystem.getInstance().controlBottomArmBrake(false);

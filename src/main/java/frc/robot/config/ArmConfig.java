@@ -26,21 +26,22 @@ public class ArmConfig {
     // NetworkTable setpointsTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTableSetpoints); 
 
     public enum ArmSetpoint {
-        HOME_WITH_GAMEPIECE(6.6, -11.92+2, new ArmWaypoint(12, 0)), // Default position
-        PICKUP(5.5, -11.92, new ArmWaypoint(12, 0)),
-        // CUBE_PICKUP(8.2, -9.95, true),
-        PICKUP_OUTSIDE_FRAME(23.55, -9.66, new ArmWaypoint(8, -3)),
-        HUMAN_PLAYER_PICKUP(21.375, 40, new ArmWaypoint(10, 15)),
+        HOME_AFTER_PICKUP(11, -8),// Default position
+        HOME_WITH_GAMEPIECE(11, -8, new ArmWaypoint(19, -3)), 
+        
+        PICKUP(5.5, -11.92, new ArmWaypoint(19, -3), new ArmWaypoint(10, -8)),
+        PICKUP_OUTSIDE_FRAME(23.55, -9.66, new ArmWaypoint(14, -8)), // CHECK
+        HUMAN_PLAYER_PICKUP(30, 40, new ArmWaypoint(14, -7)), // NOT DONE
 
-        BOTTOM_CONE(21.375, -5.7, new ArmWaypoint(8, -3)),
-        MIDDLE_CONE(36, 28.03, new ArmWaypoint(10, 15)),
-        MIDDLE_CONE_RELEASE(36, 28.03-7, new ArmWaypoint(10, 15)),
-        TOP_CONE(53, 39, new ArmWaypoint(10, 15)),
+        BOTTOM_CONE(21.375, -5.7),
+        MIDDLE_CONE(36, 28.03, new ArmWaypoint(22, -1)), 
+        MIDDLE_CONE_RELEASE(36, 28.03-7), 
+        TOP_CONE(53, 39, new ArmWaypoint(24, 1)),
         TOP_CONE_RELEASE(53, 39-7),
 
-        BOTTOM_CUBE(21.375, -7, new ArmWaypoint(8, -3)),
-        MIDDLE_CUBE(36, 15.5, new ArmWaypoint(10, 15)),
-        TOP_CUBE(53.03, 27.8, new ArmWaypoint(10, 15));
+        BOTTOM_CUBE(21.375, -7),
+        MIDDLE_CUBE(36, 15.5, new ArmWaypoint(22, -1)),
+        TOP_CUBE(53.03, 27.8, new ArmWaypoint(24, 1));
         
 
         public DoubleEntry x_entry;
@@ -126,11 +127,11 @@ public class ArmConfig {
 
       // soft limit constants for top arm
       public static final float top_arm_forward_limit = (float)Math.toRadians(190); 
-      public static final float top_arm_reverse_limit = (float)Math.toRadians(15); 
+      public static final float top_arm_reverse_limit = (float)Math.toRadians(10); 
       public static final boolean TOP_SOFT_LIMIT_ENABLE = true;
     
       // soft limit constants for bottom arm
-      public static final float bottom_arm_forward_limit = (float)Math.toRadians(95);
+      public static final float bottom_arm_forward_limit = (float)Math.toRadians(105);
       public static final float bottom_arm_reverse_limit = (float)Math.toRadians(40);
       public static final boolean BOTTOM_SOFT_LIMIT_ENABLE = true;
 
