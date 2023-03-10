@@ -8,19 +8,19 @@ package frc.robot.subsystems;
 public class ArmWaypoint {
 
     private double x;
-    private double low_x_range;
-    private double high_x_range;
     private double z;
-    private double low_z_range;
-    private double high_z_range;
 
     public ArmWaypoint(double x, double z) {
         this.x = x;
         this.z = z;
+    }
 
-        
+    public double getX() {
+        return x;
+    }
 
-
+    public double getZ() {
+        return z;
     }
 
 }
