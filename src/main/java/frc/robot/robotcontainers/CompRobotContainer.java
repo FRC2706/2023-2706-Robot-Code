@@ -23,7 +23,6 @@ import frc.robot.Robot;
 import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommandSelector;
 import frc.robot.commands.ArmFFTestCommand;
-import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
 import frc.robot.commands.ResetOdometry;
@@ -113,10 +112,6 @@ public class CompRobotContainer extends RobotContainer {
     ));
 
 
-    // Operator Joystick
-    operator.rightBumper().whileTrue(new IntakeCommand(1, setState));
-    operator.back().whileTrue(new IntakeCommand(3, setState));
-    operator.start().whileTrue(new IntakeCommand(2, setState));
 
     // Temporary operator brake control for hardware to test (REMOVE LATER)
     operator.leftTrigger().toggleOnTrue(Commands.startEnd(
