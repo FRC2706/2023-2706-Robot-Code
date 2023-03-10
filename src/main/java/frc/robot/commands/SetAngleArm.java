@@ -35,11 +35,9 @@ public class SetAngleArm extends CommandBase {
   @Override
   public void initialize() {
     if (isTop) {
-      ArmSubsystem.getInstance().setConstraintsTop(m_slowerAcceleration);
       ArmSubsystem.getInstance().controlTopArmBrake(false);
     }
     else {
-      ArmSubsystem.getInstance().setConstraintsBottom(m_slowerAcceleration);
       ArmSubsystem.getInstance().controlBottomArmBrake(false);
     }
     ArmSubsystem.getInstance().resetMotionProfile();

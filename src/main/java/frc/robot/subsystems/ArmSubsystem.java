@@ -171,10 +171,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     m_pidControllerTopArm = m_topArm.getPIDController();
     m_pidControllerBottomArm = m_bottomArm.getPIDController();
-    m_topPID = new ProfileExternalPIDController(new Constraints(0, 0));
-    m_bottomPID = new ProfileExternalPIDController(new Constraints(0, 0));
-    setConstraintsTop(true);
-    setConstraintsBottom(true);
+    m_topPID = new ProfileExternalPIDController(new Constraints(ArmConfig.TOP_MAX_VEL, ArmConfig.TOP_MAX_ACCEL));
+    m_bottomPID = new ProfileExternalPIDController(new Constraints(ArmConfig.BOTTOM_MAX_VEL, ArmConfig.BOTTOM_MAX_ACCEL));
 
     m_bottomEncoder = m_bottomArm.getEncoder();
     m_topEncoder = m_topArm.getEncoder();
@@ -278,22 +276,6 @@ public class ArmSubsystem extends SubsystemBase {
     armDisplay.updateMeasurementDisplay(bottomPosition, topPosition);
   }
 
-  public void setConstraintsTop(boolean slowerAcceleration) {
-    if (slowerAcceleration) {
-        m_topPID.setConstraints(new Constraints(ArmConfig.TOP_SLOW_ACCEL_MAX_VEL, ArmConfig.TOP_SLOW_ACCEL_MAX_ACCEL));
-    } else {
-        m_topPID.setConstraints(new Constraints(ArmConfig.TOP_MAX_VEL, ArmConfig.TOP_MAX_ACCEL));
-    }
-  }
-
-  public void setConstraintsBottom(boolean slowerAcceleration) {
-    if (slowerAcceleration) {
-        m_bottomPID.setConstraints(new Constraints(ArmConfig.BOTTOM_SLOW_ACCEL_MAX_VEL, ArmConfig.BOTTOM_SLOW_ACCEL_MAX_ACCEL));
-    } else {
-        m_bottomPID.setConstraints(new Constraints(ArmConfig.BOTTOM_MAX_VEL, ArmConfig.BOTTOM_MAX_ACCEL));
-    }
-  }
-
   public void resetMotionProfile() {
     m_topPID.reset(m_topEncoder.getPosition(), m_topEncoder.getVelocity());
     m_bottomPID.reset(m_bottomEncoder.getPosition(), m_bottomEncoder.getVelocity());
@@ -333,7 +315,7 @@ public class ArmSubsystem extends SubsystemBase {
       slowDownVoltage += getTopVel() * -0.8;
     }
 
-    m_pidControllerTopArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFTop() + slowDownVoltage);//+ m_topSimpleFF.calculate(m_topPID.getSetpoint().velocity, acceleration));
+    m_pidControllerTopArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFTop(m_hasCone) + slowDownVoltage);//+ m_topSimpleFF.calculate(m_topPID.getSetpoint().velocity, acceleration));
     m_topArmSetpointPub.accept(Math.toDegrees(angle));
   }
 
@@ -342,9 +324,21 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArm.getEncoder().setPosition(bottom_position);
   }
 
-  private double calculateFFTop() {
+  private double calculateFFTop(boolean haveCone) {
     double enc2AtHorizontal = getTopPosition() - (Math.PI - getBottomPosition());
-    return m_topArmVoltsAtHorizontal.get() * Math.cos(enc2AtHorizontal);
+    double voltsAtHorizontal;
+    if (haveCone) {
+      voltsAtHorizontal = ArmConfig.TOP_HORIZONTAL_VOLTAGE_CONE;
+    }
+    else {
+      voltsAtHorizontal = m_topArmVoltsAtHorizontal.get();
+    }
+    if (getTopVel() < -1.5) {
+      return voltsAtHorizontal * Math.cos(enc2AtHorizontal) * 1.5;
+    }
+    else {
+      return voltsAtHorizontal * Math.cos(enc2AtHorizontal);
+    }
   }
 
   private double calculateFFBottom(double encoder1Rad, double encoder2Rad, boolean haveCone) {
@@ -369,7 +363,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void testFeedForwardTop(double additionalVoltage) {
-    double voltage = additionalVoltage + calculateFFTop();
+    double voltage = additionalVoltage + calculateFFTop(m_hasCone);
     m_pidControllerTopArm.setReference(voltage, ControlType.kVoltage);
     m_topArmFFTestingVolts.accept(voltage);
 }
@@ -455,8 +449,8 @@ public class ArmSubsystem extends SubsystemBase {
    * @return Whether the encoders are synced or not
    */
   public boolean areEncodersSynced() {
-    return Math.abs(getAbsoluteBottom() - getBottomPosition()) < ArmConfig.ENCODER_SYNCING_TOLARANCE &&
-           Math.abs(getAbsoluteTop() - getTopPosition()) < ArmConfig.ENCODER_SYNCING_TOLARANCE;
+    return Math.abs(getAbsoluteBottom() - getBottomPosition()) < ArmConfig.ENCODER_SYNCING_TOLERANCE &&
+           Math.abs(getAbsoluteTop() - getTopPosition()) < ArmConfig.ENCODER_SYNCING_TOLERANCE;
 
   }
 }

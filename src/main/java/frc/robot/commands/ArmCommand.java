@@ -9,6 +9,7 @@ import frc.robot.config.ArmConfig;
 import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.subsystems.ArmDisplay;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ArmWaypoint;
 
 public class ArmCommand extends CommandBase {
   ArmSetpoint armSetpoint;
@@ -18,6 +19,9 @@ public class ArmCommand extends CommandBase {
   double[] angles;
   double angle1;
   double angle2;
+  int index;
+  double tempX;
+  double tempZ;
 
   // arm simulation variables
   ArmDisplay armDisplay;
@@ -36,7 +40,7 @@ public class ArmCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    ArmSubsystem.getInstance().setConstraintsTop(armSetpoint.getSlowAccel());
+    index = 0;
     ArmSubsystem.getInstance().resetMotionProfile();
     ArmSubsystem.getInstance().controlTopArmBrake(false);
     ArmSubsystem.getInstance().controlBottomArmBrake(false);
@@ -45,14 +49,38 @@ public class ArmCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    angles = ArmSubsystem.getInstance().inverseKinematics(ArmConfig.L1, ArmConfig.L2, armSetpoint.getX(), armSetpoint.getZ());
+    ArmWaypoint waypoint = armSetpoint.getWaypoint()[index];
+
+    if (index == 99) {
+      tempX = armSetpoint.getX();
+      tempZ = armSetpoint.getZ();
+    }
+    else {
+      tempX = waypoint.getX();
+      tempZ = waypoint.getZ();
+    }
+
+    angles = ArmSubsystem.getInstance().inverseKinematics(ArmConfig.L1, ArmConfig.L2, tempX, tempZ);
     angle1 = angles[0];
     angle2 = angles[1];
+
 
     ArmSubsystem.getInstance().updateSetpointDisplay(angle1, angle2);
 
     ArmSubsystem.getInstance().setTopJoint(angle2);
     ArmSubsystem.getInstance().setBottomJoint(angle1, angle2);
+
+    if (Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.positionTolerance &&
+    Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.positionTolerance &&
+    Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.velocityTolerance &&
+     Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance) {
+      if (index == armSetpoint.getWaypoint().length - 1) {
+        index = 99;
+      }
+      else {
+        index += 1;
+      }
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -71,7 +99,7 @@ public class ArmCommand extends CommandBase {
     if (Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.positionTolerance &&
      Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.positionTolerance &&
      Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.velocityTolerance &&
-      Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance) {
+      Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance && index == 99) {
         return true;
       }
     else {

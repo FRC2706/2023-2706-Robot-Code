@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.subsystems.ArmWaypoint;
 
 /** Add your docs here. */
 public class ArmConfig {
@@ -25,29 +26,29 @@ public class ArmConfig {
     // NetworkTable setpointsTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTableSetpoints); 
 
     public enum ArmSetpoint {
-        HOME_WITH_GAMEPIECE(6.6, -11.92+2), // Default position
-        PICKUP(5.5, -11.92, true),
+        HOME_WITH_GAMEPIECE(6.6, -11.92+2, new ArmWaypoint(12, 0)), // Default position
+        PICKUP(5.5, -11.92, new ArmWaypoint(12, 0)),
         // CUBE_PICKUP(8.2, -9.95, true),
-        PICKUP_OUTSIDE_FRAME(23.55, -9.66),
-        HUMAN_PLAYER_PICKUP(21.375, 40),
+        PICKUP_OUTSIDE_FRAME(23.55, -9.66, new ArmWaypoint(8, -3)),
+        HUMAN_PLAYER_PICKUP(21.375, 40, new ArmWaypoint(10, 15)),
 
-        BOTTOM_CONE(21.375, -5.7),
-        MIDDLE_CONE(36, 28.03),
-        MIDDLE_CONE_RELEASE(36, 28.03-7),
-        TOP_CONE(53, 39),
+        BOTTOM_CONE(21.375, -5.7, new ArmWaypoint(8, -3)),
+        MIDDLE_CONE(36, 28.03, new ArmWaypoint(10, 15)),
+        MIDDLE_CONE_RELEASE(36, 28.03-7, new ArmWaypoint(10, 15)),
+        TOP_CONE(53, 39, new ArmWaypoint(10, 15)),
         TOP_CONE_RELEASE(53, 39-7),
 
-        BOTTOM_CUBE(21.375, -7),
-        MIDDLE_CUBE(36, 15.5),
-        TOP_CUBE(53.03, 27.8);
+        BOTTOM_CUBE(21.375, -7, new ArmWaypoint(8, -3)),
+        MIDDLE_CUBE(36, 15.5, new ArmWaypoint(10, 15)),
+        TOP_CUBE(53.03, 27.8, new ArmWaypoint(10, 15));
         
 
-        private boolean slowAcceleration;
         public DoubleEntry x_entry;
         public DoubleEntry z_entry;
+        private ArmWaypoint waypoints[];
 
-        private ArmSetpoint(double x, double z, boolean slowAcceleration) {
-            this.slowAcceleration = slowAcceleration;
+        private ArmSetpoint(double x, double z, ArmWaypoint...waypoints) {
+            this.waypoints = waypoints;
 
             if (x < x_lower || x > x_upper || z < z_lower || z > z_upper ||
                 Math.hypot(x, z) > L1 + L2 //66.35
@@ -64,12 +65,8 @@ public class ArmConfig {
 
         }
 
-        private ArmSetpoint(double x, double z) {
-            this(x, z, false);
-        }
-
-        public boolean getSlowAccel() {
-            return slowAcceleration;
+        public ArmWaypoint[] getWaypoint() {
+            return waypoints;
         }
 
         public double getX() {
@@ -93,31 +90,25 @@ public class ArmConfig {
       public static final double LENGTH_BOTTOM_ARM_TO_COG = 14.56;
       public static final double LENGTH_TOP_ARM_TO_COG = 28.22;
       public static final double TOP_HORIZONTAL_VOLTAGE = 1.3;
+      public static final double TOP_HORIZONTAL_VOLTAGE_CONE = 1.7;
       public static final double BOTTOM_MOMENT_TO_VOLTAGE = 0.000005;
       public static final boolean TOP_SET_INVERTED = true;
       public static final boolean BOTTOM_SET_INVERTED = true;
       public static final int CURRENT_LIMIT = 40;
 
       // constants for arm constraints
-      public static final double TOP_SLOW_ACCEL_MAX_VEL = Math.PI * 3;
-      public static final double TOP_SLOW_ACCEL_MAX_ACCEL = Math.PI * 1.5; // radians/sec
       public static final double TOP_MAX_VEL = Math.PI * 12;
       public static final double TOP_MAX_ACCEL = Math.PI * 12;
-      public static final double BOTTOM_SLOW_ACCEL_MAX_VEL = Math.PI;
-      public static final double BOTTOM_SLOW_ACCEL_MAX_ACCEL = Math.PI * 0.5;
       public static final double BOTTOM_MAX_VEL = Math.PI * 2;
       public static final double BOTTOM_MAX_ACCEL = Math.PI * 2;
-
-      public static final double RESET_ENCODER_POSITION = Math.toRadians(-90);
-
 
       public static final double topArmPositionConversionFactor = 2 * Math.PI / TOP_NEO_GEAR_RATIO;
       public static final double topArmVelocityConversionFactor = topArmPositionConversionFactor / 60.0;
       public static final double bottomArmPositionConversionFactor = 2 * Math.PI / BOTTOM_NEO_GEAR_RATIO;
       public static final double bottomArmVelocityConversionFactor = bottomArmPositionConversionFactor / 60.0;
 
-      public static final double positionTolerance = Math.toRadians(2);
-      public static final double velocityTolerance = Math.toRadians(5);
+      public static final double positionTolerance = Math.toRadians(1);
+      public static final double velocityTolerance = Math.toRadians(1);
 
       // PID constants for top arm
       public static final double top_arm_kP = 0.23; 
@@ -164,7 +155,7 @@ public class ArmConfig {
       // Syncing encoders
       public static double ENCODER_SYNCING_PERIOD = 0.4; // seconds
       public static int ENCODER_SYNCING_TIMEOUT = 20; // seconds
-      public static double ENCODER_SYNCING_TOLARANCE = 0.008; // radians
+      public static double ENCODER_SYNCING_TOLERANCE = 0.008; // radians
       public static int NUM_SYNCING_SAMPLES = 20; // num of samples needed to average
 
 }
