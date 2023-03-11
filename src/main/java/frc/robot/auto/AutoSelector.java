@@ -60,11 +60,11 @@ public class AutoSelector {
         int autoId;
         String autoName = SmartDashboard.getString("Auto Selector", "Use Analog Selector");
 
-        System.out.println(autoName);
+        System.out.println("FRC Dashboard autoName: " +autoName);
 
         switch(autoName)
         {
-            case "Select Autonomous...  ":
+            case "Select Autonomous ...  ":
                 autoId = getAnalogSelectorIndex();
                 break;
             case "Use Analog Selector":
