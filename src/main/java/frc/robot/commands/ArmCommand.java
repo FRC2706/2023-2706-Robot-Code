@@ -54,13 +54,14 @@ public class ArmCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    ArmWaypoint waypoint = armSetpoint.getWaypoint()[index];
+    ArmWaypoint waypoint;
 
-    if (index == 99) {
+    if (index >= 99) {
       tempX = armSetpoint.getX();
       tempZ = armSetpoint.getZ();
     }
     else {
+      waypoint = armSetpoint.getWaypoint()[index];
       tempX = waypoint.getX();
       tempZ = waypoint.getZ();
     }
@@ -75,12 +76,18 @@ public class ArmCommand extends CommandBase {
     ArmSubsystem.getInstance().setTopJoint(angle2);
     ArmSubsystem.getInstance().setBottomJoint(angle1, angle2);
 
-    if (Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.positionTolerance &&
-    Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.positionTolerance &&
-    Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.velocityTolerance &&
-     Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance) {
-      if (index == armSetpoint.getWaypoint().length - 1) {
+    if (Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.waypointPositionTolerance &&
+    Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.waypointPositionTolerance &&
+    Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.waypointVelocityTolerance &&
+     Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointVelocityTolerance) {
+
+      if (index == armSetpoint.getWaypoint().length - 1 || armSetpoint.getWaypoint().length == 0) {
         index = 99;
+        tempX = armSetpoint.getX();
+        tempZ = armSetpoint.getZ();
+        angles = ArmSubsystem.getInstance().inverseKinematics(ArmConfig.L1, ArmConfig.L2, tempX, tempZ);
+        angle1 = angles[0];
+        angle2 = angles[1];
       }
       else {
         index += 1;
@@ -104,7 +111,7 @@ public class ArmCommand extends CommandBase {
     if (Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.positionTolerance &&
      Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.positionTolerance &&
      Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.velocityTolerance &&
-      Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance && index == 99) {
+      Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance && index >= 99) {
         return true;
       }
     else {

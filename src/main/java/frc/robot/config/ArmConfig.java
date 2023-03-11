@@ -26,10 +26,10 @@ public class ArmConfig {
     // NetworkTable setpointsTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTableSetpoints); 
 
     public enum ArmSetpoint {
-        HOME_AFTER_PICKUP(11, -8),// Default position
-        HOME_WITH_GAMEPIECE(11, -8, new ArmWaypoint(19, -3)), 
+        HOME_AFTER_PICKUP(17, 1.5),// Default position
+        HOME_WITH_GAMEPIECE(17, 1.5, new ArmWaypoint(19, -3)), 
         
-        PICKUP(5.5, -11.92, new ArmWaypoint(19, -3), new ArmWaypoint(10, -8)),
+        PICKUP(5.5, -11.6, new ArmWaypoint(19, -3), new ArmWaypoint(11, -9)),
         PICKUP_OUTSIDE_FRAME(23.55, -9.66, new ArmWaypoint(14, -8)), // CHECK
         HUMAN_PLAYER_PICKUP(30, 40, new ArmWaypoint(14, -7)), // NOT DONE
 
@@ -39,9 +39,9 @@ public class ArmConfig {
         TOP_CONE(53, 39, new ArmWaypoint(24, 1)),
         TOP_CONE_RELEASE(53, 39-7),
 
-        BOTTOM_CUBE(21.375, -7),
-        MIDDLE_CUBE(36, 15.5, new ArmWaypoint(22, -1)),
-        TOP_CUBE(53.03, 27.8, new ArmWaypoint(24, 1));
+        BOTTOM_CUBE(24, -7),
+        MIDDLE_CUBE(40.5, 27, new ArmWaypoint(22, -1)),
+        TOP_CUBE(53.03, 35, new ArmWaypoint(24, 1));
         
 
         public DoubleEntry x_entry;
@@ -52,7 +52,7 @@ public class ArmConfig {
             this.waypoints = waypoints;
 
             if (x < x_lower || x > x_upper || z < z_lower || z > z_upper ||
-                Math.hypot(x, z) > L1 + L2 //66.35
+                Math.hypot(x, z) > L1 + L2
             ) {
                 x = homeX;
                 z = homeZ;
@@ -90,16 +90,16 @@ public class ArmConfig {
       public static final double L2 = 38.6; //length of arm 2 in inches 
       public static final double LENGTH_BOTTOM_ARM_TO_COG = 14.56;
       public static final double LENGTH_TOP_ARM_TO_COG = 28.22;
-      public static final double TOP_HORIZONTAL_VOLTAGE = 1.3;
-      public static final double TOP_HORIZONTAL_VOLTAGE_CONE = 1.7;
+      public static final double TOP_HORIZONTAL_VOLTAGE = 1.5;
+      public static final double TOP_HORIZONTAL_VOLTAGE_CONE = 12.0;
       public static final double BOTTOM_MOMENT_TO_VOLTAGE = 0.000005;
       public static final boolean TOP_SET_INVERTED = true;
       public static final boolean BOTTOM_SET_INVERTED = true;
-      public static final int CURRENT_LIMIT = 40;
+      public static final int CURRENT_LIMIT = 60;
 
       // constants for arm constraints
-      public static final double TOP_MAX_VEL = Math.PI * 12;
-      public static final double TOP_MAX_ACCEL = Math.PI * 12;
+      public static final double TOP_MAX_VEL = Math.PI * 4;
+      public static final double TOP_MAX_ACCEL = Math.PI * 4;
       public static final double BOTTOM_MAX_VEL = Math.PI * 2;
       public static final double BOTTOM_MAX_ACCEL = Math.PI * 2;
 
@@ -108,15 +108,25 @@ public class ArmConfig {
       public static final double bottomArmPositionConversionFactor = 2 * Math.PI / BOTTOM_NEO_GEAR_RATIO;
       public static final double bottomArmVelocityConversionFactor = bottomArmPositionConversionFactor / 60.0;
 
-      public static final double positionTolerance = Math.toRadians(1);
+      public static final double positionTolerance = Math.toRadians(2);
       public static final double velocityTolerance = Math.toRadians(1);
 
+      public static final double waypointPositionTolerance = Math.toRadians(4);
+      public static final double waypointVelocityTolerance = Math.toRadians(4);
+
       // PID constants for top arm
-      public static final double top_arm_kP = 0.23; 
-      public static final double top_arm_kI = 0.0001;
-      public static final double top_arm_kD = 0;
-      public static final double top_arm_kIz = 0.3;
+      public static final double top_arm_kP = 0.8;//0.23; 
+      public static final double top_arm_kI = 0;// 0.0001;
+      public static final double top_arm_kD = 0;// 4.0;
+      public static final double top_arm_kIz = 0;// 0.3;
       public static final double top_arm_kFF = 0;
+
+      // PID constants for top arm
+      public static final double top_arm_kP2 = 1.5;//0.23; 
+      public static final double top_arm_kI2 = 0;// 0.0001;
+      public static final double top_arm_kD2 = 1.5;// 4.0;
+      public static final double top_arm_kIz2 = 0;// 0.3;
+      public static final double top_arm_kFF2 = 0;
 
       // PID constants for bottom arm
       public static final double bottom_arm_kP = 0.900000;
@@ -127,11 +137,11 @@ public class ArmConfig {
 
       // soft limit constants for top arm
       public static final float top_arm_forward_limit = (float)Math.toRadians(190); 
-      public static final float top_arm_reverse_limit = (float)Math.toRadians(10); 
+      public static final float top_arm_reverse_limit = (float)Math.toRadians(13); 
       public static final boolean TOP_SOFT_LIMIT_ENABLE = true;
     
       // soft limit constants for bottom arm
-      public static final float bottom_arm_forward_limit = (float)Math.toRadians(105);
+      public static final float bottom_arm_forward_limit = (float)Math.toRadians(120);
       public static final float bottom_arm_reverse_limit = (float)Math.toRadians(40);
       public static final boolean BOTTOM_SOFT_LIMIT_ENABLE = true;
 
@@ -156,7 +166,7 @@ public class ArmConfig {
       // Syncing encoders
       public static double ENCODER_SYNCING_PERIOD = 0.4; // seconds
       public static int ENCODER_SYNCING_TIMEOUT = 20; // seconds
-      public static double ENCODER_SYNCING_TOLERANCE = 0.008; // radians
+      public static double ENCODER_SYNCING_TOLERANCE = 0.01; // radians
       public static int NUM_SYNCING_SAMPLES = 20; // num of samples needed to average
 
 }

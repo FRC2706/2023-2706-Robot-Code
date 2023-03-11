@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.commands.AlignToTargetVision;
@@ -33,6 +34,7 @@ import frc.robot.commands.SwerveTeleop;
 import frc.robot.commands.TranslationCommand;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.config.ArmConfig;
+import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.RelaySubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -114,9 +116,9 @@ public class CompRobotContainer extends RobotContainer {
 
 
     // Operator Joystick
-    operator.rightBumper().whileTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));
-    operator.back().whileTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, setState));
-    operator.start().whileTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, setState));
+    operator.rightBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));
+    operator.back().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, setState).andThen(new WaitCommand(0.2)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+    operator.start().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, setState).andThen(new WaitCommand(0.2)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
 
     // Temporary operator brake control for hardware to test (REMOVE LATER)
     operator.leftTrigger().toggleOnTrue(Commands.startEnd(
@@ -154,9 +156,9 @@ public class CompRobotContainer extends RobotContainer {
     // armStick.y().onTrue(new SetAngleArm(70, false, false).alongWith(new SetAngleArm(105, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
     // armStick.x().onTrue(new SetAngleArm(45, false, false).alongWith(new SetAngleArm(180, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
     
-    operator.a().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.BOTTOM_CONE));
-    operator.b().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.MIDDLE_CONE));
-    operator.y().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.TOP_CONE));
+    operator.a().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.BOTTOM_CUBE));
+    operator.b().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.MIDDLE_CUBE));
+    operator.y().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.TOP_CUBE));
     operator.x().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.PICKUP));
     
 

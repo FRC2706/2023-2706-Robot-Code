@@ -252,6 +252,14 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerTopArm.setIZone(m_topArmIzSubs.get()); 
     m_pidControllerTopArm.setOutputRange(ArmConfig.min_output, ArmConfig.max_output);
 
+    // setting PID constants for top spark max
+    m_pidControllerTopArm.setFF(ArmConfig.top_arm_kFF2, 1);
+    m_pidControllerTopArm.setP(ArmConfig.top_arm_kP2, 1);
+    m_pidControllerTopArm.setI(ArmConfig.top_arm_kI2, 1);
+    m_pidControllerTopArm.setD(ArmConfig.top_arm_kD2, 1);
+    m_pidControllerTopArm.setIZone(ArmConfig.top_arm_kIz2, 1);
+    m_pidControllerTopArm.setOutputRange(ArmConfig.min_output, ArmConfig.max_output);
+    
     // setting PID constants for bottom spark max
     m_pidControllerBottomArm.setFF(m_bottomArmFFSubs.get());
     m_pidControllerBottomArm.setP(m_bottomArmPSubs.get());
@@ -301,21 +309,33 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setTopJoint(double angle) {
-    if (angle < Math.toRadians(25) && getTopVel() < -1.5) {
-      angle = Math.toRadians(24);
-    }
+    double topVel = getTopVel();
+    // if (angle < Math.toRadians(25) && getTopVel() < -1.5) {
+    //   angle = Math.toRadians(24);
+    // }
 
     double pidSetpoint = m_topPID.getPIDSetpoint(angle); 
 
     double slowDownVoltage = 0;
-    if (getTopVel() < -2.2) {
+    if (topVel < Math.toRadians(-160)) {
       slowDownVoltage += 0.6;
     }
-    if (getTopPosition() < 40 && getTopVel() < -1.3) {
-      slowDownVoltage += getTopVel() * -0.8;
+
+    double velRange = Math.toRadians(-70);
+    if (topVel < velRange) {
+      slowDownVoltage += (topVel - velRange) * -1.0;
     }
 
-    m_pidControllerTopArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFTop(m_hasCone) + slowDownVoltage);//+ m_topSimpleFF.calculate(m_topPID.getSetpoint().velocity, acceleration));
+    if (getTopPosition() < 40 && topVel < Math.toRadians(-74.5)) {
+      slowDownVoltage += getTopVel() * -0.8;
+    }
+    int slot;
+    if (m_hasCone && angle > Math.toRadians(30)) {
+      slot = 0;
+    } else {
+      slot = 0;
+    }
+    m_pidControllerTopArm.setReference(pidSetpoint, ControlType.kPosition, slot, calculateFFTop(m_hasCone, angle) + slowDownVoltage);//+ m_topSimpleFF.calculate(m_topPID.getSetpoint().velocity, acceleration));
     m_topArmSetpointPub.accept(Math.toDegrees(angle));
   }
 
@@ -323,22 +343,22 @@ public class ArmSubsystem extends SubsystemBase {
     m_topArm.getEncoder().setPosition(top_position);
     m_bottomArm.getEncoder().setPosition(bottom_position);
   }
-
-  private double calculateFFTop(boolean haveCone) {
+ 
+  private double calculateFFTop(boolean haveCone, double topSetpoint) {
     double enc2AtHorizontal = getTopPosition() - (Math.PI - getBottomPosition());
     double voltsAtHorizontal;
     if (haveCone) {
-      voltsAtHorizontal = ArmConfig.TOP_HORIZONTAL_VOLTAGE_CONE;
+      if (topSetpoint < Math.toRadians(50)) {
+        voltsAtHorizontal = m_topArmVoltsAtHorizontal.get();
+      } else {
+        voltsAtHorizontal = ArmConfig.TOP_HORIZONTAL_VOLTAGE_CONE;
+      }
     }
     else {
       voltsAtHorizontal = m_topArmVoltsAtHorizontal.get();
     }
-    if (getTopVel() < -1.5) {
-      return voltsAtHorizontal * Math.cos(enc2AtHorizontal) * 1.5;
-    }
-    else {
-      return voltsAtHorizontal * Math.cos(enc2AtHorizontal);
-    }
+    System.out.println(voltsAtHorizontal * Math.cos(enc2AtHorizontal));
+    return voltsAtHorizontal * Math.cos(enc2AtHorizontal);
   }
 
   private double calculateFFBottom(double encoder1Rad, double encoder2Rad, boolean haveCone) {
@@ -363,7 +383,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void testFeedForwardTop(double additionalVoltage) {
-    double voltage = additionalVoltage + calculateFFTop(m_hasCone);
+    double voltage = additionalVoltage + calculateFFTop(m_hasCone, 0);
     m_pidControllerTopArm.setReference(voltage, ControlType.kVoltage);
     m_topArmFFTestingVolts.accept(voltage);
 }
