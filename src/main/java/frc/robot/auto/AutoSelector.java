@@ -51,6 +51,7 @@ public class AutoSelector {
         "Id28_place_pick_bottom_charge_new",
         "Id29_place_pick_top_charge_new",
         "Id30_place_pick_place_pick_place_top2",
+        "Id31_cube_1p0_top_charge"
         };
         SmartDashboard.putStringArray("Auto List", autoList );
     }
@@ -165,6 +166,11 @@ public class AutoSelector {
             case "Id30_place_pick_place_pick_place_top2": //2.5_top1
                 autoId = 30;
                 break;
+
+            case "Id31_cube_1p0_top_charge":
+                autoId = 31;
+                break;
+            
 
             default:
                 autoId = getAnalogSelectorIndex();

@@ -19,9 +19,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.ArmCommand;
 import frc.robot.commands.SetBlingCommand;
 import frc.robot.commands.TranslationCommand;
 import frc.robot.config.Config;
+import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /** Add your docs here. */
@@ -59,6 +61,8 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> place_pick_bottom_charge_new;
     List<PathPlannerTrajectory> place_pick_top_charge_new;
     List<PathPlannerTrajectory> place_pick_place_pick_place_top2;
+    List<PathPlannerTrajectory> cube_1p0_top_charge;
+
 
 
     public AutoRoutines() {
@@ -76,6 +80,8 @@ public class AutoRoutines {
                 new SwerveModuleState(-0.1, Rotation2d.fromDegrees(45)),
                 new SwerveModuleState(-0.1, Rotation2d.fromDegrees(-45)),
             })).withTimeout(0.4)));
+
+        // eventMap.put("ArmCubeTop", new ArmCommand(ArmSetpoint.HIGH_CUBE, false))
 
         autoBuilder = new SwerveAutoBuilder(
                 SwerveSubsystem.getInstance()::getPose,
@@ -118,6 +124,7 @@ public class AutoRoutines {
         place_pick_bottom_charge_new = PathPlanner.loadPathGroup("place_pick_bottom2_charge_new", 2.5, 3);// 2.5, 3);
         place_pick_top_charge_new = PathPlanner.loadPathGroup("place_pick_top_charge_new", 2.5, 3);// 2.5, 3);
         place_pick_place_pick_place_top2 = PathPlanner.loadPathGroup("place_pick_place_pick_place_top2", 2.5, 3);// 2.5, 3);
+        cube_1p0_top_charge = PathPlanner.loadPathGroup("cube_1p0_top_charge", 2.5, 3);
     }
 
     public Command getAutonomousCommand(int selectAuto) {
