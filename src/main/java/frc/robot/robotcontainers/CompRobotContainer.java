@@ -18,23 +18,26 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.auto.AutoRoutines;
 import frc.robot.auto.AutoSelector;
 import frc.robot.auto.AutoSelector;
 import frc.robot.commands.AlignToTargetVision;
-import frc.robot.commands.ArmCommandSelector;
+import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmFFTestCommand;
+import frc.robot.commands.GripperCommand;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
 import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.RotateXYSupplier;
-import frc.robot.commands.SetAngleArm;
 import frc.robot.commands.SwerveTeleop;
 import frc.robot.commands.TranslationCommand;
-import frc.robot.config.Config;
+import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
+import frc.robot.config.ArmConfig;
+import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.RelaySubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -118,7 +121,13 @@ public class CompRobotContainer extends RobotContainer {
         0.5)
     ));
 
-   // Temporary operator brake control for hardware to test (REMOVE LATER)
+    // Operator Joystick
+    operator.rightBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));
+    operator.back().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, setState).andThen(new WaitCommand(0.2)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+    operator.start().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, setState).andThen(new WaitCommand(0.2)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+
+    // Temporary operator brake control for hardware to test (REMOVE LATER)
+
     operator.leftTrigger().toggleOnTrue(Commands.startEnd(
       () -> ArmSubsystem.getInstance().controlBottomArmBrake(true), 
       () -> ArmSubsystem.getInstance().controlBottomArmBrake(false)));
@@ -147,10 +156,19 @@ public class CompRobotContainer extends RobotContainer {
 
     boolean isTop = true;
 
-    armStick.a().onTrue(new SetAngleArm(30, false, isTop));
-    armStick.b().onTrue(new SetAngleArm(60, false, isTop));
-    armStick.y().onTrue(new SetAngleArm(90, false, isTop));
-    armStick.x().onTrue(new SetAngleArm(120, false, isTop));
+    // armStick.a().onTrue(new SetAngleArm(85, false, false).alongWith(new SetAngleArm(20, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
+    //           //  .andThen((new SetAngleArm(85, false, false)).alongWith(new SetAngleArm(20, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance()))));
+
+    // armStick.b().onTrue(new SetAngleArm(60, false, false).alongWith(new SetAngleArm(55, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
+    // armStick.y().onTrue(new SetAngleArm(70, false, false).alongWith(new SetAngleArm(105, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
+    // armStick.x().onTrue(new SetAngleArm(45, false, false).alongWith(new SetAngleArm(180, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
+    
+    operator.a().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.BOTTOM_CUBE));
+    operator.b().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.MIDDLE_CUBE));
+    operator.y().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.TOP_CUBE));
+    operator.x().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.PICKUP));
+    
+
 
     armStick.rightTrigger().toggleOnTrue(Commands.startEnd(
       () -> ArmSubsystem.getInstance().controlBottomArmBrake(true), 
@@ -163,10 +181,13 @@ public class CompRobotContainer extends RobotContainer {
     Command armFF = new ArmFFTestCommand(armStick, 7, true, true);
 
     armStick.leftBumper().onTrue(Commands.runOnce(() -> armFF.schedule()));
+    armStick.rightBumper().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().updatePIDSettings()));
     armStick.back().onTrue(Commands.sequence(
             Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()),
             Commands.runOnce(() -> ArmSubsystem.getInstance().stopMotors())
         ));
+    // armStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder(100, Math.toRadians(-90)))); // 100 is an arbitrary number
+    armStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().updateFromAbsoluteTop()));
 
     // Construct the RelaySubsystem so the NTRelays are constructed
     RelaySubsystem.getInstance();

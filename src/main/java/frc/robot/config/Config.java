@@ -109,8 +109,8 @@ public class Config {
         public static final int REAR_RIGHT_CANCODER = 7;
 
         // Arm Subsystem
-        public static final int TOP_ARM_SPARK_CAN_ID = 5;
-        public static final int BOTTOM_ARM_SPARK_CAN_ID = 4;
+        public static final int TOP_ARM_SPARK_CAN_ID = robotSpecific(5, 0, 0, 0, 0, 18, 18);
+        public static final int BOTTOM_ARM_SPARK_CAN_ID = robotSpecific(4, 0, 0, 0, 0, 19, 19);
         public static final int TOP_CANCODER_CAN_ID = 3;
         public static final int BOTTOM_CANCODER_CAN_ID = 2;
 

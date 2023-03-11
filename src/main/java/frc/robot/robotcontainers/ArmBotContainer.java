@@ -55,7 +55,7 @@ public class ArmBotContainer extends RobotContainer{
     controlStick.y().onTrue(new SetAngleArm(0, false, true));
     controlStick.a().onTrue(new SetAngleArm(Math.PI/8, false, true));
 
-    controlStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder()));
+    controlStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder(100, Math.toRadians(-90))));
 
     Command topArmFF = new ArmFFTestCommand(controlStick, 2, false, true);
 
@@ -70,7 +70,7 @@ public class ArmBotContainer extends RobotContainer{
 
     ArmDisplay display = new ArmDisplay(ArmConfig.L1, ArmConfig.L2);
 
-    driver.a().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.LOW_CONE, false));
+    driver.a().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.BOTTOM_CONE));
 
     driver.b().onTrue(Commands.runOnce(() -> display.updateSetpointDisplay(Math.toRadians(45), Math.toRadians(90))));
     driver.x().onTrue(Commands.runOnce(() -> display.updateSetpointDisplay(Math.toRadians(45), Math.toRadians(135))));

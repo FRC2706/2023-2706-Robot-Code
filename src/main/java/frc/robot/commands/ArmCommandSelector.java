@@ -36,17 +36,17 @@ public class ArmCommandSelector extends CommandBase {
     RobotGamePieceState robotState = m_robotState.get();
     switch (robotState) {
       case NoGamePiece: 
-        m_ArmSetPoint = ArmSetpoint.CONE_PICKUP;
+        m_ArmSetPoint = ArmSetpoint.PICKUP;
       break;
       case HasCone:
         if (m_Position == ArmPosition.GAME_PIECE_BOTTOM) {
-          m_ArmSetPoint = ArmSetpoint.LOW_CONE;
+          m_ArmSetPoint = ArmSetpoint.BOTTOM_CONE;
         }
         else if (m_Position == ArmPosition.GAME_PIECE_MIDDLE) {
-          m_ArmSetPoint = ArmSetpoint.MEDIUM_CONE;
+          m_ArmSetPoint = ArmSetpoint.MIDDLE_CONE;
         }
         else if (m_Position == ArmPosition.GAME_PIECE_TOP) {
-          m_ArmSetPoint = ArmSetpoint.HIGH_CONE;
+          m_ArmSetPoint = ArmSetpoint.TOP_CONE;
         }
         else {
           m_ArmSetPoint = ArmSetpoint.HOME_WITH_GAMEPIECE;
@@ -54,13 +54,13 @@ public class ArmCommandSelector extends CommandBase {
       break;
       case HasCube:
         if (m_Position == ArmPosition.GAME_PIECE_BOTTOM) {
-          m_ArmSetPoint = ArmSetpoint.LOW_CUBE;
+          m_ArmSetPoint = ArmSetpoint.BOTTOM_CUBE;
         }
         else if (m_Position == ArmPosition.GAME_PIECE_MIDDLE) {
-          m_ArmSetPoint = ArmSetpoint.MEDIUM_CUBE;
+          m_ArmSetPoint = ArmSetpoint.MIDDLE_CUBE;
         }
         else if (m_Position == ArmPosition.GAME_PIECE_TOP) {
-          m_ArmSetPoint = ArmSetpoint.HIGH_CUBE;
+          m_ArmSetPoint = ArmSetpoint.TOP_CUBE;
         }
         else {
           m_ArmSetPoint = ArmSetpoint.HOME_WITH_GAMEPIECE;
@@ -70,7 +70,7 @@ public class ArmCommandSelector extends CommandBase {
         m_ArmSetPoint = ArmSetpoint.HOME_WITH_GAMEPIECE;
       break;
     }
-    m_ArmCommand = new ArmCommand (m_ArmSetPoint, m_slowerAcceleration);
+    m_ArmCommand = new ArmCommand (m_ArmSetPoint);
     m_ArmCommand.schedule();
 
   }
