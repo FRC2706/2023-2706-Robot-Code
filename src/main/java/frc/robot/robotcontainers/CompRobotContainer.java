@@ -31,6 +31,7 @@ import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.RotateXYSupplier;
 import frc.robot.commands.SwerveTeleop;
 import frc.robot.commands.TranslationCommand;
+import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.config.ArmConfig;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.RelaySubsystem;
@@ -113,9 +114,9 @@ public class CompRobotContainer extends RobotContainer {
 
 
     // Operator Joystick
-    operator.rightBumper().whileTrue(new GripperCommand(1, setState));
-    operator.back().whileTrue(new GripperCommand(3, setState));
-    operator.start().whileTrue(new GripperCommand(2, setState));
+    operator.rightBumper().whileTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));
+    operator.back().whileTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, setState));
+    operator.start().whileTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, setState));
 
     // Temporary operator brake control for hardware to test (REMOVE LATER)
     operator.leftTrigger().toggleOnTrue(Commands.startEnd(
