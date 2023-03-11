@@ -20,6 +20,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
+import frc.robot.auto.AutoRoutines;
+import frc.robot.auto.AutoSelector;
+import frc.robot.auto.AutoSelector;
 import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommandSelector;
 import frc.robot.commands.ArmFFTestCommand;
@@ -50,11 +53,15 @@ public class CompRobotContainer extends RobotContainer {
     HasCube
   }
   private RobotGamePieceState m_robotState = RobotGamePieceState.NoGamePiece;
-
+  AutoSelector m_autoSelector;
+  AutoRoutines routines;
+  
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public CompRobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    m_autoSelector = new AutoSelector();
+    routines = new AutoRoutines();
   }
 
   /**
@@ -111,9 +118,7 @@ public class CompRobotContainer extends RobotContainer {
         0.5)
     ));
 
-
-
-    // Temporary operator brake control for hardware to test (REMOVE LATER)
+   // Temporary operator brake control for hardware to test (REMOVE LATER)
     operator.leftTrigger().toggleOnTrue(Commands.startEnd(
       () -> ArmSubsystem.getInstance().controlBottomArmBrake(true), 
       () -> ArmSubsystem.getInstance().controlBottomArmBrake(false)));
@@ -174,7 +179,9 @@ public class CompRobotContainer extends RobotContainer {
    */
   @Override
   public Command getAutonomousCommand() {
-    return new InstantCommand(); 
+    int autoId = m_autoSelector.getAutoId();
+    System.out.println("*********************** Auto Id"+autoId);
+     return routines.getAutonomousCommand(autoId);
   }
   public RobotGamePieceState getRobotGamePieceState() {
     return m_robotState;
