@@ -36,6 +36,7 @@ public class ArmFFTestCommand extends CommandBase {
     if (m_enableTop) {
       ArmSubsystem.getInstance().setTopArmIdleMode(IdleMode.kCoast);
     }
+    ArmSubsystem.getInstance().setHasCone(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -48,7 +49,6 @@ public class ArmFFTestCommand extends CommandBase {
     joystickValueBottom = MathUtil.applyDeadband(joystickValueBottom, 0.15);
 
     if (m_enableBot) {
-      System.out.println(joystickValueBottom);
       ArmSubsystem.getInstance().testFeedForwardBottom(joystickValueBottom * m_maxExtraVolts);
     }
     if (m_enableTop) {

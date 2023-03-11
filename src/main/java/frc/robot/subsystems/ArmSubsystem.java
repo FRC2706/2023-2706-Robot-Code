@@ -29,6 +29,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ProfileExternalPIDController;
@@ -56,8 +57,6 @@ public class ArmSubsystem extends SubsystemBase {
   public ProfileExternalPIDController m_bottomPID;
   private RelativeEncoder m_bottomEncoder;
   private RelativeEncoder m_topEncoder;
-  public final double kMaxOutput = 1;
-  public final double kMinOutput = -1;
 
   private double m_topArmEncoderOffset;
   private double m_bottomArmEncoderOffset;
@@ -81,8 +80,8 @@ public class ArmSubsystem extends SubsystemBase {
   private DoublePublisher m_topArmVelPub;
   private DoubleEntry m_topArmVoltsAtHorizontal;
   private DoublePublisher m_topArmFFTestingVolts;
-  private DoubleSubscriber m_topArmOffset;
-  private DoublePublisher m_topCANCoderValue;
+  private DoubleEntry m_topArmOffset;
+  private DoublePublisher m_topAbsoluteEncoder;
 
   // network table entries for bottom arm
   private DoubleEntry m_bottomArmPSubs;
@@ -93,14 +92,23 @@ public class ArmSubsystem extends SubsystemBase {
   private DoublePublisher m_bottomArmPosPub;
   private DoublePublisher m_bottomArmSetpointPub;   
   private DoublePublisher m_bottomArmVelPub;
-  private DoubleEntry m_bottomArmVoltsAtHorizontal;
+  private DoubleEntry m_bottomArmMomentToVoltage;
   private DoublePublisher m_bottomArmFFTestingVolts;
-  private DoubleSubscriber m_bottomArmOffset;
-  private DoublePublisher m_bottomCANCoderValue;
+  private DoubleEntry m_bottomArmOffset;
+  private DoublePublisher m_bottomAbsoluteEncoder;
+
+  // for bottom arm ff
+  private DoubleSubscriber momentToVoltageConversion;
+  private double m_bottomVoltageConversion;
+  private boolean m_hasCone = true;
 
   // for arm pneumatic brakes
   DoubleSolenoid brakeSolenoidLow;
   DoubleSolenoid brakeSolenoidHigh;
+
+  // duty cycle encoder
+  private DutyCycleEncoder m_topDutyCycleEncoder;
+  private DutyCycleEncoder m_bottomDutyCycleEncoder;
 
   public static ArmSubsystem getInstance() {
     if (instance == null) {
@@ -126,10 +134,15 @@ public class ArmSubsystem extends SubsystemBase {
     m_topArm.setSoftLimit(SoftLimitDirection.kReverse, ArmConfig.top_arm_reverse_limit);
     m_bottomArm.setSoftLimit(SoftLimitDirection.kForward, ArmConfig.bottom_arm_forward_limit);
     m_bottomArm.setSoftLimit(SoftLimitDirection.kReverse, ArmConfig.bottom_arm_reverse_limit);
-    m_topArm.enableSoftLimit(SoftLimitDirection.kForward, true);
-    m_topArm.enableSoftLimit(SoftLimitDirection.kReverse, true);
-    m_bottomArm.enableSoftLimit(SoftLimitDirection.kForward, false);
-    m_bottomArm.enableSoftLimit(SoftLimitDirection.kReverse, false);
+    m_topArm.enableSoftLimit(SoftLimitDirection.kForward, ArmConfig.TOP_SOFT_LIMIT_ENABLE);
+    m_topArm.enableSoftLimit(SoftLimitDirection.kReverse, ArmConfig.TOP_SOFT_LIMIT_ENABLE);
+    m_bottomArm.enableSoftLimit(SoftLimitDirection.kForward, ArmConfig.BOTTOM_SOFT_LIMIT_ENABLE);
+    m_bottomArm.enableSoftLimit(SoftLimitDirection.kReverse, ArmConfig.BOTTOM_SOFT_LIMIT_ENABLE);
+
+    m_topDutyCycleEncoder = new DutyCycleEncoder(ArmConfig.top_duty_cycle_channel);
+    m_topDutyCycleEncoder.setDistancePerRotation(360);
+    m_bottomDutyCycleEncoder = new DutyCycleEncoder(ArmConfig.bottom_duty_cycle_channel);
+    m_bottomDutyCycleEncoder.setDistancePerRotation(360);
     
     CANCoderConfiguration config = new CANCoderConfiguration();
     config.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
@@ -158,9 +171,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     m_pidControllerTopArm = m_topArm.getPIDController();
     m_pidControllerBottomArm = m_bottomArm.getPIDController();
-    m_topPID = new ProfileExternalPIDController(new Constraints(0, 0));
-    m_bottomPID = new ProfileExternalPIDController(new Constraints(0, 0));
-    setConstraints(true);
+    m_topPID = new ProfileExternalPIDController(new Constraints(ArmConfig.TOP_MAX_VEL, ArmConfig.TOP_MAX_ACCEL));
+    m_bottomPID = new ProfileExternalPIDController(new Constraints(ArmConfig.BOTTOM_MAX_VEL, ArmConfig.BOTTOM_MAX_ACCEL));
 
     m_bottomEncoder = m_bottomArm.getEncoder();
     m_topEncoder = m_topArm.getEncoder();
@@ -177,7 +189,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_topArmDSubs = topArmTuningTable.getDoubleTopic("D").getEntry(ArmConfig.top_arm_kD);
     m_topArmIzSubs = topArmTuningTable.getDoubleTopic("IZone").getEntry(ArmConfig.top_arm_kIz);
     m_topArmFFSubs = topArmTuningTable.getDoubleTopic("FF").getEntry(ArmConfig.top_arm_kFF);
-    m_topArmOffset = topArmTuningTable.getDoubleTopic("Offset").subscribe(m_topArmEncoderOffset);
+    m_topArmOffset = topArmTuningTable.getDoubleTopic("Offset").getEntry(ArmConfig.top_arm_offset);
     
     NetworkTable bottomArmTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTableBottom);
     m_bottomArmPSubs = bottomArmTuningTable.getDoubleTopic("P").getEntry(ArmConfig.bottom_arm_kP);
@@ -185,7 +197,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArmDSubs = bottomArmTuningTable.getDoubleTopic("D").getEntry(ArmConfig.bottom_arm_kD);
     m_bottomArmIzSubs = bottomArmTuningTable.getDoubleTopic("IZone").getEntry(ArmConfig.bottom_arm_kIz);
     m_bottomArmFFSubs = bottomArmTuningTable.getDoubleTopic("FF").getEntry(ArmConfig.bottom_arm_kFF);
-    m_bottomArmOffset = topArmTuningTable.getDoubleTopic("Offset").subscribe(m_bottomArmEncoderOffset);
+    m_bottomArmOffset = bottomArmTuningTable.getDoubleTopic("Offset").getEntry(ArmConfig.bottom_arm_offset);
+    momentToVoltageConversion = bottomArmTuningTable.getDoubleTopic("VoltageConversion").subscribe(m_bottomVoltageConversion);
 
     // if (m_topArmPSubs.getAtomic().timestamp == 0) {
         m_topArmFFSubs.accept(ArmConfig.top_arm_kFF);
@@ -193,6 +206,7 @@ public class ArmSubsystem extends SubsystemBase {
         m_topArmISubs.accept(ArmConfig.top_arm_kI);
         m_topArmDSubs.accept(ArmConfig.top_arm_kD);
         m_topArmIzSubs.accept(ArmConfig.top_arm_kIz);
+        m_topArmOffset.accept(ArmConfig.top_arm_offset);
     // }
 
     // if (m_bottomArmPSubs.getAtomic().timestamp == 0) {
@@ -201,6 +215,7 @@ public class ArmSubsystem extends SubsystemBase {
       m_bottomArmISubs.accept(ArmConfig.bottom_arm_kI);
       m_bottomArmDSubs.accept(ArmConfig.bottom_arm_kD);
       m_bottomArmIzSubs.accept(ArmConfig.bottom_arm_kIz);
+      m_bottomArmOffset.accept(ArmConfig.bottom_arm_offset);
   // }
 
     NetworkTable topArmDataTable = NetworkTableInstance.getDefault().getTable(m_dataTableTop);
@@ -209,7 +224,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_topArmVelPub = topArmDataTable.getDoubleTopic("Vel").publish(PubSubOption.periodic(0.02));
     m_topArmVoltsAtHorizontal = topArmDataTable.getDoubleTopic("VoltsAtHorizontal").getEntry(0);
     m_topArmVoltsAtHorizontal.accept(ArmConfig.TOP_HORIZONTAL_VOLTAGE);
-    m_topCANCoderValue = topArmDataTable.getDoubleTopic("CANCoder Value").publish(PubSubOption.periodic(0.02));
+    m_topAbsoluteEncoder = topArmDataTable.getDoubleTopic("Absolute Encoder").publish(PubSubOption.periodic(0.02));
 
     m_topArmFFTestingVolts = topArmDataTable.getDoubleTopic("VoltageSetInFFTesting").publish();
 
@@ -217,15 +232,15 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArmPosPub = bottomArmDataTable.getDoubleTopic("MeasuredAngle").publish(PubSubOption.periodic(0.02));
     m_bottomArmSetpointPub = bottomArmDataTable.getDoubleTopic("SetpointAngle").publish(PubSubOption.periodic(0.02));
     m_bottomArmVelPub = bottomArmDataTable.getDoubleTopic("Vel").publish(PubSubOption.periodic(0.02));
-    m_bottomArmVoltsAtHorizontal = bottomArmDataTable.getDoubleTopic("VoltsAtHorizontal").getEntry(0);
-    m_bottomArmVoltsAtHorizontal.accept(ArmConfig.BOTTOM_MOMENT_TO_VOLTAGE);
-    m_bottomCANCoderValue = bottomArmDataTable.getDoubleTopic("CANCoder Value").publish(PubSubOption.periodic(0.02));
+    m_bottomArmMomentToVoltage = bottomArmDataTable.getDoubleTopic("MomentVoltage").getEntry(0);
+    m_bottomArmMomentToVoltage.accept(ArmConfig.BOTTOM_MOMENT_TO_VOLTAGE);
+    m_bottomAbsoluteEncoder = bottomArmDataTable.getDoubleTopic("Absolute Encoder").publish(PubSubOption.periodic(0.02));
 
     m_bottomArmFFTestingVolts = bottomArmDataTable.getDoubleTopic("VoltageSetInFFTesting").publish();
 
     updatePIDSettings();
-    updateFromCancoderTop();
-    updateFromCancoderBottom();
+    updateFromAbsoluteTop();
+    updateFromAbsoluteBottom();
   }
 
   public void updatePIDSettings() {
@@ -235,15 +250,23 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerTopArm.setI(m_topArmISubs.get());
     m_pidControllerTopArm.setD(m_topArmDSubs.get());
     m_pidControllerTopArm.setIZone(m_topArmIzSubs.get()); 
-    m_pidControllerTopArm.setOutputRange(kMinOutput, kMaxOutput);
+    m_pidControllerTopArm.setOutputRange(ArmConfig.min_output, ArmConfig.max_output);
 
+    // setting PID constants for top spark max
+    m_pidControllerTopArm.setFF(ArmConfig.top_arm_kFF2, 1);
+    m_pidControllerTopArm.setP(ArmConfig.top_arm_kP2, 1);
+    m_pidControllerTopArm.setI(ArmConfig.top_arm_kI2, 1);
+    m_pidControllerTopArm.setD(ArmConfig.top_arm_kD2, 1);
+    m_pidControllerTopArm.setIZone(ArmConfig.top_arm_kIz2, 1);
+    m_pidControllerTopArm.setOutputRange(ArmConfig.min_output, ArmConfig.max_output);
+    
     // setting PID constants for bottom spark max
     m_pidControllerBottomArm.setFF(m_bottomArmFFSubs.get());
     m_pidControllerBottomArm.setP(m_bottomArmPSubs.get());
     m_pidControllerBottomArm.setI(m_bottomArmISubs.get());
     m_pidControllerBottomArm.setD(m_bottomArmDSubs.get());
     m_pidControllerBottomArm.setIZone(m_bottomArmIzSubs.get()); 
-    m_pidControllerBottomArm.setOutputRange(kMinOutput, kMaxOutput);
+    m_pidControllerBottomArm.setOutputRange(ArmConfig.min_output, ArmConfig.max_output);
 }
 
   @Override
@@ -255,20 +278,10 @@ public class ArmSubsystem extends SubsystemBase {
     m_topArmVelPub.accept(m_topEncoder.getVelocity());
     m_bottomArmPosPub.accept(Math.toDegrees(bottomPosition));
     m_bottomArmVelPub.accept(m_bottomEncoder.getVelocity());
-    m_topCANCoderValue.accept(getCancoderTop());
-    m_bottomCANCoderValue.accept(getCancoderBottom());
+    m_topAbsoluteEncoder.accept(Math.toDegrees(getAbsoluteTop()));
+    m_bottomAbsoluteEncoder.accept(Math.toDegrees(getAbsoluteBottom()));
 
-    armDisplay.updateMeasurementDisplay(topPosition, bottomPosition);
-  }
-
-  public void setConstraints(boolean slowerAcceleration) {
-    if (slowerAcceleration) {
-        m_topPID.setConstraints(new Constraints(ArmConfig.TOP_SLOW_ACCEL_MAX_VEL, ArmConfig.TOP_SLOW_ACCEL_MAX_ACCEL));
-        m_bottomPID.setConstraints(new Constraints(ArmConfig.BOTTOM_SLOW_ACCEL_MAX_VEL, ArmConfig.BOTTOM_SLOW_ACCEL_MAX_ACCEL));
-    } else {
-        m_topPID.setConstraints(new Constraints(ArmConfig.TOP_MAX_VEL, ArmConfig.TOP_MAX_ACCEL));
-        m_bottomPID.setConstraints(new Constraints(ArmConfig.BOTTOM_MAX_VEL, ArmConfig.BOTTOM_MAX_ACCEL));
-    }
+    armDisplay.updateMeasurementDisplay(bottomPosition, topPosition);
   }
 
   public void resetMotionProfile() {
@@ -286,29 +299,79 @@ public class ArmSubsystem extends SubsystemBase {
     return angles;
   }
 
-  public void setBottomJoint(double angle) { 
-    double pidSetpoint = m_bottomPID.getPIDSetpoint(angle); 
-    m_pidControllerBottomArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFBottom()); 
-    m_bottomArmSetpointPub.accept(Math.toDegrees(angle));
+  public void setBottomJoint(double angle_bottom, double angle_top) { 
+    if (angle_top > Math.toRadians(20) && getTopPosition() < Math.toRadians(20)) {
+      angle_bottom = Math.toRadians(95);
+    }
+    double pidSetpoint = m_bottomPID.getPIDSetpoint(angle_bottom); 
+    m_pidControllerBottomArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFBottom(m_bottomEncoder.getPosition(), m_topEncoder.getPosition(), m_hasCone)); 
+    m_bottomArmSetpointPub.accept(Math.toDegrees(angle_bottom));
   }
 
   public void setTopJoint(double angle) {
+    double topVel = getTopVel();
+    // if (angle < Math.toRadians(25) && getTopVel() < -1.5) {
+    //   angle = Math.toRadians(24);
+    // }
+
     double pidSetpoint = m_topPID.getPIDSetpoint(angle); 
-    m_pidControllerTopArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFTop());
+
+    double slowDownVoltage = 0;
+    if (topVel < Math.toRadians(-160)) {
+      slowDownVoltage += 0.6;
+    }
+
+    double velRange = Math.toRadians(-70);
+    if (topVel < velRange) {
+      slowDownVoltage += (topVel - velRange) * -1.0;
+    }
+
+    if (getTopPosition() < 40 && topVel < Math.toRadians(-74.5)) {
+      slowDownVoltage += getTopVel() * -0.8;
+    }
+    int slot;
+    if (m_hasCone && angle > Math.toRadians(30)) {
+      slot = 0;
+    } else {
+      slot = 0;
+    }
+    m_pidControllerTopArm.setReference(pidSetpoint, ControlType.kPosition, slot, calculateFFTop(m_hasCone, angle) + slowDownVoltage);//+ m_topSimpleFF.calculate(m_topPID.getSetpoint().velocity, acceleration));
     m_topArmSetpointPub.accept(Math.toDegrees(angle));
   }
 
-  public void resetEncoder() {
-    m_topArm.getEncoder().setPosition(ArmConfig.RESET_ENCODER_POSITION);
-    m_bottomArm.getEncoder().setPosition(ArmConfig.RESET_ENCODER_POSITION);
+  public void resetEncoder(double bottom_position, double top_position) {
+    m_topArm.getEncoder().setPosition(top_position);
+    m_bottomArm.getEncoder().setPosition(bottom_position);
+  }
+ 
+  private double calculateFFTop(boolean haveCone, double topSetpoint) {
+    double enc2AtHorizontal = getTopPosition() - (Math.PI - getBottomPosition());
+    double voltsAtHorizontal;
+    if (haveCone) {
+      if (topSetpoint < Math.toRadians(50)) {
+        voltsAtHorizontal = m_topArmVoltsAtHorizontal.get();
+      } else {
+        voltsAtHorizontal = ArmConfig.TOP_HORIZONTAL_VOLTAGE_CONE;
+      }
+    }
+    else {
+      voltsAtHorizontal = m_topArmVoltsAtHorizontal.get();
+    }
+    System.out.println(voltsAtHorizontal * Math.cos(enc2AtHorizontal));
+    return voltsAtHorizontal * Math.cos(enc2AtHorizontal);
   }
 
-  private double calculateFFTop() {
-    return m_topArmVoltsAtHorizontal.get() * Math.cos(m_topEncoder.getPosition());
-  }
-
-  private double calculateFFBottom() {
-    return m_bottomArmVoltsAtHorizontal.get() * Math.cos(m_bottomEncoder.getPosition());
+  private double calculateFFBottom(double encoder1Rad, double encoder2Rad, boolean haveCone) {
+    double enc2AtHorizontal = encoder2Rad - (Math.PI - encoder1Rad);
+    double bottomArmMoment = ArmConfig.BOTTOM_ARM_FORCE * (ArmConfig.LENGTH_BOTTOM_ARM_TO_COG*Math.cos(encoder1Rad));
+    double topArmMoment = ArmConfig.TOP_ARM_FORCE * (ArmConfig.L1*Math.cos(encoder1Rad) + ArmConfig.LENGTH_TOP_ARM_TO_COG*Math.cos(enc2AtHorizontal));
+    if (haveCone == false) {
+        return (bottomArmMoment + topArmMoment) * m_bottomArmMomentToVoltage.get();
+    } 
+    else {
+        double coneMoment = ArmConfig.CONE_ARM_FORCE * (ArmConfig.L1*Math.cos(encoder1Rad) + ArmConfig.L2*Math.cos(enc2AtHorizontal));
+        return (bottomArmMoment + topArmMoment + coneMoment) * m_bottomArmMomentToVoltage.get();
+    }
   }
 
   public void setTopArmIdleMode(IdleMode mode) {
@@ -320,13 +383,13 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void testFeedForwardTop(double additionalVoltage) {
-    double voltage = additionalVoltage + calculateFFTop();
+    double voltage = additionalVoltage + calculateFFTop(m_hasCone, 0);
     m_pidControllerTopArm.setReference(voltage, ControlType.kVoltage);
     m_topArmFFTestingVolts.accept(voltage);
 }
 
   public void testFeedForwardBottom(double additionalVoltage) {
-    double voltage = additionalVoltage + calculateFFBottom();
+    double voltage = additionalVoltage + calculateFFBottom(m_bottomEncoder.getPosition(), m_topEncoder.getPosition(), m_hasCone);
     m_pidControllerBottomArm.setReference(voltage, ControlType.kVoltage);
     m_bottomArmFFTestingVolts.accept(voltage);
   }
@@ -336,20 +399,20 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArm.stopMotor();
 }
 
-  public double getCancoderTop() {
-    return Math.toRadians(m_absoluteTopArmEncoder.getAbsolutePosition() + m_topArmOffset.get());
+  public double getAbsoluteTop() {
+    return Math.toRadians(m_topDutyCycleEncoder.getAbsolutePosition() * 360 + m_topArmOffset.get());
   }
 
-  public double getCancoderBottom() {
-    return Math.toRadians(m_absoluteBottomArmEncoder.getAbsolutePosition() + m_bottomArmOffset.get());
+  public double getAbsoluteBottom() {
+    return Math.toRadians(m_bottomDutyCycleEncoder.getAbsolutePosition() * -360 + m_bottomArmOffset.get());
   }
 
-  public void updateFromCancoderTop() {
-    errREV(m_topEncoder.setPosition(getCancoderTop()));
+  public void updateFromAbsoluteTop() {
+    errREV(m_topEncoder.setPosition(getAbsoluteTop()));
   }
 
-  public void updateFromCancoderBottom() {
-    errREV(m_bottomEncoder.setPosition(getCancoderBottom()));
+  public void updateFromAbsoluteBottom() {
+    errREV(m_bottomEncoder.setPosition(getAbsoluteBottom()));
   }
 
   public void controlBottomArmBrake( boolean bBrakeOn) {
@@ -394,5 +457,20 @@ public class ArmSubsystem extends SubsystemBase {
 
   public double getBottomVel() {
     return m_bottomEncoder.getVelocity();
+  }
+
+  public void setHasCone(boolean hasCone) {
+    m_hasCone = hasCone;
+  }
+
+  /**
+   * Checks if the Neo encoder is synced with the Absolute Encoder
+   * 
+   * @return Whether the encoders are synced or not
+   */
+  public boolean areEncodersSynced() {
+    return Math.abs(getAbsoluteBottom() - getBottomPosition()) < ArmConfig.ENCODER_SYNCING_TOLERANCE &&
+           Math.abs(getAbsoluteTop() - getTopPosition()) < ArmConfig.ENCODER_SYNCING_TOLERANCE;
+
   }
 }

@@ -13,7 +13,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class SyncSteerEncoders extends CommandBase {
     private Timer m_smallTimer = new Timer();
     private Timer m_permanantTimer = new Timer();
-    private boolean m_needsSyncing = false;
+    private boolean m_needsSyncing = true;
 
     /** Creates a new SyncSteerEncoders. */
     public SyncSteerEncoders() {
@@ -25,9 +25,11 @@ public class SyncSteerEncoders extends CommandBase {
     public void initialize() {
         m_smallTimer.reset();
         m_permanantTimer.reset();
-
+    
         m_smallTimer.start();
         m_permanantTimer.start();
+
+        m_needsSyncing = true;
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -42,14 +44,16 @@ public class SyncSteerEncoders extends CommandBase {
                     String.format("Steering encoders are not synced, attempting to sync them... (%.1fs)", m_permanantTimer.get()),
                     false);
                 SwerveSubsystem.getInstance().resetEncodersFromCanCoder();
-            } 
+            } else {
+                m_needsSyncing = false;
+            }
         }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        if (m_needsSyncing) {
+        if (m_needsSyncing == false) {
             DriverStation.reportWarning(
                         String.format("Steering encoders are synced (%.1f) \n", m_permanantTimer.get()),
                         false);
@@ -70,12 +74,19 @@ public class SyncSteerEncoders extends CommandBase {
 
             return true;
         }
-
-        return SwerveSubsystem.getInstance().checkSteeringEncoders();
+        m_needsSyncing = SwerveSubsystem.getInstance().checkSteeringEncoders();
+        return m_needsSyncing == false;
     }
 
     @Override
     public boolean runsWhenDisabled() {
         return true;
+    }
+
+    @Override
+    public InterruptionBehavior getInterruptionBehavior() {
+        DriverStation.reportWarning("Another SwerveSubsystem command was scheduled while " +
+                "SyncSteerEncoders is still running. Cancelling the incoming command.", false);
+        return InterruptionBehavior.kCancelIncoming;
     }
 }

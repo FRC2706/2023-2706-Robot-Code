@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.commands.BrakeModeDisabled;
+import frc.robot.commands.SyncArmEncoders;
 import frc.robot.commands.SyncSteerEncoders;
 import frc.robot.config.Config;
 import frc.robot.robotcontainers.ArmBotContainer;
@@ -51,6 +52,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    DriverStation.silenceJoystickConnectionWarning(true);
     pcmCompressor.enableDigital();
     PathPlannerServer.startServer(5811);
     // Instantiate the RobotContainer based on the Robot ID.  This will perform all our button bindings, and put our
@@ -93,6 +95,7 @@ public class Robot extends TimedRobot {
     
     if (SubsystemChecker.canSubsystemConstruct(SubsystemType.SwerveSubsystem)) {
       new SyncSteerEncoders().schedule();
+      new SyncArmEncoders().schedule();
     } 
 
     // Add CommandScheduler to shuffleboard so we can display what commands are scheduled

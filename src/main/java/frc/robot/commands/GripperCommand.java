@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.robotcontainers.CompRobotContainer.RobotGamePieceState;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.BlingSubsystem;
 import frc.robot.subsystems.GripperSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -52,14 +53,17 @@ public class GripperCommand extends InstantCommand {
      case OPEN:
       open();
       newRobotState.accept(RobotGamePieceState.NoGamePiece);
+      ArmSubsystem.getInstance().setHasCone(false);
       break;
      case PICK_UP_CONE:
       takeCone();
       newRobotState.accept(RobotGamePieceState.HasCone);
+      ArmSubsystem.getInstance().setHasCone(true);
       break;
      case PICK_UP_CUBE:
       takeCube();
       newRobotState.accept(RobotGamePieceState.HasCube);
+      ArmSubsystem.getInstance().setHasCone(false);
       break;
      default:
      //?? for default??
