@@ -118,8 +118,7 @@ public class CompRobotContainer extends RobotContainer {
         0.5)
     ));
 
-
-    // Temporary operator brake control for hardware to test (REMOVE LATER)
+   // Temporary operator brake control for hardware to test (REMOVE LATER)
     operator.leftTrigger().toggleOnTrue(Commands.startEnd(
       () -> ArmSubsystem.getInstance().controlBottomArmBrake(true), 
       () -> ArmSubsystem.getInstance().controlBottomArmBrake(false)));
