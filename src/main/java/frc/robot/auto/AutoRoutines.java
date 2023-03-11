@@ -55,7 +55,7 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> place_pick_place_pick_place_top;
     List<PathPlannerTrajectory> place_pick_place_pick_place_middle;
     List<PathPlannerTrajectory> place_pick_place_pick_place_bottom;
-    List<PathPlannerTrajectory> place_pick_place_pick_place_bottom_new;
+    List<PathPlannerTrajectory> place_2p5_bottom_new;
     List<PathPlannerTrajectory> place_pick_bottom_charge_new;
     List<PathPlannerTrajectory> place_pick_top_charge_new;
     List<PathPlannerTrajectory> place_pick_place_pick_place_top2;
@@ -114,7 +114,7 @@ public class AutoRoutines {
         place_pick_place_pick_place_top = PathPlanner.loadPathGroup("place_pick_place_pick_place_top", 2.5, 3);
         place_pick_place_pick_place_middle = PathPlanner.loadPathGroup("place_pick_place_pick_place_middle", 2.5, 3);
         place_pick_place_pick_place_bottom = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom", 2.5, 3);
-        place_pick_place_pick_place_bottom_new = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2", 2.5, 3);// 2.5, 3);
+        place_2p5_bottom_new = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2", 2.5, 3);// 2.5, 3);
         place_pick_bottom_charge_new = PathPlanner.loadPathGroup("place_pick_bottom2_charge_new", 2.5, 3);// 2.5, 3);
         place_pick_top_charge_new = PathPlanner.loadPathGroup("place_pick_top_charge_new", 2.5, 3);// 2.5, 3);
         place_pick_place_pick_place_top2 = PathPlanner.loadPathGroup("place_pick_place_pick_place_top2", 2.5, 3);// 2.5, 3);
@@ -210,7 +210,7 @@ public class AutoRoutines {
 
 
             case 27:
-                return autoBuilder.fullAuto(place_pick_place_pick_place_bottom_new);
+                return autoBuilder.fullAuto(place_2p5_bottom_new);
                
             case 28:
                 return autoBuilder.fullAuto(place_pick_bottom_charge_new);
