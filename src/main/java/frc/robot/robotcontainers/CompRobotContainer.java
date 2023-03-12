@@ -87,15 +87,6 @@ public class CompRobotContainer extends RobotContainer {
     CommandXboxController testStick = new CommandXboxController(2);
     CommandXboxController armStick = new CommandXboxController(3);
 
-    // // getState and setState for commands managing the RobotGamePieceState
-    // Supplier<RobotGamePieceState> getState = ()-> getRobotGamePieceState();
-    // Consumer<RobotGamePieceState> setState = a ->setRobotGamePieceState(a);
-
-    SwerveModuleState state1 =  new SwerveModuleState(0, Rotation2d.fromDegrees(0));
-    SwerveModuleState state2 =  new SwerveModuleState(0, Rotation2d.fromDegrees(90));
-    SwerveModuleState state3 =  new SwerveModuleState(-1.5, Rotation2d.fromDegrees(0));
-    SwerveModuleState state4 =  new SwerveModuleState(1.5, Rotation2d.fromDegrees(0));
-
     // Driver joystick
     SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
 
@@ -132,19 +123,15 @@ public class CompRobotContainer extends RobotContainer {
     operator.rightBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));
     operator.back().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, setState).andThen(new WaitCommand(0.2)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
     operator.start().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, setState).andThen(new WaitCommand(0.4)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
-
-    // Temporary operator brake control for hardware to test (REMOVE LATER)
-
-    // operator.leftTrigger().toggleOnTrue(Commands.startEnd(
-    //   () -> ArmSubsystem.getInstance().controlBottomArmBrake(true), 
-    //   () -> ArmSubsystem.getInstance().controlBottomArmBrake(false)));
-
-    // // Temporary operator brake control for hardware to test (REMOVE LATER)
-    // operator.rightTrigger().toggleOnTrue(Commands.startEnd(
-    //   () -> ArmSubsystem.getInstance().controlTopArmBrake(true), 
-    //   () -> ArmSubsystem.getInstance().controlTopArmBrake(false)));
-
+    
     operator.x().onTrue(new ArmCommand(ArmSetpoint.PICKUP));
+
+    // Force the buttons to just do cone setpoints
+    operator.a().onTrue(new ArmCommand(ArmSetpoint.BOTTOM_CONE));
+    operator.b().onTrue(new ArmCommand(ArmSetpoint.MIDDLE_CONE));
+    operator.y().onTrue(new ArmCommand(ArmSetpoint.TOP_CONE));
+
+    // Choose the ArmSetpoint based on RobotGamePieceState
     // operator.a().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_BOTTOM, false));
     // operator.b().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_MIDDLE, false));
     // operator.y().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_TOP, false));
@@ -152,22 +139,9 @@ public class CompRobotContainer extends RobotContainer {
     operator.rightTrigger().onTrue(new ArmCommand(ArmSetpoint.HUMAN_PLAYER_PICKUP));
     operator.leftTrigger().onTrue(new ArmCommand(ArmSetpoint.PICKUP_OUTSIDE_FRAME));
 
-    new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_BOTTOM, false);
-    
-    Command angleSetPoint1 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state1, state1, state1, state1}, true), SwerveSubsystem.getInstance());
-    testStick.a().whileTrue(angleSetPoint1).whileFalse(new InstantCommand(SwerveSubsystem.getInstance()::stopMotors, SwerveSubsystem.getInstance()));
-
-    Command angleSetPoint2 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state2, state2, state2, state2}, true), SwerveSubsystem.getInstance());
-    testStick.b().whileTrue(angleSetPoint2).whileFalse(new InstantCommand(SwerveSubsystem.getInstance()::stopMotors, SwerveSubsystem.getInstance()));
-
-    Command speedSetPoint1 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state3, state3, state3, state3}, true), SwerveSubsystem.getInstance());
-    testStick.y().whileTrue(speedSetPoint1).whileFalse(new InstantCommand(SwerveSubsystem.getInstance()::stopMotors, SwerveSubsystem.getInstance()));
-    
-    Command speedSetPoint2 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state4, state4, state4, state4}, true), SwerveSubsystem.getInstance());
-    testStick.x().whileTrue(speedSetPoint2).whileFalse(new InstantCommand(SwerveSubsystem.getInstance()::stopMotors, SwerveSubsystem.getInstance()));
   
 
-    boolean isTop = true;
+    // boolean isTop = true;
 
     // armStick.a().onTrue(new SetAngleArm(85, false, false).alongWith(new SetAngleArm(20, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
     //           //  .andThen((new SetAngleArm(85, false, false)).alongWith(new SetAngleArm(20, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance()))));
