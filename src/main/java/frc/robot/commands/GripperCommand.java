@@ -52,17 +52,20 @@ public class GripperCommand extends InstantCommand {
      break;
      case OPEN:
       open();
-      newRobotState.accept(RobotGamePieceState.NoGamePiece);
+      if(newRobotState != null)
+        newRobotState.accept(RobotGamePieceState.NoGamePiece);
       ArmSubsystem.getInstance().setHasCone(false);
       break;
      case PICK_UP_CONE:
       takeCone();
-      newRobotState.accept(RobotGamePieceState.HasCone);
+      if (newRobotState != null)
+        newRobotState.accept(RobotGamePieceState.HasCone);
       ArmSubsystem.getInstance().setHasCone(true);
       break;
      case PICK_UP_CUBE:
       takeCube();
-      newRobotState.accept(RobotGamePieceState.HasCube);
+      if ( newRobotState != null)
+        newRobotState.accept(RobotGamePieceState.HasCube);
       ArmSubsystem.getInstance().setHasCone(false);
       break;
      default:

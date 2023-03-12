@@ -17,7 +17,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 public class RotateXYSupplier extends SwerveTeleop {
 
-  ProfiledPIDController pid = new ProfiledPIDController(5.0, 0, 0.4, 
+  ProfiledPIDController pid = new ProfiledPIDController(2.05, 0, 0.5, 
                                         new TrapezoidProfile.Constraints(4 * Math.PI, 8 * Math.PI)); //pid to be tested
   DoubleSupplier m_supplier;
   double setpoint;

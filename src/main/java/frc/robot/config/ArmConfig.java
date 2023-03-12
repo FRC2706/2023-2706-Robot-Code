@@ -29,7 +29,7 @@ public class ArmConfig {
         HOME_AFTER_PICKUP(17, 1.5),// Default position
         HOME_WITH_GAMEPIECE(17, 1.5, new ArmWaypoint(19, -3)), 
         
-        PICKUP(5.5, -11.6, new ArmWaypoint(19, -3), new ArmWaypoint(11, -9)),
+        PICKUP(5.5, -11.6, new ArmWaypoint(17, -3), new ArmWaypoint(11, -9)),
         PICKUP_OUTSIDE_FRAME(23.55, -9.66, new ArmWaypoint(14, -8)), // CHECK
         HUMAN_PLAYER_PICKUP(30, 40, new ArmWaypoint(14, -7)), // NOT DONE
 
@@ -40,8 +40,8 @@ public class ArmConfig {
         TOP_CONE_RELEASE(53, 39-7),
 
         BOTTOM_CUBE(24, -7),
-        MIDDLE_CUBE(40.5, 27, new ArmWaypoint(22, -1)),
-        TOP_CUBE(53.03, 35, new ArmWaypoint(24, 1));
+        MIDDLE_CUBE(40.5, 27, new ArmWaypoint(21, 12)),
+        TOP_CUBE(51, 38.5, new ArmWaypoint(25, 15));
         
 
         public DoubleEntry x_entry;
@@ -100,8 +100,8 @@ public class ArmConfig {
       // constants for arm constraints
       public static final double TOP_MAX_VEL = Math.PI * 4;
       public static final double TOP_MAX_ACCEL = Math.PI * 4;
-      public static final double BOTTOM_MAX_VEL = Math.PI * 2;
-      public static final double BOTTOM_MAX_ACCEL = Math.PI * 2;
+      public static final double BOTTOM_MAX_VEL = Math.PI * 3;
+      public static final double BOTTOM_MAX_ACCEL = Math.PI *3;
 
       public static final double topArmPositionConversionFactor = 2 * Math.PI / TOP_NEO_GEAR_RATIO;
       public static final double topArmVelocityConversionFactor = topArmPositionConversionFactor / 60.0;
@@ -111,7 +111,7 @@ public class ArmConfig {
       public static final double positionTolerance = Math.toRadians(2);
       public static final double velocityTolerance = Math.toRadians(1);
 
-      public static final double waypointPositionTolerance = Math.toRadians(4);
+      public static final double waypointPositionTolerance = Math.toRadians(6);
       public static final double waypointVelocityTolerance = Math.toRadians(4);
 
       // PID constants for top arm
@@ -129,9 +129,9 @@ public class ArmConfig {
       public static final double top_arm_kFF2 = 0;
 
       // PID constants for bottom arm
-      public static final double bottom_arm_kP = 0.900000;
+      public static final double bottom_arm_kP = 1.4;
       public static final double bottom_arm_kI = 0.0;
-      public static final double bottom_arm_kD = 0.900000;
+      public static final double bottom_arm_kD = 0.9;
       public static final double bottom_arm_kIz = 0;
       public static final double bottom_arm_kFF = 0;
 
@@ -141,7 +141,7 @@ public class ArmConfig {
       public static final boolean TOP_SOFT_LIMIT_ENABLE = true;
     
       // soft limit constants for bottom arm
-      public static final float bottom_arm_forward_limit = (float)Math.toRadians(120);
+      public static final float bottom_arm_forward_limit = (float)Math.toRadians(135);
       public static final float bottom_arm_reverse_limit = (float)Math.toRadians(40);
       public static final boolean BOTTOM_SOFT_LIMIT_ENABLE = true;
 
