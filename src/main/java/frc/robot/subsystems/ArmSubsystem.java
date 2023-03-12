@@ -29,8 +29,10 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ProfileExternalPIDController;
 import frc.robot.SubsystemChecker;
@@ -268,7 +270,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidControllerBottomArm.setIZone(m_bottomArmIzSubs.get()); 
     m_pidControllerBottomArm.setOutputRange(ArmConfig.min_output, ArmConfig.max_output);
 }
-
+  PowerDistribution pdp = new PowerDistribution(); 
   @Override
   public void periodic() {
     double topPosition = m_topEncoder.getPosition();
@@ -282,6 +284,16 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomAbsoluteEncoder.accept(Math.toDegrees(getAbsoluteBottom()));
 
     armDisplay.updateMeasurementDisplay(bottomPosition, topPosition);
+
+
+    // pdp.getCurrent(12);
+    SmartDashboard.putNumber("BotArmCurrent", pdp.getCurrent(12));
+    SmartDashboard.putNumber("TopArmCurrent", pdp.getCurrent(15));
+    //12, Lower 
+    // 15, Upper
+
+
+
   }
 
   public void resetMotionProfile() {
@@ -329,9 +341,13 @@ public class ArmSubsystem extends SubsystemBase {
     if (getTopPosition() < 40 && topVel < Math.toRadians(-74.5)) {
       slowDownVoltage += getTopVel() * -0.8;
     }
-    int slot;
-    if (m_hasCone && angle > Math.toRadians(30)) {
-      slot = 0;
+
+    if (angle > Math.toRadians(35) && getTopPosition() > angle && getTopPosition() - angle < Math.toRadians(10)) {
+      slowDownVoltage += 0.2;
+    }
+    int slot = 0;
+    if (m_hasCone) {
+      slot = 1;
     } else {
       slot = 0;
     }
@@ -348,11 +364,7 @@ public class ArmSubsystem extends SubsystemBase {
     double enc2AtHorizontal = getTopPosition() - (Math.PI - getBottomPosition());
     double voltsAtHorizontal;
     if (haveCone) {
-      if (topSetpoint < Math.toRadians(50)) {
-        voltsAtHorizontal = m_topArmVoltsAtHorizontal.get();
-      } else {
         voltsAtHorizontal = ArmConfig.TOP_HORIZONTAL_VOLTAGE_CONE;
-      }
     }
     else {
       voltsAtHorizontal = m_topArmVoltsAtHorizontal.get();

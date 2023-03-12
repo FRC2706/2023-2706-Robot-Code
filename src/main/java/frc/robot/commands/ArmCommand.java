@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.config.ArmConfig;
 import frc.robot.config.ArmConfig.ArmSetpoint;
@@ -25,6 +26,9 @@ public class ArmCommand extends CommandBase {
 
   // arm simulation variables
   ArmDisplay armDisplay;
+
+  boolean startBrakeTimer;
+  Timer m_timer = new Timer();
   
 
   /** Creates a new ArmExtend. */
@@ -49,6 +53,10 @@ public class ArmCommand extends CommandBase {
     ArmSubsystem.getInstance().resetMotionProfile();
     ArmSubsystem.getInstance().controlTopArmBrake(false);
     ArmSubsystem.getInstance().controlBottomArmBrake(false);
+
+    startBrakeTimer = false;
+    m_timer.stop();
+    m_timer.reset();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -76,23 +84,41 @@ public class ArmCommand extends CommandBase {
     ArmSubsystem.getInstance().setTopJoint(angle2);
     ArmSubsystem.getInstance().setBottomJoint(angle1, angle2);
 
-    if (Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.waypointPositionTolerance &&
-    Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.waypointPositionTolerance &&
-    Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.waypointVelocityTolerance &&
-     Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointVelocityTolerance) {
-
-      if (index == armSetpoint.getWaypoint().length - 1 || armSetpoint.getWaypoint().length == 0) {
-        index = 99;
-        tempX = armSetpoint.getX();
-        tempZ = armSetpoint.getZ();
-        angles = ArmSubsystem.getInstance().inverseKinematics(ArmConfig.L1, ArmConfig.L2, tempX, tempZ);
-        angle1 = angles[0];
-        angle2 = angles[1];
+    boolean topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.positionTolerance &&
+                              Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.velocityTolerance;
+    boolean bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.positionTolerance &&
+                                  Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance;
+    if (index >= 99) {
+      if (topReached) {
+        ArmSubsystem.getInstance().controlTopArmBrake(true);
       }
-      else {
-        index += 1;
+      if (bottomReached) {
+        ArmSubsystem.getInstance().controlBottomArmBrake(true);
+      }
+      if (startBrakeTimer == false && topReached && bottomReached) {
+        startBrakeTimer = true;
+        m_timer.restart();
+      }
+    } else {
+      topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.waypointPositionTolerance &&
+          Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.waypointVelocityTolerance;
+      bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.waypointPositionTolerance &&
+          Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointVelocityTolerance;
+      if (bottomReached && topReached) {
+        if (index == armSetpoint.getWaypoint().length - 1 || armSetpoint.getWaypoint().length == 0) {
+          index = 99;
+          // tempX = armSetpoint.getX();
+          // tempZ = armSetpoint.getZ();
+          // angles = ArmSubsystem.getInstance().inverseKinematics(ArmConfig.L1, ArmConfig.L2, tempX, tempZ);
+          // angle1 = angles[0];
+          // angle2 = angles[1];
+        }
+        else {
+          index += 1;
+        }
       }
     }
+    
   }
 
   // Called once the command ends or is interrupted.
@@ -103,19 +129,22 @@ public class ArmCommand extends CommandBase {
       ArmSubsystem.getInstance().controlTopArmBrake(true);
       ArmSubsystem.getInstance().controlBottomArmBrake(true);
     }
+
+    m_timer.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.positionTolerance &&
-     Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.positionTolerance &&
-     Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.velocityTolerance &&
-      Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance && index >= 99) {
-        return true;
-      }
-    else {
-      return false;
-    }
+    // if (Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.positionTolerance &&
+    //  Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.positionTolerance &&
+    //  Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.velocityTolerance &&
+    //   Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance && index >= 99) {
+    //     return true;
+    //   }
+    // else {
+    //   return false;
+    // }
+    return m_timer.hasElapsed(0.2);
   }
 }
