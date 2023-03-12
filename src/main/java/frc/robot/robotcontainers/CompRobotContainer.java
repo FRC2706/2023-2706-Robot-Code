@@ -55,9 +55,14 @@ public class CompRobotContainer extends RobotContainer {
     HasCone,
     HasCube
   }
-  private RobotGamePieceState m_robotState = RobotGamePieceState.NoGamePiece;
+  private static RobotGamePieceState m_robotState = RobotGamePieceState.NoGamePiece;
   AutoSelector m_autoSelector;
   AutoRoutines routines;
+
+    // getState and setState for commands managing the RobotGamePieceState
+   public static Supplier<RobotGamePieceState> getState = ()-> getRobotGamePieceState();
+   public static Consumer<RobotGamePieceState> setState = a ->setRobotGamePieceState(a);
+
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public CompRobotContainer() {
@@ -80,9 +85,9 @@ public class CompRobotContainer extends RobotContainer {
     CommandXboxController testStick = new CommandXboxController(2);
     CommandXboxController armStick = new CommandXboxController(3);
 
-    // getState and setState for commands managing the RobotGamePieceState
-    Supplier<RobotGamePieceState> getState = ()-> getRobotGamePieceState();
-    Consumer<RobotGamePieceState> setState = a ->setRobotGamePieceState(a);
+    // // getState and setState for commands managing the RobotGamePieceState
+    // Supplier<RobotGamePieceState> getState = ()-> getRobotGamePieceState();
+    // Consumer<RobotGamePieceState> setState = a ->setRobotGamePieceState(a);
 
     SwerveModuleState state1 =  new SwerveModuleState(0, Rotation2d.fromDegrees(0));
     SwerveModuleState state2 =  new SwerveModuleState(0, Rotation2d.fromDegrees(90));
@@ -101,7 +106,7 @@ public class CompRobotContainer extends RobotContainer {
     
     driver.x().whileTrue(new TranslationCommand(1, 1));
     driver.leftTrigger().whileTrue(new RotateXYSupplier(driver,
-      NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("YawToTarget").subscribe(-99)
+      NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99)
     ));
 
     driver.rightTrigger().whileTrue(Commands.sequence(
@@ -204,10 +209,10 @@ public class CompRobotContainer extends RobotContainer {
     System.out.println("*********************** Auto Id"+autoId);
      return routines.getAutonomousCommand(autoId);
   }
-  public RobotGamePieceState getRobotGamePieceState() {
+  public static RobotGamePieceState getRobotGamePieceState() {
     return m_robotState;
   }
-  public void setRobotGamePieceState(RobotGamePieceState state) {
+  public static void setRobotGamePieceState(RobotGamePieceState state) {
     m_robotState=state;
   }
 }

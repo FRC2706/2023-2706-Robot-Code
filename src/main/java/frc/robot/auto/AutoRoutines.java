@@ -19,9 +19,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.ArmCommand;
+import frc.robot.commands.GripperCommand;
+import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.commands.SetBlingCommand;
 import frc.robot.commands.TranslationCommand;
+import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.config.Config;
+import frc.robot.robotcontainers.CompRobotContainer;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /** Add your docs here. */
@@ -59,6 +64,9 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> place_pick_bottom_charge_new;
     List<PathPlannerTrajectory> place_pick_top_charge_new;
     List<PathPlannerTrajectory> place_pick_place_pick_place_top2;
+    List<PathPlannerTrajectory> cube_1p0_top_charge;
+    List<PathPlannerTrajectory> cube_2p0_top;
+
 
 
     public AutoRoutines() {
@@ -76,7 +84,26 @@ public class AutoRoutines {
                 new SwerveModuleState(-0.1, Rotation2d.fromDegrees(45)),
                 new SwerveModuleState(-0.1, Rotation2d.fromDegrees(-45)),
             })).withTimeout(0.4)));
+         
+         //place game pieces
+         eventMap.put("ArmCubeTop", new ArmCommand(ArmSetpoint.TOP_CUBE));
+         eventMap.put("ArmCubeMiddle", new ArmCommand(ArmSetpoint.MIDDLE_CUBE));
+         eventMap.put("ArmCubeBottom", new ArmCommand(ArmSetpoint.BOTTOM_CUBE));
+         eventMap.put("ArmPickup", new ArmCommand(ArmSetpoint.PICKUP));
+         eventMap.put("ArmHome", new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE));
+         eventMap.put("ArmHomeAfterPickup", new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP));
 
+
+
+         eventMap.put("GripperPickCube", new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, 
+                                            CompRobotContainer.setState));
+         eventMap.put("GripperPickCone", new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, 
+                                            CompRobotContainer.setState));
+
+         eventMap.put("GripperOpen", new GripperCommand(GRIPPER_INSTRUCTION.OPEN, 
+                                            CompRobotContainer.setState));
+
+         
         autoBuilder = new SwerveAutoBuilder(
                 SwerveSubsystem.getInstance()::getPose,
                 SwerveSubsystem.getInstance()::resetOdometry,
@@ -118,6 +145,8 @@ public class AutoRoutines {
         place_pick_bottom_charge_new = PathPlanner.loadPathGroup("place_pick_bottom2_charge_new", 2.5, 3);// 2.5, 3);
         place_pick_top_charge_new = PathPlanner.loadPathGroup("place_pick_top_charge_new", 2.5, 3);// 2.5, 3);
         place_pick_place_pick_place_top2 = PathPlanner.loadPathGroup("place_pick_place_pick_place_top2", 2.5, 3);// 2.5, 3);
+        cube_1p0_top_charge = PathPlanner.loadPathGroup("cube_1p0_top_charge", 2.5, 3);
+        cube_2p0_top = PathPlanner.loadPathGroup("cube_2p0_top", 2.5, 3);
     }
 
     public Command getAutonomousCommand(int selectAuto) {
@@ -214,6 +243,9 @@ public class AutoRoutines {
                
             case 28:
                 return autoBuilder.fullAuto(place_pick_bottom_charge_new);
+
+            case 31:
+                return autoBuilder.fullAuto(cube_1p0_top_charge);
 
         }
         return new InstantCommand();
