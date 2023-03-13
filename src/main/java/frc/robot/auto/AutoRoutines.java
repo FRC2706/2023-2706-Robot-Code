@@ -34,41 +34,21 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class AutoRoutines {
     SwerveAutoBuilder autoBuilder;
 
-    List<PathPlannerTrajectory> Practice1;
-    List<PathPlannerTrajectory> Practice2;
-    List<PathPlannerTrajectory> leave_top;
-    List<PathPlannerTrajectory> leave_middle_around_;
-    List<PathPlannerTrajectory> leave_middle_through_;
-    List<PathPlannerTrajectory> leave_bottom;
-    List<PathPlannerTrajectory> leave_balance_top;    
-    List<PathPlannerTrajectory> leave_balance_middle_around_;
-    List<PathPlannerTrajectory> leave_balance_middle_through_;
-    List<PathPlannerTrajectory> leave_balance_bottom;
-    List<PathPlannerTrajectory> place_pick_top;
-    List<PathPlannerTrajectory> place_pick_middle_around_;
-    List<PathPlannerTrajectory> place_pick_middle_through_;
-    List<PathPlannerTrajectory> place_pick_bottom;
-    List<PathPlannerTrajectory> place_pick_balance_top;
-    List<PathPlannerTrajectory> place_pick_balance_middle;
-    List<PathPlannerTrajectory> place_pick_balance_bottom;
-    List<PathPlannerTrajectory> place_pick_place_balance_top;
-    List<PathPlannerTrajectory> place_pick_place_balance_middle;
-    List<PathPlannerTrajectory> place_pick_place_balance_bottom;
-    List<PathPlannerTrajectory> place_pick_place_top;
-    List<PathPlannerTrajectory> place_pick_place_middle;
-    List<PathPlannerTrajectory> place_pick_place_bottom;
-    List<PathPlannerTrajectory> place_pick_place_pick_place_top;
-    List<PathPlannerTrajectory> place_pick_place_pick_place_middle;
-    List<PathPlannerTrajectory> place_pick_place_pick_place_bottom;
-    List<PathPlannerTrajectory> place_2p5_bottom_new;
-    List<PathPlannerTrajectory> place_pick_bottom_charge_new;
-    List<PathPlannerTrajectory> place_pick_top_charge_new;
-    List<PathPlannerTrajectory> place_pick_place_pick_place_top2;
-    List<PathPlannerTrajectory> cube_1p0_top_charge;
-    List<PathPlannerTrajectory> cube_2p0_top;
-
-
-
+    List<PathPlannerTrajectory> cube_0p5_top_charge_good;
+    List<PathPlannerTrajectory> cube_0p5_bottom_charge;
+    List<PathPlannerTrajectory> cube_0p5_middle_charge;
+    List<PathPlannerTrajectory> cube_1p0_top;
+    List<PathPlannerTrajectory> cube_1p0_bottom;
+    List<PathPlannerTrajectory> cone_0p5_top_charge;
+    List<PathPlannerTrajectory> cone_0p5_middle1_charge;    
+    List<PathPlannerTrajectory> cone_0p5_middle2_charge;
+    List<PathPlannerTrajectory> cone_0p5_bottom_charge;
+    List<PathPlannerTrajectory> cone_1p0_top;
+    List<PathPlannerTrajectory> cone_1p0_bottom;
+    List<PathPlannerTrajectory> BK_cube_2p0_bottom;
+    List<PathPlannerTrajectory> BK_cube_0p5_middle_charge;
+    List<PathPlannerTrajectory> BK_cone_0p5_charge;
+   
     public AutoRoutines() {
         Map<String, Command> eventMap = new HashMap<String, Command>();
 
@@ -93,8 +73,6 @@ public class AutoRoutines {
          eventMap.put("ArmHome", new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE));
          eventMap.put("ArmHomeAfterPickup", new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP));
 
-
-
          eventMap.put("GripperPickCube", new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, 
                                             CompRobotContainer.setState));
          eventMap.put("GripperPickCone", new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, 
@@ -115,38 +93,21 @@ public class AutoRoutines {
                 true,
                 SwerveSubsystem.getInstance());
 
-        Practice1 = PathPlanner.loadPathGroup("Practice1", 2.5, 3);
-        Practice2 = PathPlanner.loadPathGroup("Practice2", 2.5, 3);
-        leave_top = PathPlanner.loadPathGroup("leave_top", 2.5, 3);
-        leave_middle_around_ = PathPlanner.loadPathGroup("leave_middle_around_", 2.5, 3);
-        leave_middle_through_ = PathPlanner.loadPathGroup("leave_middle_through_", 2.5, 3);
-        leave_bottom = PathPlanner.loadPathGroup("leave_bottom", 2.5, 3);
-        leave_balance_top = PathPlanner.loadPathGroup("leave_balance_top", 2.5, 3);
-        leave_balance_middle_around_ = PathPlanner.loadPathGroup("leave_balance_middle_around_", 2.5, 3);
-        leave_balance_middle_through_ = PathPlanner.loadPathGroup("leave_balance_middle_through_", 2.5, 3);
-        leave_balance_bottom = PathPlanner.loadPathGroup("leave_balance_bottom", 2.5, 3);
-        place_pick_top = PathPlanner.loadPathGroup("place_pick_top", 2.5, 3);
-        place_pick_middle_around_ = PathPlanner.loadPathGroup("place_pick_middle_around_", 2.5, 3);
-        place_pick_middle_through_ = PathPlanner.loadPathGroup("place_pick_middle_through_", 2.5, 3);
-        place_pick_bottom = PathPlanner.loadPathGroup("place_pick_bottom", 2.5, 3);
-        place_pick_balance_top = PathPlanner.loadPathGroup("place_pick_balance_top", 2.5, 3);
-        place_pick_balance_middle = PathPlanner.loadPathGroup("place_pick_balance_middle", 2.5, 3);
-        place_pick_balance_bottom = PathPlanner.loadPathGroup("place_pick_balance_bottom", 2.5, 3);
-        place_pick_place_top = PathPlanner.loadPathGroup("place_pick_place_top", 2.5, 3);
-        place_pick_place_balance_middle = PathPlanner.loadPathGroup("place_pick_place_balance_middle", 2.5, 3);
-        place_pick_place_balance_bottom = PathPlanner.loadPathGroup("place_pick_place_balance_bottom", 2.5, 3);
-        place_pick_place_top = PathPlanner.loadPathGroup("place_pick_place_top", 2.5, 3);
-        place_pick_place_middle = PathPlanner.loadPathGroup("place_pick_place_middle", 2.5, 3);
-        place_pick_place_bottom = PathPlanner.loadPathGroup("place_pick_place_bottom", 2.5, 3);
-        place_pick_place_pick_place_top = PathPlanner.loadPathGroup("place_pick_place_pick_place_top", 2.5, 3);
-        place_pick_place_pick_place_middle = PathPlanner.loadPathGroup("place_pick_place_pick_place_middle", 2.5, 3);
-        place_pick_place_pick_place_bottom = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom", 2.5, 3);
-        place_2p5_bottom_new = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2", 2.5, 3);// 2.5, 3);
-        place_pick_bottom_charge_new = PathPlanner.loadPathGroup("place_pick_bottom2_charge_new", 2.5, 3);// 2.5, 3);
-        place_pick_top_charge_new = PathPlanner.loadPathGroup("place_pick_top_charge_new", 2.5, 3);// 2.5, 3);
-        place_pick_place_pick_place_top2 = PathPlanner.loadPathGroup("place_pick_place_pick_place_top2", 2.5, 3);// 2.5, 3);
-        cube_1p0_top_charge = PathPlanner.loadPathGroup("cube_1p0_top_charge", 2.5, 3);
-        cube_2p0_top = PathPlanner.loadPathGroup("cube_2p0_top", 2.5, 3);
+        cube_0p5_top_charge_good = PathPlanner.loadPathGroup("cube_0p5_top_charge_goode", 2.5, 3);
+        cube_0p5_bottom_charge = PathPlanner.loadPathGroup("cube_0p5_bottom_charge", 2.5, 3);
+        cube_0p5_middle_charge = PathPlanner.loadPathGroup("cube_0p5_middle_charge", 2.5, 3);
+        cube_1p0_top = PathPlanner.loadPathGroup("cube_1p0_top", 2.5, 3);
+        cube_1p0_bottom = PathPlanner.loadPathGroup("cube_1p0_bottom", 2.5, 3);
+        cone_0p5_top_charge = PathPlanner.loadPathGroup("cone_0p5_top_charge", 2.5, 3);
+        cone_0p5_middle1_charge = PathPlanner.loadPathGroup("cone_0p5_middle1_charge", 2.5, 3);
+        cone_0p5_middle2_charge = PathPlanner.loadPathGroup("cone_0p5_middle2_charge", 2.5, 3);
+        cone_0p5_bottom_charge = PathPlanner.loadPathGroup("cone_0p5_bottom_charge", 2.5, 3);
+        cone_1p0_top = PathPlanner.loadPathGroup("cone_1p0_top", 2.5, 3);
+        cone_1p0_bottom = PathPlanner.loadPathGroup("cone_1p0_bottom", 2.5, 3);
+        BK_cube_2p0_bottom = PathPlanner.loadPathGroup("BK_cube_2p0_bottom", 2.5, 3);
+        BK_cube_0p5_middle_charge = PathPlanner.loadPathGroup("BK_cube_0p5_middle_charge", 2.5, 3);
+        BK_cone_0p5_charge = PathPlanner.loadPathGroup("BK_cone_0p5_charge", 2.5, 3);
+        
     }
 
     public Command getAutonomousCommand(int selectAuto) {
@@ -156,96 +117,47 @@ public class AutoRoutines {
                 return null;
 
             case 1:
-                return (autoBuilder.fullAuto(leave_top));
+                return (autoBuilder.fullAuto(cube_0p5_top_charge_good));
 
             case 2:
-                return (autoBuilder.fullAuto(leave_middle_around_));
+                return (autoBuilder.fullAuto(cube_0p5_bottom_charge));
 
             case 3:
-                return (autoBuilder.fullAuto(leave_middle_through_));
+                return (autoBuilder.fullAuto(cube_0p5_middle_charge));
 
             case 4:
-                return (autoBuilder.fullAuto(leave_bottom));
+                return (autoBuilder.fullAuto(cube_1p0_top));
             
             case 5:
-                return (autoBuilder.fullAuto(leave_balance_top));
+                return (autoBuilder.fullAuto(cube_1p0_bottom));
 
             case 6:
-                return (autoBuilder.fullAuto(leave_balance_middle_around_));
+                return (autoBuilder.fullAuto(cone_0p5_top_charge));
 
             case 7:
-                return (autoBuilder.fullAuto(leave_balance_middle_through_));
+                return (autoBuilder.fullAuto(cone_0p5_middle1_charge));
 
             case 8:
-                return (autoBuilder.fullAuto(leave_balance_bottom));
+                return (autoBuilder.fullAuto(cone_0p5_middle2_charge));
                 
             case 9:
-                return (autoBuilder.fullAuto(place_pick_top));
+                return (autoBuilder.fullAuto(cone_0p5_bottom_charge));
 
             case 10:
-                return (autoBuilder.fullAuto(place_pick_middle_around_));
+                return (autoBuilder.fullAuto(cone_1p0_top));
                 
             case 11:
-                return (autoBuilder.fullAuto(place_pick_middle_through_));
+                return (autoBuilder.fullAuto(cone_1p0_bottom));
                 
 
             case 12:
-                return (autoBuilder.fullAuto(place_pick_bottom));
+                return (autoBuilder.fullAuto(BK_cube_2p0_bottom));
 
             case 13:
-                return (autoBuilder.fullAuto(place_pick_balance_top));
+                return (autoBuilder.fullAuto(BK_cube_0p5_middle_charge));
 
             case 14:
-                return (autoBuilder.fullAuto(place_pick_balance_middle));
-
-                //test this case
-            case 15:
-                return new SequentialCommandGroup(
-                    autoBuilder.fullAuto(place_pick_balance_bottom),
-                    new TranslationCommand(-2.7,0)
-                );
-            case 16:
-                return (autoBuilder.fullAuto(place_pick_place_balance_top));
-
-            case 17:
-                return (autoBuilder.fullAuto(place_pick_place_balance_middle));
-            
-            case 18:
-                return (autoBuilder.fullAuto(place_pick_place_balance_bottom));
-
-            case 19:
-                return (autoBuilder.fullAuto(place_pick_place_top));
-
-            case 20:
-                return (autoBuilder.fullAuto(place_pick_place_middle));
-
-            case 21:
-                return (autoBuilder.fullAuto(place_pick_place_bottom));
-
-            case 22:
-                return (autoBuilder.fullAuto(place_pick_place_pick_place_top));
-
-            case 23:
-                return (autoBuilder.fullAuto(place_pick_place_pick_place_middle));
-
-            case 24:
-                return (autoBuilder.fullAuto(place_pick_place_pick_place_bottom));
-            
-            case 25:
-                return (autoBuilder.fullAuto(Practice1));
-                
-            case 26:
-                return (autoBuilder.fullAuto(Practice2));
-
-
-            case 27:
-                return autoBuilder.fullAuto(place_2p5_bottom_new);
-               
-            case 28:
-                return autoBuilder.fullAuto(place_pick_bottom_charge_new);
-
-            case 31:
-                return autoBuilder.fullAuto(cube_1p0_top_charge);
+                return (autoBuilder.fullAuto(BK_cone_0p5_charge));
 
         }
         return new InstantCommand();

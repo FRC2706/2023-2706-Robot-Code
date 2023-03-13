@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 2.0,
-        "y": 3.2634707299871457
+        "x": 2.8658132504234937,
+        "y": 4.7
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0406916549873704,
-        "y": 4.329592090656264
+        "x": 2.534313940808333,
+        "y": 4.671126635486354
       },
       "holonomicAngle": -180.0,
       "isReversal": false,
@@ -17,8 +17,88 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "Bling Red"
+          "GripperPickCube",
+          "ArmCubeTop"
         ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
+        "waitTime": 0.0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.8009972862050994,
+        "y": 4.440081662118213
+      },
+      "prevControl": {
+        "x": 2.2128600648178747,
+        "y": 4.450127095742914
+      },
+      "nextControl": {
+        "x": 2.2128600648178747,
+        "y": 4.450127095742914
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "GripperOpen"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "after",
+        "waitTime": 0.3
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 3.789993143896063,
+        "y": 4.711308369985162
+      },
+      "prevControl": {
+        "x": 3.5505762697193353,
+        "y": 4.696344815349117
+      },
+      "nextControl": {
+        "x": 4.754354771867439,
+        "y": 4.771580971733373
+      },
+      "holonomicAngle": 90.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "ArmHome"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "after",
+        "waitTime": 0.1
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.462078488066751,
+        "y": 3.3551748306504146
+      },
+      "prevControl": {
+        "x": 6.452033054442048,
+        "y": 3.807219343761999
+      },
+      "nextControl": {
+        "x": 6.470785242467586,
+        "y": 2.963370882612851
+      },
+      "holonomicAngle": 1.6365770416166354,
+      "isReversal": false,
+      "velOverride": 0.5,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -26,104 +106,21 @@
     },
     {
       "anchorPoint": {
-        "x": 6.4,
-        "y": 4.590018682575437
+        "x": 4.975354311610879,
+        "y": 4.6409903346122485
       },
       "prevControl": {
-        "x": 4.853717110479907,
-        "y": 5.574756733269813
-      },
-      "nextControl": {
-        "x": 4.853717110479907,
-        "y": 5.574756733269813
-      },
-      "holonomicAngle": 0,
-      "isReversal": true,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [
-          "Bling Honeydew"
-        ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "after",
-        "waitTime": 0.3
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 2.0,
-        "y": 3.9715055267673995
-      },
-      "prevControl": {
-        "x": 1.0618477072791492,
-        "y": 3.625282656837347
-      },
-      "nextControl": {
-        "x": 3.3672396075695588,
-        "y": 4.4760820486046935
-      },
-      "holonomicAngle": -180.0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [
-          "Bling Red"
-        ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "after",
-        "waitTime": 0.3
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.4,
-        "y": 3.5238973219124228
-      },
-      "prevControl": {
-        "x": 4.52004553957736,
-        "y": 5.957258290151099
-      },
-      "nextControl": {
-        "x": 6.485167682061076,
-        "y": 3.413658633877293
-      },
-      "holonomicAngle": 0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [
-          "Bling Honeydew"
-        ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "after",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 2.0,
-        "y": 4.956243577467879
-      },
-      "prevControl": {
-        "x": 6.126133815719408,
-        "y": 5.127148528414836
+        "x": 5.556160658185978,
+        "y": 4.681172069111056
       },
       "nextControl": null,
-      "holonomicAngle": -180.0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "Bling Red"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
