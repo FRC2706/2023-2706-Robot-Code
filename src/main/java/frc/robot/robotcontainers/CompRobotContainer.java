@@ -127,14 +127,19 @@ public class CompRobotContainer extends RobotContainer {
     operator.x().onTrue(new ArmCommand(ArmSetpoint.PICKUP));
 
     // Force the buttons to just do cone setpoints
-    operator.a().onTrue(new ArmCommand(ArmSetpoint.BOTTOM_CONE));
-    operator.b().onTrue(new ArmCommand(ArmSetpoint.MIDDLE_CONE));
-    operator.y().onTrue(new ArmCommand(ArmSetpoint.TOP_CONE));
+    // operator.a().onTrue(new ArmCommand(ArmSetpoint.BOTTOM_CONE));
+    // operator.b().onTrue(new ArmCommand(ArmSetpoint.MIDDLE_CONE));
+    // operator.y().onTrue(new ArmCommand(ArmSetpoint.TOP_CONE));
+
+    // Force the buttons to just do cube setpoints
+    // operator.a().onTrue(new ArmCommand(ArmSetpoint.BOTTOM_CUBE));
+    // operator.b().onTrue(new ArmCommand(ArmSetpoint.MIDDLE_CUBE));
+    // operator.y().onTrue(new ArmCommand(ArmSetpoint.TOP_CUBE));
 
     // Choose the ArmSetpoint based on RobotGamePieceState
-    // operator.a().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_BOTTOM, false));
-    // operator.b().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_MIDDLE, false));
-    // operator.y().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_TOP, false));
+    operator.a().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_BOTTOM, false));
+    operator.b().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_MIDDLE, false));
+    operator.y().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_TOP, false));
 
     operator.rightTrigger().onTrue(new ArmCommand(ArmSetpoint.HUMAN_PLAYER_PICKUP));
     operator.leftTrigger().onTrue(new ArmCommand(ArmSetpoint.PICKUP_OUTSIDE_FRAME));

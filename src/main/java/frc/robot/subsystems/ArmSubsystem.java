@@ -102,7 +102,7 @@ public class ArmSubsystem extends SubsystemBase {
   // for bottom arm ff
   private DoubleSubscriber momentToVoltageConversion;
   private double m_bottomVoltageConversion;
-  private boolean m_hasCone = true;
+  private boolean m_hasCone = false;
 
   // for arm pneumatic brakes
   DoubleSolenoid brakeSolenoidLow;

@@ -41,7 +41,7 @@ public class ArmConfig {
 
         BOTTOM_CUBE(24, -7),
         MIDDLE_CUBE(40.5, 27, new ArmWaypoint(21, 12)),
-        TOP_CUBE(49, 45.5, new ArmWaypoint(25, 15));
+        TOP_CUBE(49, 42, new ArmWaypoint(25, 15));
         
 
         public DoubleEntry x_entry;
