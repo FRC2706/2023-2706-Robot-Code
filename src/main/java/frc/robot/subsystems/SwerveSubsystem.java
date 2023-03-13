@@ -154,6 +154,15 @@ public class SwerveSubsystem extends SubsystemBase {
         m_rearRight.setDesiredState(swerveModuleStates[3],isOpenLoop);
     }
 
+    public void setModuleStatesNoAntiJitter(SwerveModuleState[] desiredStates, boolean isOpenLoop){
+        SwerveDriveKinematics.desaturateWheelSpeeds(
+                desiredStates, Config.Swerve.kMaxAttainableWheelSpeed);
+        m_frontLeft.setDesiredState(desiredStates[0], isOpenLoop, false);
+        m_frontRight.setDesiredState(desiredStates[1], isOpenLoop, false);
+        m_rearLeft.setDesiredState(desiredStates[2], isOpenLoop, false);
+        m_rearRight.setDesiredState(desiredStates[3], isOpenLoop, false);
+    }
+
     /**
      * Sets the swerve ModuleStates.
      *
