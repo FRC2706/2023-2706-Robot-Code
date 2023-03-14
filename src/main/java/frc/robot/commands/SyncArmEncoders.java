@@ -94,10 +94,10 @@ public class SyncArmEncoders extends CommandBase {
             // ((float) ArmSubsystem.getInstance().getTopPosition() )> ArmConfig.top_arm_forward_limit ||
             
             /** Temporary checks for current encoder setup. TODO: Remove once encoder wrapping is solved.*/
-            ArmSubsystem.getInstance().getBottomPosition() < Math.toRadians(70) ||
-            ArmSubsystem.getInstance().getBottomPosition() > Math.toRadians(100) ||
-            ArmSubsystem.getInstance().getTopPosition() < Math.toRadians(10) ||
-            ArmSubsystem.getInstance().getTopPosition() > Math.toRadians(35) ||
+            ArmSubsystem.getInstance().getBottomPosition() < Math.toRadians(60) ||
+            ArmSubsystem.getInstance().getBottomPosition() > Math.toRadians(120) ||
+            ArmSubsystem.getInstance().getTopPosition() < Math.toRadians(5) ||
+            ArmSubsystem.getInstance().getTopPosition() > Math.toRadians(70) ||
             ArmSubsystem.getInstance().areEncodersSynced() == false ||
             m_commandState != 99
             ) {
