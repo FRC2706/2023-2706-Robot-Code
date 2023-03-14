@@ -23,20 +23,23 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.auto.AutoRoutines;
 import frc.robot.auto.AutoSelector;
-import frc.robot.auto.AutoSelector;
 import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommand;
+import frc.robot.commands.ArmCommandSelector;
 import frc.robot.commands.ArmFFTestCommand;
+import frc.robot.commands.ChargeStationLock;
 import frc.robot.commands.GripperCommand;
+import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
 import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.RotateXYSupplier;
+import frc.robot.commands.SetAngleArm;
 import frc.robot.commands.SwerveTeleop;
 import frc.robot.commands.TranslationCommand;
-import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.config.ArmConfig;
+import frc.robot.config.ArmConfig.ArmPosition;
 import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.RelaySubsystem;
@@ -60,7 +63,7 @@ public class CompRobotContainer extends RobotContainer {
   AutoRoutines routines;
 
     // getState and setState for commands managing the RobotGamePieceState
-   public static Supplier<RobotGamePieceState> getState = ()-> getRobotGamePieceState();
+   public static Supplier<RobotGamePieceState> getState = CompRobotContainer::getRobotGamePieceState;
    public static Consumer<RobotGamePieceState> setState = a ->setRobotGamePieceState(a);
 
   
@@ -85,15 +88,6 @@ public class CompRobotContainer extends RobotContainer {
     CommandXboxController testStick = new CommandXboxController(2);
     CommandXboxController armStick = new CommandXboxController(3);
 
-    // // getState and setState for commands managing the RobotGamePieceState
-    // Supplier<RobotGamePieceState> getState = ()-> getRobotGamePieceState();
-    // Consumer<RobotGamePieceState> setState = a ->setRobotGamePieceState(a);
-
-    SwerveModuleState state1 =  new SwerveModuleState(0, Rotation2d.fromDegrees(0));
-    SwerveModuleState state2 =  new SwerveModuleState(0, Rotation2d.fromDegrees(90));
-    SwerveModuleState state3 =  new SwerveModuleState(-1.5, Rotation2d.fromDegrees(0));
-    SwerveModuleState state4 =  new SwerveModuleState(1.5, Rotation2d.fromDegrees(0));
-
     // Driver joystick
     SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
 
@@ -104,7 +98,7 @@ public class CompRobotContainer extends RobotContainer {
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
     driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
     
-    driver.x().whileTrue(new TranslationCommand(1, 1));
+    driver.x().whileTrue(new ChargeStationLock());
     driver.leftTrigger().whileTrue(new RotateXYSupplier(driver,
       NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99)
     ));
@@ -128,38 +122,46 @@ public class CompRobotContainer extends RobotContainer {
 
     // Operator Joystick
     operator.rightBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));
-    operator.back().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, setState).andThen(new WaitCommand(0.2)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
-    operator.start().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, setState).andThen(new WaitCommand(0.2)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+    operator.leftBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.USE_VISION, setState).andThen(new WaitCommand(0.3)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+    operator.back().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, setState).andThen(new WaitCommand(0.3)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+    operator.start().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, setState).andThen(new WaitCommand(0.3)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+    
+    operator.rightTrigger().onTrue(new ArmCommand(ArmSetpoint.HUMAN_PLAYER_PICKUP));
+    operator.leftTrigger().onTrue(new ArmCommand(ArmSetpoint.PICKUP_OUTSIDE_FRAME));
 
-    // Temporary operator brake control for hardware to test (REMOVE LATER)
+    // Choose the ArmSetpoint based on RobotGamePieceState
+    operator.x().onTrue(new ArmCommand(ArmSetpoint.PICKUP));
+    operator.a().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_BOTTOM, false));
+    operator.b().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_MIDDLE, false));
+    operator.y().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_TOP, false));
+    
 
-    operator.leftTrigger().toggleOnTrue(Commands.startEnd(
-      () -> ArmSubsystem.getInstance().controlBottomArmBrake(true), 
-      () -> ArmSubsystem.getInstance().controlBottomArmBrake(false)));
+    // Force the buttons to just do cone setpoints
+    // operator.a().onTrue(new ArmCommand(ArmSetpoint.BOTTOM_CONE));
+    // operator.b().onTrue(new ArmCommand(ArmSetpoint.MIDDLE_CONE));
+    // operator.y().onTrue(new ArmCommand(ArmSetpoint.TOP_CONE));
 
-    // Temporary operator brake control for hardware to test (REMOVE LATER)
-    operator.rightTrigger().toggleOnTrue(Commands.startEnd(
-      () -> ArmSubsystem.getInstance().controlTopArmBrake(true), 
-      () -> ArmSubsystem.getInstance().controlTopArmBrake(false)));
+    // Force the buttons to just do cube setpoints
+    // operator.a().onTrue(new ArmCommand(ArmSetpoint.BOTTOM_CUBE));
+    // operator.b().onTrue(new ArmCommand(ArmSetpoint.MIDDLE_CUBE));
+    // operator.y().onTrue(new ArmCommand(ArmSetpoint.TOP_CUBE));
 
+        // Temporary operator brake control for hardware to test (REMOVE LATER)
+    // operator.leftTrigger().toggleOnTrue(Commands.startEnd(
+    //   () -> ArmSubsystem.getInstance().controlBottomArmBrake(true), 
+    //   () -> ArmSubsystem.getInstance().controlBottomArmBrake(false)));
 
-
+    // // Temporary operator brake control for hardware to test (REMOVE LATER)
+    // operator.rightTrigger().toggleOnTrue(Commands.startEnd(
+    //   () -> ArmSubsystem.getInstance().controlTopArmBrake(true), 
+    //   () -> ArmSubsystem.getInstance().controlTopArmBrake(false)));
+    
 
     
-    Command angleSetPoint1 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state1, state1, state1, state1}, true), SwerveSubsystem.getInstance());
-    testStick.a().whileTrue(angleSetPoint1).whileFalse(new InstantCommand(SwerveSubsystem.getInstance()::stopMotors, SwerveSubsystem.getInstance()));
 
-    Command angleSetPoint2 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state2, state2, state2, state2}, true), SwerveSubsystem.getInstance());
-    testStick.b().whileTrue(angleSetPoint2).whileFalse(new InstantCommand(SwerveSubsystem.getInstance()::stopMotors, SwerveSubsystem.getInstance()));
-
-    Command speedSetPoint1 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state3, state3, state3, state3}, true), SwerveSubsystem.getInstance());
-    testStick.y().whileTrue(speedSetPoint1).whileFalse(new InstantCommand(SwerveSubsystem.getInstance()::stopMotors, SwerveSubsystem.getInstance()));
-    
-    Command speedSetPoint2 = new RunCommand(() -> SwerveSubsystem.getInstance().setModuleStates(new SwerveModuleState[]{state4, state4, state4, state4}, true), SwerveSubsystem.getInstance());
-    testStick.x().whileTrue(speedSetPoint2).whileFalse(new InstantCommand(SwerveSubsystem.getInstance()::stopMotors, SwerveSubsystem.getInstance()));
   
 
-    boolean isTop = true;
+    // boolean isTop = true;
 
     // armStick.a().onTrue(new SetAngleArm(85, false, false).alongWith(new SetAngleArm(20, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
     //           //  .andThen((new SetAngleArm(85, false, false)).alongWith(new SetAngleArm(20, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance()))));
@@ -168,11 +170,13 @@ public class CompRobotContainer extends RobotContainer {
     // armStick.y().onTrue(new SetAngleArm(70, false, false).alongWith(new SetAngleArm(105, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
     // armStick.x().onTrue(new SetAngleArm(45, false, false).alongWith(new SetAngleArm(180, false, true)).alongWith(Commands.runOnce(()-> ArmSubsystem.getInstance(), ArmSubsystem.getInstance())));
     
-    operator.a().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.BOTTOM_CUBE));
-    operator.b().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.MIDDLE_CUBE));
-    operator.y().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.TOP_CUBE));
-    operator.x().onTrue(new ArmCommand(ArmConfig.ArmSetpoint.PICKUP));
-    
+
+
+
+    armStick.a().onTrue(new SetAngleArm(30, false, true));
+    armStick.b().onTrue(new SetAngleArm(60, false, true));
+    armStick.y().onTrue(new SetAngleArm(90, false, true));
+    armStick.x().onTrue(new SetAngleArm(120, false, true));
 
 
     armStick.rightTrigger().toggleOnTrue(Commands.startEnd(
@@ -183,7 +187,7 @@ public class CompRobotContainer extends RobotContainer {
       () -> ArmSubsystem.getInstance().controlTopArmBrake(true), 
       () -> ArmSubsystem.getInstance().controlTopArmBrake(false)));
 
-    Command armFF = new ArmFFTestCommand(armStick, 7, true, true);
+    Command armFF = new ArmFFTestCommand(armStick, 7, false, true);
 
     armStick.leftBumper().onTrue(Commands.runOnce(() -> armFF.schedule()));
     armStick.rightBumper().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().updatePIDSettings()));

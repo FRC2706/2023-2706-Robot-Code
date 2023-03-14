@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.config.ArmConfig.ArmPosition;
 import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.robotcontainers.CompRobotContainer.RobotGamePieceState;
+import frc.robot.subsystems.ArmSubsystem;
 
 public class ArmCommandSelector extends CommandBase {
   Supplier<RobotGamePieceState> m_robotState;
@@ -26,7 +27,8 @@ public class ArmCommandSelector extends CommandBase {
     m_robotState = robotState;
     m_Position = position;
     m_slowerAcceleration = slowerAcceleration;
-    // Use addRequirements() here to declare subsystem dependencies.
+
+    addRequirements(ArmSubsystem.getInstance());
   }
 
   // Called when the command is initially scheduled.
@@ -71,23 +73,25 @@ public class ArmCommandSelector extends CommandBase {
       break;
     }
     m_ArmCommand = new ArmCommand (m_ArmSetPoint);
-    m_ArmCommand.schedule();
+    m_ArmCommand.initialize();
 
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    m_ArmCommand.execute();
+  }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_ArmCommand.cancel();
+    m_ArmCommand.end(interrupted);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_ArmCommand.isFinished();
   }
 }
