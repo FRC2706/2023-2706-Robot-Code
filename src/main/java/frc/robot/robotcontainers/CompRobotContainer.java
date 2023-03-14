@@ -130,6 +130,7 @@ public class CompRobotContainer extends RobotContainer {
     operator.rightBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));
     operator.back().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, setState).andThen(new WaitCommand(0.2)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
     operator.start().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, setState).andThen(new WaitCommand(0.2)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+    operator.leftBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.USE_VISION, setState).andThen(new WaitCommand(0.2)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
 
     // Temporary operator brake control for hardware to test (REMOVE LATER)
 

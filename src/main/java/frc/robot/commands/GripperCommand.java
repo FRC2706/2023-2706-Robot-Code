@@ -6,6 +6,12 @@ package frc.robot.commands;
 
 import java.util.function.Consumer;
 
+import javax.lang.model.util.ElementScanner14;
+
+import com.fasterxml.jackson.databind.ser.std.BooleanSerializer;
+
+import edu.wpi.first.networktables.BooleanSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.robotcontainers.CompRobotContainer.RobotGamePieceState;
 import frc.robot.subsystems.ArmSubsystem;
@@ -27,6 +33,9 @@ public class GripperCommand extends InstantCommand {
   GripperSubsystem gripper;
   BlingSubsystem bling;
   
+  BooleanSubscriber bDetectCone;
+  BooleanSubscriber bDetectCube;
+
   /** Creates a new IntakeCommand. */
   public GripperCommand(GRIPPER_INSTRUCTION gripperInstruction, Consumer<RobotGamePieceState> robotState) {
     m_gripperInstruction = gripperInstruction;
@@ -41,6 +50,10 @@ public class GripperCommand extends InstantCommand {
     if (bling != null) {
       addRequirements(bling);
     }
+
+    bDetectCone = NetworkTableInstance.getDefault().getTable("MergePipelineIntake22").getBooleanTopic("DetectCone").subscribe(false);
+    bDetectCube = NetworkTableInstance.getDefault().getTable("MergePipelineIntake22").getBooleanTopic("DetectCube").subscribe(false);
+
   }
 
   // Called when the command is initially scheduled.
@@ -48,30 +61,58 @@ public class GripperCommand extends InstantCommand {
   public void initialize() {
   switch(m_gripperInstruction){
      case USE_VISION:
-     //@todo: read the network table, decide to take cone/cube/open/do nothing
+     {
+      // read the network table, decide to take cone/cube/open/do nothing
+      //give cone a higher priority than cube
+      if( bDetectCone.get() == true)
+      {
+        takeCone();
+        if (newRobotState != null)
+          newRobotState.accept(RobotGamePieceState.HasCone);
+        ArmSubsystem.getInstance().setHasCone(true);
+      }
+      else if( bDetectCube.get() == true)
+      {
+        takeCube();
+        if ( newRobotState != null)
+          newRobotState.accept(RobotGamePieceState.HasCube);
+        ArmSubsystem.getInstance().setHasCone(false);
+      }
      break;
-     case OPEN:
+    }
+    case OPEN:
+    {
       open();
       if(newRobotState != null)
         newRobotState.accept(RobotGamePieceState.NoGamePiece);
       ArmSubsystem.getInstance().setHasCone(false);
       break;
-     case PICK_UP_CONE:
+    }
+    case PICK_UP_CONE:
+    {
       takeCone();
       if (newRobotState != null)
         newRobotState.accept(RobotGamePieceState.HasCone);
       ArmSubsystem.getInstance().setHasCone(true);
       break;
-     case PICK_UP_CUBE:
+    }
+    case PICK_UP_CUBE:
+    {
       takeCube();
       if ( newRobotState != null)
         newRobotState.accept(RobotGamePieceState.HasCube);
       ArmSubsystem.getInstance().setHasCone(false);
       break;
-     default:
-     //?? for default??
+    }
+    default:
+    {
+      open();
+      if(newRobotState != null)
+        newRobotState.accept(RobotGamePieceState.NoGamePiece);
+      ArmSubsystem.getInstance().setHasCone(false);
       break;
      }
+    }
   }
 
   public void open (){
