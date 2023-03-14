@@ -169,7 +169,7 @@ public class SwerveModule {
      * @param desiredState Desired state with speed and angle.
      */
 
-    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
+    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop, boolean useAntiJitter) {
         Rotation2d angle = getSteeringAngle();
         double velocity = getVelocity();
 
@@ -185,11 +185,10 @@ public class SwerveModule {
             errREV(m_drivePIDController.setReference(desiredState.speedMetersPerSecond, ControlType.kVelocity, 0, feedforward.calculate(desiredState.speedMetersPerSecond)));
         }
         // CODE: Pass the velocity (which is in meters per second) to velocity PID on drive SparkMax. (VelocityConversionFactor set so SparkMax wants m/s)
-
         double newAngle = 
-            (Math.abs(desiredState.speedMetersPerSecond) <= (Config.Swerve.kMaxAttainableWheelSpeed *0.001))
-                ? lastAngle
-                :desiredState.angle.getRadians();
+            (Math.abs(desiredState.speedMetersPerSecond) >= (Config.Swerve.kMaxAttainableWheelSpeed *0.001) && useAntiJitter)
+                ? desiredState.angle.getRadians()
+                :lastAngle;
         // CODE: Pass the angle (which is in radians) to position PID on steering SparkMax. (PositionConversionFactor set so SparkMax wants radians)
         /*double newAngle = desiredState.angle.getRadians();*/
         errREV(m_turningPIDController.setReference(newAngle, ControlType.kPosition));
@@ -205,6 +204,10 @@ public class SwerveModule {
         desiredAngle360Range.accept(MathUtil.inputModulus(desiredState.angle.getDegrees(), -180.0, 180.0));
         currentAngle360Range.accept(MathUtil.inputModulus(angle.getDegrees(), -180.0, 180.0));
         NetworkTableInstance.getDefault().flush();
+    }
+
+    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {    
+        setDesiredState(desiredState, isOpenLoop, true);
     }
 
     public void resetLastAngle() {

@@ -27,6 +27,7 @@ import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmCommandSelector;
 import frc.robot.commands.ArmFFTestCommand;
+import frc.robot.commands.ChargeStationLock;
 import frc.robot.commands.GripperCommand;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.commands.ResetGyro;
@@ -97,7 +98,7 @@ public class CompRobotContainer extends RobotContainer {
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
     driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
     
-    driver.x().whileTrue(new TranslationCommand(1, 1));
+    driver.x().whileTrue(new ChargeStationLock());
     driver.leftTrigger().whileTrue(new RotateXYSupplier(driver,
       NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99)
     ));
