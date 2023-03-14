@@ -96,6 +96,8 @@ public class SwerveSubsystem extends SubsystemBase {
         rotEntry.accept(getPose().getRotation().getDegrees());
 
         m_field.setRobotPose(getPose());
+
+        System.out.printf("RollValue: %.2f, Roll: %.2f, Pitch: %.2f  \n", getRollValue(), getRoll(), getPitch());
         
     }
 
@@ -254,6 +256,9 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     public double getYaw() {
         return(m_pigeon.getYaw());
+    }
+    public double getPitch() {
+        return(m_pigeon.getPitch());
     }
 
 }

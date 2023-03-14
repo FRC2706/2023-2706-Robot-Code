@@ -15,14 +15,23 @@ public class ChargeCommand extends CommandBase {
   double desiredX;
   double deltaX;
 
+  ProfiledPIDController pidControlTheta;
+  double currentTheta;
+  double desiredTheta;
+
   double rollValue;
   double initRollValue;
+
+  boolean hasReachedAngle;
 
   double ROLL_TOLERANCE = 15;
   /** Creates a new ChargeCommand. */
   public ChargeCommand( double deltaX) {
     pidControlX = new ProfiledPIDController(1, 0.0, 0.2, 
     new TrapezoidProfile.Constraints(1, 1));
+
+    pidControlTheta = new ProfiledPIDController(5.0,0, 0.4,
+    new TrapezoidProfile.Constraints(4*Math.PI, 8*Math.PI));
 
     this.deltaX = deltaX;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -36,11 +45,18 @@ public class ChargeCommand extends CommandBase {
     currentX = SwerveSubsystem.getInstance().getPose().getX();
     desiredX = currentX + deltaX;
 
+    currentTheta = SwerveSubsystem.getInstance().getHeading().getRadians();
+    //keep the current angle
+    desiredTheta = currentTheta; 
+
     //reset current positions
     pidControlX.reset(currentX);
+    pidControlTheta.reset(currentTheta);
 
     //get the initial roll value
     initRollValue = SwerveSubsystem.getInstance().getRollValue();
+
+    hasReachedAngle = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -48,9 +64,18 @@ public class ChargeCommand extends CommandBase {
   public void execute() {
     currentX = SwerveSubsystem.getInstance().getPose().getX();
     double x = pidControlX.calculate(currentX, desiredX);
-    SwerveSubsystem.getInstance().drive(x, 0, 0, true, false);
+
+    currentTheta = SwerveSubsystem.getInstance().getHeading().getRadians();
+    double theta = pidControlTheta.calculate(currentTheta, desiredTheta);
+
+    SwerveSubsystem.getInstance().drive(x, 0, theta, true, false);
 
     rollValue = SwerveSubsystem.getInstance().getRollValue();
+
+    if (hasReachedAngle == false && Math.abs(initRollValue - rollValue) > ROLL_TOLERANCE +3) 
+    {
+      hasReachedAngle = true;
+    }
 
     //@todo: use the deltaRollValue to determine x.
 
@@ -65,7 +90,7 @@ public class ChargeCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Math.abs(initRollValue - rollValue) < ROLL_TOLERANCE )
+    if (hasReachedAngle && Math.abs(initRollValue - rollValue) < ROLL_TOLERANCE )
       return (true);
     else
       return (false);
