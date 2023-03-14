@@ -2,71 +2,74 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 2.0,
-        "y": 0.5
+        "x": 2.4338596045613152,
+        "y": 2.6921762114200933
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.999999999999999,
-        "y": 0.5
-      },
-      "holonomicAngle": 180.0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [
-          "place game piece"
-        ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.349610425109176,
-        "y": 0.9359080647095324
-      },
-      "prevControl": {
-        "x": 6.686843805159692,
-        "y": 0.9562538922032173
-      },
-      "nextControl": {
-        "x": 6.01237704505866,
-        "y": 0.9155622372158474
-      },
-      "holonomicAngle": 0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 2.0,
-        "y": 1.6358045304923103
-      },
-      "prevControl": {
-        "x": 2.049635074158653,
-        "y": -0.5692154443311628
-      },
-      "nextControl": {
-        "x": 1.9956033414604912,
-        "y": 1.8311244744316901
+        "x": 2.1023602949461546,
+        "y": 2.6633028469064475
       },
       "holonomicAngle": -180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "GripperPickCube",
+          "ArmCubeTop"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
+        "waitTime": 0.0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.8311335870792047,
+        "y": 2.722312512294199
+      },
+      "prevControl": {
+        "x": 2.242996365691979,
+        "y": 2.7323579459189
+      },
+      "nextControl": {
+        "x": 2.242996365691979,
+        "y": 2.7323579459189
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
       "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "GripperOpen"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "after",
+        "waitTime": 0.3
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.41185131994324,
+        "y": 2.8026759812918134
+      },
+      "prevControl": {
+        "x": 6.607737275624926,
+        "y": 2.8026759812918134
+      },
+      "nextControl": {
+        "x": 6.215965364261554,
+        "y": 2.8026759812918134
+      },
+      "holonomicAngle": -178.78112476486865,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
@@ -76,22 +79,22 @@
     },
     {
       "anchorPoint": {
-        "x": 3.9162494568643966,
-        "y": 2.758894208143747
+        "x": 5.578080329092989,
+        "y": 2.772539680417707
       },
       "prevControl": {
-        "x": 3.3058746320538335,
-        "y": 2.799585863131118
+        "x": 5.608216629967095,
+        "y": 2.7323579459189
       },
       "nextControl": null,
-      "holonomicAngle": 179.7685877543219,
+      "holonomicAngle": -179.31793960682734,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "balance"
+          "charge"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -99,18 +102,5 @@
       }
     }
   ],
-  "markers": [
-    {
-      "position": 1.0129870129870002,
-      "names": [
-        "pick up game piece"
-      ]
-    },
-    {
-      "position": 1.9948051948054306,
-      "names": [
-        "place game piece"
-      ]
-    }
-  ]
+  "markers": []
 }
