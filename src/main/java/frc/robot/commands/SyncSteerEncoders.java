@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.config.Config;
 import frc.robot.subsystems.BlingSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -34,7 +36,7 @@ public class SyncSteerEncoders extends CommandBase {
 
         state = 0;
         
-        BlingSubsystem.getINSTANCE().setRed();
+        BlingSubsystem.getINSTANCE().noEncodersSynced();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -73,7 +75,9 @@ public class SyncSteerEncoders extends CommandBase {
             DriverStation.reportWarning(
                         String.format("Steering encoders are synced (%.1f) \n", m_permanantTimer.get()),
                         false);
-            BlingSubsystem.getINSTANCE().setBlue();
+            BlingSubsystem.getINSTANCE().steerEncodersSynced();
+
+            new WaitCommand(1).andThen(Commands.runOnce(() -> BlingSubsystem.getINSTANCE().steerEncodersSynced())).schedule();
         }
 
         m_permanantTimer.stop();

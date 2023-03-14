@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.config.ArmConfig;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.BlingSubsystem;
@@ -34,8 +35,8 @@ public class SyncArmEncoders extends CommandBase {
         m_sumBotSamples = 0;
         m_sumTopSamples = 0;
         m_commandState = 0;
-
-        BlingSubsystem.getINSTANCE().setRed();
+        
+        BlingSubsystem.getINSTANCE().noEncodersSynced();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -86,7 +87,9 @@ public class SyncArmEncoders extends CommandBase {
                         String.format("Arm encoders are synced (%.1f) \n", m_permanantTimer.get()),
                         false);    
             
-            BlingSubsystem.getINSTANCE().setYellow();
+            BlingSubsystem.getINSTANCE().armEncodersSynced();
+
+            new WaitCommand(1).andThen(Commands.runOnce(() -> BlingSubsystem.getINSTANCE().armEncodersSynced())).schedule();
         }
 
         m_permanantTimer.stop();

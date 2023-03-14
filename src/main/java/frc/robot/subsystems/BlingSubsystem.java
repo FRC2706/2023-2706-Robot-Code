@@ -18,6 +18,9 @@ public class BlingSubsystem extends SubsystemBase {
   public CANdle candle; 
   public final double Brightness = 0.5;
   private static BlingSubsystem INSTANCE = null;
+
+  private boolean steerEncodersSynced = false;
+  private boolean armEncodersSynced = false;
   /**
    * Creates a new Bling.
    */
@@ -92,4 +95,27 @@ public class BlingSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
       
   }
+
+  public void noEncodersSynced() {
+    setRed();
+  }
+
+  public void armEncodersSynced() {
+    armEncodersSynced = true;
+    if (steerEncodersSynced) {
+      setPurple();
+    } else {
+      setBlue();
+    }
+  }
+
+  public void steerEncodersSynced() {
+    steerEncodersSynced = true;
+    if (armEncodersSynced) {
+      setPurple();
+    } else {
+      setYellow();
+    }
+  }
+
 }
