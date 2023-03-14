@@ -6,10 +6,6 @@ package frc.robot.commands;
 
 import java.util.function.Consumer;
 
-import javax.lang.model.util.ElementScanner14;
-
-import com.fasterxml.jackson.databind.ser.std.BooleanSerializer;
-
 import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
