@@ -34,7 +34,11 @@ public class AutoSelector {
         "Id11_cone_1p0_bottom",
         "Id12_BK_cube_2p0_bottom",
         "Id13_BK_cube_0p5_middle_charge",
-        "Id14_BK_cone_0p5_charge"
+        "Id14_BK_cone_0p5_charge",
+        "Id15_place_pick_bottom2_charge_new",
+        "Id16_place_pick_place_pick_place_bottom2",
+        "Id17_place_pick_place_pick_place_bottom2_charge",
+        "Id18_place_pick_place_pick_place_bottom_new"
         };
         SmartDashboard.putStringArray("Auto List", autoList );
     }
@@ -99,10 +103,22 @@ public class AutoSelector {
             case "Id14_BK_cone_0p5_charge": 
                 autoId = 14;
                 break;
+            case "Id15_place_pick_bottom2_charge_new":
+                autoId = 15;
+                break;
+            case "Id16_place_pick_place_pick_place_bottom2":
+                autoId = 16;
+                break;
+            case "Id17_place_pick_place_pick_place_bottom2_charge":
+                autoId = 17;
+                break;
+            case "Id18_place_pick_place_pick_place_bottom_new":
+                autoId = 18;
+                break;
             default:
                 autoId = getAnalogSelectorIndex();
                 break;
-        
+ 
         }
         return autoId;
     }

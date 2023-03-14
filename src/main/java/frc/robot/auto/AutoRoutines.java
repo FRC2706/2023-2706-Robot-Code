@@ -48,6 +48,11 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> BK_cube_2p0_bottom;
     List<PathPlannerTrajectory> BK_cube_0p5_middle_charge;
     List<PathPlannerTrajectory> BK_cone_0p5_charge;
+    List<PathPlannerTrajectory> place_pick_bottom2_charge_new;
+    List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2;
+    List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2_charge;
+    List<PathPlannerTrajectory> place_pick_place_pick_place_bottom_new;
+
    
     public AutoRoutines() {
         Map<String, Command> eventMap = new HashMap<String, Command>();
@@ -104,10 +109,15 @@ public class AutoRoutines {
         cone_0p5_bottom_charge = PathPlanner.loadPathGroup("cone_0p5_bottom_charge", 2.5, 3);
         cone_1p0_top = PathPlanner.loadPathGroup("cone_1p0_top", 2.5, 3);
         cone_1p0_bottom = PathPlanner.loadPathGroup("cone_1p0_bottom", 2.5, 3);
+        
         BK_cube_2p0_bottom = PathPlanner.loadPathGroup("BK_cube_2p0_bottom", 2.5, 3);
         BK_cube_0p5_middle_charge = PathPlanner.loadPathGroup("BK_cube_0p5_middle_charge", 2.5, 3);
         BK_cone_0p5_charge = PathPlanner.loadPathGroup("BK_cone_0p5_charge", 2.5, 3);
         
+        place_pick_bottom2_charge_new = PathPlanner.loadPathGroup("place_pick_bottom2_charge_new", 2.5, 3);
+        place_pick_place_pick_place_bottom2 = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2", 2.5, 3);
+        place_pick_place_pick_place_bottom2_charge = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2_charge", 2.5, 3);
+        place_pick_place_pick_place_bottom_new = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom_new", 2.5, 3);
     }
 
     public Command getAutonomousCommand(int selectAuto) {
@@ -158,6 +168,18 @@ public class AutoRoutines {
 
             case 14:
                 return (autoBuilder.fullAuto(BK_cone_0p5_charge));
+
+            case 15:
+                return (autoBuilder.fullAuto(place_pick_bottom2_charge_new));
+                
+            case 16:
+                return (autoBuilder.fullAuto(place_pick_place_pick_place_bottom2));
+
+            case 17:
+                return (autoBuilder.fullAuto(place_pick_place_pick_place_bottom2_charge));
+
+            case 18:
+                return (autoBuilder.fullAuto(place_pick_place_pick_place_bottom_new));
 
         }
         return new InstantCommand();
