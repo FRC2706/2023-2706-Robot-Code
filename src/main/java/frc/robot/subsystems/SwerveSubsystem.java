@@ -244,5 +244,16 @@ public class SwerveSubsystem extends SubsystemBase {
         m_rearRight.resetLastAngle();
     }
 
+    public double getRollValue() {
+        double[] ypr = new double[3];
+        m_pigeon.getYawPitchRoll(ypr);
+        return Math.abs(ypr[2]);
+    }
+    public double getRoll() {
+        return(m_pigeon.getRoll());
+    }
+    public double getYaw() {
+        return(m_pigeon.getYaw());
+    }
 
 }
