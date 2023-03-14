@@ -6,14 +6,17 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.config.Config;
+import frc.robot.subsystems.BlingSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class SyncSteerEncoders extends CommandBase {
     private Timer m_smallTimer = new Timer();
     private Timer m_permanantTimer = new Timer();
-    private boolean m_needsSyncing = true;
+
+    private int state = 0;
 
     /** Creates a new SyncSteerEncoders. */
     public SyncSteerEncoders() {
@@ -29,34 +32,48 @@ public class SyncSteerEncoders extends CommandBase {
         m_smallTimer.start();
         m_permanantTimer.start();
 
-        m_needsSyncing = true;
+        state = 0;
+        
+        BlingSubsystem.getINSTANCE().setRed();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (m_smallTimer.get() > Config.Swerve.ENCODER_SYNCING_PERIOD) {
-            m_smallTimer.reset();
+        SmartDashboard.putNumber("SyncSteerState", state);
+        if (state == 0 && m_permanantTimer.hasElapsed(6)) {
+            state = 1;
+            DriverStation.reportWarning(
+                    String.format("Starting to sync steer encoders (%.1fs)", m_permanantTimer.get()), false);
+        }
+        if (state == 1 && m_smallTimer.hasElapsed(Config.Swerve.ENCODER_SYNCING_PERIOD)) {
+            m_smallTimer.restart();
 
             if (SwerveSubsystem.getInstance().checkSteeringEncoders() == false) {
-                m_needsSyncing = true;
                 DriverStation.reportWarning(
                     String.format("Steering encoders are not synced, attempting to sync them... (%.1fs)", m_permanantTimer.get()),
                     false);
                 SwerveSubsystem.getInstance().resetEncodersFromCanCoder();
             } else {
-                m_needsSyncing = false;
+                state = 2;
+                m_smallTimer.restart();
             }
         }
+        if (state == 2 && m_smallTimer.hasElapsed(5)) {
+            SwerveSubsystem.getInstance().resetEncodersFromCanCoder();
+            state = 99;
+        }
+        SmartDashboard.putNumber("SyncSteerState", state);
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        if (m_needsSyncing == false) {
+        if (SwerveSubsystem.getInstance().checkSteeringEncoders()) {
             DriverStation.reportWarning(
                         String.format("Steering encoders are synced (%.1f) \n", m_permanantTimer.get()),
                         false);
+            BlingSubsystem.getINSTANCE().setBlue();
         }
 
         m_permanantTimer.stop();
@@ -74,8 +91,7 @@ public class SyncSteerEncoders extends CommandBase {
 
             return true;
         }
-        m_needsSyncing = SwerveSubsystem.getInstance().checkSteeringEncoders();
-        return m_needsSyncing == false;
+        return state == 99;
     }
 
     @Override

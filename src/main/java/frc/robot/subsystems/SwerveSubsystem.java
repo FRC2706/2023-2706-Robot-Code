@@ -31,10 +31,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
     private NetworkTable table = NetworkTableInstance.getDefault().getTable("DriveTrain");
-    private DoublePublisher gyroEntry = table.getDoubleTopic("RawGyro").publish();
+    private DoublePublisher gyroEntry = table.getDoubleTopic("RawGyroYaw").publish();
     private DoublePublisher xEntry = table.getDoubleTopic("OdometryX").publish();
     private DoublePublisher yEntry = table.getDoubleTopic("OdometryY").publish();
     private DoubleEntry rotEntry = table.getDoubleTopic("OdometryRot").getEntry(0);
+
+    private DoublePublisher pitchPub = table.getDoubleTopic("Pitch").publish();
+    private DoublePublisher rollPub = table.getDoubleTopic("Roll").publish();
     
     // Instance for singleton class
     private static SwerveSubsystem instance;
@@ -97,8 +100,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
         m_field.setRobotPose(getPose());
 
-        System.out.printf("RollValue: %.2f, Roll: %.2f, Pitch: %.2f  \n", getRollValue(), getRoll(), getPitch());
-        
+        pitchPub.accept(getPitch());
+        rollPub.accept(getRoll());
     }
 
     private SwerveModulePosition[] getPosition() {
@@ -157,8 +160,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void setModuleStatesNoAntiJitter(SwerveModuleState[] desiredStates, boolean isOpenLoop){
-        SwerveDriveKinematics.desaturateWheelSpeeds(
-                desiredStates, Config.Swerve.kMaxAttainableWheelSpeed);
         m_frontLeft.setDesiredState(desiredStates[0], isOpenLoop, false);
         m_frontRight.setDesiredState(desiredStates[1], isOpenLoop, false);
         m_rearLeft.setDesiredState(desiredStates[2], isOpenLoop, false);
@@ -255,19 +256,11 @@ public class SwerveSubsystem extends SubsystemBase {
         m_rearRight.resetLastAngle();
     }
 
-    public double getRollValue() {
-        double[] ypr = new double[3];
-        m_pigeon.getYawPitchRoll(ypr);
-        return Math.abs(ypr[2]);
-    }
     public double getRoll() {
         return(m_pigeon.getRoll());
     }
-    public double getYaw() {
-        return(m_pigeon.getYaw());
-    }
+
     public double getPitch() {
         return(m_pigeon.getPitch());
     }
-
 }

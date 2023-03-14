@@ -160,7 +160,7 @@ public class Config {
         public static boolean INVERTED_REAR_RIGHT_STEERING =  robotSpecific(false);
 
         public static double ENCODER_SYNCING_PERIOD = 0.5; // seconds
-        public static int ENCODER_SYNCING_TIMEOUT = 20; // seconds
+        public static int ENCODER_SYNCING_TIMEOUT = 40; // seconds
 
         public static final double MK4_L1_GEAR_RATIO = (50.0/14.0)*(19.0/25.0)*(45.0/15.0);
         public static final double turningEncoderConstant = (2*Math.PI)/12.8;

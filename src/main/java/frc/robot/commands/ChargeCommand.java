@@ -5,11 +5,13 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class ChargeCommand extends CommandBase {
+  Timer m_timer = new Timer();
   ProfiledPIDController pidControlX;
   double currentX;
   double desiredX;
@@ -19,24 +21,24 @@ public class ChargeCommand extends CommandBase {
   double currentTheta;
   double desiredTheta;
 
-  double rollValue;
-  double initRollValue;
+  double pitchValue;
+  double initPitchValue;
 
-  boolean hasReachedAngle;
+  int state = 0;
 
-  double ROLL_TOLERANCE = 15;
+  double PITCH_TOLERANCE = 10;
+  double TIME_FOR_REVERSING = 0.5;
   /** Creates a new ChargeCommand. */
   public ChargeCommand( double deltaX) {
-    pidControlX = new ProfiledPIDController(1, 0.0, 0.2, 
-    new TrapezoidProfile.Constraints(1, 1));
+    pidControlX = new ProfiledPIDController(1.2, 0.0, 0.6, 
+          new Constraints(1.2, 1.2));
 
     pidControlTheta = new ProfiledPIDController(5.0,0, 0.4,
-    new TrapezoidProfile.Constraints(4*Math.PI, 8*Math.PI));
+          new Constraints(4*Math.PI, 8*Math.PI));
 
     this.deltaX = deltaX;
-    // Use addRequirements() here to declare subsystem dependencies.
+
     addRequirements(SwerveSubsystem.getInstance());
-    
   }
 
   // Called when the command is initially scheduled.
@@ -47,16 +49,18 @@ public class ChargeCommand extends CommandBase {
 
     currentTheta = SwerveSubsystem.getInstance().getHeading().getRadians();
     //keep the current angle
-    desiredTheta = currentTheta; 
+    desiredTheta = currentTheta;    
 
     //reset current positions
     pidControlX.reset(currentX);
     pidControlTheta.reset(currentTheta);
 
     //get the initial roll value
-    initRollValue = SwerveSubsystem.getInstance().getRollValue();
+    initPitchValue = SwerveSubsystem.getInstance().getPitch();
 
-    hasReachedAngle = false;
+    state = 0;
+    m_timer.stop();
+    m_timer.reset();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -68,14 +72,24 @@ public class ChargeCommand extends CommandBase {
     currentTheta = SwerveSubsystem.getInstance().getHeading().getRadians();
     double theta = pidControlTheta.calculate(currentTheta, desiredTheta);
 
-    SwerveSubsystem.getInstance().drive(x, 0, theta, true, false);
 
-    rollValue = SwerveSubsystem.getInstance().getRollValue();
+    pitchValue = SwerveSubsystem.getInstance().getPitch();
 
-    if (hasReachedAngle == false && Math.abs(initRollValue - rollValue) > ROLL_TOLERANCE +3) 
+    if (state == 0 && Math.abs(initPitchValue - pitchValue) > PITCH_TOLERANCE +1) 
     {
-      hasReachedAngle = true;
+      state = 1;
     }
+    if (state == 1 && Math.abs(initPitchValue - SwerveSubsystem.getInstance().getPitch()) < PITCH_TOLERANCE) {
+      state = 2;
+      m_timer.restart();
+    }
+
+    if (state == 2) {
+      SwerveSubsystem.getInstance().drive(-1 * Math.copySign(2, deltaX), 0, 0, true, false);
+    } else {
+      SwerveSubsystem.getInstance().drive(x, 0, theta, true, false);
+    }
+
 
     //@todo: use the deltaRollValue to determine x.
 
@@ -90,7 +104,7 @@ public class ChargeCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (hasReachedAngle && Math.abs(initRollValue - rollValue) < ROLL_TOLERANCE )
+    if (state == 2 && m_timer.hasElapsed(TIME_FOR_REVERSING))
       return (true);
     else
       return (false);

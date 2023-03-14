@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.ArmCommand;
+import frc.robot.commands.ChargeCommand;
+import frc.robot.commands.ChargeStationLock;
 import frc.robot.commands.GripperCommand;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.commands.SetBlingCommand;
@@ -52,6 +54,7 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2;
     List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2_charge;
     List<PathPlannerTrajectory> place_pick_place_pick_place_bottom_new;
+    List<PathPlannerTrajectory> cube_1p0_top_charge;
 
    
     public AutoRoutines() {
@@ -69,6 +72,10 @@ public class AutoRoutines {
                 new SwerveModuleState(-0.1, Rotation2d.fromDegrees(45)),
                 new SwerveModuleState(-0.1, Rotation2d.fromDegrees(-45)),
             })).withTimeout(0.4)));
+
+        eventMap.put("charge2", new ChargeCommand(-2.9).andThen(new ChargeStationLock()));
+
+        //2.3
          
          //place game pieces
          eventMap.put("ArmCubeTop", new ArmCommand(ArmSetpoint.TOP_CUBE));
@@ -110,6 +117,9 @@ public class AutoRoutines {
         cone_1p0_top = PathPlanner.loadPathGroup("cone_1p0_top", 2.5, 3);
         cone_1p0_bottom = PathPlanner.loadPathGroup("cone_1p0_bottom", 2.5, 3);
         
+        // HUMBER:
+        cube_1p0_top_charge = PathPlanner.loadPathGroup("cube_1p0_top_charge", 2.5, 3);
+
         BK_cube_2p0_bottom = PathPlanner.loadPathGroup("BK_cube_2p0_bottom", 2.5, 3);
         BK_cube_0p5_middle_charge = PathPlanner.loadPathGroup("BK_cube_0p5_middle_charge", 2.5, 3);
         BK_cone_0p5_charge = PathPlanner.loadPathGroup("BK_cone_0p5_charge", 2.5, 3);
@@ -180,6 +190,9 @@ public class AutoRoutines {
 
             case 18:
                 return (autoBuilder.fullAuto(place_pick_place_pick_place_bottom_new));
+
+            case 19:
+                return (autoBuilder.fullAuto(cube_1p0_top_charge));
 
         }
         return new InstantCommand();
