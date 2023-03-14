@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.commands.BrakeModeDisabled;
 import frc.robot.commands.SyncArmEncoders;
@@ -95,7 +96,7 @@ public class Robot extends TimedRobot {
     
     if (SubsystemChecker.canSubsystemConstruct(SubsystemType.SwerveSubsystem)) {
       new SyncSteerEncoders().schedule();
-      new SyncArmEncoders().schedule();
+      new WaitCommand(3).andThen(new SyncArmEncoders()).schedule();
     } 
 
     // Add CommandScheduler to shuffleboard so we can display what commands are scheduled

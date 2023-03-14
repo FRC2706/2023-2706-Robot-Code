@@ -8,8 +8,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.config.ArmConfig;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.BlingSubsystem;
 
 public class SyncArmEncoders extends CommandBase {
     private Timer m_smallTimer = new Timer();
@@ -33,6 +35,8 @@ public class SyncArmEncoders extends CommandBase {
         m_sumBotSamples = 0;
         m_sumTopSamples = 0;
         m_commandState = 0;
+        
+        BlingSubsystem.getINSTANCE().noEncodersSynced();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -81,21 +85,20 @@ public class SyncArmEncoders extends CommandBase {
         if (m_commandState == 99) {
             DriverStation.reportWarning(
                         String.format("Arm encoders are synced (%.1f) \n", m_permanantTimer.get()),
-                        false);           
+                        false);    
+            
+            BlingSubsystem.getINSTANCE().armEncodersSynced();
+
+            new WaitCommand(1).andThen(Commands.runOnce(() -> BlingSubsystem.getINSTANCE().armEncodersSynced())).schedule();
         }
 
         m_permanantTimer.stop();
         m_smallTimer.stop();
 
-        if (
-            // ((float) ArmSubsystem.getInstance().getBottomPosition() )< Math.toRadians(40) ||
-            // ((float) ArmSubsystem.getInstance().getBottomPosition() )> ArmConfig.bottom_arm_forward_limit ||
-            // ((float) ArmSubsystem.getInstance().getTopPosition() )< ArmConfig.top_arm_reverse_limit ||
-            // ((float) ArmSubsystem.getInstance().getTopPosition() )> ArmConfig.top_arm_forward_limit ||
-            
+        if (           
             /** Temporary checks for current encoder setup. TODO: Remove once encoder wrapping is solved.*/
-            ArmSubsystem.getInstance().getBottomPosition() < Math.toRadians(60) ||
-            ArmSubsystem.getInstance().getBottomPosition() > Math.toRadians(120) ||
+            ArmSubsystem.getInstance().getBottomPosition() < Math.toRadians(5) ||
+            ArmSubsystem.getInstance().getBottomPosition() > Math.toRadians(170) ||
             ArmSubsystem.getInstance().getTopPosition() < Math.toRadians(5) ||
             ArmSubsystem.getInstance().getTopPosition() > Math.toRadians(70) ||
             ArmSubsystem.getInstance().areEncodersSynced() == false ||

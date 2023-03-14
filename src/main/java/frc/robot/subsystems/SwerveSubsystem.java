@@ -31,10 +31,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
     private NetworkTable table = NetworkTableInstance.getDefault().getTable("DriveTrain");
-    private DoublePublisher gyroEntry = table.getDoubleTopic("RawGyro").publish();
+    private DoublePublisher gyroEntry = table.getDoubleTopic("RawGyroYaw").publish();
     private DoublePublisher xEntry = table.getDoubleTopic("OdometryX").publish();
     private DoublePublisher yEntry = table.getDoubleTopic("OdometryY").publish();
     private DoubleEntry rotEntry = table.getDoubleTopic("OdometryRot").getEntry(0);
+
+    private DoublePublisher pitchPub = table.getDoubleTopic("Pitch").publish();
+    private DoublePublisher rollPub = table.getDoubleTopic("Roll").publish();
     
     // Instance for singleton class
     private static SwerveSubsystem instance;
@@ -96,7 +99,9 @@ public class SwerveSubsystem extends SubsystemBase {
         rotEntry.accept(getPose().getRotation().getDegrees());
 
         m_field.setRobotPose(getPose());
-        
+
+        pitchPub.accept(getPitch());
+        rollPub.accept(getRoll());
     }
 
     private SwerveModulePosition[] getPosition() {
@@ -155,8 +160,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void setModuleStatesNoAntiJitter(SwerveModuleState[] desiredStates, boolean isOpenLoop){
-        SwerveDriveKinematics.desaturateWheelSpeeds(
-                desiredStates, Config.Swerve.kMaxAttainableWheelSpeed);
         m_frontLeft.setDesiredState(desiredStates[0], isOpenLoop, false);
         m_frontRight.setDesiredState(desiredStates[1], isOpenLoop, false);
         m_rearLeft.setDesiredState(desiredStates[2], isOpenLoop, false);
@@ -253,5 +256,11 @@ public class SwerveSubsystem extends SubsystemBase {
         m_rearRight.resetLastAngle();
     }
 
+    public double getRoll() {
+        return(m_pigeon.getRoll());
+    }
 
+    public double getPitch() {
+        return(m_pigeon.getPitch());
+    }
 }

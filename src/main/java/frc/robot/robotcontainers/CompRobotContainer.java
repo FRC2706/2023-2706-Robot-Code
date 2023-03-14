@@ -27,6 +27,7 @@ import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmCommandSelector;
 import frc.robot.commands.ArmFFTestCommand;
+import frc.robot.commands.ChargeCommand;
 import frc.robot.commands.ChargeStationLock;
 import frc.robot.commands.GripperCommand;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
@@ -91,9 +92,8 @@ public class CompRobotContainer extends RobotContainer {
     // Driver joystick
     SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
 
-    driver.start().onTrue(new ResetGyroToNearest());
+    driver.start().onTrue(new ResetGyroToNearest()); // ResetGyroToNearest command is untested
     driver.back().onTrue(new ResetGyro());
-    driver.b().onTrue(new ResetOdometry(new Pose2d()));
 
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
     driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));

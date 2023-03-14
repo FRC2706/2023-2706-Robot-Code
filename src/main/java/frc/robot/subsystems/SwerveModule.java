@@ -184,13 +184,18 @@ public class SwerveModule {
         } else{
             errREV(m_drivePIDController.setReference(desiredState.speedMetersPerSecond, ControlType.kVelocity, 0, feedforward.calculate(desiredState.speedMetersPerSecond)));
         }
-        // CODE: Pass the velocity (which is in meters per second) to velocity PID on drive SparkMax. (VelocityConversionFactor set so SparkMax wants m/s)
-        double newAngle = 
-            (Math.abs(desiredState.speedMetersPerSecond) >= (Config.Swerve.kMaxAttainableWheelSpeed *0.001) && useAntiJitter)
-                ? desiredState.angle.getRadians()
-                :lastAngle;
-        // CODE: Pass the angle (which is in radians) to position PID on steering SparkMax. (PositionConversionFactor set so SparkMax wants radians)
-        /*double newAngle = desiredState.angle.getRadians();*/
+
+        double newAngle;
+        if (useAntiJitter) {
+            if (Math.abs(desiredState.speedMetersPerSecond) <= Config.Swerve.kMaxAttainableWheelSpeed *0.001) {
+                newAngle = lastAngle;
+            } else {
+                newAngle = desiredState.angle.getRadians();
+            }
+        } else {
+            newAngle = desiredState.angle.getRadians();
+        }
+        
         errREV(m_turningPIDController.setReference(newAngle, ControlType.kPosition));
 
         lastAngle = newAngle;
@@ -286,7 +291,7 @@ public class SwerveModule {
     }
 
     public void updateNT(){
-        canCoderEntry.accept(Math.toDegrees(m_turningEncoder.getPosition()));
+        canCoderEntry.accept(Math.toDegrees(getCancoder()));//m_turningEncoder.getPosition()));
     }
 
     /**
@@ -312,5 +317,9 @@ public class SwerveModule {
     public enum Direction {
         CLOCKWISE,
         COUNTER_CLOCKWISE
+    }
+
+    public void setEncoderZero() {
+        m_turningEncoder.setPosition(0);
     }
 }

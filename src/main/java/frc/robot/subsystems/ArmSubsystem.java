@@ -369,7 +369,7 @@ public class ArmSubsystem extends SubsystemBase {
     else {
       voltsAtHorizontal = m_topArmVoltsAtHorizontal.get();
     }
-    System.out.println(voltsAtHorizontal * Math.cos(enc2AtHorizontal));
+    // System.out.println(voltsAtHorizontal * Math.cos(enc2AtHorizontal));
     return voltsAtHorizontal * Math.cos(enc2AtHorizontal);
   }
 
