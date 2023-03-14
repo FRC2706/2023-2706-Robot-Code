@@ -13,19 +13,21 @@ public class ChargeStationLock extends CommandBase {
   /** Creates a new ChargeStationLock. */
   public ChargeStationLock() {
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(SwerveSubsystem.getInstance());
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    SwerveModuleState state1 = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
-    SwerveModuleState state2 = new SwerveModuleState(0, Rotation2d.fromDegrees(-45));
-    SwerveSubsystem.getInstance().setModuleStatesNoAntiJitter(new SwerveModuleState[]{state1, state2, state2, state1}, false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    SwerveModuleState state1 = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
+    SwerveModuleState state2 = new SwerveModuleState(0, Rotation2d.fromDegrees(-45));
+    SwerveSubsystem.getInstance().setModuleStatesNoAntiJitter(new SwerveModuleState[]{state1, state2, state2, state1}, false);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
