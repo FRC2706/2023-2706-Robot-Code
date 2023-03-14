@@ -105,7 +105,7 @@ public class AutoRoutines {
                 true,
                 SwerveSubsystem.getInstance());
 
-        cube_0p5_top_charge_good = PathPlanner.loadPathGroup("cube_0p5_top_charge_goode", 2.5, 3);
+        cube_0p5_top_charge_good = PathPlanner.loadPathGroup("cube_0p5_top_charge_good", 2.5, 3);
         cube_0p5_bottom_charge = PathPlanner.loadPathGroup("cube_0p5_bottom_charge", 2.5, 3);
         cube_0p5_middle_charge = PathPlanner.loadPathGroup("cube_0p5_middle_charge", 2.5, 3);
         cube_1p0_top = PathPlanner.loadPathGroup("cube_1p0_top", 2.5, 3);
