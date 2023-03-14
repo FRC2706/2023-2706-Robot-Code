@@ -29,19 +29,19 @@ public class ArmConfig {
         HOME_AFTER_PICKUP(17, 1.5),// Default position
         HOME_WITH_GAMEPIECE(17, 1.5, new ArmWaypoint(19, -3)), 
         
-        PICKUP(5.5, -11.6, new ArmWaypoint(17, -3), new ArmWaypoint(11, -9)),
-        PICKUP_OUTSIDE_FRAME(23.55, -9.66, new ArmWaypoint(14, -8)), // CHECK
-        HUMAN_PLAYER_PICKUP(30, 40, new ArmWaypoint(14, -7)), // NOT DONE
+        PICKUP(8, -12, new ArmWaypoint(17, -3), new ArmWaypoint(11, -9)),
+        PICKUP_OUTSIDE_FRAME(25, -11, new ArmWaypoint(14, -8)), // CHECK
+        HUMAN_PLAYER_PICKUP(25, 40, new ArmWaypoint(14, -7)), // NOT DONE
 
-        BOTTOM_CONE(21.375, -5.7),
-        MIDDLE_CONE(36, 28.03, new ArmWaypoint(22, -1)), 
-        MIDDLE_CONE_RELEASE(36, 28.03-7), 
-        TOP_CONE(53, 39, new ArmWaypoint(24, 1)),
-        TOP_CONE_RELEASE(53, 39-7),
+        BOTTOM_CONE(27, -3),
+        MIDDLE_CONE(37, 35, new ArmWaypoint(28, 29)), 
+        MIDDLE_CONE_RELEASE(36, 28.03-7), //WRONG
+        TOP_CONE(50.35, 43.16, new ArmWaypoint(28,36)),
+        TOP_CONE_RELEASE(53, 39-7), // WRONG
 
         BOTTOM_CUBE(24, -7),
         MIDDLE_CUBE(40.5, 27, new ArmWaypoint(21, 12)),
-        TOP_CUBE(51, 38.5, new ArmWaypoint(25, 15));
+        TOP_CUBE(49, 42, new ArmWaypoint(25, 15));
         
 
         public DoubleEntry x_entry;
@@ -91,7 +91,7 @@ public class ArmConfig {
       public static final double LENGTH_BOTTOM_ARM_TO_COG = 14.56;
       public static final double LENGTH_TOP_ARM_TO_COG = 28.22;
       public static final double TOP_HORIZONTAL_VOLTAGE = 1.5;
-      public static final double TOP_HORIZONTAL_VOLTAGE_CONE = 12.0;
+      public static final double TOP_HORIZONTAL_VOLTAGE_CONE = 2.3;
       public static final double BOTTOM_MOMENT_TO_VOLTAGE = 0.000005;
       public static final boolean TOP_SET_INVERTED = true;
       public static final boolean BOTTOM_SET_INVERTED = true;
@@ -108,24 +108,24 @@ public class ArmConfig {
       public static final double bottomArmPositionConversionFactor = 2 * Math.PI / BOTTOM_NEO_GEAR_RATIO;
       public static final double bottomArmVelocityConversionFactor = bottomArmPositionConversionFactor / 60.0;
 
-      public static final double positionTolerance = Math.toRadians(2);
+      public static final double positionTolerance = Math.toRadians(1);
       public static final double velocityTolerance = Math.toRadians(1);
 
       public static final double waypointPositionTolerance = Math.toRadians(6);
-      public static final double waypointVelocityTolerance = Math.toRadians(4);
+      public static final double waypointVelocityTolerance = Math.toRadians(5);
 
       // PID constants for top arm
-      public static final double top_arm_kP = 0.8;//0.23; 
+      public static final double top_arm_kP = 1;//0.23; 
       public static final double top_arm_kI = 0;// 0.0001;
-      public static final double top_arm_kD = 0;// 4.0;
+      public static final double top_arm_kD = 2;// 4.0;
       public static final double top_arm_kIz = 0;// 0.3;
       public static final double top_arm_kFF = 0;
 
       // PID constants for top arm
-      public static final double top_arm_kP2 = 1.5;//0.23; 
-      public static final double top_arm_kI2 = 0;// 0.0001;
-      public static final double top_arm_kD2 = 1.5;// 4.0;
-      public static final double top_arm_kIz2 = 0;// 0.3;
+      public static final double top_arm_kP2 = 1.2;//0.23; 
+      public static final double top_arm_kI2 = 0.0005;
+      public static final double top_arm_kD2 = 20;// 4.0;
+      public static final double top_arm_kIz2 = 0.4;// 0.3;
       public static final double top_arm_kFF2 = 0;
 
       // PID constants for bottom arm
