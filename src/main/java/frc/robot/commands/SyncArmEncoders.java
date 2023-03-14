@@ -126,6 +126,9 @@ public class SyncArmEncoders extends CommandBase {
                 m_permanantTimer.get()),
                 false);
 
+            //backup plan to set the encoder to the initial positions
+            ArmSubsystem.getInstance().backupSetupEncoders();
+            
             return true;
         }
         return m_commandState == 99;

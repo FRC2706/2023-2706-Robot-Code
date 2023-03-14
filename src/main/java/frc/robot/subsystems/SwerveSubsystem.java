@@ -263,4 +263,13 @@ public class SwerveSubsystem extends SubsystemBase {
     public double getPitch() {
         return(m_pigeon.getPitch());
     }
+
+    public void backupSetupSteeringEncoders()
+    {
+        //@todo: 0 or 180?
+        m_frontLeft.setEncoderZero();
+        m_frontRight.setEncoderZero();
+        m_rearLeft.setEncoderZero();
+        m_rearRight.setEncoderZero();
+    }
 }

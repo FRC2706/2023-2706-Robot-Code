@@ -485,4 +485,12 @@ public class ArmSubsystem extends SubsystemBase {
            Math.abs(getAbsoluteTop() - getTopPosition()) < ArmConfig.ENCODER_SYNCING_TOLERANCE;
 
   }
+
+  public void backupSetupEncoders()
+  {
+    //@todo: put the inital positions here
+    errREV(m_topEncoder.setPosition(0));
+    errREV(m_bottomEncoder.setPosition(0));
+
+  }
 }

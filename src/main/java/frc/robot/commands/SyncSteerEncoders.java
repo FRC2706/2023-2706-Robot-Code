@@ -93,6 +93,8 @@ public class SyncSteerEncoders extends CommandBase {
                 m_permanantTimer.get()),
                 false);
 
+            //backup plan: to reset all encoders
+            SwerveSubsystem.getInstance().backupSetupSteeringEncoders();
             return true;
         }
         return state == 99;
