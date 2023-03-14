@@ -121,10 +121,19 @@ public class CompRobotContainer extends RobotContainer {
 
     // Operator Joystick
     operator.rightBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));
-    operator.back().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, setState).andThen(new WaitCommand(0.2)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
-    operator.start().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, setState).andThen(new WaitCommand(0.4)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+    operator.leftBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.USE_VISION, setState).andThen(new WaitCommand(0.3)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+    operator.back().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, setState).andThen(new WaitCommand(0.3)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+    operator.start().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, setState).andThen(new WaitCommand(0.3)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
     
+    operator.rightTrigger().onTrue(new ArmCommand(ArmSetpoint.HUMAN_PLAYER_PICKUP));
+    operator.leftTrigger().onTrue(new ArmCommand(ArmSetpoint.PICKUP_OUTSIDE_FRAME));
+
+    // Choose the ArmSetpoint based on RobotGamePieceState
     operator.x().onTrue(new ArmCommand(ArmSetpoint.PICKUP));
+    operator.a().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_BOTTOM, false));
+    operator.b().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_MIDDLE, false));
+    operator.y().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_TOP, false));
+    
 
     // Force the buttons to just do cone setpoints
     // operator.a().onTrue(new ArmCommand(ArmSetpoint.BOTTOM_CONE));
@@ -136,13 +145,18 @@ public class CompRobotContainer extends RobotContainer {
     // operator.b().onTrue(new ArmCommand(ArmSetpoint.MIDDLE_CUBE));
     // operator.y().onTrue(new ArmCommand(ArmSetpoint.TOP_CUBE));
 
-    // Choose the ArmSetpoint based on RobotGamePieceState
-    operator.a().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_BOTTOM, false));
-    operator.b().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_MIDDLE, false));
-    operator.y().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_TOP, false));
+        // Temporary operator brake control for hardware to test (REMOVE LATER)
+    // operator.leftTrigger().toggleOnTrue(Commands.startEnd(
+    //   () -> ArmSubsystem.getInstance().controlBottomArmBrake(true), 
+    //   () -> ArmSubsystem.getInstance().controlBottomArmBrake(false)));
 
-    operator.rightTrigger().onTrue(new ArmCommand(ArmSetpoint.HUMAN_PLAYER_PICKUP));
-    operator.leftTrigger().onTrue(new ArmCommand(ArmSetpoint.PICKUP_OUTSIDE_FRAME));
+    // // Temporary operator brake control for hardware to test (REMOVE LATER)
+    // operator.rightTrigger().toggleOnTrue(Commands.startEnd(
+    //   () -> ArmSubsystem.getInstance().controlTopArmBrake(true), 
+    //   () -> ArmSubsystem.getInstance().controlTopArmBrake(false)));
+    
+
+    
 
   
 
