@@ -96,8 +96,8 @@ public class CompRobotContainer extends RobotContainer {
     ));
      
     driver.rightTrigger().whileTrue(Commands.sequence(
-      new AlignToTargetVision(driver, 2.0, 0.3, 0, Math.PI, 1.5, 1.5),
-      new AlignToTargetVision(driver, 1.5, 0.03, 0, Math.PI, 1, 0.5)
+      new AlignToTargetVision(driver, true, 1.35, 0.2, 0, Math.PI, 2.5, 3),
+      new AlignToTargetVision(driver, true, 1.0, 0.03, 0, Math.PI, 1.5, 1.7)
     ));
 
     // Operator Joystick
