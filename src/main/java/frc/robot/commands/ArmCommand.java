@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.config.ArmConfig;
@@ -44,6 +45,13 @@ public class ArmCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("~~~~~" + armSetpoint.name());
+
+    if (Double.isNaN(armSetpoint.getX()) && Double.isNaN(armSetpoint.getZ())) {
+      DriverStation.reportError("ArmSetpoint called " + armSetpoint.name() + " is NaN", true);
+      this.cancel();
+    }
+
     if (armSetpoint.getWaypoint().length == 0) {
       index = 99;
     } else {
@@ -99,6 +107,14 @@ public class ArmCommand extends CommandBase {
         startBrakeTimer = true;
         m_timer.restart();
       }
+      if (startBrakeTimer && armSetpoint == ArmSetpoint.PICKUP) {
+        ArmSubsystem.getInstance().testFeedForwardTop(-10);
+      }
+      if (startBrakeTimer && armSetpoint == ArmSetpoint.TOP_CONE) {
+        if (ArmSubsystem.getInstance().getTopPosition() < angle2) {
+          ArmSubsystem.getInstance().testFeedForwardTop(2.0);
+        }
+      }
     } else {
       topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.waypointPositionTolerance &&
           Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.waypointVelocityTolerance;
@@ -145,6 +161,9 @@ public class ArmCommand extends CommandBase {
     // else {
     //   return false;
     // }
+    if (armSetpoint == ArmSetpoint.PICKUP) {
+      return m_timer.hasElapsed(0.4);
+    }
     return m_timer.hasElapsed(0.2);
   }
 }

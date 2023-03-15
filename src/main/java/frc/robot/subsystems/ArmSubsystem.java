@@ -342,9 +342,20 @@ public class ArmSubsystem extends SubsystemBase {
       slowDownVoltage += getTopVel() * -0.8;
     }
 
-    if (angle > Math.toRadians(35) && getTopPosition() > angle && getTopPosition() - angle < Math.toRadians(10)) {
-      slowDownVoltage += 0.2;
+    // Overshoot then prevent it from going below the setpoint
+    if (angle > Math.toRadians(35) && getTopPosition() > angle && getTopPosition() - angle < Math.toRadians(10) && getTopVel() < 0) {
+      if (m_hasCone) {
+        slowDownVoltage += 0.6;
+      } else {
+        slowDownVoltage += 0.2;
+      }
     }
+
+    // Stop the middle cone from overshooting too much
+    if (angle > Math.toRadians(35) && getTopVel() > 1.5 && getTopPosition() < angle && angle - getTopPosition() < Math.toRadians(25)) {
+      slowDownVoltage -= 1;
+    }
+
     int slot = 0;
     if (m_hasCone) {
       slot = 1;

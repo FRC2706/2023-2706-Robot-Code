@@ -7,17 +7,12 @@ package frc.robot.robotcontainers;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
@@ -27,19 +22,16 @@ import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmCommandSelector;
 import frc.robot.commands.ArmFFTestCommand;
-import frc.robot.commands.ChargeCommand;
 import frc.robot.commands.ChargeStationLock;
+import frc.robot.commands.CheckArmSetpoints;
 import frc.robot.commands.GripperCommand;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
-import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.RotateXYSupplier;
 import frc.robot.commands.SetAngleArm;
 import frc.robot.commands.SwerveTeleop;
-import frc.robot.commands.TranslationCommand;
-import frc.robot.config.ArmConfig;
 import frc.robot.config.ArmConfig.ArmPosition;
 import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.subsystems.ArmSubsystem;
@@ -102,22 +94,10 @@ public class CompRobotContainer extends RobotContainer {
     driver.leftTrigger().whileTrue(new RotateXYSupplier(driver,
       NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99)
     ));
-
+     
     driver.rightTrigger().whileTrue(Commands.sequence(
-      new AlignToTargetVision(driver,
-        NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("YawToTarget").subscribe(-99),
-        NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("DistanceToTarget").subscribe(-99),
-        2.0,
-        0.3,
-        1.5,
-        1.5),
-      new AlignToTargetVision(driver,
-        NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("YawToTarget").subscribe(-99),
-        NetworkTableInstance.getDefault().getTable("pipelineTape21").getDoubleTopic("DistanceToTarget").subscribe(-99),
-        1.5,
-        0.03,
-        1,
-        0.5)
+      new AlignToTargetVision(driver, 2.0, 0.3, 0, Math.PI, 1.5, 1.5),
+      new AlignToTargetVision(driver, 1.5, 0.03, 0, Math.PI, 1, 0.5)
     ));
 
     // Operator Joystick
@@ -135,7 +115,10 @@ public class CompRobotContainer extends RobotContainer {
     operator.b().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_MIDDLE, false));
     operator.y().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_TOP, false));
     
+    // Starting configuration
+    operator.leftStick().onTrue(new ArmCommand(ArmSetpoint.STARTING_CONFIGURATIN));
 
+    testStick.a().onTrue(new CheckArmSetpoints(testStick));
     // Force the buttons to just do cone setpoints
     // operator.a().onTrue(new ArmCommand(ArmSetpoint.BOTTOM_CONE));
     // operator.b().onTrue(new ArmCommand(ArmSetpoint.MIDDLE_CONE));

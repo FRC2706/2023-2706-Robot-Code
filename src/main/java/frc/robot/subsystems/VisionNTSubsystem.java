@@ -25,10 +25,10 @@ public class VisionNTSubsystem extends SubsystemBase{
     public final double DISTANCE_ERROR_CODE = -1;
     public final double FLIP_Y = -1;
     public final double FLIP_X = 1;
-    public final Pose2d TAPE_CAMERA_LOCATION = new Pose2d(-0.1, -0.1, Rotation2d.fromDegrees(180));
+    public final Pose2d TAPE_CAMERA_LOCATION = new Pose2d(7.5, 10, Rotation2d.fromDegrees(180));
     public final double TIME_FOR_BAD_DATA = 1;
 
-    private NetworkTable table = NetworkTableInstance.getDefault().getTable("MergeVisionPipelinePi21");
+    private NetworkTable table = NetworkTableInstance.getDefault().getTable("MergeVisionPipelineTape21");
     private DoubleSubscriber tapeX;
     private DoubleSubscriber tapeY;
 
@@ -41,8 +41,8 @@ public class VisionNTSubsystem extends SubsystemBase{
     LinearFilter linearTapeFilterY = LinearFilter.movingAverage(10);  
 
     private VisionNTSubsystem(){
-        tapeX = table.getDoubleTopic("PoseY").subscribe(ANGLE_ERROR_CODE);
-        tapeY = table.getDoubleTopic("PoseX").subscribe(ANGLE_ERROR_CODE);
+        tapeX = table.getDoubleTopic("PoseX").subscribe(ANGLE_ERROR_CODE);
+        tapeY = table.getDoubleTopic("PoseZ").subscribe(ANGLE_ERROR_CODE);
         
         tapeTimer.restart();
     }

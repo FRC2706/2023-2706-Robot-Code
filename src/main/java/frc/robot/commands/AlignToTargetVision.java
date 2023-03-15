@@ -27,8 +27,6 @@ public class AlignToTargetVision extends CommandBase {
   ProfiledPIDController pidRot = new ProfiledPIDController(5.0, 0, 0.4, 
                                           new TrapezoidProfile.Constraints(4 * Math.PI, 8 * Math.PI)); //pid to be tested
 
-  DoubleSupplier m_visionYaw;
-  DoubleSupplier m_visionDist;
   double m_visionDistanceFromTargetY;
   double m_distFromTarget;
 
@@ -44,17 +42,8 @@ public class AlignToTargetVision extends CommandBase {
   Timer time = new Timer();
 
   /** Creates a new AlignWithNode. */
-  public AlignToTargetVision(CommandXboxController driverStick, DoubleSubscriber subscriberYaw, DoubleSubscriber subscriberDist, double distFromTarget, double tolerance, double vel, double accel) {
-    this(driverStick, ()-> subscriberYaw.getAsDouble(), ()-> subscriberDist.getAsDouble(), distFromTarget, tolerance, vel, accel);
-  }
-
-  public AlignToTargetVision(CommandXboxController driverStick, DoubleSupplier visionYaw, DoubleSupplier visionDist, double distFromTarget, double tolerance, double vel, double accel) {
-    this(driverStick, visionYaw, visionDist, distFromTarget, tolerance, 0, Math.PI, vel, accel);
-  }
-  public AlignToTargetVision(CommandXboxController driverStick, DoubleSupplier visionYaw, DoubleSupplier visionDist, double distFromTarget, double tolerance, double desiredVisionY, double desiredHeading, double vel, double accel) {
-
-    m_visionYaw = visionYaw;
-    m_visionDist = visionDist;
+  
+  public AlignToTargetVision(CommandXboxController driverStick, double distFromTarget, double tolerance, double desiredVisionY, double desiredHeading, double vel, double accel) {
     m_distFromTarget = distFromTarget;
     m_visionDistanceFromTargetY = desiredVisionY;
     m_tolerance = tolerance;
@@ -91,8 +80,8 @@ public class AlignToTargetVision extends CommandBase {
     Translation2d visionTarget = VisionNTSubsystem.getInstance().calculateTapeTarget();
 
     if(visionTarget != null){
-      xSetpoint =  visionTarget.getX();
-      ySetpoint = visionTarget.getY();
+      xSetpoint =  visionTarget.getX() + m_distFromTarget;
+      ySetpoint = visionTarget.getY() + m_visionDistanceFromTargetY;
     }
 
     double xSpeed = pidX.calculate(SwerveSubsystem.getInstance().getPose().getX(), xSetpoint);
