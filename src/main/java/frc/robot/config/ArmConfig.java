@@ -31,7 +31,7 @@ public class ArmConfig {
         
         STARTING_CONFIGURATIN(10.5, -8),
         
-        PICKUP(4.1, -12.2, new ArmWaypoint(17, -3), new ArmWaypoint(8.5, -11.7)),
+        PICKUP(3.6, -12.2, new ArmWaypoint(17, -3), new ArmWaypoint(8.5, -11.5)),
         PICKUP_OUTSIDE_FRAME(25, -11, new ArmWaypoint(14, -8)), // CHECK
         HUMAN_PLAYER_PICKUP(25, 40, new ArmWaypoint(14, -7)), // NOT DONE
 
@@ -39,6 +39,7 @@ public class ArmConfig {
         MIDDLE_CONE(33.5, 35), //, new ArmWaypoint(28, 29)), 
         MIDDLE_CONE_RELEASE(36, 28.03-7), //WRONG
         TOP_CONE(47, 46, new ArmWaypoint(28,36)),
+        TOP_CONE_NO_WAYPOINT(47, 46),
         TOP_CONE_RELEASE(53, 39-7), // WRONG
 
         BOTTOM_CUBE(24, -7),

@@ -32,6 +32,7 @@ import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.RotateXYSupplier;
 import frc.robot.commands.SetAngleArm;
 import frc.robot.commands.SwerveTeleop;
+import frc.robot.commands.WaitForVisionData;
 import frc.robot.config.ArmConfig.ArmPosition;
 import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.subsystems.ArmSubsystem;
@@ -95,9 +96,11 @@ public class CompRobotContainer extends RobotContainer {
       NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99)
     ));
      
+    boolean isTapeNotApril = true;
     driver.rightTrigger().whileTrue(Commands.sequence(
-      new AlignToTargetVision(driver, true, 1.35, 0.2, 0, Math.PI, 2.5, 3),
-      new AlignToTargetVision(driver, true, 1.0, 0.03, 0, Math.PI, 1.5, 1.7)
+      new WaitForVisionData(isTapeNotApril),
+      new AlignToTargetVision(isTapeNotApril, 1.35, 0.2, 0, Math.PI, 2.5, 3),
+      new AlignToTargetVision(isTapeNotApril, 1.0, 0.03, 0, Math.PI, 1.5, 1.7)
     ));
 
     // Operator Joystick

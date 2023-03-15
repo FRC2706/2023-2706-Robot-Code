@@ -7,8 +7,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5741889445094395,
-        "y": 4.7237669804617015
+        "x": 2.2121699205230474,
+        "y": 4.660851153763377
       },
       "holonomicAngle": -180.0,
       "isReversal": false,
@@ -17,7 +17,8 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "GripperPickCube"
+          "GripperPickCube",
+          "ArmCubeTop"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "after",
@@ -30,12 +31,12 @@
         "y": 4.416079977198123
       },
       "prevControl": {
-        "x": 2.5283326902531673,
-        "y": 4.477272771339437
+        "x": 2.783302665841973,
+        "y": 4.579260761574959
       },
       "nextControl": {
-        "x": 2.5283326902531673,
-        "y": 4.477272771339437
+        "x": 2.783302665841973,
+        "y": 4.579260761574959
       },
       "holonomicAngle": 180.0,
       "isReversal": true,
@@ -53,16 +54,16 @@
     },
     {
       "anchorPoint": {
-        "x": 3.843977764291407,
-        "y": 4.6812487518104815
+        "x": 3.8949717594091675,
+        "y": 4.742441545951794
       },
       "prevControl": {
-        "x": 2.875260016135059,
-        "y": 4.663198110540487
+        "x": 2.4773386951354053,
+        "y": 4.742441545951794
       },
       "nextControl": {
-        "x": 5.485984407083318,
-        "y": 4.711845148881139
+        "x": 5.537263437061611,
+        "y": 4.742441545951794
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -133,12 +134,6 @@
       "position": 1.5030303030303507,
       "names": [
         "ArmHome"
-      ]
-    },
-    {
-      "position": 0.1,
-      "names": [
-        "ArmCubeTop"
       ]
     }
   ]

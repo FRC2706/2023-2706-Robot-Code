@@ -42,7 +42,7 @@ public class AlignToTargetVision extends CommandBase {
 
   /** Creates a new AlignWithNode. */
   
-  public AlignToTargetVision(CommandXboxController driverStick, boolean isTapeNotApril, double distFromTarget, double tolerance, double desiredVisionY, double desiredHeading, double vel, double accel) {
+  public AlignToTargetVision(boolean isTapeNotApril, double distFromTarget, double tolerance, double desiredVisionY, double desiredHeading, double vel, double accel) {
     m_isTapeNotApril = isTapeNotApril;
     
     m_distFromTarget = distFromTarget;
