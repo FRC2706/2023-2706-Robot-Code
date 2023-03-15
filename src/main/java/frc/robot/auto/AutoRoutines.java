@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ChargeCommand;
 import frc.robot.commands.ChargeStationLock;
@@ -36,6 +37,15 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class AutoRoutines {
     SwerveAutoBuilder autoBuilder;
 
+    // HUMBER MAINS
+    List<PathPlannerTrajectory> cube_1p0_top_charge;
+
+    // Possible humbers
+    List<PathPlannerTrajectory> cone_2p0_bot;
+    List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2;
+
+
+
     List<PathPlannerTrajectory> cube_0p5_top_charge_good;
     List<PathPlannerTrajectory> cube_0p5_bottom_charge;
     List<PathPlannerTrajectory> cube_0p5_middle_charge;
@@ -51,10 +61,8 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> BK_cube_0p5_middle_charge;
     List<PathPlannerTrajectory> BK_cone_0p5_charge;
     List<PathPlannerTrajectory> place_pick_bottom2_charge_new;
-    List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2;
     List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2_charge;
     List<PathPlannerTrajectory> place_pick_place_pick_place_bottom_new;
-    List<PathPlannerTrajectory> cube_1p0_top_charge;
 
    
     public AutoRoutines() {
@@ -73,12 +81,13 @@ public class AutoRoutines {
                 new SwerveModuleState(-0.1, Rotation2d.fromDegrees(-45)),
             })).withTimeout(0.4)));
 
-        eventMap.put("charge2", new ChargeCommand(-2.9).andThen(new ChargeStationLock()));
+        eventMap.put("charge2", new ChargeCommand(-3.2).andThen(new ChargeStationLock()));
 
         //2.3
          
          //place game pieces
          eventMap.put("ArmCubeTop", new ArmCommand(ArmSetpoint.TOP_CUBE));
+         eventMap.put("ArmCubeTopNoWP", new ArmCommand(ArmSetpoint.TOP_CONE_NO_WAYPOINT));
          eventMap.put("ArmCubeMiddle", new ArmCommand(ArmSetpoint.MIDDLE_CUBE));
          eventMap.put("ArmCubeBottom", new ArmCommand(ArmSetpoint.BOTTOM_CUBE));
          eventMap.put("ArmPickup", new ArmCommand(ArmSetpoint.PICKUP));
@@ -92,7 +101,6 @@ public class AutoRoutines {
 
          eventMap.put("GripperOpen", new GripperCommand(GRIPPER_INSTRUCTION.OPEN, 
                                             CompRobotContainer.setState));
-
          
         autoBuilder = new SwerveAutoBuilder(
                 SwerveSubsystem.getInstance()::getPose,
@@ -104,6 +112,13 @@ public class AutoRoutines {
                 eventMap,
                 true,
                 SwerveSubsystem.getInstance());
+
+        // HUMBER MAINS
+        cube_1p0_top_charge = PathPlanner.loadPathGroup("cube_1p0_top_charge", 2.5, 3);
+
+        // Possible Humber
+        cone_2p0_bot = PathPlanner.loadPathGroup("cone_2p0_bot", 2.5, 3);
+        place_pick_place_pick_place_bottom2 = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2", 2.5, 3);
 
         cube_0p5_top_charge_good = PathPlanner.loadPathGroup("cube_0p5_top_charge_good", 2.5, 3);
         cube_0p5_bottom_charge = PathPlanner.loadPathGroup("cube_0p5_bottom_charge", 2.5, 3);
@@ -117,15 +132,13 @@ public class AutoRoutines {
         cone_1p0_top = PathPlanner.loadPathGroup("cone_1p0_top", 2.5, 3);
         cone_1p0_bottom = PathPlanner.loadPathGroup("cone_1p0_bottom", 2.5, 3);
         
-        // HUMBER:
-        cube_1p0_top_charge = PathPlanner.loadPathGroup("cube_1p0_top_charge", 2.5, 3);
+        
 
         BK_cube_2p0_bottom = PathPlanner.loadPathGroup("BK_cube_2p0_bottom", 2.5, 3);
         BK_cube_0p5_middle_charge = PathPlanner.loadPathGroup("BK_cube_0p5_middle_charge", 2.5, 3);
         BK_cone_0p5_charge = PathPlanner.loadPathGroup("BK_cone_0p5_charge", 2.5, 3);
         
         place_pick_bottom2_charge_new = PathPlanner.loadPathGroup("place_pick_bottom2_charge_new", 2.5, 3);
-        place_pick_place_pick_place_bottom2 = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2", 2.5, 3);
         place_pick_place_pick_place_bottom2_charge = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2_charge", 2.5, 3);
         place_pick_place_pick_place_bottom_new = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom_new", 2.5, 3);
     }
@@ -193,6 +206,14 @@ public class AutoRoutines {
 
             case 19:
                 return (autoBuilder.fullAuto(cube_1p0_top_charge));
+
+            case 20:
+                return new SequentialCommandGroup(
+                    autoBuilder.fullAuto(cone_2p0_bot),
+                    // new ArmCommand(ArmSetpoint.TOP_CONE_NO_WAYPOINT),
+                    new AlignToTargetVision(true, 1.0, 0.03, 0, Math.PI, 1.5, 1.7).withTimeout(1.3),
+                    new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState)
+                );
 
         }
         return new InstantCommand();

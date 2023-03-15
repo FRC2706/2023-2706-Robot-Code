@@ -124,7 +124,7 @@ public class AutoSelector {
                 break;
  
         }
-        return 19; // autoId; // Hard coded for now
+        return autoId;
     }
 
     public int getAnalogSelectorIndex()

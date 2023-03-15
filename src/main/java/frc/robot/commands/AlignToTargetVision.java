@@ -20,17 +20,17 @@ import frc.robot.subsystems.VisionNTSubsystem;
 
 public class AlignToTargetVision extends CommandBase {
 
-  ProfiledPIDController pidX = new ProfiledPIDController(2, 0.0, 0.2, 
+  ProfiledPIDController pidX = new ProfiledPIDController(4, 0.0, 0.2, 
                                           new TrapezoidProfile.Constraints(2, 2));
-  ProfiledPIDController pidY = new ProfiledPIDController(2, 0.0, 0.2, 
+  ProfiledPIDController pidY = new ProfiledPIDController(4, 0.0, 0.2, 
                                           new TrapezoidProfile.Constraints(2, 2));
   ProfiledPIDController pidRot = new ProfiledPIDController(5.0, 0, 0.4, 
                                           new TrapezoidProfile.Constraints(4 * Math.PI, 8 * Math.PI)); //pid to be tested
 
-  DoubleSupplier m_visionYaw;
-  DoubleSupplier m_visionDist;
   double m_visionDistanceFromTargetY;
   double m_distFromTarget;
+
+  boolean m_isTapeNotApril;
 
   double xSetpoint = 0;
   double ySetpoint = 0;
@@ -38,23 +38,13 @@ public class AlignToTargetVision extends CommandBase {
 
   double m_tolerance = 0.05;
 
-  LinearFilter linearFilterX = LinearFilter.movingAverage(10);
-  LinearFilter linearFilterY = LinearFilter.movingAverage(10);
-
   Timer time = new Timer();
 
   /** Creates a new AlignWithNode. */
-  public AlignToTargetVision(CommandXboxController driverStick, DoubleSubscriber subscriberYaw, DoubleSubscriber subscriberDist, double distFromTarget, double tolerance, double vel, double accel) {
-    this(driverStick, ()-> subscriberYaw.getAsDouble(), ()-> subscriberDist.getAsDouble(), distFromTarget, tolerance, vel, accel);
-  }
-
-  public AlignToTargetVision(CommandXboxController driverStick, DoubleSupplier visionYaw, DoubleSupplier visionDist, double distFromTarget, double tolerance, double vel, double accel) {
-    this(driverStick, visionYaw, visionDist, distFromTarget, tolerance, 0, Math.PI, vel, accel);
-  }
-  public AlignToTargetVision(CommandXboxController driverStick, DoubleSupplier visionYaw, DoubleSupplier visionDist, double distFromTarget, double tolerance, double desiredVisionY, double desiredHeading, double vel, double accel) {
-
-    m_visionYaw = visionYaw;
-    m_visionDist = visionDist;
+  
+  public AlignToTargetVision(boolean isTapeNotApril, double distFromTarget, double tolerance, double desiredVisionY, double desiredHeading, double vel, double accel) {
+    m_isTapeNotApril = isTapeNotApril;
+    
     m_distFromTarget = distFromTarget;
     m_visionDistanceFromTargetY = desiredVisionY;
     m_tolerance = tolerance;
@@ -88,18 +78,23 @@ public class AlignToTargetVision extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Translation2d visionTarget = VisionNTSubsystem.getInstance().calculateTapeTarget();
-
+    Translation2d visionTarget;
+    if (m_isTapeNotApril) {
+      visionTarget = VisionNTSubsystem.getInstance().calculateTapeTarget();
+    } else {
+      visionTarget = VisionNTSubsystem.getInstance().calculateAprilTarget();
+    }
+  
     if(visionTarget != null){
-      xSetpoint =  visionTarget.getX();
-      ySetpoint = visionTarget.getY();
+      xSetpoint =  visionTarget.getX() + m_distFromTarget;
+      ySetpoint = visionTarget.getY() + m_visionDistanceFromTargetY;
     }
 
     double xSpeed = pidX.calculate(SwerveSubsystem.getInstance().getPose().getX(), xSetpoint);
     double ySpeed = pidY.calculate(SwerveSubsystem.getInstance().getPose().getY(), ySetpoint);
     double rot = pidRot.calculate(SwerveSubsystem.getInstance().getHeading().getRadians(), rotSetpoint);
     
-    //System.out.println("X: " + SwerveSubsystem.getInstance().getPose().getX() + ", Setpoint: " + xSetpoint + ", Y: " + SwerveSubsystem.getInstance().getPose().getY() + ", Setpoint: " + ySetpoint + "Rot: " + SwerveSubsystem.getInstance().getHeading().getRadians() + ", Setpoint: " + rotSetpoint);
+    // System.out.println("X: " + SwerveSubsystem.getInstance().getPose().getX() + ", Setpoint: " + xSetpoint + ", Y: " + SwerveSubsystem.getInstance().getPose().getY() + ", Setpoint: " + ySetpoint + "Rot: " + SwerveSubsystem.getInstance().getHeading().getRadians() + ", Setpoint: " + rotSetpoint);
 
     SwerveSubsystem.getInstance().drive(
       xSpeed, 
@@ -108,6 +103,7 @@ public class AlignToTargetVision extends CommandBase {
       true, 
       false
     );
+
   }
 
   // Called once the command ends or is interrupted.
@@ -121,7 +117,9 @@ public class AlignToTargetVision extends CommandBase {
   public boolean isFinished() {
 
     //if (pidX.atSetpoint() && pidY.atSetpoint() && pidRot.atSetpoint()) {
-    if ((Math.abs(SwerveSubsystem.getInstance().getPose().getX() - xSetpoint) < m_tolerance) && (Math.abs(SwerveSubsystem.getInstance().getPose().getY() - ySetpoint) < m_tolerance) && (Math.abs(SwerveSubsystem.getInstance().getHeading().getRadians() - rotSetpoint) < Math.PI / 8.0)) {
+    if ((Math.abs(SwerveSubsystem.getInstance().getPose().getX() - xSetpoint) < m_tolerance) && 
+        (Math.abs(SwerveSubsystem.getInstance().getPose().getY() - ySetpoint) < m_tolerance) && 
+        (Math.abs(SwerveSubsystem.getInstance().getHeading().getRadians() - rotSetpoint) < Math.PI / 8.0)) {
       return(true);
     }
 
