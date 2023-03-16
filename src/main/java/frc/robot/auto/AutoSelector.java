@@ -39,7 +39,8 @@ public class AutoSelector {
         "Id16_place_pick_place_pick_place_bottom2",
         "Id17_place_pick_place_pick_place_bottom2_charge",
         "Id18_place_pick_place_pick_place_bottom_new",
-        "Id19_cube_1p0_top_charge"
+        "Id19_cube_1p0_top_charge",
+        "Id20_cone_2p0_bot"
         };
         SmartDashboard.putStringArray("Auto List", autoList );
     }
@@ -119,12 +120,15 @@ public class AutoSelector {
             case "Id19_cube_1p0_top_charge":
                 autoId = 19;
                 break;
+            case "Id20_cone_2p0_bot":
+                autoId = 20;
+                break;
             default:
                 autoId = getAnalogSelectorIndex();
                 break;
  
         }
-        return 19; // autoId; // Hard coded for now
+        return autoId; 
     }
 
     public int getAnalogSelectorIndex()
