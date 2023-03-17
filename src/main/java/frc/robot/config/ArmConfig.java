@@ -31,14 +31,14 @@ public class ArmConfig {
         
         STARTING_CONFIGURATIN(10.5, -8),
         
-        PICKUP(3.6, -12.2, new ArmWaypoint(17, -3), new ArmWaypoint(8.5, -11.5)),
+        PICKUP(3.8, -12.2, new ArmWaypoint(17, -3), new ArmWaypoint(8.5, -11.5)),
         PICKUP_OUTSIDE_FRAME(25, -11, new ArmWaypoint(14, -8)), // CHECK
         HUMAN_PLAYER_PICKUP(25, 40, new ArmWaypoint(14, -7)), // NOT DONE
 
         BOTTOM_CONE(27, -3),
         MIDDLE_CONE(33.5, 35), //, new ArmWaypoint(28, 29)), 
         MIDDLE_CONE_RELEASE(36, 28.03-7), //WRONG
-        TOP_CONE(47, 46, new ArmWaypoint(28,36)),
+        TOP_CONE(47, 46),//, new ArmWaypoint(28,36)),
         TOP_CONE_NO_WAYPOINT(47, 46),
         TOP_CONE_RELEASE(53, 39-7), // WRONG
 
@@ -103,8 +103,11 @@ public class ArmConfig {
       // constants for arm constraints
       public static final double TOP_MAX_VEL = Math.PI * 4.5;
       public static final double TOP_MAX_ACCEL = Math.PI * 3;
+      public static final double TOP_CONE_MAX_VEL = Math.PI * 4.5;
+      public static final double TOP_CONE_MAX_ACCEL = Math.PI * 1;
       public static final double BOTTOM_MAX_VEL = Math.PI * 3;
       public static final double BOTTOM_MAX_ACCEL = Math.PI *3;
+      
 
       public static final double topArmPositionConversionFactor = 2 * Math.PI / TOP_NEO_GEAR_RATIO;
       public static final double topArmVelocityConversionFactor = topArmPositionConversionFactor / 60.0;
@@ -116,6 +119,8 @@ public class ArmConfig {
 
       public static final double waypointPositionTolerance = Math.toRadians(5);
       public static final double waypointVelocityTolerance = Math.toRadians(6);
+      public static final double waypointPickupPositionTolerance = Math.toRadians(2);
+      public static final double waypointPickupVelocityTolerance = Math.toRadians(2);
 
       // PID constants for top arm
       public static final double top_arm_kP = 1;//0.23; 

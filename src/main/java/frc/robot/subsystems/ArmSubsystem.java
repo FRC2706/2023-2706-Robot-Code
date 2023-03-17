@@ -483,6 +483,12 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setHasCone(boolean hasCone) {
+    if (hasCone) {
+      m_topPID.setConstraints(new Constraints(ArmConfig.TOP_CONE_MAX_VEL, ArmConfig.TOP_CONE_MAX_ACCEL));
+    }
+    else {
+      m_topPID.setConstraints(new Constraints(ArmConfig.TOP_MAX_VEL, ArmConfig.TOP_MAX_ACCEL));
+    }
     m_hasCone = hasCone;
   }
 

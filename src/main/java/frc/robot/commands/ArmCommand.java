@@ -116,10 +116,20 @@ public class ArmCommand extends CommandBase {
         }
       }
     } else {
-      topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.waypointPositionTolerance &&
-          Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.waypointVelocityTolerance;
-      bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.waypointPositionTolerance &&
-          Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointVelocityTolerance;
+
+      if (armSetpoint == ArmSetpoint.PICKUP && index == 1) {
+        topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.waypointPickupPositionTolerance &&
+          Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.waypointPickupVelocityTolerance;
+        bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.waypointPickupPositionTolerance &&
+          Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointPickupVelocityTolerance;
+
+      }
+      else {
+        topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.waypointPositionTolerance &&
+        Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.waypointVelocityTolerance;
+        bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.waypointPositionTolerance &&
+        Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointVelocityTolerance;
+      }
       if (bottomReached && topReached) {
         if (index == armSetpoint.getWaypoint().length - 1 || armSetpoint.getWaypoint().length == 0) {
           index = 99;

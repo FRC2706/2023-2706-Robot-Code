@@ -113,7 +113,7 @@ public class CompRobotContainer extends RobotContainer {
     operator.leftTrigger().onTrue(new ArmCommand(ArmSetpoint.PICKUP_OUTSIDE_FRAME));
 
     // Choose the ArmSetpoint based on RobotGamePieceState
-    operator.x().onTrue(new ArmCommand(ArmSetpoint.PICKUP));
+    operator.x().and(()-> getState.get() == RobotGamePieceState.NoGamePiece).onTrue(new ArmCommand(ArmSetpoint.PICKUP));
     operator.a().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_BOTTOM, false));
     operator.b().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_MIDDLE, false));
     operator.y().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_TOP, false));
