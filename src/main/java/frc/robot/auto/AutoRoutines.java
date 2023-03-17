@@ -165,6 +165,7 @@ public class AutoRoutines {
                 return (autoBuilder.fullAuto(cube_1p0_bottom));
 
              case 6:
+                return null;
              case 7:
              //Adding 7 here, since Analog Selector misses 6, from 5 to 7 directly.
                 return (autoBuilder.fullAuto(cone_0p5_top_charge));

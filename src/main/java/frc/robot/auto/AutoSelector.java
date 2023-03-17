@@ -77,8 +77,8 @@ public class AutoSelector {
             case "Id5_cube_1p0_bottom":
                 autoId = 5;
                 break;
-            case "Id6_cone_0p5_top_charge":
-                autoId = 6;
+            case "Id7_cone_0p5_top_charge":
+                autoId = 7;
                 break;
             // case "Id7_cone_0p5_middle1_charge":
             //     autoId = 7;
