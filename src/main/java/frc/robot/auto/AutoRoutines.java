@@ -151,26 +151,16 @@ public class AutoRoutines {
 
             case 1:
                 return (autoBuilder.fullAuto(cube_0p5_top_charge)); 
-                // I changed this from cube_0p5_top_charge_good to cube_1p0_top_charge.
-                // cube_0p5_top_charge_good is not the one that was tested at EoM, it should be cube_1p0_top_charge.
-                // It's almost identical but it's faster by like 1 second, and the path was tested and proven to work. (but not the charge command)
-
-                //Note: change its name from cube_1p0_top_charge to cube_0p5_top_charge, since we already printed auto routines for the drive team.
+             
             case 2:
                 return (autoBuilder.fullAuto(cube_0p5_bottom_charge));
-                // I've made sure that this auto stops at the same distance as cube_1p0_top_charge so that we only have
-                // to tune the charge commands once.
-
+         
             case 3:
                 return (autoBuilder.fullAuto(cube_0p5_middle_charge));
-                // I really don't think we can use pathplanner to go over the charge station
-                // I changed this path to just drive striaght onto it after scoring.
-                // I had to add "charge3" marker since it needs +3.3 meters instead of -3.2 meters
+        
             case 4:
                 return (autoBuilder.fullAuto(cube_1p0_top));
             
-                // I changed this one slightly.
-                // Added marker for lowering the arm.
             case 5:
                 return (autoBuilder.fullAuto(cube_1p0_bottom));
 
