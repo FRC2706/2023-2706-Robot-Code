@@ -31,12 +31,12 @@
         "y": 4.440081662118213
       },
       "prevControl": {
-        "x": 2.2128600648178747,
-        "y": 4.450127095742914
+        "x": 2.1424454387370333,
+        "y": 4.451334479592036
       },
       "nextControl": {
-        "x": 2.2128600648178747,
-        "y": 4.450127095742914
+        "x": 2.1424454387370333,
+        "y": 4.451334479592036
       },
       "holonomicAngle": 180.0,
       "isReversal": true,
@@ -54,22 +54,22 @@
     },
     {
       "anchorPoint": {
-        "x": 3.789993143896063,
-        "y": 4.711308369985162
+        "x": 2.893969441785039,
+        "y": 4.672937711260038
       },
       "prevControl": {
-        "x": 3.5505762697193353,
-        "y": 4.696344815349117
+        "x": 2.7100939911846718,
+        "y": 4.664370037934573
       },
       "nextControl": {
-        "x": 4.754354771867439,
-        "y": 4.771580971733373
+        "x": 5.582112991149061,
+        "y": 4.798191711768039
       },
-      "holonomicAngle": 90.0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": true,
+      "isStopPoint": false,
       "stopEvent": {
         "names": [
           "ArmHome"
@@ -81,20 +81,20 @@
     },
     {
       "anchorPoint": {
-        "x": 6.462078488066751,
-        "y": 3.3551748306504146
+        "x": 7.0755260741290735,
+        "y": 5.2
       },
       "prevControl": {
-        "x": 6.452033054442048,
-        "y": 3.807219343761999
+        "x": 6.9695419198530715,
+        "y": 7.3610812606240605
       },
       "nextControl": {
-        "x": 6.470785242467586,
-        "y": 2.963370882612851
+        "x": 7.104043898679086,
+        "y": 4.618504241036808
       },
-      "holonomicAngle": 1.6365770416166354,
+      "holonomicAngle": -90.0,
       "isReversal": false,
-      "velOverride": 0.5,
+      "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
@@ -106,26 +106,37 @@
     },
     {
       "anchorPoint": {
-        "x": 4.975354311610879,
-        "y": 4.6409903346122485
+        "x": 7.094795920361074,
+        "y": 4.5
       },
       "prevControl": {
-        "x": 5.556160658185978,
-        "y": 4.681172069111056
+        "x": 7.094795920361074,
+        "y": 4.769286942420039
       },
       "nextControl": null,
-      "holonomicAngle": 180.0,
+      "holonomicAngle": -90.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "GripperPickCone",
+          "wait",
+          "ArmHomeAfterPickup"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
-  "markers": []
+  "markers": [
+    {
+      "position": 1.1636363636363218,
+      "names": [
+        "ArmPickup"
+      ]
+    }
+  ]
 }
