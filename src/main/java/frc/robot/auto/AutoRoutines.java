@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ChargeCommand;
@@ -38,31 +39,29 @@ public class AutoRoutines {
     SwerveAutoBuilder autoBuilder;
 
     // HUMBER MAINS
-    List<PathPlannerTrajectory> cube_1p0_top_charge;
-
-    // Possible humbers
-    List<PathPlannerTrajectory> cone_2p0_bot;
-    List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2;
-
-
-
-    List<PathPlannerTrajectory> cube_0p5_top_charge_good;
+    List<PathPlannerTrajectory> cube_0p5_top_charge;
     List<PathPlannerTrajectory> cube_0p5_bottom_charge;
     List<PathPlannerTrajectory> cube_0p5_middle_charge;
     List<PathPlannerTrajectory> cube_1p0_top;
     List<PathPlannerTrajectory> cube_1p0_bottom;
     List<PathPlannerTrajectory> cone_0p5_top_charge;
-    List<PathPlannerTrajectory> cone_0p5_middle1_charge;    
-    List<PathPlannerTrajectory> cone_0p5_middle2_charge;
-    List<PathPlannerTrajectory> cone_0p5_bottom_charge;
-    List<PathPlannerTrajectory> cone_1p0_top;
-    List<PathPlannerTrajectory> cone_1p0_bottom;
-    List<PathPlannerTrajectory> BK_cube_2p0_bottom;
-    List<PathPlannerTrajectory> BK_cube_0p5_middle_charge;
-    List<PathPlannerTrajectory> BK_cone_0p5_charge;
-    List<PathPlannerTrajectory> place_pick_bottom2_charge_new;
-    List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2_charge;
-    List<PathPlannerTrajectory> place_pick_place_pick_place_bottom_new;
+
+    // // Possible humbers
+    // List<PathPlannerTrajectory> cone_2p0_bot;
+    // List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2;
+
+    // List<PathPlannerTrajectory> cube_0p5_top_charge_good;
+    // List<PathPlannerTrajectory> cone_0p5_middle1_charge;    
+    // List<PathPlannerTrajectory> cone_0p5_middle2_charge;
+    // List<PathPlannerTrajectory> cone_0p5_bottom_charge;
+    // List<PathPlannerTrajectory> cone_1p0_top;
+    // List<PathPlannerTrajectory> cone_1p0_bottom;
+    // List<PathPlannerTrajectory> BK_cube_2p0_bottom;
+    // List<PathPlannerTrajectory> BK_cube_0p5_middle_charge;
+    // List<PathPlannerTrajectory> BK_cone_0p5_charge;
+    // List<PathPlannerTrajectory> place_pick_bottom2_charge_new;
+    // List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2_charge;
+    // List<PathPlannerTrajectory> place_pick_place_pick_place_bottom_new;
 
    
     public AutoRoutines() {
@@ -82,6 +81,7 @@ public class AutoRoutines {
             })).withTimeout(0.4)));
 
         eventMap.put("charge2", new ChargeCommand(-3.2).andThen(new ChargeStationLock()));
+        eventMap.put("charge3", new WaitCommand(0.3).andThen(new ChargeCommand(3.3).andThen(new ChargeStationLock())));
 
         //2.3
          
@@ -101,6 +101,8 @@ public class AutoRoutines {
 
          eventMap.put("GripperOpen", new GripperCommand(GRIPPER_INSTRUCTION.OPEN, 
                                             CompRobotContainer.setState));
+
+        eventMap.put("wait", new WaitCommand(0.3));
          
         autoBuilder = new SwerveAutoBuilder(
                 SwerveSubsystem.getInstance()::getPose,
@@ -114,33 +116,31 @@ public class AutoRoutines {
                 SwerveSubsystem.getInstance());
 
         // HUMBER MAINS
-        cube_1p0_top_charge = PathPlanner.loadPathGroup("cube_1p0_top_charge", 2.5, 3);
-
-        // Possible Humber
-        cone_2p0_bot = PathPlanner.loadPathGroup("cone_2p0_bot", 2.5, 3);
-        place_pick_place_pick_place_bottom2 = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2", 2.5, 3);
-
-        cube_0p5_top_charge_good = PathPlanner.loadPathGroup("cube_0p5_top_charge_good", 2.5, 3);
-        cube_0p5_bottom_charge = PathPlanner.loadPathGroup("cube_0p5_bottom_charge", 2.5, 3);
-        cube_0p5_middle_charge = PathPlanner.loadPathGroup("cube_0p5_middle_charge", 2.5, 3);
+        cube_0p5_top_charge = PathPlanner.loadPathGroup("cube_1p0_top_charge", 2.5, 3);
+        cube_0p5_bottom_charge = PathPlanner.loadPathGroup("cube_1p0_bottom_charge", 2.5, 3);
+        cube_0p5_middle_charge = PathPlanner.loadPathGroup("cube_1p0_middle_charge", 2.5, 3);
         cube_1p0_top = PathPlanner.loadPathGroup("cube_1p0_top", 2.5, 3);
         cube_1p0_bottom = PathPlanner.loadPathGroup("cube_1p0_bottom", 2.5, 3);
         cone_0p5_top_charge = PathPlanner.loadPathGroup("cone_0p5_top_charge", 2.5, 3);
-        cone_0p5_middle1_charge = PathPlanner.loadPathGroup("cone_0p5_middle1_charge", 2.5, 3);
-        cone_0p5_middle2_charge = PathPlanner.loadPathGroup("cone_0p5_middle2_charge", 2.5, 3);
-        cone_0p5_bottom_charge = PathPlanner.loadPathGroup("cone_0p5_bottom_charge", 2.5, 3);
-        cone_1p0_top = PathPlanner.loadPathGroup("cone_1p0_top", 2.5, 3);
-        cone_1p0_bottom = PathPlanner.loadPathGroup("cone_1p0_bottom", 2.5, 3);
-        
-        
 
-        BK_cube_2p0_bottom = PathPlanner.loadPathGroup("BK_cube_2p0_bottom", 2.5, 3);
-        BK_cube_0p5_middle_charge = PathPlanner.loadPathGroup("BK_cube_0p5_middle_charge", 2.5, 3);
-        BK_cone_0p5_charge = PathPlanner.loadPathGroup("BK_cone_0p5_charge", 2.5, 3);
+        // Possible Humber
+        // cone_2p0_bot = PathPlanner.loadPathGroup("cone_2p0_bot", 2.5, 3);
+        // place_pick_place_pick_place_bottom2 = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2", 2.5, 3);
+
+        // cube_0p5_top_charge_good = PathPlanner.loadPathGroup("cube_0p5_top_charge_good", 2.5, 3);
+        // cone_0p5_middle1_charge = PathPlanner.loadPathGroup("cone_0p5_middle1_charge", 2.5, 3);
+        // cone_0p5_middle2_charge = PathPlanner.loadPathGroup("cone_0p5_middle2_charge", 2.5, 3);
+        // cone_0p5_bottom_charge = PathPlanner.loadPathGroup("cone_0p5_bottom_charge", 2.5, 3);
+        // cone_1p0_top = PathPlanner.loadPathGroup("cone_1p0_top", 2.5, 3);
+        // cone_1p0_bottom = PathPlanner.loadPathGroup("cone_1p0_bottom", 2.5, 3);       
+
+        // BK_cube_2p0_bottom = PathPlanner.loadPathGroup("BK_cube_2p0_bottom", 2.5, 3);
+        // BK_cube_0p5_middle_charge = PathPlanner.loadPathGroup("BK_cube_0p5_middle_charge", 2.5, 3);
+        // BK_cone_0p5_charge = PathPlanner.loadPathGroup("BK_cone_0p5_charge", 2.5, 3);
         
-        place_pick_bottom2_charge_new = PathPlanner.loadPathGroup("place_pick_bottom2_charge_new", 2.5, 3);
-        place_pick_place_pick_place_bottom2_charge = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2_charge", 2.5, 3);
-        place_pick_place_pick_place_bottom_new = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom_new", 2.5, 3);
+        // place_pick_bottom2_charge_new = PathPlanner.loadPathGroup("place_pick_bottom2_charge_new", 2.5, 3);
+        // place_pick_place_pick_place_bottom2_charge = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2_charge", 2.5, 3);
+        // place_pick_place_pick_place_bottom_new = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom_new", 2.5, 3);
     }
 
     public Command getAutonomousCommand(int selectAuto) {
@@ -150,70 +150,83 @@ public class AutoRoutines {
                 return null;
 
             case 1:
-                return (autoBuilder.fullAuto(cube_0p5_top_charge_good));
+                return (autoBuilder.fullAuto(cube_0p5_top_charge)); 
+                // I changed this from cube_0p5_top_charge_good to cube_1p0_top_charge.
+                // cube_0p5_top_charge_good is not the one that was tested at EoM, it should be cube_1p0_top_charge.
+                // It's almost identical but it's faster by like 1 second, and the path was tested and proven to work. (but not the charge command)
 
+                //Note: change its name from cube_1p0_top_charge to cube_0p5_top_charge, since we already printed auto routines for the drive team.
             case 2:
                 return (autoBuilder.fullAuto(cube_0p5_bottom_charge));
+                // I've made sure that this auto stops at the same distance as cube_1p0_top_charge so that we only have
+                // to tune the charge commands once.
 
             case 3:
                 return (autoBuilder.fullAuto(cube_0p5_middle_charge));
-
+                // I really don't think we can use pathplanner to go over the charge station
+                // I changed this path to just drive striaght onto it after scoring.
+                // I had to add "charge3" marker since it needs +3.3 meters instead of -3.2 meters
             case 4:
                 return (autoBuilder.fullAuto(cube_1p0_top));
             
+                // I changed this one slightly.
+                // Added marker for lowering the arm.
             case 5:
                 return (autoBuilder.fullAuto(cube_1p0_bottom));
 
-            case 6:
+             case 6:
+             case 7:
+             //Adding 7 here, since Analog Selector misses 6, from 5 to 7 directly.
                 return (autoBuilder.fullAuto(cone_0p5_top_charge));
 
-            case 7:
-                return (autoBuilder.fullAuto(cone_0p5_middle1_charge));
+        
+            // case 7:
+            //     return (autoBuilder.fullAuto(cone_0p5_middle1_charge));
 
-            case 8:
-                return (autoBuilder.fullAuto(cone_0p5_middle2_charge));
+            // case 8:
+            //     return (autoBuilder.fullAuto(cone_0p5_middle2_charge));
                 
-            case 9:
-                return (autoBuilder.fullAuto(cone_0p5_bottom_charge));
+            // case 9:
+            //     return (autoBuilder.fullAuto(cone_0p5_bottom_charge));
 
-            case 10:
-                return (autoBuilder.fullAuto(cone_1p0_top));
+            // case 10:
+            //     return (autoBuilder.fullAuto(cone_1p0_top));
                 
-            case 11:
-                return (autoBuilder.fullAuto(cone_1p0_bottom));
+            // case 11:
+            //     return (autoBuilder.fullAuto(cone_1p0_bottom));
                 
 
-            case 12:
-                return (autoBuilder.fullAuto(BK_cube_2p0_bottom));
+            // case 12:
+            //     return (autoBuilder.fullAuto(BK_cube_2p0_bottom));
 
-            case 13:
-                return (autoBuilder.fullAuto(BK_cube_0p5_middle_charge));
+            // case 13:
+            //     return (autoBuilder.fullAuto(BK_cube_0p5_middle_charge));
 
-            case 14:
-                return (autoBuilder.fullAuto(BK_cone_0p5_charge));
+            // case 14:
+            //     return (autoBuilder.fullAuto(BK_cone_0p5_charge));
 
-            case 15:
-                return (autoBuilder.fullAuto(place_pick_bottom2_charge_new));
+            // case 15:
+            //     return (autoBuilder.fullAuto(place_pick_bottom2_charge_new));
                 
-            case 16:
-                return (autoBuilder.fullAuto(place_pick_place_pick_place_bottom2));
+            // case 16:
+            //     return (autoBuilder.fullAuto(place_pick_place_pick_place_bottom2));
 
-            case 17:
-                return (autoBuilder.fullAuto(place_pick_place_pick_place_bottom2_charge));
+            // case 17:
+            //     return (autoBuilder.fullAuto(place_pick_place_pick_place_bottom2_charge));
 
-            case 18:
-                return (autoBuilder.fullAuto(place_pick_place_pick_place_bottom_new));
+            // case 18:
+            //     return (autoBuilder.fullAuto(place_pick_place_pick_place_bottom_new));
 
-            case 19:
-                return (autoBuilder.fullAuto(cube_1p0_top_charge));
+            // case 19:
+            //     return (autoBuilder.fullAuto(cube_1p0_top_charge));
 
-            case 20:
-                return new SequentialCommandGroup(
-                    autoBuilder.fullAuto(cone_2p0_bot),
-                    // new ArmCommand(ArmSetpoint.TOP_CONE_NO_WAYPOINT),
-                    new AlignToTargetVision(true, 1.0, 0.03, 0, Math.PI, 1.5, 1.7).withTimeout(1.3),
-                    new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState)
-                );
+            // case 20:
+            //     return new SequentialCommandGroup(
+            //         autoBuilder.fullAuto(cone_2p0_bot),
+            //         // new ArmCommand(ArmSetpoint.TOP_CONE_NO_WAYPOINT),
+            //         new AlignToTargetVision(true, 1.0, 0.03, 0, Math.PI, 1.5, 1.7).withTimeout(1.3),
+            //         new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState)
+            //     );
 
         }
         return new InstantCommand();
