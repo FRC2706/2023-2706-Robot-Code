@@ -30,6 +30,7 @@ public class ArmCommand extends CommandBase {
 
   boolean startBrakeTimer;
   Timer m_timer = new Timer();
+  Timer m_timer2 = new Timer();
   
 
   /** Creates a new ArmExtend. */
@@ -62,9 +63,18 @@ public class ArmCommand extends CommandBase {
     ArmSubsystem.getInstance().controlTopArmBrake(false);
     ArmSubsystem.getInstance().controlBottomArmBrake(false);
 
+    if (armSetpoint == ArmSetpoint.MIDDLE_CONE) {
+      ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_CONE_MIDDLE_MAX_VEL, ArmConfig.TOP_CONE_MIDDLE_MAX_ACCEL);
+    }
+    if (armSetpoint == ArmSetpoint.TOP_CONE) {
+      ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_CONE_TOP_MAX_VEL, ArmConfig.TOP_CONE_TOP_MAX_ACCEL);
+    }
+
     startBrakeTimer = false;
     m_timer.stop();
     m_timer.reset();
+    m_timer2.stop();
+    m_timer2.reset();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -97,6 +107,9 @@ public class ArmCommand extends CommandBase {
     boolean bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.positionTolerance &&
                                   Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance;
     if (index >= 99) {
+      if (armSetpoint == ArmSetpoint.PICKUP && m_timer2.get() > 3) {
+        topReached = true;
+      }
       if (topReached) {
         ArmSubsystem.getInstance().controlTopArmBrake(true);
       }
@@ -133,6 +146,9 @@ public class ArmCommand extends CommandBase {
       if (bottomReached && topReached) {
         if (index == armSetpoint.getWaypoint().length - 1 || armSetpoint.getWaypoint().length == 0) {
           index = 99;
+          if (armSetpoint == ArmSetpoint.PICKUP) {
+            m_timer2.restart();
+          }
           // tempX = armSetpoint.getX();
           // tempZ = armSetpoint.getZ();
           // angles = ArmSubsystem.getInstance().inverseKinematics(ArmConfig.L1, ArmConfig.L2, tempX, tempZ);
