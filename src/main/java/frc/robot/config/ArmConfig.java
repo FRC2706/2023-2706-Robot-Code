@@ -38,7 +38,7 @@ public class ArmConfig {
         BOTTOM_CONE(27, -3),
         MIDDLE_CONE(33.5, 35), //, new ArmWaypoint(28, 29)), 
         MIDDLE_CONE_RELEASE(36, 28.03-7), //WRONG
-        TOP_CONE(47, 46, new ArmWaypoint(25, 10), new ArmWaypoint(35, 24)), //new ArmWaypoint(28,36)), 30, 12
+        TOP_CONE(47, 46, new ArmWaypoint(30, 12)), //new ArmWaypoint(28,36)), 30, 12
         TOP_CONE_NO_WAYPOINT(47, 46),
         TOP_CONE_RELEASE(53, 39-7), // WRONG
 
@@ -130,7 +130,7 @@ public class ArmConfig {
 
       // PID constants for top arm
       public static final double top_arm_kP = 1;//0.23; 
-      public static final double top_arm_kI = 0.0001;
+      public static final double top_arm_kI = 0.0005;
       public static final double top_arm_kD = 2;// 4.0;
       public static final double top_arm_kIz = 0.3;
       public static final double top_arm_kFF = 0;
@@ -144,9 +144,9 @@ public class ArmConfig {
 
       // PID constants for bottom arm
       public static final double bottom_arm_kP = 1.4;
-      public static final double bottom_arm_kI = 0.0;
+      public static final double bottom_arm_kI = 0.0001;
       public static final double bottom_arm_kD = 0.9;
-      public static final double bottom_arm_kIz = 0;
+      public static final double bottom_arm_kIz = 0.3;
       public static final double bottom_arm_kFF = 0;
 
       // soft limit constants for top arm

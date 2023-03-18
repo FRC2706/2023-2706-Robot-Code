@@ -85,7 +85,7 @@ public class ChargeCommand extends CommandBase {
     }
 
     if (state == 2) {
-      SwerveSubsystem.getInstance().drive(-1 * Math.copySign(0.25, deltaX), 0, 0, true, false);
+      SwerveSubsystem.getInstance().drive(-1 * Math.copySign(0.4, deltaX), 0, 0, true, false);
     } else {
       SwerveSubsystem.getInstance().drive(x, 0, theta, true, false);
     }

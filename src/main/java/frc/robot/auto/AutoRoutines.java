@@ -13,14 +13,13 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ChargeCommand;
 import frc.robot.commands.ChargeStationLock;
@@ -80,7 +79,7 @@ public class AutoRoutines {
                 new SwerveModuleState(-0.1, Rotation2d.fromDegrees(-45)),
             })).withTimeout(0.4)));
 
-        eventMap.put("charge2", new ChargeCommand(-3.2).andThen(new ChargeStationLock()));
+        eventMap.put("charge2", new ChargeCommand(-3.05).andThen(new ChargeStationLock()));
         eventMap.put("charge3", new WaitCommand(0.3).andThen(new ChargeCommand(3.3).andThen(new ChargeStationLock())));
 
         //2.3
@@ -147,7 +146,7 @@ public class AutoRoutines {
         System.out.println (selectAuto);
         switch (selectAuto) {
             case 0:
-                return null;
+                return new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, CompRobotContainer.setState).andThen(Commands.runOnce(()-> SwerveSubsystem.getInstance().resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))));
 
             case 1:
                 return (autoBuilder.fullAuto(cube_0p5_top_charge)); 
