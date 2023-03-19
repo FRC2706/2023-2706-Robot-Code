@@ -107,7 +107,7 @@ public class CompRobotContainer extends RobotContainer {
     operator.rightBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));
     operator.leftBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.USE_VISION, setState).andThen(new WaitCommand(0.3)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
     operator.back().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, setState).andThen(new WaitCommand(0.3)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
-    operator.start().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, setState).andThen(new WaitCommand(0.3)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+    operator.start().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, setState).andThen(new WaitCommand(0.5)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
     
     operator.rightTrigger().onTrue(new ArmCommand(ArmSetpoint.HUMAN_PLAYER_PICKUP));
     operator.leftTrigger().onTrue(new ArmCommand(ArmSetpoint.PICKUP_OUTSIDE_FRAME));
