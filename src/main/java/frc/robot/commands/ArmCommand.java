@@ -70,6 +70,10 @@ public class ArmCommand extends CommandBase {
       ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_CONE_TOP_MAX_VEL, ArmConfig.TOP_CONE_TOP_MAX_ACCEL);
     }
 
+    if (armSetpoint == ArmSetpoint.PICKUP && ArmSubsystem.getInstance().getTopPosition() < Math.toRadians(28)) {
+      index = 1;
+    }
+
     startBrakeTimer = false;
     m_timer.stop();
     m_timer.reset();
@@ -107,6 +111,13 @@ public class ArmCommand extends CommandBase {
     boolean bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.positionTolerance &&
                                   Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance;
     if (index >= 99) {
+      if (armSetpoint == ArmSetpoint.TOP_CUBE && DriverStation.isAutonomous()) {
+        topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < Math.toDegrees(2) &&
+                     Math.abs(ArmSubsystem.getInstance().getTopVel()) < Math.toDegrees(2);
+        bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < Math.toDegrees(2) &&
+                        Math.abs(ArmSubsystem.getInstance().getBottomVel()) < Math.toDegrees(2);
+      }
+
       if (armSetpoint == ArmSetpoint.PICKUP && m_timer2.get() > 3) {
         topReached = true;
       }

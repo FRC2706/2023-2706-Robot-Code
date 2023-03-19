@@ -82,13 +82,13 @@ public class AutoRoutines {
                 new SwerveModuleState(-0.1, Rotation2d.fromDegrees(-45)),
             })).withTimeout(0.4)));
 
-        eventMap.put("charge2", new ChargeCommand(-3.05).andThen(new ChargeStationLock()));
-        eventMap.put("charge3", new WaitCommand(0.3).andThen(new ChargeCommand(3.3).andThen(new ChargeStationLock())));
+        eventMap.put("charge2", new ChargeCommand(-3.05).alongWith((Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeStationLock())));
+        eventMap.put("charge3", new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommand(3.3).andThen(new ChargeStationLock())));
 
         //2.3
          
          //place game pieces
-         eventMap.put("ArmCubeTop", new ArmCommand(ArmSetpoint.TOP_CUBE).withTimeout(5).andThen((Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true))))));
+         eventMap.put("ArmCubeTop", new ArmCommand(ArmSetpoint.TOP_CUBE).withTimeout(4).andThen((Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true))))));
          eventMap.put("ArmCubeTopNoWP", new ArmCommand(ArmSetpoint.TOP_CONE_NO_WAYPOINT));
          eventMap.put("ArmCubeMiddle", new ArmCommand(ArmSetpoint.MIDDLE_CUBE));
          eventMap.put("ArmCubeBottom", new ArmCommand(ArmSetpoint.BOTTOM_CUBE));
