@@ -79,8 +79,8 @@ public class CompRobotContainer extends RobotContainer {
     // CommandXboxController
     CommandXboxController driver = new CommandXboxController(0);
     CommandXboxController operator = new CommandXboxController(1);
-    CommandXboxController testStick = new CommandXboxController(2);
-    CommandXboxController armStick = new CommandXboxController(3);
+    // CommandXboxController testStick = new CommandXboxController(2);
+    // CommandXboxController armStick = new CommandXboxController(3);
 
     // Driver joystick
     SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
@@ -121,7 +121,7 @@ public class CompRobotContainer extends RobotContainer {
     // Starting configuration
     operator.leftStick().onTrue(new ArmCommand(ArmSetpoint.STARTING_CONFIGURATIN).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(false))));
 
-    testStick.a().onTrue(new CheckArmSetpoints(testStick));
+    // testStick.a().onTrue(new CheckArmSetpoints(testStick));
     // Force the buttons to just do cone setpoints
     // operator.a().onTrue(new ArmCommand(ArmSetpoint.BOTTOM_CONE));
     // operator.b().onTrue(new ArmCommand(ArmSetpoint.MIDDLE_CONE));
@@ -159,33 +159,33 @@ public class CompRobotContainer extends RobotContainer {
 
 
 
-    armStick.a().onTrue(new SetAngleArm(30, false, true));
-    armStick.b().onTrue(new SetAngleArm(60, false, true));
-    armStick.y().onTrue(new SetAngleArm(90, false, true));
-    armStick.x().onTrue(new SetAngleArm(120, false, true));
+    // armStick.a().onTrue(new SetAngleArm(30, false, true));
+    // armStick.b().onTrue(new SetAngleArm(60, false, true));
+    // armStick.y().onTrue(new SetAngleArm(90, false, true));
+    // armStick.x().onTrue(new SetAngleArm(120, false, true));
 
 
-    armStick.rightTrigger().toggleOnTrue(Commands.startEnd(
-      () -> ArmSubsystem.getInstance().controlBottomArmBrake(true), 
-      () -> ArmSubsystem.getInstance().controlBottomArmBrake(false)));
+    // armStick.rightTrigger().toggleOnTrue(Commands.startEnd(
+    //   () -> ArmSubsystem.getInstance().controlBottomArmBrake(true), 
+    //   () -> ArmSubsystem.getInstance().controlBottomArmBrake(false)));
 
-    armStick.leftTrigger().toggleOnTrue(Commands.startEnd(
-      () -> ArmSubsystem.getInstance().controlTopArmBrake(true), 
-      () -> ArmSubsystem.getInstance().controlTopArmBrake(false)));
+    // armStick.leftTrigger().toggleOnTrue(Commands.startEnd(
+    //   () -> ArmSubsystem.getInstance().controlTopArmBrake(true), 
+    //   () -> ArmSubsystem.getInstance().controlTopArmBrake(false)));
 
-    Command armFF = new ArmFFTestCommand(armStick, 7, false, true);
+    // Command armFF = new ArmFFTestCommand(armStick, 7, false, true);
 
-    armStick.leftBumper().onTrue(Commands.runOnce(() -> armFF.schedule()));
-    armStick.rightBumper().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().updatePIDSettings()));
-    armStick.back().onTrue(Commands.sequence(
-            Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()),
-            Commands.runOnce(() -> ArmSubsystem.getInstance().stopMotors())
-        ));
-    // armStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder(100, Math.toRadians(-90)))); // 100 is an arbitrary number
-    armStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().updateFromAbsoluteTop()));
+    // armStick.leftBumper().onTrue(Commands.runOnce(() -> armFF.schedule()));
+    // armStick.rightBumper().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().updatePIDSettings()));
+    // armStick.back().onTrue(Commands.sequence(
+    //         Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()),
+    //         Commands.runOnce(() -> ArmSubsystem.getInstance().stopMotors())
+    //     ));
+    // // armStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().resetEncoder(100, Math.toRadians(-90)))); // 100 is an arbitrary number
+    // armStick.start().onTrue(Commands.runOnce(() -> ArmSubsystem.getInstance().updateFromAbsoluteTop()));
 
-    // Construct the RelaySubsystem so the NTRelays are constructed
-    RelaySubsystem.getInstance();
+    // // Construct the RelaySubsystem so the NTRelays are constructed
+    // RelaySubsystem.getInstance();
  }
 
   /**
