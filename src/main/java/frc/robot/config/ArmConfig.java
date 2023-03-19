@@ -32,6 +32,7 @@ public class ArmConfig {
         STARTING_CONFIGURATIN(10.5, -8),
         
         PICKUP(4.5, -12.5, new ArmWaypoint(17, -3), new ArmWaypoint(9, -11.7)),
+        PICKUP_NOWP(4.5, -12.5, new ArmWaypoint(9, -11.7)),
         PICKUP_OUTSIDE_FRAME(25, -11, new ArmWaypoint(14, -8)), // CHECK
         HUMAN_PLAYER_PICKUP(25, 40, new ArmWaypoint(14, -7)), // NOT DONE
 
@@ -129,9 +130,9 @@ public class ArmConfig {
       public static final double waypointPickupVelocityTolerance = Math.toRadians(2);
 
       // PID constants for top arm
-      public static final double top_arm_kP = 1;//0.23; 
-      public static final double top_arm_kI = 0.0005;
-      public static final double top_arm_kD = 2;// 4.0;
+      public static final double top_arm_kP = 1.15;//0.23; 
+      public static final double top_arm_kI = 0.002;
+      public static final double top_arm_kD = 4;// 4.0;
       public static final double top_arm_kIz = 0.3;
       public static final double top_arm_kFF = 0;
 

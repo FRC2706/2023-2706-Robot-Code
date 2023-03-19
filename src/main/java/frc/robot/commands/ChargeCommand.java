@@ -30,13 +30,16 @@ public class ChargeCommand extends CommandBase {
   double TIME_FOR_REVERSING = 0.10;
   /** Creates a new ChargeCommand. */
   public ChargeCommand( double deltaX) {
-    pidControlX = new ProfiledPIDController(0.8, 0.0, 0.2, 
-          new Constraints(0.8, 0.8));
+    pidControlX = new ProfiledPIDController(1.2, 0.0, 0.2, 
+          new Constraints(2, 1.1));
 
     pidControlTheta = new ProfiledPIDController(5.0,0, 0.4,
           new Constraints(4*Math.PI, 8*Math.PI));
 
+    
+    
     this.deltaX = deltaX;
+    pidControlTheta.enableContinuousInput(-Math.PI, Math.PI);
 
     addRequirements(SwerveSubsystem.getInstance());
   }
@@ -85,7 +88,7 @@ public class ChargeCommand extends CommandBase {
     }
 
     if (state == 2) {
-      SwerveSubsystem.getInstance().drive(-1 * Math.copySign(0.4, deltaX), 0, 0, true, false);
+      SwerveSubsystem.getInstance().drive(-1 * Math.copySign(0.5, deltaX), 0, 0, true, false);
     } else {
       SwerveSubsystem.getInstance().drive(x, 0, theta, true, false);
     }
