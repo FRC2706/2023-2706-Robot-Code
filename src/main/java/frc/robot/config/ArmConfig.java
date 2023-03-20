@@ -31,14 +31,15 @@ public class ArmConfig {
         
         STARTING_CONFIGURATIN(10.5, -8),
         
-        PICKUP(3.6, -12.2, new ArmWaypoint(17, -3), new ArmWaypoint(8.5, -11.5)),
+        PICKUP(4.7, -12.7, new ArmWaypoint(17, -3), new ArmWaypoint(9.2, -12)),
+        PICKUP_NOWP(4.5, -12.5, new ArmWaypoint(9, -11.7)),
         PICKUP_OUTSIDE_FRAME(25, -11, new ArmWaypoint(14, -8)), // CHECK
         HUMAN_PLAYER_PICKUP(25, 40, new ArmWaypoint(14, -7)), // NOT DONE
 
         BOTTOM_CONE(27, -3),
         MIDDLE_CONE(33.5, 35), //, new ArmWaypoint(28, 29)), 
         MIDDLE_CONE_RELEASE(36, 28.03-7), //WRONG
-        TOP_CONE(47, 46, new ArmWaypoint(28,36)),
+        TOP_CONE(47, 46, new ArmWaypoint(30, 12)), //new ArmWaypoint(28,36)), 30, 12
         TOP_CONE_NO_WAYPOINT(47, 46),
         TOP_CONE_RELEASE(53, 39-7), // WRONG
 
@@ -103,8 +104,17 @@ public class ArmConfig {
       // constants for arm constraints
       public static final double TOP_MAX_VEL = Math.PI * 4.5;
       public static final double TOP_MAX_ACCEL = Math.PI * 3;
+      public static final double TOP_CONE_MAX_VEL = Math.PI * 4.5;
+      public static final double TOP_CONE_MAX_ACCEL = Math.PI * 1.6;
+      public static final double TOP_CONE_TOP_MAX_VEL = Math.PI * 4.5;
+      public static final double TOP_CONE_TOP_MAX_ACCEL = Math.PI * 1.6;
+      public static final double TOP_CONE_MIDDLE_MAX_VEL = Math.PI * 4.5;
+      public static final double TOP_CONE_MIDDLE_MAX_ACCEL = Math.PI * 1;
       public static final double BOTTOM_MAX_VEL = Math.PI * 3;
       public static final double BOTTOM_MAX_ACCEL = Math.PI *3;
+      public static final double BOTTOM_CONE_MAX_VEL = Math.PI * 3;
+      public static final double BOTTOM_CONE_MAX_ACCEL = Math.PI * 2;
+      
 
       public static final double topArmPositionConversionFactor = 2 * Math.PI / TOP_NEO_GEAR_RATIO;
       public static final double topArmVelocityConversionFactor = topArmPositionConversionFactor / 60.0;
@@ -116,26 +126,28 @@ public class ArmConfig {
 
       public static final double waypointPositionTolerance = Math.toRadians(5);
       public static final double waypointVelocityTolerance = Math.toRadians(6);
+      public static final double waypointPickupPositionTolerance = Math.toRadians(2);
+      public static final double waypointPickupVelocityTolerance = Math.toRadians(2);
 
       // PID constants for top arm
-      public static final double top_arm_kP = 1;//0.23; 
-      public static final double top_arm_kI = 0;// 0.0001;
-      public static final double top_arm_kD = 2;// 4.0;
-      public static final double top_arm_kIz = 0;// 0.3;
+      public static final double top_arm_kP = 1.15;//0.23; 
+      public static final double top_arm_kI = 0.002;
+      public static final double top_arm_kD = 4;// 4.0;
+      public static final double top_arm_kIz = 0.3;
       public static final double top_arm_kFF = 0;
 
       // PID constants for top arm
       public static final double top_arm_kP2 = 3.6;//0.23; 
-      public static final double top_arm_kI2 = 0.001;
+      public static final double top_arm_kI2 = 0.003;
       public static final double top_arm_kD2 = 80;// 4.0;
       public static final double top_arm_kIz2 = 0.35;// 0.3;
       public static final double top_arm_kFF2 = 0;
 
       // PID constants for bottom arm
       public static final double bottom_arm_kP = 1.4;
-      public static final double bottom_arm_kI = 0.0;
+      public static final double bottom_arm_kI = 0.0001;
       public static final double bottom_arm_kD = 0.9;
-      public static final double bottom_arm_kIz = 0;
+      public static final double bottom_arm_kIz = 0.3;
       public static final double bottom_arm_kFF = 0;
 
       // soft limit constants for top arm

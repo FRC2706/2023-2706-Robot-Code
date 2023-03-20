@@ -4,12 +4,17 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.Config;
 
 public class AnalogSelectorSubsystem extends SubsystemBase {
+
+  //network table publisher for analog switch
+  private DoublePublisher analogSwitchIndex;
+  private final String m_autoTable = "Auto/AnalogSwitchIndex";
 
   private static final double MODE_ZERO_LOW_VOLTAGE = 0;
   private static final double MODE_ZERO_HIGH_VOLTAGE = 2.4;
@@ -157,7 +162,7 @@ public static class Range {
     // This method will be called once per scheduler run
 
     //for testing only
-    // SmartDashboard.putNumber("AnalogSwitch", getIndex());
+    SmartDashboard.putNumber("AnalogSwitch", getIndex());
 
   }
 }

@@ -13,16 +13,17 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ChargeCommand;
+import frc.robot.commands.ChargeCommandRoll;
 import frc.robot.commands.ChargeStationLock;
 import frc.robot.commands.GripperCommand;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
@@ -31,6 +32,7 @@ import frc.robot.commands.TranslationCommand;
 import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.config.Config;
 import frc.robot.robotcontainers.CompRobotContainer;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /** Add your docs here. */
@@ -45,6 +47,7 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> cube_1p0_top;
     List<PathPlannerTrajectory> cube_1p0_bottom;
     List<PathPlannerTrajectory> cone_0p5_top_charge;
+    List<PathPlannerTrajectory> cube_0p5_bottom;
 
     // // Possible humbers
     // List<PathPlannerTrajectory> cone_2p0_bot;
@@ -80,17 +83,19 @@ public class AutoRoutines {
                 new SwerveModuleState(-0.1, Rotation2d.fromDegrees(-45)),
             })).withTimeout(0.4)));
 
-        eventMap.put("charge2", new ChargeCommand(-3.2).andThen(new ChargeStationLock()));
-        eventMap.put("charge3", new WaitCommand(0.3).andThen(new ChargeCommand(3.3).andThen(new ChargeStationLock())));
+        eventMap.put("charge2", new ChargeCommand(-3.05).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeStationLock()));
+        eventMap.put("charge3", new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommand(4.1).andThen(new ChargeStationLock())));
+        eventMap.put("chargeRoll", new WaitCommand(0.4).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandRoll(3.2).alongWith(new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE))).andThen(new ChargeStationLock()));
 
         //2.3
          
          //place game pieces
-         eventMap.put("ArmCubeTop", new ArmCommand(ArmSetpoint.TOP_CUBE));
+         eventMap.put("ArmCubeTop", new ArmCommand(ArmSetpoint.TOP_CUBE).withTimeout(4.5).andThen((Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true))))));
          eventMap.put("ArmCubeTopNoWP", new ArmCommand(ArmSetpoint.TOP_CONE_NO_WAYPOINT));
          eventMap.put("ArmCubeMiddle", new ArmCommand(ArmSetpoint.MIDDLE_CUBE));
          eventMap.put("ArmCubeBottom", new ArmCommand(ArmSetpoint.BOTTOM_CUBE));
          eventMap.put("ArmPickup", new ArmCommand(ArmSetpoint.PICKUP));
+         eventMap.put("ArmPickupNoWP", new ArmCommand(ArmSetpoint.PICKUP_NOWP));
          eventMap.put("ArmHome", new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE));
          eventMap.put("ArmHomeAfterPickup", new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP));
 
@@ -121,6 +126,8 @@ public class AutoRoutines {
         cube_0p5_middle_charge = PathPlanner.loadPathGroup("cube_0p5_middle_charge", 2.5, 3);
         cube_1p0_top = PathPlanner.loadPathGroup("cube_1p0_top", 2.5, 3);
         cube_1p0_bottom = PathPlanner.loadPathGroup("cube_1p0_bottom", 2.5, 3);
+        cube_0p5_bottom = PathPlanner.loadPathGroup("cube_0p5_bottom", 2.5, 3);
+
         cone_0p5_top_charge = PathPlanner.loadPathGroup("cone_0p5_top_charge", 2.5, 3);
 
         // Possible Humber
@@ -147,7 +154,7 @@ public class AutoRoutines {
         System.out.println (selectAuto);
         switch (selectAuto) {
             case 0:
-                return null;
+                return new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, CompRobotContainer.setState).andThen(Commands.runOnce(()-> SwerveSubsystem.getInstance().resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))));
 
             case 1:
                 return (autoBuilder.fullAuto(cube_0p5_top_charge)); 
@@ -162,17 +169,19 @@ public class AutoRoutines {
                 return (autoBuilder.fullAuto(cube_1p0_top));
             
             case 5:
-                return (autoBuilder.fullAuto(cube_1p0_bottom));
+                return (autoBuilder.fullAuto(cube_0p5_bottom));
 
              case 6:
                 return null;
              case 7:
-             //Adding 7 here, since Analog Selector misses 6, from 5 to 7 directly.
-                return (autoBuilder.fullAuto(cone_0p5_top_charge));
-
-        
-            // case 7:
-            //     return (autoBuilder.fullAuto(cone_0p5_middle1_charge));
+             //Adding 7 here, since Analog Selector misses 6, from 5 to 7 directly. 
+             // Drive team calls this 6 since they have to do 6 clicks on the switch.
+                return Commands.runOnce(()-> SwerveSubsystem.getInstance().resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(-90)))).andThen(
+                 new ParallelCommandGroup(
+                    new ChargeCommand(2.6),
+                    new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, CompRobotContainer.setState).withTimeout(1),
+                    new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP).withTimeout(1)
+                ).andThen(new ChargeStationLock()));
 
             // case 8:
             //     return (autoBuilder.fullAuto(cone_0p5_middle2_charge));
