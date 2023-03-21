@@ -16,7 +16,7 @@ import frc.robot.subsystems.ArmDisplay;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmWaypoint;
 
-public class ArmCommand extends CommandBase {
+public class ArmJoystickConeCommand extends CommandBase {
   ArmSetpoint armSetpoint;
   double defaultAngle1 = Math.PI; // angle in radians of joint 1 in default position (vertical)
   double defaultAngle2 = Math.PI/36; // angle in radians of joint 2 in default position (angle of 5 degrees)
@@ -42,7 +42,7 @@ public class ArmCommand extends CommandBase {
 
   /** Creates a new ArmExtend. */
   
-  public ArmCommand(ArmSetpoint armSetpoint) {
+  public ArmJoystickConeCommand(ArmSetpoint armSetpoint) {
     this.armSetpoint = armSetpoint;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(ArmSubsystem.getInstance());
@@ -91,7 +91,14 @@ public class ArmCommand extends CommandBase {
 
     if (index >= 99) {
       tempX = armSetpoint.getX();
-      tempZ = armSetpoint.getZ();
+      tempZ = armSetpoint.getZ() + z_offset;
+
+      double x = m_joystick.getRawAxis(XboxController.Axis.kRightY.value);
+      x = MathUtil.applyDeadband(x, ArmConfig.ARM_JOYSTICK_DEADBAND);
+      z_offset += x * 0.16;
+      z_offset = MathUtil.clamp(z_offset, -8, 0);
+
+
     }
     else {
       waypoint = armSetpoint.getWaypoint()[index];
@@ -195,9 +202,6 @@ public class ArmCommand extends CommandBase {
     // else {
     //   return false;
     // }
-    if (armSetpoint == ArmSetpoint.PICKUP) {
-      return m_timer.hasElapsed(0.4);
-    }
-    return m_timer.hasElapsed(0.2);
+    return false;
   }
 }
