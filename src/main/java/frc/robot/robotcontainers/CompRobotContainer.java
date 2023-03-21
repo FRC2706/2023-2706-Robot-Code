@@ -113,9 +113,9 @@ public class CompRobotContainer extends RobotContainer {
 
     // Choose the ArmSetpoint based on RobotGamePieceState
     operator.x().and(()-> getState.get() == RobotGamePieceState.NoGamePiece).onTrue(new ArmCommand(ArmSetpoint.PICKUP));
-    operator.a().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_BOTTOM, false));
-    operator.b().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_MIDDLE, false));
-    operator.y().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_TOP, false));
+    operator.a().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_BOTTOM, false, operator));
+    operator.b().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_MIDDLE, false, operator));
+    operator.y().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_TOP, false, operator));
     
     // Starting configuration
     operator.leftStick().onTrue(new ArmCommand(ArmSetpoint.STARTING_CONFIGURATIN).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(false))));

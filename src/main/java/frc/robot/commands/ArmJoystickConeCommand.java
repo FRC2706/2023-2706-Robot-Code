@@ -42,8 +42,9 @@ public class ArmJoystickConeCommand extends CommandBase {
 
   /** Creates a new ArmExtend. */
   
-  public ArmJoystickConeCommand(ArmSetpoint armSetpoint) {
+  public ArmJoystickConeCommand(ArmSetpoint armSetpoint, CommandXboxController operator_stick) {
     this.armSetpoint = armSetpoint;
+    this.m_joystick = operator_stick;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(ArmSubsystem.getInstance());
   }
@@ -82,6 +83,8 @@ public class ArmJoystickConeCommand extends CommandBase {
     m_timer.reset();
     m_timer2.stop();
     m_timer2.reset();
+
+    z_offset = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -93,11 +96,10 @@ public class ArmJoystickConeCommand extends CommandBase {
       tempX = armSetpoint.getX();
       tempZ = armSetpoint.getZ() + z_offset;
 
-      double x = m_joystick.getRawAxis(XboxController.Axis.kRightY.value);
-      x = MathUtil.applyDeadband(x, ArmConfig.ARM_JOYSTICK_DEADBAND);
-      z_offset += x * 0.16;
+      double z = m_joystick.getRawAxis(XboxController.Axis.kRightY.value);
+      z = MathUtil.applyDeadband(z, ArmConfig.ARM_JOYSTICK_DEADBAND);
+      z_offset += z * 0.16;
       z_offset = MathUtil.clamp(z_offset, -8, 0);
-
 
     }
     else {
@@ -121,22 +123,21 @@ public class ArmJoystickConeCommand extends CommandBase {
     boolean bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.positionTolerance &&
                                   Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance;
     if (index >= 99) {
-
-      if (armSetpoint == ArmSetpoint.PICKUP && m_timer2.get() > 3) {
-        topReached = true;
-      }
       if (topReached) {
         ArmSubsystem.getInstance().controlTopArmBrake(true);
+      }
+      else {
+        ArmSubsystem.getInstance().controlTopArmBrake(false);
       }
       if (bottomReached) {
         ArmSubsystem.getInstance().controlBottomArmBrake(true);
       }
+      else {
+        ArmSubsystem.getInstance().controlBottomArmBrake(false);
+      }
       if (startBrakeTimer == false && topReached && bottomReached) {
         startBrakeTimer = true;
         m_timer.restart();
-      }
-      if (startBrakeTimer && armSetpoint == ArmSetpoint.PICKUP) {
-        ArmSubsystem.getInstance().testFeedForwardTop(-2);
       }
       if (startBrakeTimer && armSetpoint == ArmSetpoint.TOP_CONE) {
         if (ArmSubsystem.getInstance().getTopPosition() < angle2) {

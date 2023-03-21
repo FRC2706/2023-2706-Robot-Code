@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.config.ArmConfig.ArmPosition;
 import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.robotcontainers.CompRobotContainer.RobotGamePieceState;
@@ -19,15 +20,17 @@ public class ArmCommandSelector extends CommandBase {
   ArmSetpoint m_ArmSetPoint;
   boolean m_slowerAcceleration;
   Command m_ArmCommand;
+  CommandXboxController m_operator_stick;
   
   /** Creates a new ArmCommand. */
   public ArmCommandSelector(Supplier<RobotGamePieceState> robotState, 
                             ArmPosition position,
-                            boolean slowerAcceleration ) {
+                            boolean slowerAcceleration, CommandXboxController operator_stick) {
     //get the current robotState: from container
     m_robotState = robotState;
     m_Position = position;
     m_slowerAcceleration = slowerAcceleration;
+    m_operator_stick = operator_stick;
 
     addRequirements(ArmSubsystem.getInstance());
   }
@@ -74,7 +77,7 @@ public class ArmCommandSelector extends CommandBase {
       break;
     }
     if (m_ArmSetPoint == ArmSetpoint.MIDDLE_CONE || m_ArmSetPoint == ArmSetpoint.TOP_CONE) {
-      m_ArmCommand = new ArmJoystickConeCommand (m_ArmSetPoint);
+      m_ArmCommand = new ArmJoystickConeCommand (m_ArmSetPoint, m_operator_stick);
     }
     else {
       m_ArmCommand = new ArmCommand (m_ArmSetPoint);
