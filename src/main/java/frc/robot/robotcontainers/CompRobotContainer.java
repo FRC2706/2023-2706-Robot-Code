@@ -85,7 +85,6 @@ public class CompRobotContainer extends RobotContainer {
     // Driver joystick
     SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
 
-    driver.start().onTrue(new ResetGyroToNearest()); // ResetGyroToNearest command is untested
     driver.back().onTrue(new ResetGyro());
 
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
@@ -99,9 +98,9 @@ public class CompRobotContainer extends RobotContainer {
     boolean isTapeNotApril = true;
     driver.rightTrigger().whileTrue(Commands.sequence(
       new WaitForVisionData(isTapeNotApril),
-      new AlignToTargetVision(isTapeNotApril, 1.35, 0.2, 0, Math.PI, 2.5, 3),
-      new AlignToTargetVision(isTapeNotApril, 1.0, 0.03, 0, Math.PI, 1.5, 1.7)
+      new AlignToTargetVision(isTapeNotApril, 2.0, 0.2, 0, Math.PI, 2.5, 3)
     ));
+    driver.start().whileTrue(new AlignToTargetVision(isTapeNotApril, 1.0, 0.03, 0, Math.PI, 1.5, 1.7)); // ResetGyroToNearest command is untested
 
     // Operator Joystick
     operator.rightBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));
