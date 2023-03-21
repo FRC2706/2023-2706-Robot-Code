@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -25,6 +26,7 @@ import frc.robot.commands.ArmFFTestCommand;
 import frc.robot.commands.ChargeStationLock;
 import frc.robot.commands.CheckArmSetpoints;
 import frc.robot.commands.GripperCommand;
+import frc.robot.commands.PickupJoystickRumble;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetGyroToNearest;
@@ -113,7 +115,7 @@ public class CompRobotContainer extends RobotContainer {
     operator.leftTrigger().onTrue(new ArmCommand(ArmSetpoint.PICKUP_OUTSIDE_FRAME));
 
     // Choose the ArmSetpoint based on RobotGamePieceState
-    operator.x().onTrue(new ArmCommand(ArmSetpoint.PICKUP));
+    operator.x().onTrue(new ArmCommand(ArmSetpoint.PICKUP).alongWith(new PickupJoystickRumble(operator)));
     operator.a().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_BOTTOM, false));
     operator.b().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_MIDDLE, false));
     operator.y().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_TOP, false));
