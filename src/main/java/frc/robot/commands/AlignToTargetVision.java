@@ -117,11 +117,11 @@ public class AlignToTargetVision extends CommandBase {
   public boolean isFinished() {
 
     //if (pidX.atSetpoint() && pidY.atSetpoint() && pidRot.atSetpoint()) {
-    if ((Math.abs(SwerveSubsystem.getInstance().getPose().getX() - xSetpoint) < m_tolerance) && 
-        (Math.abs(SwerveSubsystem.getInstance().getPose().getY() - ySetpoint) < m_tolerance) && 
-        (Math.abs(SwerveSubsystem.getInstance().getHeading().getRadians() - rotSetpoint) < Math.PI / 8.0)) {
-      return(true);
-    }
+    // if ((Math.abs(SwerveSubsystem.getInstance().getPose().getX() - xSetpoint) < m_tolerance) && 
+    //     (Math.abs(SwerveSubsystem.getInstance().getPose().getY() - ySetpoint) < m_tolerance) && 
+    //     (Math.abs(SwerveSubsystem.getInstance().getHeading().getRadians() - rotSetpoint) < Math.PI / 8.0)) {
+    //   return(true);
+    // }
 
     return false;
   }
