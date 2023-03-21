@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveSubsystem;
 
-public class ChargeCommand extends CommandBase {
+public class ChargeCommandRoll extends CommandBase {
   Timer m_timer = new Timer();
   ProfiledPIDController pidControlX;
   double currentX;
@@ -28,8 +28,8 @@ public class ChargeCommand extends CommandBase {
 
   double PITCH_TOLERANCE = 10;
   double TIME_FOR_REVERSING = 0.10;
-  /** Creates a new ChargeCommand. */
-  public ChargeCommand( double deltaX) {
+  /** Creates a new ChargeCommandRoll. */
+  public ChargeCommandRoll( double deltaX) {
     pidControlX = new ProfiledPIDController(1.2, 0.0, 0.2, 
           new Constraints(2, 1.1));
 
@@ -59,7 +59,7 @@ public class ChargeCommand extends CommandBase {
     pidControlTheta.reset(currentTheta);
 
     //get the initial roll value
-    initPitchValue = SwerveSubsystem.getInstance().getPitch();
+    initPitchValue = SwerveSubsystem.getInstance().getRoll();
 
     state = 0;
     m_timer.stop();
@@ -76,13 +76,13 @@ public class ChargeCommand extends CommandBase {
     double theta = pidControlTheta.calculate(currentTheta, desiredTheta);
 
 
-    pitchValue = SwerveSubsystem.getInstance().getPitch();
+    pitchValue = SwerveSubsystem.getInstance().getRoll();
 
     if (state == 0 && Math.abs(initPitchValue - pitchValue) > PITCH_TOLERANCE +1) 
     {
       state = 1;
     }
-    if (state == 1 && Math.abs(initPitchValue - SwerveSubsystem.getInstance().getPitch()) < PITCH_TOLERANCE) {
+    if (state == 1 && Math.abs(initPitchValue - SwerveSubsystem.getInstance().getRoll()) < PITCH_TOLERANCE) {
       state = 2;
       m_timer.restart();
     }

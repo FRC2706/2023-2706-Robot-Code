@@ -1,5 +1,7 @@
 package frc.robot.auto;
 
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.AnalogSelectorSubsystem;
 
@@ -7,7 +9,7 @@ public class AutoSelector {
     
     int m_analogSelectorIndex = 0;
     private AnalogSelectorSubsystem analogSelector = null; 
- 
+
      
     public AutoSelector()
     {
@@ -49,8 +51,8 @@ public class AutoSelector {
         int autoId;
         String autoName = SmartDashboard.getString("Auto Selector", "Use Analog Selector");
 
-        System.out.println("FRC Dashboard autoName: " +autoName);
-
+        // DriverStation.reportWarning("FRC Dashboard autoName: " +autoName, false);
+/* 
         switch(autoName)
         {
             case "Select Autonomous ...  ":
@@ -124,11 +126,13 @@ public class AutoSelector {
                 break;
  
         }
-        return autoId;
+        */
+        return getAnalogSelectorIndex();
     }
 
     public int getAnalogSelectorIndex()
     {
+        DriverStation.reportWarning("Selector Switch used for auto", false);
         if (analogSelector != null){
             //Get value from selector
             m_analogSelectorIndex = analogSelector.getIndex();

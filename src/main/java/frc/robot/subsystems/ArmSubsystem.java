@@ -483,6 +483,14 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setHasCone(boolean hasCone) {
+    if (hasCone) {
+      // m_topPID.setConstraints(new Constraints(ArmConfig.TOP_CONE_MAX_VEL, ArmConfig.TOP_CONE_MAX_ACCEL));
+      m_bottomPID.setConstraints(new Constraints(ArmConfig.BOTTOM_CONE_MAX_VEL, ArmConfig.BOTTOM_CONE_MAX_ACCEL));
+    }
+    else {
+      m_topPID.setConstraints(new Constraints(ArmConfig.TOP_MAX_VEL, ArmConfig.TOP_MAX_ACCEL));
+      m_bottomPID.setConstraints(new Constraints(ArmConfig.BOTTOM_MAX_VEL, ArmConfig.BOTTOM_MAX_ACCEL));
+    }
     m_hasCone = hasCone;
   }
 
@@ -495,5 +503,9 @@ public class ArmSubsystem extends SubsystemBase {
     return Math.abs(getAbsoluteBottom() - getBottomPosition()) < ArmConfig.ENCODER_SYNCING_TOLERANCE &&
            Math.abs(getAbsoluteTop() - getTopPosition()) < ArmConfig.ENCODER_SYNCING_TOLERANCE;
 
+  }
+
+  public void setTopConstraints(double maxVelocity, double maxAccel) {
+    m_topPID.setConstraints(new Constraints(maxVelocity, maxAccel));
   }
 }
