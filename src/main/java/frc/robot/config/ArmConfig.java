@@ -31,10 +31,11 @@ public class ArmConfig {
         
         STARTING_CONFIGURATIN(10.5, -8),
         
-        PICKUP(4.7, -12.7, new ArmWaypoint(17, -3), new ArmWaypoint(9.2, -12)),
+        // pickup setpoint was 4.7
+        PICKUP(5.2, -12.5, new ArmWaypoint(17, -3), new ArmWaypoint(8, -11)), // x was 9.7 z was -12
         PICKUP_NOWP(4.5, -12.5, new ArmWaypoint(9, -11.7)),
         PICKUP_OUTSIDE_FRAME(25, -11, new ArmWaypoint(14, -8)), // CHECK
-        HUMAN_PLAYER_PICKUP(25, 40, new ArmWaypoint(14, -7)), // NOT DONE
+        HUMAN_PLAYER_PICKUP(25, 35, new ArmWaypoint(14, -7)), // NOT DONE
 
         BOTTOM_CONE(27, -3),
         MIDDLE_CONE(33.5, 35), //, new ArmWaypoint(28, 29)), 
@@ -183,5 +184,8 @@ public class ArmConfig {
       public static int ENCODER_SYNCING_TIMEOUT = 20; // seconds
       public static double ENCODER_SYNCING_TOLERANCE = 0.01; // radians
       public static int NUM_SYNCING_SAMPLES = 20; // num of samples needed to average
+
+      // deadband for arm joystick
+      public static double ARM_JOYSTICK_DEADBAND = 0.25;
 
 }

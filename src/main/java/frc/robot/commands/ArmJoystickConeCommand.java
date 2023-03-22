@@ -4,16 +4,20 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.config.ArmConfig;
 import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.subsystems.ArmDisplay;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmWaypoint;
 
-public class ArmCommand extends CommandBase {
+public class ArmJoystickConeCommand extends CommandBase {
   ArmSetpoint armSetpoint;
   double defaultAngle1 = Math.PI; // angle in radians of joint 1 in default position (vertical)
   double defaultAngle2 = Math.PI/36; // angle in radians of joint 2 in default position (angle of 5 degrees)
@@ -33,13 +37,17 @@ public class ArmCommand extends CommandBase {
   Timer m_timer2 = new Timer();
 
   // joystick value controlling cone arm
+  private CommandXboxController m_joystick;
   double z_offset = 0;
+  Debouncer m_topDebounce = new Debouncer(0.3);
+  Debouncer m_bottomDebounce = new Debouncer(0.3);
   
 
   /** Creates a new ArmExtend. */
   
-  public ArmCommand(ArmSetpoint armSetpoint) {
+  public ArmJoystickConeCommand(ArmSetpoint armSetpoint, CommandXboxController operator_stick) {
     this.armSetpoint = armSetpoint;
+    this.m_joystick = operator_stick;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(ArmSubsystem.getInstance());
   }
@@ -78,6 +86,8 @@ public class ArmCommand extends CommandBase {
     m_timer.reset();
     m_timer2.stop();
     m_timer2.reset();
+
+    z_offset = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -86,8 +96,14 @@ public class ArmCommand extends CommandBase {
     ArmWaypoint waypoint;
 
     if (index >= 99) {
-      tempX = armSetpoint.getX();
-      tempZ = armSetpoint.getZ();
+      tempX = armSetpoint.getX() + z_offset * -0.3;
+      tempZ = armSetpoint.getZ() + z_offset;
+
+      double z = m_joystick.getRawAxis(XboxController.Axis.kRightY.value);
+      z = MathUtil.applyDeadband(z, ArmConfig.ARM_JOYSTICK_DEADBAND);
+      z_offset += z * -0.16;
+      z_offset = MathUtil.clamp(z_offset, -8, 0);
+
     }
     else {
       waypoint = armSetpoint.getWaypoint()[index];
@@ -109,23 +125,25 @@ public class ArmCommand extends CommandBase {
                               Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.velocityTolerance;
     boolean bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.positionTolerance &&
                                   Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance;
-    if (index >= 99) {
+    topReached = m_topDebounce.calculate(topReached);
+    bottomReached = m_bottomDebounce.calculate(bottomReached);
 
-      if (armSetpoint == ArmSetpoint.PICKUP && m_timer2.get() > 3) {
-        topReached = true;
-      }
+    if (index >= 99) {
       if (topReached) {
         ArmSubsystem.getInstance().controlTopArmBrake(true);
+      }
+      else {
+        ArmSubsystem.getInstance().controlTopArmBrake(false);
       }
       if (bottomReached) {
         ArmSubsystem.getInstance().controlBottomArmBrake(true);
       }
+      else {
+        ArmSubsystem.getInstance().controlBottomArmBrake(false);
+      }
       if (startBrakeTimer == false && topReached && bottomReached) {
         startBrakeTimer = true;
         m_timer.restart();
-      }
-      if (startBrakeTimer && armSetpoint == ArmSetpoint.PICKUP) {
-        ArmSubsystem.getInstance().testFeedForwardTop(-6);
       }
       if (startBrakeTimer && armSetpoint == ArmSetpoint.TOP_CONE) {
         if (ArmSubsystem.getInstance().getTopPosition() < angle2) {
@@ -191,9 +209,6 @@ public class ArmCommand extends CommandBase {
     // else {
     //   return false;
     // }
-    if (armSetpoint == ArmSetpoint.PICKUP) {
-      return m_timer.hasElapsed(0.4);
-    }
-    return m_timer.hasElapsed(0.2);
+    return false;
   }
 }
