@@ -32,7 +32,7 @@ public class ArmConfig {
         STARTING_CONFIGURATIN(10.5, -8),
         
         // pickup setpoint was 4.7
-        PICKUP(5.4, -12.5, new ArmWaypoint(17, -3), new ArmWaypoint(8, -11)), // x was 9.7 z was -12
+        PICKUP(5.2, -12.5, new ArmWaypoint(17, -3), new ArmWaypoint(8, -11)), // x was 9.7 z was -12
         PICKUP_NOWP(4.5, -12.5, new ArmWaypoint(9, -11.7)),
         PICKUP_OUTSIDE_FRAME(25, -11, new ArmWaypoint(14, -8)), // CHECK
         HUMAN_PLAYER_PICKUP(25, 35, new ArmWaypoint(14, -7)), // NOT DONE

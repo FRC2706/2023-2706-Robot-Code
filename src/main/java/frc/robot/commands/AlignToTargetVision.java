@@ -96,14 +96,20 @@ public class AlignToTargetVision extends CommandBase {
     
     // System.out.println("X: " + SwerveSubsystem.getInstance().getPose().getX() + ", Setpoint: " + xSetpoint + ", Y: " + SwerveSubsystem.getInstance().getPose().getY() + ", Setpoint: " + ySetpoint + "Rot: " + SwerveSubsystem.getInstance().getHeading().getRadians() + ", Setpoint: " + rotSetpoint);
 
-    SwerveSubsystem.getInstance().drive(
-      xSpeed, 
-      ySpeed, 
-      rot, 
-      true, 
-      false
-    );
-
+    if ((Math.abs(SwerveSubsystem.getInstance().getPose().getX() - xSetpoint) < m_tolerance) && 
+        (Math.abs(SwerveSubsystem.getInstance().getPose().getY() - ySetpoint) < m_tolerance) && 
+        (Math.abs(SwerveSubsystem.getInstance().getHeading().getRadians() - rotSetpoint) < Math.PI / 8.0)) {
+          
+      SwerveSubsystem.getInstance().stopMotors();
+    } else {
+      SwerveSubsystem.getInstance().drive(
+        xSpeed, 
+        ySpeed, 
+        rot, 
+        true, 
+        false
+      );
+    }
   }
 
   // Called once the command ends or is interrupted.

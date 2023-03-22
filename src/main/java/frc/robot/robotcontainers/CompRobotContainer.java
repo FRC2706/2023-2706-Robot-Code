@@ -9,11 +9,11 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
@@ -22,23 +22,18 @@ import frc.robot.auto.AutoSelector;
 import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmCommandSelector;
-import frc.robot.commands.ArmFFTestCommand;
 import frc.robot.commands.ChargeStationLock;
-import frc.robot.commands.CheckArmSetpoints;
 import frc.robot.commands.GripperCommand;
-import frc.robot.commands.PickupJoystickRumble;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
+import frc.robot.commands.PickupJoystickRumble;
 import frc.robot.commands.ResetGyro;
-import frc.robot.commands.ResetGyroToNearest;
 import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.RotateXYSupplier;
-import frc.robot.commands.SetAngleArm;
 import frc.robot.commands.SwerveTeleop;
 import frc.robot.commands.WaitForVisionData;
 import frc.robot.config.ArmConfig.ArmPosition;
 import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.RelaySubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 
@@ -118,8 +113,15 @@ public class CompRobotContainer extends RobotContainer {
     operator.a().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_BOTTOM, false, operator));
     operator.b().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_MIDDLE, false, operator));
     operator.y().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_TOP, false, operator));
-    operator.x().and(()-> getState.get() == RobotGamePieceState.NoGamePiece).onTrue(new ArmCommand(ArmSetpoint.PICKUP).alongWith(new PickupJoystickRumble(operator)));
+  
+    Command rumbleCommand = new StartEndCommand(
+            () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0.35),
+            () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0)
+        ).withTimeout(0.2).ignoringDisable(true);
 
+    operator.x().and(()-> getState.get() == RobotGamePieceState.NoGamePiece).onTrue(new ArmCommand(ArmSetpoint.PICKUP).andThen(rumbleCommand));
+
+    
     // Starting configuration
     operator.leftStick().onTrue(new ArmCommand(ArmSetpoint.STARTING_CONFIGURATIN).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(false))));
 

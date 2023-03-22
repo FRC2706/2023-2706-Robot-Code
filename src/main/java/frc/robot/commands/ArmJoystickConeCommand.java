@@ -96,7 +96,7 @@ public class ArmJoystickConeCommand extends CommandBase {
     ArmWaypoint waypoint;
 
     if (index >= 99) {
-      tempX = armSetpoint.getX() + z_offset * -0.5;
+      tempX = armSetpoint.getX() + z_offset * -0.3;
       tempZ = armSetpoint.getZ() + z_offset;
 
       double z = m_joystick.getRawAxis(XboxController.Axis.kRightY.value);

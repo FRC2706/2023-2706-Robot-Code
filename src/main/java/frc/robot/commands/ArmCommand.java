@@ -125,7 +125,7 @@ public class ArmCommand extends CommandBase {
         m_timer.restart();
       }
       if (startBrakeTimer && armSetpoint == ArmSetpoint.PICKUP) {
-        ArmSubsystem.getInstance().testFeedForwardTop(-2);
+        ArmSubsystem.getInstance().testFeedForwardTop(-6);
       }
       if (startBrakeTimer && armSetpoint == ArmSetpoint.TOP_CONE) {
         if (ArmSubsystem.getInstance().getTopPosition() < angle2) {
