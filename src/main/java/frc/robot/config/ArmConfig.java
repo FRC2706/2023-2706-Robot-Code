@@ -35,7 +35,7 @@ public class ArmConfig {
         PICKUP(5.4, -12.5, new ArmWaypoint(17, -3), new ArmWaypoint(8, -11)), // x was 9.7 z was -12
         PICKUP_NOWP(4.5, -12.5, new ArmWaypoint(9, -11.7)),
         PICKUP_OUTSIDE_FRAME(25, -11, new ArmWaypoint(14, -8)), // CHECK
-        HUMAN_PLAYER_PICKUP(25, 40, new ArmWaypoint(14, -7)), // NOT DONE
+        HUMAN_PLAYER_PICKUP(25, 35, new ArmWaypoint(14, -7)), // NOT DONE
 
         BOTTOM_CONE(27, -3),
         MIDDLE_CONE(33.5, 35), //, new ArmWaypoint(28, 29)), 

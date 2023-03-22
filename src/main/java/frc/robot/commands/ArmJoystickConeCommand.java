@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -38,6 +39,8 @@ public class ArmJoystickConeCommand extends CommandBase {
   // joystick value controlling cone arm
   private CommandXboxController m_joystick;
   double z_offset = 0;
+  Debouncer m_topDebounce = new Debouncer(0.3);
+  Debouncer m_bottomDebounce = new Debouncer(0.3);
   
 
   /** Creates a new ArmExtend. */
@@ -93,12 +96,12 @@ public class ArmJoystickConeCommand extends CommandBase {
     ArmWaypoint waypoint;
 
     if (index >= 99) {
-      tempX = armSetpoint.getX();
+      tempX = armSetpoint.getX() + z_offset * -0.5;
       tempZ = armSetpoint.getZ() + z_offset;
 
       double z = m_joystick.getRawAxis(XboxController.Axis.kRightY.value);
       z = MathUtil.applyDeadband(z, ArmConfig.ARM_JOYSTICK_DEADBAND);
-      z_offset += z * 0.16;
+      z_offset += z * -0.16;
       z_offset = MathUtil.clamp(z_offset, -8, 0);
 
     }
@@ -122,6 +125,9 @@ public class ArmJoystickConeCommand extends CommandBase {
                               Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.velocityTolerance;
     boolean bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.positionTolerance &&
                                   Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance;
+    topReached = m_topDebounce.calculate(topReached);
+    bottomReached = m_bottomDebounce.calculate(bottomReached);
+
     if (index >= 99) {
       if (topReached) {
         ArmSubsystem.getInstance().controlTopArmBrake(true);
