@@ -21,15 +21,16 @@ public class ChargeCommand extends CommandBase {
   double currentTheta;
   double desiredTheta;
 
-  double pitchValue;
-  double initPitchValue;
+  double pigeonValue;
+  double initPigeonValue;
+  boolean bWideSide;
 
   int state = 0;
 
   double PITCH_TOLERANCE = 10;
   double TIME_FOR_REVERSING = 0.10;
   /** Creates a new ChargeCommand. */
-  public ChargeCommand( double deltaX) {
+  public ChargeCommand( double deltaX, boolean bWideSide) {
     pidControlX = new ProfiledPIDController(1.2, 0.0, 0.2, 
           new Constraints(2, 1.1));
 
@@ -39,6 +40,7 @@ public class ChargeCommand extends CommandBase {
     
     
     this.deltaX = deltaX;
+    this.bWideSide = bWideSide;
     pidControlTheta.enableContinuousInput(-Math.PI, Math.PI);
 
     addRequirements(SwerveSubsystem.getInstance());
@@ -58,8 +60,15 @@ public class ChargeCommand extends CommandBase {
     pidControlX.reset(currentX);
     pidControlTheta.reset(currentTheta);
 
+    //wide = roll
+
     //get the initial roll value
-    initPitchValue = SwerveSubsystem.getInstance().getPitch();
+    if (bWideSide == true) {
+      initPigeonValue = SwerveSubsystem.getInstance().getRoll();
+    }
+    else {
+      initPigeonValue = SwerveSubsystem.getInstance().getPitch();
+    }
 
     state = 0;
     m_timer.stop();
@@ -76,13 +85,18 @@ public class ChargeCommand extends CommandBase {
     double theta = pidControlTheta.calculate(currentTheta, desiredTheta);
 
 
-    pitchValue = SwerveSubsystem.getInstance().getPitch();
+    if (bWideSide == true) {
+      pigeonValue = SwerveSubsystem.getInstance().getRoll();
+    }
+    else {
+      pigeonValue = SwerveSubsystem.getInstance().getPitch();
+    }
 
-    if (state == 0 && Math.abs(initPitchValue - pitchValue) > PITCH_TOLERANCE +1) 
+    if (state == 0 && Math.abs(initPigeonValue - pigeonValue) > PITCH_TOLERANCE +1) 
     {
       state = 1;
     }
-    if (state == 1 && Math.abs(initPitchValue - SwerveSubsystem.getInstance().getPitch()) < PITCH_TOLERANCE) {
+    if (state == 1 && Math.abs(initPigeonValue - pigeonValue) < PITCH_TOLERANCE) {
       state = 2;
       m_timer.restart();
     }
