@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -34,6 +35,9 @@ public class ArmCommand extends CommandBase {
 
   // joystick value controlling cone arm
   double z_offset = 0;
+
+  // debouncer
+  Debouncer m_BrakeDebounce = new Debouncer(ArmConfig.top_brake_debounce_time);
   
 
   /** Creates a new ArmExtend. */
@@ -49,6 +53,9 @@ public class ArmCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
+    m_BrakeDebounce = new Debouncer(ArmConfig.top_brake_debounce_time);
+
     System.out.println("~~~~~" + armSetpoint.name());
 
     if (Double.isNaN(armSetpoint.getX()) || Double.isNaN(armSetpoint.getZ())) {
@@ -115,7 +122,13 @@ public class ArmCommand extends CommandBase {
         topReached = true;
       }
       if (topReached) {
-        ArmSubsystem.getInstance().controlTopArmBrake(true);
+        // debouncer to increase the time for arm to reach set point (only if its in pickup position)
+        if (armSetpoint == ArmSetpoint.PICKUP) {
+          ArmSubsystem.getInstance().controlTopArmBrake(m_BrakeDebounce.calculate(topReached));
+        }
+        else {
+          ArmSubsystem.getInstance().controlTopArmBrake(topReached);
+        }
       }
       if (bottomReached) {
         ArmSubsystem.getInstance().controlBottomArmBrake(true);
@@ -124,8 +137,8 @@ public class ArmCommand extends CommandBase {
         startBrakeTimer = true;
         m_timer.restart();
       }
-      if (startBrakeTimer && armSetpoint == ArmSetpoint.PICKUP) {
-        ArmSubsystem.getInstance().testFeedForwardTop(-6);
+      if (startBrakeTimer && armSetpoint == ArmSetpoint.PICKUP) { 
+        ArmSubsystem.getInstance().testFeedForwardTop(-4); 
       }
       if (startBrakeTimer && armSetpoint == ArmSetpoint.TOP_CONE) {
         if (ArmSubsystem.getInstance().getTopPosition() < angle2) {
@@ -192,7 +205,7 @@ public class ArmCommand extends CommandBase {
     //   return false;
     // }
     if (armSetpoint == ArmSetpoint.PICKUP) {
-      return m_timer.hasElapsed(0.4);
+      return m_timer.hasElapsed(ArmConfig.top_brake_debounce_time + 0.2);
     }
     return m_timer.hasElapsed(0.2);
   }
