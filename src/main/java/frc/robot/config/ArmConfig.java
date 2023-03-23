@@ -26,6 +26,9 @@ public class ArmConfig {
     // NetworkTable setpointsTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTableSetpoints); 
 
     public enum ArmSetpoint {
+        // for north bay, setpoints to tune: PICKUP, BOTTOM_CONE, MIDDLE_CONE, TOP_CONE
+        // if time allows, try bottom, middle, top for cubes as well
+
         HOME_AFTER_PICKUP(13, -3.5),// Default position
         HOME_WITH_GAMEPIECE(13, -3.5, new ArmWaypoint(19, -3)),
         

@@ -45,6 +45,7 @@ public class ArmCommand extends CommandBase {
     this.armSetpoint = armSetpoint;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(ArmSubsystem.getInstance());
+    m_BrakeDebounce = new Debouncer(ArmConfig.top_brake_debounce_time);
   }
 
 
@@ -52,8 +53,6 @@ public class ArmCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
-    m_BrakeDebounce = new Debouncer(ArmConfig.top_brake_debounce_time);
 
     System.out.println("~~~~~" + armSetpoint.name());
 
@@ -123,7 +122,9 @@ public class ArmCommand extends CommandBase {
       if (topReached) {
         // debouncer to increase the time for arm to reach set point (only if its in pickup position)
         if (armSetpoint == ArmSetpoint.PICKUP) {
-          ArmSubsystem.getInstance().controlTopArmBrake(m_BrakeDebounce.calculate(topReached));
+          if (bottomReached) {
+            ArmSubsystem.getInstance().controlTopArmBrake(m_BrakeDebounce.calculate(topReached));
+          }
         }
         else {
           ArmSubsystem.getInstance().controlTopArmBrake(topReached);
