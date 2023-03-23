@@ -110,10 +110,13 @@
         "y": 2.1155597232735124
       },
       "prevControl": {
-        "x": 7.035227080439896,
-        "y": 2.1269951812371524
+        "x": 6.607215823127299,
+        "y": 2.4991914580102472
       },
-      "nextControl": null,
+      "nextControl": {
+        "x": 6.620411514616063,
+        "y": 1.465926922682259
+      },
       "holonomicAngle": 2.2906100426383498,
       "isReversal": false,
       "velOverride": null,
@@ -125,7 +128,44 @@
         "waitBehavior": "none",
         "waitTime": 0
       }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.709951929220629,
+        "y": 0.8875187936711283
+      },
+      "prevControl": {
+        "x": 6.645741862912298,
+        "y": 0.9838338931336261
+      },
+      "nextControl": null,
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "ArmHomeAfterPickup"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
     }
   ],
-  "markers": []
+  "markers": [
+    {
+      "position": 3.4545454545454346,
+      "names": [
+        "ArmPickupNoWP"
+      ]
+    },
+    {
+      "position": 3.9480519480521554,
+      "names": [
+        "GripperPickCube"
+      ]
+    }
+  ]
 }
