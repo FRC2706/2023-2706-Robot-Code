@@ -38,9 +38,8 @@ public class ArmCommand extends CommandBase {
 
   // debouncer
   Debouncer m_BrakeDebounce = new Debouncer(ArmConfig.top_brake_debounce_time);
-  
 
-  /** Creates a new ArmExtend. */
+  /** Creates a new ArmCommand. */
   
   public ArmCommand(ArmSetpoint armSetpoint) {
     this.armSetpoint = armSetpoint;
