@@ -19,6 +19,11 @@ public class ChargeCommandPigeon extends CommandBase {
 
   double pigeonValue;
   double initPigeonValue;
+
+  double initXPos;
+  double currentX;
+  double xLimit;
+
   boolean bWideSide;
   double flipXDirection;
 
@@ -26,8 +31,10 @@ public class ChargeCommandPigeon extends CommandBase {
 
   //@todo: tune these values
   double TIME_FOR_REVERSING = 0.10;
-  double X_SPEED_STATE0 = 1.5;
-  double X_SPEED_STATE1 = 1.0;
+  double X_WIDE_LIMIT = 4.0;
+  double X_NARROW_LIMIT = 4.5;
+  double X_SPEED_STATE0 = 1.7; //2.0
+  double X_SPEED_STATE1 = 0.7;
   double X_SPEED_STATE2 = 0.5;
 
   int state = 0;
@@ -62,15 +69,18 @@ public class ChargeCommandPigeon extends CommandBase {
     {
       //use the roll value
       initPigeonValue = SwerveSubsystem.getInstance().getRoll();
+      xLimit = X_WIDE_LIMIT;
 
     }
     else
     {
       //use the pitch value
       initPigeonValue = SwerveSubsystem.getInstance().getPitch();
+      xLimit = X_NARROW_LIMIT;
     }
 
     state = 0;
+    initXPos = SwerveSubsystem.getInstance().getPose().getX();
 
     flipXState0 = flipXDirection;
     flipXState1 = flipXDirection;
@@ -85,6 +95,8 @@ public class ChargeCommandPigeon extends CommandBase {
   public void execute() {
     currentTheta = SwerveSubsystem.getInstance().getHeading().getRadians();
     double theta = pidControlTheta.calculate(currentTheta, desiredTheta);
+
+    currentX = SwerveSubsystem.getInstance().getPose().getX();
 
     if( bWideSide == true )
     {
@@ -135,12 +147,13 @@ public class ChargeCommandPigeon extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     SwerveSubsystem.getInstance().stopMotors();
+    m_timer.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (state == 2 && m_timer.hasElapsed(TIME_FOR_REVERSING))
+    if ((state == 2 && m_timer.hasElapsed(TIME_FOR_REVERSING)) || Math.abs(initXPos - currentX) > xLimit)
       return (true);
     else
       return (false);
