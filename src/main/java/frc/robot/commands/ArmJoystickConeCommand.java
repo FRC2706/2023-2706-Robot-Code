@@ -102,7 +102,7 @@ public class ArmJoystickConeCommand extends CommandBase {
       double z = m_joystick.getRawAxis(XboxController.Axis.kRightY.value);
       z = MathUtil.applyDeadband(z, ArmConfig.ARM_JOYSTICK_DEADBAND);
       z_offset += z * -0.16;
-      z_offset = MathUtil.clamp(z_offset, -8, 0); // maybe change higher limit to -1?
+      z_offset = MathUtil.clamp(z_offset, -8, 0); // Currently allowing the right joystick to control the arm up to 8 inches downwards. Do not change the 0.
 
     }
     else {

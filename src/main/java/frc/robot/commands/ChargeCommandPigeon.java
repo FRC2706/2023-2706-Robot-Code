@@ -87,10 +87,10 @@ public class ChargeCommandPigeon extends CommandBase {
    * ~ Method 2: Save 1 to 3 seconds but a little chaotic
    *    - Tune X_SPEED_STATE1 to drive up the ramp faster than a slow crawl
    *    - Tune X_SPEED_STATE1 to be fast enough it ends up going slightly too far
-   *    - Tune the "jump back" actually jump back, getting rid of all speed from X_SPEED_STATE1 and
-   *          have it go back by 0.1 meters.
+   *    - Tune the "jump back" to actually jump back, getting rid of all speed from X_SPEED_STATE1 and
+   *          have it go back by less than 0.15 meters.
    * 
-   * The best way will probably be mostly method 1 with a bit of method 2.
+   * The best way will probably be mostly method 1 with a tiny bit of method 2.
    */
 
   // Unit: seconds
