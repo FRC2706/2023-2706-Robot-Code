@@ -123,7 +123,7 @@ public class CompRobotContainer extends RobotContainer {
 
     
     // Starting configuration
-    operator.leftStick().onTrue(new ArmCommand(ArmSetpoint.STARTING_CONFIGURATIN).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(false))));
+    operator.leftStick().onTrue(new ArmCommand(ArmSetpoint.STARTING_CONFIGURATIN));
 
     // testStick.a().onTrue(new CheckArmSetpoints(testStick));
     // Force the buttons to just do cone setpoints

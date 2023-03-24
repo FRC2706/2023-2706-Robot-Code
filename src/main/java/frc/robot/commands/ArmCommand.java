@@ -32,6 +32,7 @@ public class ArmCommand extends CommandBase {
   boolean startBrakeTimer;
   Timer m_timer = new Timer();
   Timer m_timer2 = new Timer();
+  Timer m_timer3 = new Timer();
 
   // joystick value controlling cone arm
   double z_offset = 0;
@@ -83,6 +84,10 @@ public class ArmCommand extends CommandBase {
     m_timer.reset();
     m_timer2.stop();
     m_timer2.reset();
+    m_timer3.stop();
+    m_timer3.reset();
+
+    m_BrakeDebounce.calculate(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -121,13 +126,13 @@ public class ArmCommand extends CommandBase {
       }
       if (topReached) {
         // debouncer to increase the time for arm to reach set point (only if its in pickup position)
-        if (armSetpoint == ArmSetpoint.PICKUP) {
+        if (armSetpoint == ArmSetpoint.PICKUP || armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) {
           if (bottomReached) {
-            ArmSubsystem.getInstance().controlTopArmBrake(m_BrakeDebounce.calculate(topReached));
+            ArmSubsystem.getInstance().controlTopArmBrake(m_BrakeDebounce.calculate(true));
           }
         }
         else {
-          ArmSubsystem.getInstance().controlTopArmBrake(topReached);
+          ArmSubsystem.getInstance().controlTopArmBrake(true);
         }
       }
       if (bottomReached) {
@@ -136,9 +141,13 @@ public class ArmCommand extends CommandBase {
       if (startBrakeTimer == false && topReached && bottomReached) {
         startBrakeTimer = true;
         m_timer.restart();
+        m_BrakeDebounce.calculate(false);
       }
       if (startBrakeTimer && armSetpoint == ArmSetpoint.PICKUP) { 
         ArmSubsystem.getInstance().testFeedForwardTop(-4); 
+      }
+      if (startBrakeTimer && armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) { 
+        ArmSubsystem.getInstance().testFeedForwardTop(-6); 
       }
       if (startBrakeTimer && armSetpoint == ArmSetpoint.TOP_CONE) {
         if (ArmSubsystem.getInstance().getTopPosition() < angle2) {
@@ -207,6 +216,14 @@ public class ArmCommand extends CommandBase {
     if (armSetpoint == ArmSetpoint.PICKUP) {
       return m_timer.hasElapsed(ArmConfig.top_brake_debounce_time + 0.2);
     }
+    if (armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) {
+      return m_timer.hasElapsed(ArmConfig.top_brake_debounce_time + 0.4);
+    }
+    /* 
+    if (armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) {
+      return m_timer3.hasElapsed(ArmConfig.top_brake_debounce_time);
+    }
+    */
     return m_timer.hasElapsed(0.2);
   }
 }

@@ -32,7 +32,7 @@ public class ArmConfig {
         HOME_AFTER_PICKUP(13, -3.5),// Default position
         HOME_WITH_GAMEPIECE(13, -3.5, new ArmWaypoint(19, -3)),
         
-        STARTING_CONFIGURATIN(10.5, -8),
+        STARTING_CONFIGURATIN(9.8, -8),
         
         // pickup setpoint was 4.7
         PICKUP(5.0, -12.4, new ArmWaypoint(17, -3), new ArmWaypoint(8, -11)), // x was 9.7 z was -12
