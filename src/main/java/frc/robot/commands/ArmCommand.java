@@ -34,11 +34,10 @@ public class ArmCommand extends CommandBase {
   Timer m_timer2 = new Timer();
   Timer m_timer3 = new Timer();
 
+
   // joystick value controlling cone arm
   double z_offset = 0;
 
-  // debouncer
-  Debouncer m_BrakeDebounce = new Debouncer(ArmConfig.top_brake_debounce_time);
 
   /** Creates a new ArmCommand. */
   
@@ -46,7 +45,7 @@ public class ArmCommand extends CommandBase {
     this.armSetpoint = armSetpoint;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(ArmSubsystem.getInstance());
-    m_BrakeDebounce = new Debouncer(ArmConfig.top_brake_debounce_time);
+    // m_BrakeDebounce = new Debouncer(ArmConfig.top_brake_debounce_time);
   }
 
 
@@ -87,7 +86,8 @@ public class ArmCommand extends CommandBase {
     m_timer3.stop();
     m_timer3.reset();
 
-    m_BrakeDebounce.calculate(false);
+
+    // m_BrakeDebounce.calculate(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -112,8 +112,14 @@ public class ArmCommand extends CommandBase {
 
     ArmSubsystem.getInstance().updateSetpointDisplay(angle1, angle2);
 
-    ArmSubsystem.getInstance().setTopJoint(angle2);
-    ArmSubsystem.getInstance().setBottomJoint(angle1, angle2);
+    if (!
+        ((armSetpoint == ArmSetpoint.PICKUP || armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) 
+        && startBrakeTimer
+        )) {
+          ArmSubsystem.getInstance().setTopJoint(angle2);
+          ArmSubsystem.getInstance().setBottomJoint(angle1, angle2);
+    }
+    
 
     boolean topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.positionTolerance &&
                               Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.velocityTolerance;
@@ -125,10 +131,12 @@ public class ArmCommand extends CommandBase {
         topReached = true;
       }
       if (topReached) {
-        // debouncer to increase the time for arm to reach set point (only if its in pickup position)
-        if (armSetpoint == ArmSetpoint.PICKUP || armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) {
-          if (bottomReached) {
-            ArmSubsystem.getInstance().controlTopArmBrake(m_BrakeDebounce.calculate(true));
+        // Delay triggering the top brake so we can do extra reversing into mechanical stops to be more consistent.
+        if (armSetpoint == ArmSetpoint.PICKUP) { // || armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) {
+          if (startBrakeTimer) {
+            if (m_timer.get() > ArmConfig.top_brake_debounce_time) {
+              ArmSubsystem.getInstance().controlTopArmBrake(true);
+            }
           }
         }
         else {
@@ -141,13 +149,9 @@ public class ArmCommand extends CommandBase {
       if (startBrakeTimer == false && topReached && bottomReached) {
         startBrakeTimer = true;
         m_timer.restart();
-        m_BrakeDebounce.calculate(false);
       }
       if (startBrakeTimer && armSetpoint == ArmSetpoint.PICKUP) { 
-        ArmSubsystem.getInstance().testFeedForwardTop(-4); 
-      }
-      if (startBrakeTimer && armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) { 
-        ArmSubsystem.getInstance().testFeedForwardTop(-6); 
+        ArmSubsystem.getInstance().testFeedForwardTop(-2);//4); 
       }
       if (startBrakeTimer && armSetpoint == ArmSetpoint.TOP_CONE) {
         if (ArmSubsystem.getInstance().getTopPosition() < angle2) {
@@ -216,9 +220,9 @@ public class ArmCommand extends CommandBase {
     if (armSetpoint == ArmSetpoint.PICKUP) {
       return m_timer.hasElapsed(ArmConfig.top_brake_debounce_time + 0.2);
     }
-    if (armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) {
-      return m_timer.hasElapsed(ArmConfig.top_brake_debounce_time + 0.4);
-    }
+    // if (armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) {
+    //   return m_timer.hasElapsed(ArmConfig.top_brake_debounce_time + 0.4);
+    // }
     /* 
     if (armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) {
       return m_timer3.hasElapsed(ArmConfig.top_brake_debounce_time);

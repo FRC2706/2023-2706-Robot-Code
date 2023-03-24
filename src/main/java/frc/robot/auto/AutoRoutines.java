@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ChargeCommand;
@@ -89,7 +90,18 @@ public class AutoRoutines {
         eventMap.put("chargeRoll", new WaitCommand(0.4).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandRoll(3.2).alongWith(new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE))).andThen(new ChargeStationLock()));
         
         //wide and positive X flip
-        eventMap.put("chargePigeonWidePx", new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(true, 1.0).andThen(new ChargeStationLock())));
+        Command chargePigeonWideNxLowerArm = new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE).asProxy();
+        Command chargePigeonWideNxCommand = new SequentialCommandGroup(
+            new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))),
+            new ChargeCommandPigeon(true, 1.0).alongWith(new WaitCommand(0.2).andThen(Commands.runOnce(() -> chargePigeonWideNxLowerArm.schedule()))),
+            new ChargeStationLock(),
+            Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))
+        );
+        
+        eventMap.put("chargePigeonWidePx", chargePigeonWideNxCommand);// new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(true, 1.0).alongWith(Commands.runOnce(() -> chargePigeonWideNxLowerArm.schedule()))).andThen(new ChargeStationLock()).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))));
+        
+        
+        
         eventMap.put("chargePigeonWideNx", new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(true, -1.0).andThen(new ChargeStationLock())));
         eventMap.put("chargePigeonNarrowPx", new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(false, 1.0).andThen(new ChargeStationLock())));
         eventMap.put("chargePigeonNarrowNx", new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(false, -1.0).andThen(new ChargeStationLock())));
@@ -98,6 +110,7 @@ public class AutoRoutines {
          
          //place game pieces
          eventMap.put("ArmCubeTop", new ArmCommand(ArmSetpoint.TOP_CUBE).withTimeout(4.5).andThen((Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true))))));
+         eventMap.put("ArmCubeTopProxy", new ArmCommand(ArmSetpoint.TOP_CUBE).withTimeout(4.5).asProxy().andThen((Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true))))));
          eventMap.put("ArmCubeTopNoWP", new ArmCommand(ArmSetpoint.TOP_CONE_NO_WAYPOINT));
          eventMap.put("ArmCubeMiddle", new ArmCommand(ArmSetpoint.MIDDLE_CUBE));
          eventMap.put("ArmCubeBottom", new ArmCommand(ArmSetpoint.BOTTOM_CUBE));

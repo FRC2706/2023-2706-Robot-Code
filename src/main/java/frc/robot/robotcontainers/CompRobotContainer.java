@@ -23,6 +23,7 @@ import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmCommandSelector;
 import frc.robot.commands.ChargeStationLock;
+import frc.robot.commands.DriveArmAgainstBackstop;
 import frc.robot.commands.GripperCommand;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.commands.PickupJoystickRumble;
@@ -123,7 +124,7 @@ public class CompRobotContainer extends RobotContainer {
 
     
     // Starting configuration
-    operator.leftStick().onTrue(new ArmCommand(ArmSetpoint.STARTING_CONFIGURATIN));
+    operator.leftStick().onTrue(new ArmCommand(ArmSetpoint.STARTING_CONFIGURATIN).andThen(new DriveArmAgainstBackstop()));
 
     // testStick.a().onTrue(new CheckArmSetpoints(testStick));
     // Force the buttons to just do cone setpoints

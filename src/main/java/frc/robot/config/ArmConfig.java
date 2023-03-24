@@ -29,10 +29,10 @@ public class ArmConfig {
         // for north bay, setpoints to tune: PICKUP, BOTTOM_CONE, MIDDLE_CONE, TOP_CONE
         // if time allows, try bottom, middle, top for cubes as well
 
-        HOME_AFTER_PICKUP(13, -3.5),// Default position
-        HOME_WITH_GAMEPIECE(13, -3.5, new ArmWaypoint(19, -3)),
+        HOME_AFTER_PICKUP(13.5, -3.5),// Default position
+        HOME_WITH_GAMEPIECE(13.5, -3.5, new ArmWaypoint(19, -3)),
         
-        STARTING_CONFIGURATIN(9.8, -8),
+        STARTING_CONFIGURATIN(9.8, -8), // 9.8
         
         // pickup setpoint was 4.7
         PICKUP(5.0, -12.4, new ArmWaypoint(17, -3), new ArmWaypoint(8, -11)), // x was 9.7 z was -12
@@ -156,7 +156,7 @@ public class ArmConfig {
 
       // soft limit constants for top arm
       public static final float top_arm_forward_limit = (float)Math.toRadians(190); 
-      public static final float top_arm_reverse_limit = (float)Math.toRadians(12); 
+      public static final float top_arm_reverse_limit = (float)Math.toRadians(7); 
       public static final boolean TOP_SOFT_LIMIT_ENABLE = true;
     
       // soft limit constants for bottom arm
@@ -192,6 +192,6 @@ public class ArmConfig {
       public static double ARM_JOYSTICK_DEADBAND = 0.25;
 
       // debouncer
-      public static final double top_brake_debounce_time = 0.5;
+      public static final double top_brake_debounce_time = 3;
 
 }
