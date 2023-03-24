@@ -116,7 +116,7 @@ public class CompRobotContainer extends RobotContainer {
     operator.y().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_TOP, false, operator));
   
     Command rumbleCommand = new StartEndCommand(
-            () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0.35),
+            () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0.5),
             () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0)
         ).withTimeout(0.2).ignoringDisable(true);
 

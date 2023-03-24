@@ -151,7 +151,7 @@ public class ArmCommand extends CommandBase {
         m_timer.restart();
       }
       if (startBrakeTimer && armSetpoint == ArmSetpoint.PICKUP) { 
-        ArmSubsystem.getInstance().testFeedForwardTop(-2);//4); 
+        ArmSubsystem.getInstance().testFeedForwardTop(-1);//4); 
       }
       if (startBrakeTimer && armSetpoint == ArmSetpoint.TOP_CONE) {
         if (ArmSubsystem.getInstance().getTopPosition() < angle2) {
@@ -218,7 +218,7 @@ public class ArmCommand extends CommandBase {
     //   return false;
     // }
     if (armSetpoint == ArmSetpoint.PICKUP) {
-      return m_timer.hasElapsed(ArmConfig.top_brake_debounce_time + 0.2);
+      return m_timer.hasElapsed(ArmConfig.top_brake_debounce_time + 0.3);
     }
     // if (armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) {
     //   return m_timer.hasElapsed(ArmConfig.top_brake_debounce_time + 0.4);

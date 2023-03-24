@@ -35,7 +35,7 @@ public class ArmConfig {
         STARTING_CONFIGURATIN(9.8, -8), // 9.8
         
         // pickup setpoint was 4.7
-        PICKUP(5.0, -12.4, new ArmWaypoint(17, -3), new ArmWaypoint(8, -11)), // x was 9.7 z was -12
+        PICKUP(5.0, -12.3, new ArmWaypoint(17, -3), new ArmWaypoint(8, -11)), // x was 9.7 z was -12
         PICKUP_NOWP(4.5, -12.5, new ArmWaypoint(9, -11.7)),
         PICKUP_OUTSIDE_FRAME(25, -11, new ArmWaypoint(14, -8)), // CHECK
         HUMAN_PLAYER_PICKUP(25, 35, new ArmWaypoint(14, -7)), // NOT DONE
@@ -192,6 +192,6 @@ public class ArmConfig {
       public static double ARM_JOYSTICK_DEADBAND = 0.25;
 
       // debouncer
-      public static final double top_brake_debounce_time = 3;
+      public static final double top_brake_debounce_time = 0.1;
 
 }
