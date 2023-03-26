@@ -13,7 +13,7 @@ import frc.robot.subsystems.ArmWaypoint;
 /** Add your docs here. */
 public class ArmConfig {
 
-    public static final double x_lower = 2;
+    public static final double x_lower = -60;
     public static final double x_upper = 60;
     public static final double z_lower = -13.75;
     public static final double z_upper = 60;
@@ -49,7 +49,10 @@ public class ArmConfig {
 
         BOTTOM_CUBE(24, -7),
         MIDDLE_CUBE(40.5, 27, new ArmWaypoint(21, 12)),
-        TOP_CUBE(49, 42, new ArmWaypoint(25, 15));
+        TOP_CUBE(49, 42, new ArmWaypoint(25, 15)),
+
+        ULTAUTO_BACKWARDS_PICKUP(-50, -11, new ArmWaypoint(0, 290, true), new ArmWaypoint(90, 260, true), new ArmWaypoint(90+40, 270, true));
+
         
 
         public DoubleEntry x_entry;

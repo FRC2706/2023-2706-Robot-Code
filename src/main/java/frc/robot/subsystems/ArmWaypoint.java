@@ -10,9 +10,21 @@ public class ArmWaypoint {
     private double x;
     private double z;
 
+    private boolean m_isAnglesNotXY = false;
+
     public ArmWaypoint(double x, double z) {
+        this(x, z, false);
+    }
+
+    public ArmWaypoint(double x, double z, boolean anglesNotXY) {
         this.x = x;
         this.z = z;
+
+        if (anglesNotXY) {
+            this.x = Math.toRadians(this.x);
+            this.z = Math.toRadians(this.z);
+        }
+        m_isAnglesNotXY = anglesNotXY;
     }
 
     public double getX() {
@@ -21,6 +33,10 @@ public class ArmWaypoint {
 
     public double getZ() {
         return z;
+    }
+
+    public boolean isAnglesNotXY() {
+        return m_isAnglesNotXY;
     }
 
 }

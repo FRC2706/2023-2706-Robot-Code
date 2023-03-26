@@ -15,10 +15,9 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.commands.BrakeModeDisabled;
-import frc.robot.commands.CheckArmSetpoints;
+import frc.robot.commands.SimTestArmBackwardsPickup;
 import frc.robot.commands.SyncArmEncoders;
 import frc.robot.commands.SyncSteerEncoders;
 import frc.robot.config.Config;
@@ -169,6 +168,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    
+    new SimTestArmBackwardsPickup().schedule();
   }
 
   /** This function is called periodically during operator control. */
