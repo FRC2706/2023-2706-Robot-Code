@@ -94,7 +94,7 @@ public class AutoRoutines {
         Command chargePigeonWideNxCommand = new SequentialCommandGroup(
             new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))),
             new ChargeCommandPigeon(true, 1.0).alongWith(new WaitCommand(0.2).andThen(Commands.runOnce(() -> chargePigeonWideNxLowerArm.schedule()))),
-            new ChargeStationLock(),
+            new ChargeStationLock().withTimeout(1),
             Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))
         );
         

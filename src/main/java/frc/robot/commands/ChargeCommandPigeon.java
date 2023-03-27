@@ -97,8 +97,8 @@ public class ChargeCommandPigeon extends CommandBase {
   double TIME_FOR_REVERSING = 0.10;
 
   // Unit: meters per second
-  double X_SPEED_STATE0 = 1.7;
-  double X_SPEED_STATE1 = 0.7;
+  double X_SPEED_STATE0 = 1.5;
+  double X_SPEED_STATE1 = 0.5;
   double X_SPEED_STATE2 = -0.5; // Negative because it should "jump back" or just get rid of any velocity.
 
   int state = 0;
@@ -124,7 +124,7 @@ public class ChargeCommandPigeon extends CommandBase {
 
     currentTheta = SwerveSubsystem.getInstance().getHeading().getRadians();
     //keep the current angle
-    desiredTheta = currentTheta;    
+    desiredTheta = currentTheta; // + Math.toRadians(10);    
 
     //reset current positions
     pidControlTheta.reset(currentTheta);
