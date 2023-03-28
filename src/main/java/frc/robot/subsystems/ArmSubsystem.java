@@ -126,7 +126,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArm = new CANSparkMax(Config.CANID.BOTTOM_ARM_SPARK_CAN_ID, motorType);
     m_topArm.restoreFactoryDefaults();
     m_bottomArm.restoreFactoryDefaults();
-    m_topArm.setSmartCurrentLimit(ArmConfig.CURRENT_LIMIT);
+    // m_topArm.setSmartCurrentLimit(ArmConfig.CURRENT_LIMIT);
     m_bottomArm.setSmartCurrentLimit(ArmConfig.CURRENT_LIMIT);
     m_topArm.setInverted(ArmConfig.TOP_SET_INVERTED);
     m_bottomArm.setInverted(ArmConfig.BOTTOM_SET_INVERTED);
@@ -507,5 +507,9 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void setTopConstraints(double maxVelocity, double maxAccel) {
     m_topPID.setConstraints(new Constraints(maxVelocity, maxAccel));
+  }
+
+  public void setTopVoltage(double topVoltage) {
+    m_topArm.set(topVoltage);
   }
 }

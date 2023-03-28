@@ -18,7 +18,7 @@
       "stopEvent": {
         "names": [
           "GripperPickCube",
-          "ArmCubeTop"
+          "ArmCubeTopProxy"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "after",
@@ -43,7 +43,7 @@
       "stopEvent": {
         "names": [
           "GripperOpen",
-          "chargeRoll"
+          "chargePigeonWidePx"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",

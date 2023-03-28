@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.subsystems;
+import frc.robot.commands.SetBlingCommand;
 import frc.robot.config.Config;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -63,6 +64,7 @@ public class BlingSubsystem extends SubsystemBase {
   public void setDisabled()
   {
     candle.configBrightnessScalar(0.0);
+    candle.clearAnimation(0);
   }
 
   public void setPurple()
@@ -103,18 +105,18 @@ public class BlingSubsystem extends SubsystemBase {
   public void armEncodersSynced() {
     armEncodersSynced = true;
     if (steerEncodersSynced) {
-      setPurple();
+      new SetBlingCommand(1).schedule(); // purple
     } else {
-      setBlue();
+      new SetBlingCommand(2).schedule(); // blue
     }
   }
 
   public void steerEncodersSynced() {
     steerEncodersSynced = true;
     if (armEncodersSynced) {
-      setPurple();
+      new SetBlingCommand(1).schedule(); // purple
     } else {
-      setYellow();
+      new SetBlingCommand(4).schedule(); // yellow
     }
   }
 

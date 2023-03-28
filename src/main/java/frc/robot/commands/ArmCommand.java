@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -31,17 +32,20 @@ public class ArmCommand extends CommandBase {
   boolean startBrakeTimer;
   Timer m_timer = new Timer();
   Timer m_timer2 = new Timer();
+  Timer m_timer3 = new Timer();
+
 
   // joystick value controlling cone arm
   double z_offset = 0;
-  
 
-  /** Creates a new ArmExtend. */
+
+  /** Creates a new ArmCommand. */
   
   public ArmCommand(ArmSetpoint armSetpoint) {
     this.armSetpoint = armSetpoint;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(ArmSubsystem.getInstance());
+    // m_BrakeDebounce = new Debouncer(ArmConfig.top_brake_debounce_time);
   }
 
 
@@ -49,6 +53,7 @@ public class ArmCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
     System.out.println("~~~~~" + armSetpoint.name());
 
     if (Double.isNaN(armSetpoint.getX()) || Double.isNaN(armSetpoint.getZ())) {
@@ -78,6 +83,11 @@ public class ArmCommand extends CommandBase {
     m_timer.reset();
     m_timer2.stop();
     m_timer2.reset();
+    m_timer3.stop();
+    m_timer3.reset();
+
+
+    // m_BrakeDebounce.calculate(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -102,8 +112,14 @@ public class ArmCommand extends CommandBase {
 
     ArmSubsystem.getInstance().updateSetpointDisplay(angle1, angle2);
 
-    ArmSubsystem.getInstance().setTopJoint(angle2);
-    ArmSubsystem.getInstance().setBottomJoint(angle1, angle2);
+    if (!
+        ((armSetpoint == ArmSetpoint.PICKUP || armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) 
+        && startBrakeTimer
+        )) {
+          ArmSubsystem.getInstance().setTopJoint(angle2);
+          ArmSubsystem.getInstance().setBottomJoint(angle1, angle2);
+    }
+    
 
     boolean topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.positionTolerance &&
                               Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.velocityTolerance;
@@ -115,7 +131,17 @@ public class ArmCommand extends CommandBase {
         topReached = true;
       }
       if (topReached) {
-        ArmSubsystem.getInstance().controlTopArmBrake(true);
+        // Delay triggering the top brake so we can do extra reversing into mechanical stops to be more consistent.
+        if (armSetpoint == ArmSetpoint.PICKUP) { // || armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) {
+          if (startBrakeTimer) {
+            if (m_timer.get() > ArmConfig.top_brake_debounce_time) {
+              ArmSubsystem.getInstance().controlTopArmBrake(true);
+            }
+          }
+        }
+        else {
+          ArmSubsystem.getInstance().controlTopArmBrake(true);
+        }
       }
       if (bottomReached) {
         ArmSubsystem.getInstance().controlBottomArmBrake(true);
@@ -124,8 +150,8 @@ public class ArmCommand extends CommandBase {
         startBrakeTimer = true;
         m_timer.restart();
       }
-      if (startBrakeTimer && armSetpoint == ArmSetpoint.PICKUP) {
-        ArmSubsystem.getInstance().testFeedForwardTop(-6);
+      if (startBrakeTimer && armSetpoint == ArmSetpoint.PICKUP) { 
+        ArmSubsystem.getInstance().testFeedForwardTop(-1);//4); 
       }
       if (startBrakeTimer && armSetpoint == ArmSetpoint.TOP_CONE) {
         if (ArmSubsystem.getInstance().getTopPosition() < angle2) {
@@ -192,8 +218,16 @@ public class ArmCommand extends CommandBase {
     //   return false;
     // }
     if (armSetpoint == ArmSetpoint.PICKUP) {
-      return m_timer.hasElapsed(0.4);
+      return m_timer.hasElapsed(ArmConfig.top_brake_debounce_time + 0.3);
     }
+    // if (armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) {
+    //   return m_timer.hasElapsed(ArmConfig.top_brake_debounce_time + 0.4);
+    // }
+    /* 
+    if (armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) {
+      return m_timer3.hasElapsed(ArmConfig.top_brake_debounce_time);
+    }
+    */
     return m_timer.hasElapsed(0.2);
   }
 }

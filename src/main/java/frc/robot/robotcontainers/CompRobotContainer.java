@@ -23,6 +23,7 @@ import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmCommandSelector;
 import frc.robot.commands.ChargeStationLock;
+import frc.robot.commands.DriveArmAgainstBackstop;
 import frc.robot.commands.GripperCommand;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.commands.PickupJoystickRumble;
@@ -101,7 +102,7 @@ public class CompRobotContainer extends RobotContainer {
 
     // Operator Joystick
     operator.rightBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));
-    operator.leftBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.USE_VISION, setState).andThen(new WaitCommand(0.3)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+    operator.leftBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.USE_VISION, setState).andThen(new WaitCommand(0.3)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP))); // maybe remove and replace with human player pickup
     operator.back().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, setState).andThen(new WaitCommand(0.3)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
     operator.start().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, setState))
                     .onFalse(new WaitCommand(0.5).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
@@ -115,7 +116,7 @@ public class CompRobotContainer extends RobotContainer {
     operator.y().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_TOP, false, operator));
   
     Command rumbleCommand = new StartEndCommand(
-            () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0.35),
+            () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0.5),
             () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0)
         ).withTimeout(0.2).ignoringDisable(true);
 
@@ -123,7 +124,7 @@ public class CompRobotContainer extends RobotContainer {
 
     
     // Starting configuration
-    operator.leftStick().onTrue(new ArmCommand(ArmSetpoint.STARTING_CONFIGURATIN).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(false))));
+    operator.leftStick().onTrue(new ArmCommand(ArmSetpoint.STARTING_CONFIGURATIN).andThen(new DriveArmAgainstBackstop()));
 
     // testStick.a().onTrue(new CheckArmSetpoints(testStick));
     // Force the buttons to just do cone setpoints

@@ -148,5 +148,10 @@ public class SetBlingCommand extends InstantCommand {
     bling.candle.animate(rgbFadeAnimation);
   }
 
+  @Override
+  public boolean runsWhenDisabled() {
+    return true;
+  }
+
 }
 
