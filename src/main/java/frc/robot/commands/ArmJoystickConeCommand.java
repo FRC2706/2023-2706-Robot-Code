@@ -160,10 +160,10 @@ public class ArmJoystickConeCommand extends CommandBase {
 
       }
       else {
-        topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.waypointPositionTolerance &&
-        Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.waypointVelocityTolerance;
-        bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.waypointPositionTolerance &&
-        Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointVelocityTolerance;
+        topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.waypointPositionTolerance; //&&
+        // Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.waypointVelocityTolerance;
+        bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.waypointPositionTolerance; //&&
+        // Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointVelocityTolerance;
       }
       if (bottomReached && topReached) {
         if (index == armSetpoint.getWaypoint().length - 1 || armSetpoint.getWaypoint().length == 0) {

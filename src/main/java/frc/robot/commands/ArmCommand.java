@@ -93,7 +93,7 @@ public class ArmCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    ArmWaypoint waypoint;
+    ArmWaypoint waypoint = new ArmWaypoint(13.5, -3.5);
 
     if (index >= 99) {
       tempX = armSetpoint.getX();
@@ -116,8 +116,14 @@ public class ArmCommand extends CommandBase {
         ((armSetpoint == ArmSetpoint.PICKUP || armSetpoint == ArmSetpoint.STARTING_CONFIGURATIN) 
         && startBrakeTimer
         )) {
-          ArmSubsystem.getInstance().setTopJoint(angle2);
-          ArmSubsystem.getInstance().setBottomJoint(angle1, angle2);
+          if (index < 99) {
+            ArmSubsystem.getInstance().setTopJoint(angle2, waypoint.getTopVel());
+            ArmSubsystem.getInstance().setBottomJoint(angle1, angle2, waypoint.getBotVel());
+          }
+          else {
+            ArmSubsystem.getInstance().setTopJoint(angle2);
+            ArmSubsystem.getInstance().setBottomJoint(angle1, angle2);
+          }
     }
     
 
@@ -167,11 +173,18 @@ public class ArmCommand extends CommandBase {
           Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointPickupVelocityTolerance;
 
       }
-      else {
+      else if (armSetpoint == ArmSetpoint.PICKUP && index == 0) {
         topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.waypointPositionTolerance &&
-        Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.waypointVelocityTolerance;
+          Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.waypointVelocityTolerance;
         bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.waypointPositionTolerance &&
-        Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointVelocityTolerance;
+          Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointVelocityTolerance;
+
+      }
+      else {
+        topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.waypointPositionTolerance; //&&
+        // Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.waypointVelocityTolerance;
+        bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.waypointPositionTolerance; // &&
+        // Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointVelocityTolerance;
       }
       if (bottomReached && topReached) {
         if (index == armSetpoint.getWaypoint().length - 1 || armSetpoint.getWaypoint().length == 0) {

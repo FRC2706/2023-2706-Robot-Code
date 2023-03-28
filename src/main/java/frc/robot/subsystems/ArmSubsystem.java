@@ -20,6 +20,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -312,38 +313,45 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setBottomJoint(double angle_bottom, double angle_top) { 
+    setBottomJoint(angle_bottom, angle_top, 0);
+  }
+
+  public void setBottomJoint(double angle_bottom, double angle_top, double vel) { 
     if (angle_top > Math.toRadians(20) && getTopPosition() < Math.toRadians(20)) {
       angle_bottom = Math.toRadians(95);
     }
-    double pidSetpoint = m_bottomPID.getPIDSetpoint(angle_bottom); 
+    double pidSetpoint = m_bottomPID.getPIDSetpoint(new TrapezoidProfile.State(angle_bottom, vel)); 
     m_pidControllerBottomArm.setReference(pidSetpoint, ControlType.kPosition, 0, calculateFFBottom(m_bottomEncoder.getPosition(), m_topEncoder.getPosition(), m_hasCone)); 
     m_bottomArmSetpointPub.accept(Math.toDegrees(angle_bottom));
   }
-
   public void setTopJoint(double angle) {
+    setTopJoint(angle, 0);
+  }
+
+  public void setTopJoint(double angle, double vel) {
     double topVel = getTopVel();
     // if (angle < Math.toRadians(25) && getTopVel() < -1.5) {
     //   angle = Math.toRadians(24);
     // }
 
-    double pidSetpoint = m_topPID.getPIDSetpoint(angle); 
+    double pidSetpoint = m_topPID.getPIDSetpoint(new TrapezoidProfile.State(angle, vel)); 
 
     double slowDownVoltage = 0;
     if (topVel < Math.toRadians(-160)) {
       slowDownVoltage += 0.6;
     }
 
-    double velRange = Math.toRadians(-70);
+    double velRange = Math.toRadians(-40);
     if (topVel < velRange) {
-      slowDownVoltage += (topVel - velRange) * -1.0;
+      slowDownVoltage += (topVel - velRange) * -1.2;
     }
 
-    if (getTopPosition() < 40 && topVel < Math.toRadians(-74.5)) {
-      slowDownVoltage += getTopVel() * -0.8;
+    if (getTopPosition() < 40 && topVel < Math.toRadians(-60)) {
+      slowDownVoltage += getTopVel() * -0.9;
     }
 
     // Overshoot then prevent it from going below the setpoint
-    if (angle > Math.toRadians(35) && getTopPosition() > angle && getTopPosition() - angle < Math.toRadians(10) && getTopVel() < 0) {
+    if (angle > Math.toRadians(50) && getTopPosition() > angle && getTopPosition() - angle < Math.toRadians(10) && getTopVel() < 0) {
       if (m_hasCone) {
         slowDownVoltage += 0.6;
       } else {

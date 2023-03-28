@@ -43,13 +43,13 @@ public class ArmConfig {
         BOTTOM_CONE(27, -3),
         MIDDLE_CONE(33.5, 35), //, new ArmWaypoint(28, 29)), 
         MIDDLE_CONE_RELEASE(36, 28.03-7), //WRONG
-        TOP_CONE(47, 46, new ArmWaypoint(30, 12)), //new ArmWaypoint(28,36)), 30, 12
+        TOP_CONE(47, 46, new ArmWaypoint(34, 20, 0, 10)), //new ArmWaypoint(28,36)), 30, 12
         TOP_CONE_NO_WAYPOINT(47, 46),
         TOP_CONE_RELEASE(53, 39-7), // WRONG
 
         BOTTOM_CUBE(24, -7),
-        MIDDLE_CUBE(40.5, 27, new ArmWaypoint(21, 12)),
-        TOP_CUBE(49, 42, new ArmWaypoint(25, 15));
+        MIDDLE_CUBE(40.5, 27, new ArmWaypoint(21, 12, 0, 0.3)),
+        TOP_CUBE(49, 42, new ArmWaypoint(25, 15, 0, 1.8));
         
 
         public DoubleEntry x_entry;
