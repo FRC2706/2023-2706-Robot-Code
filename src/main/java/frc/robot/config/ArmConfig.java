@@ -43,13 +43,14 @@ public class ArmConfig {
         BOTTOM_CONE(27, -3),
         MIDDLE_CONE(33.5, 35), //, new ArmWaypoint(28, 29)), 
         MIDDLE_CONE_RELEASE(36, 28.03-7), //WRONG
-        TOP_CONE(47, 46, new ArmWaypoint(34, 20, 0, 10)), //new ArmWaypoint(28,36)), 30, 12
+        TOP_CONE(46.5, 46.86, new ArmWaypoint(30, 20, 4, 10), new ArmWaypoint(42, 34, 3, 0.6)),
+        //TOP_CONE(47, 46, new ArmWaypoint(30, 20, 4, 10), new ArmWaypoint(40, 30, 3, 4)), // <- This does a nice S curve if cone flipping is fixed mechanically
         TOP_CONE_NO_WAYPOINT(47, 46),
         TOP_CONE_RELEASE(53, 39-7), // WRONG
 
         BOTTOM_CUBE(24, -7),
-        MIDDLE_CUBE(40.5, 27, new ArmWaypoint(21, 12, 0, 0.3)),
-        TOP_CUBE(49, 42, new ArmWaypoint(25, 15, 0, 1.8));
+        MIDDLE_CUBE(40.5, 27),//, new ArmWaypoint(21, 12, 0, 4)),
+        TOP_CUBE(49, 42, new ArmWaypoint(35, 15, 0, 2.2));
         
 
         public DoubleEntry x_entry;
@@ -132,6 +133,7 @@ public class ArmConfig {
       public static final double waypointVelocityTolerance = Math.toRadians(6);
       public static final double waypointPickupPositionTolerance = Math.toRadians(2);
       public static final double waypointPickupVelocityTolerance = Math.toRadians(2);
+      public static final double waypointConePositionTolerance = Math.toRadians(10);
 
       // PID constants for top arm
       public static final double top_arm_kP = 1.15;//0.23; 
@@ -142,14 +144,14 @@ public class ArmConfig {
 
       // PID constants for top arm
       public static final double top_arm_kP2 = 3.6;//0.23; 
-      public static final double top_arm_kI2 = 0.003;
+      public static final double top_arm_kI2 = 0.004;
       public static final double top_arm_kD2 = 80;// 4.0;
       public static final double top_arm_kIz2 = 0.35;// 0.3;
       public static final double top_arm_kFF2 = 0;
 
       // PID constants for bottom arm
       public static final double bottom_arm_kP = 1.4;
-      public static final double bottom_arm_kI = 0.0001;
+      public static final double bottom_arm_kI = 0.0003;
       public static final double bottom_arm_kD = 0.9;
       public static final double bottom_arm_kIz = 0.3;
       public static final double bottom_arm_kFF = 0;
