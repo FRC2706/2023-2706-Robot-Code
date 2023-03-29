@@ -41,6 +41,11 @@ public class ArmJoystickConeCommand extends CommandBase {
   double z_offset = 0;
   Debouncer m_topDebounce = new Debouncer(0.3);
   Debouncer m_bottomDebounce = new Debouncer(0.3);
+
+  boolean topBrakeOn = false;
+  boolean botBrakeOn = false;
+  Timer topBrakeTimer = new Timer();
+  Timer botBrakeTimer = new Timer();
   
 
   /** Creates a new ArmExtend. */
@@ -87,7 +92,18 @@ public class ArmJoystickConeCommand extends CommandBase {
     m_timer2.stop();
     m_timer2.reset();
 
+    topBrakeTimer.stop();
+    topBrakeTimer.reset();
+    botBrakeTimer.stop();
+    botBrakeTimer.reset();
+
     z_offset = 0;
+
+    m_topDebounce.calculate(false);
+    m_bottomDebounce.calculate(false);
+
+    topBrakeOn = false;
+    botBrakeOn = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -118,38 +134,73 @@ public class ArmJoystickConeCommand extends CommandBase {
 
     ArmSubsystem.getInstance().updateSetpointDisplay(angle1, angle2);
 
-    ArmSubsystem.getInstance().setTopJoint(angle2);
-    ArmSubsystem.getInstance().setBottomJoint(angle1, angle2);
+    if (!(topBrakeOn && topBrakeTimer.hasElapsed(0.3))) {
+      ArmSubsystem.getInstance().setTopJoint(angle2);
+    } else {
+      ArmSubsystem.getInstance().m_topArm.stopMotor();
+    }
+
+    if (!(botBrakeOn && botBrakeTimer.hasElapsed(0.3))) {
+      ArmSubsystem.getInstance().setBottomJoint(angle1, angle2);
+    } else {
+      ArmSubsystem.getInstance().m_bottomArm.stopMotor();
+    }
+   
 
     boolean topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.positionTolerance &&
                               Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.velocityTolerance;
     boolean bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.positionTolerance &&
                                   Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance;
+
+   
+
     topReached = m_topDebounce.calculate(topReached);
     bottomReached = m_bottomDebounce.calculate(bottomReached);
 
     if (index >= 99) {
-      if (topReached) {
-        ArmSubsystem.getInstance().controlTopArmBrake(true);
+      if (topBrakeOn) {
+        boolean topReleaseBrake = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.positionTolerance+Math.toRadians(1) &&
+                              Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.velocityTolerance+Math.toRadians(1);
+        if (topReleaseBrake == false) {
+          topBrakeOn = false;
+          ArmSubsystem.getInstance().controlTopArmBrake(false);
+        }
       }
       else {
-        ArmSubsystem.getInstance().controlTopArmBrake(false);
+        if (topReached) {
+          if (topBrakeOn == false) {
+            topBrakeTimer.restart();
+          }
+          topBrakeOn = true;
+          ArmSubsystem.getInstance().controlTopArmBrake(true);
+        }
       }
-      if (bottomReached) {
-        ArmSubsystem.getInstance().controlBottomArmBrake(true);
+      if (botBrakeOn) {
+        boolean bottomReleaseBrake = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.positionTolerance+Math.toRadians(1) &&
+                              Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.velocityTolerance+Math.toRadians(1);
+        if (bottomReleaseBrake == false) {
+          botBrakeOn = false;
+          ArmSubsystem.getInstance().controlBottomArmBrake(false);
+        }                 
       }
       else {
-        ArmSubsystem.getInstance().controlBottomArmBrake(false);
+        if (bottomReached) {
+          if (botBrakeOn == false) {
+            botBrakeTimer.restart();
+          }
+          botBrakeOn = true;
+          ArmSubsystem.getInstance().controlBottomArmBrake(true);
+        }
       }
       if (startBrakeTimer == false && topReached && bottomReached) {
         startBrakeTimer = true;
         m_timer.restart();
       }
-      if (startBrakeTimer && armSetpoint == ArmSetpoint.TOP_CONE) {
-        if (ArmSubsystem.getInstance().getTopPosition() < angle2) {
-          ArmSubsystem.getInstance().testFeedForwardTop(2.0);
-        }
-      }
+      // if (startBrakeTimer && armSetpoint == ArmSetpoint.TOP_CONE) {
+      //   if (ArmSubsystem.getInstance().getTopPosition() < angle2) {
+      //     ArmSubsystem.getInstance().testFeedForwardTop(2.0);
+      //   }
+      // }
     } else {
 
       if (armSetpoint == ArmSetpoint.PICKUP && index == 1) {
@@ -160,10 +211,10 @@ public class ArmJoystickConeCommand extends CommandBase {
 
       }
       else {
-        topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.waypointPositionTolerance &&
-        Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.waypointVelocityTolerance;
-        bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.waypointPositionTolerance &&
-        Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointVelocityTolerance;
+        topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.waypointConePositionTolerance; //&&
+        // Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.waypointVelocityTolerance;
+        bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.waypointConePositionTolerance; //&&
+        // Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointVelocityTolerance;
       }
       if (bottomReached && topReached) {
         if (index == armSetpoint.getWaypoint().length - 1 || armSetpoint.getWaypoint().length == 0) {
