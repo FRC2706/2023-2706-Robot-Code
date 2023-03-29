@@ -100,7 +100,7 @@ public class ArmJoystickConeCommand extends CommandBase {
     z_offset = 0;
 
     m_topDebounce.calculate(false);
-    m_topDebounce.calculate(false);
+    m_bottomDebounce.calculate(false);
 
     topBrakeOn = false;
     botBrakeOn = false;
