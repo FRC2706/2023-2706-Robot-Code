@@ -51,6 +51,13 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> cone_0p5_top_charge;
     List<PathPlannerTrajectory> cube_0p5_bottom;
 
+    List<PathPlannerTrajectory> cube_3p0_top;
+
+
+    //for tuning only
+    List<PathPlannerTrajectory> forward;
+    List<PathPlannerTrajectory> curve;
+
     // // Possible humbers
     // List<PathPlannerTrajectory> cone_2p0_bot;
     // List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2;
@@ -133,8 +140,8 @@ public class AutoRoutines {
                 SwerveSubsystem.getInstance()::getPose,
                 SwerveSubsystem.getInstance()::resetOdometry,
                 Config.Swerve.kSwerveDriveKinematics,
-                new PIDConstants(5, 0, 0),
-                new PIDConstants(5, 0, 0.2),
+                new PIDConstants(7, 0, 0), // Translation PID
+                new PIDConstants(7, 0, 0.2), // Heading PID
                 SwerveSubsystem.getInstance()::setModuleStatesAuto,
                 eventMap,
                 true,
@@ -147,8 +154,13 @@ public class AutoRoutines {
         cube_1p0_top = PathPlanner.loadPathGroup("cube_1p0_top", 2.5, 3);
         cube_1p0_bottom = PathPlanner.loadPathGroup("cube_1p0_bottom", 2.5, 3);
         cube_0p5_bottom = PathPlanner.loadPathGroup("cube_0p5_bottom", 2.5, 3);
+        cube_3p0_top = PathPlanner.loadPathGroup("cube_3p0_top", 2.5, 3);
 
-        cone_0p5_top_charge = PathPlanner.loadPathGroup("cone_0p5_top_charge", 2.5, 3);
+        cone_0p5_top_charge = PathPlanner.loadPathGroup("cone_0p5_top_charge", 2.8, 3.5);
+
+
+        forward = PathPlanner.loadPathGroup("TuningDriveForward", 2.5, 3);
+        curve = PathPlanner.loadPathGroup("TuningDriveCurve", 2.5, 3);
 
         // Possible Humber
         // cone_2p0_bot = PathPlanner.loadPathGroup("cone_2p0_bot", 2.5, 3);
@@ -178,9 +190,11 @@ public class AutoRoutines {
 
             case 1:
                 return (autoBuilder.fullAuto(cube_0p5_top_charge)); 
+                // return(autoBuilder.fullAuto(forward));
              
             case 2:
-                return (autoBuilder.fullAuto(cube_0p5_bottom_charge));
+                return (autoBuilder.fullAuto(cube_3p0_top));
+                // return(autoBuilder.fullAuto(curve));
          
             case 3:
                 return (autoBuilder.fullAuto(cube_0p5_middle_charge));

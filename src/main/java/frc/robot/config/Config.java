@@ -220,8 +220,8 @@ public class Config {
         public static final double teleopRateLimit = 3;
 
         public static final double driveKS = 0.667;
-        public static final double driveKV = 2.8;
-        public static final double driveKA = 0.48;
+        public static final double driveKV = 2.9;
+        public static final double driveKA = 0.5;
 
         public static DoubleSubscriber sub_kA = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kA").subscribe(driveKA);
         public static DoubleSubscriber sub_kV = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kV").subscribe(driveKV);
