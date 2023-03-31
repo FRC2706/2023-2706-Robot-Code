@@ -105,6 +105,9 @@ public class ArmSubsystem extends SubsystemBase {
   private double m_bottomVoltageConversion;
   private boolean m_hasCone = false;
 
+  // for nose-in/base-in cones
+  private boolean m_isNoseInCone;
+
   // for arm pneumatic brakes
   DoubleSolenoid brakeSolenoidLow;
   DoubleSolenoid brakeSolenoidHigh;
@@ -500,6 +503,15 @@ public class ArmSubsystem extends SubsystemBase {
       m_bottomPID.setConstraints(new Constraints(ArmConfig.BOTTOM_MAX_VEL, ArmConfig.BOTTOM_MAX_ACCEL));
     }
     m_hasCone = hasCone;
+  }
+
+  public void setConeOrientation(boolean isNoseInCone) {
+    // not sure what to do here yet
+     m_isNoseInCone = isNoseInCone;
+  }
+
+  public boolean getConeOrientation() {
+    return m_isNoseInCone;
   }
 
   /**

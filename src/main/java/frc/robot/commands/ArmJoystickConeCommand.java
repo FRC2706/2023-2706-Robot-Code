@@ -79,11 +79,22 @@ public class ArmJoystickConeCommand extends CommandBase {
     ArmSubsystem.getInstance().controlTopArmBrake(false);
     ArmSubsystem.getInstance().controlBottomArmBrake(false);
 
-    if (armSetpoint == ArmSetpoint.MIDDLE_CONE) {
-      ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_CONE_MIDDLE_MAX_VEL, ArmConfig.TOP_CONE_MIDDLE_MAX_ACCEL);
+    if (ArmSubsystem.getInstance().getConeOrientation()) {
+      if (armSetpoint == ArmSetpoint.MIDDLE_CONE) {
+        ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_NOSE_IN_CONE_MIDDLE_MAX_VEL, ArmConfig.TOP_NOSE_IN_CONE_MIDDLE_MAX_ACCEL);
+      }
+      if (armSetpoint == ArmSetpoint.TOP_CONE) {
+        ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_NOSE_IN_CONE_TOP_MAX_VEL, ArmConfig.TOP_NOSE_IN_CONE_TOP_MAX_ACCEL);
+      }
     }
-    if (armSetpoint == ArmSetpoint.TOP_CONE) {
-      ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_CONE_TOP_MAX_VEL, ArmConfig.TOP_CONE_TOP_MAX_ACCEL);
+    else {
+      if (armSetpoint == ArmSetpoint.MIDDLE_CONE) {
+        ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_BASE_IN_CONE_MIDDLE_MAX_VEL, ArmConfig.TOP_BASE_IN_CONE_MIDDLE_MAX_ACCEL);
+      }
+      if (armSetpoint == ArmSetpoint.TOP_CONE) {
+        ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_BASE_IN_CONE_TOP_MAX_VEL, ArmConfig.TOP_BASE_IN_CONE_TOP_MAX_ACCEL);
+
+      }
     }
 
     startBrakeTimer = false;

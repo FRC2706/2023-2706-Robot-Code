@@ -107,16 +107,44 @@ public class ArmConfig {
       public static final int CURRENT_LIMIT = 60;
 
       // constants for arm constraints
+
+      // for cubes (general)
       public static final double TOP_MAX_VEL = Math.PI * 4.5;
       public static final double TOP_MAX_ACCEL = Math.PI * 3;
+
+      // for cones (general)
       public static final double TOP_CONE_MAX_VEL = Math.PI * 4.5;
       public static final double TOP_CONE_MAX_ACCEL = Math.PI * 1.6;
+
+      // for nose in cones to middle level
+      public static final double TOP_NOSE_IN_CONE_MIDDLE_MAX_VEL = Math.PI * 4.5;
+      public static final double TOP_NOSE_IN_CONE_MIDDLE_MAX_ACCEL = Math.PI * 1.6;
+
+      // for nose in cones to top level
+      public static final double TOP_NOSE_IN_CONE_TOP_MAX_VEL = Math.PI * 4.5;
+      public static final double TOP_NOSE_IN_CONE_TOP_MAX_ACCEL = Math.PI * 1.6;
+
+      // for base in cones to middle level (TODO: Change - make it faster)
+      public static final double TOP_BASE_IN_CONE_MIDDLE_MAX_VEL = Math.PI * 4.5;
+      public static final double TOP_BASE_IN_CONE_MIDDLE_MAX_ACCEL = Math.PI * 1.6;
+
+       // for base in cones to top level (TODO: Change - make it faster)
+       public static final double TOP_BASE_IN_CONE_TOP_MAX_VEL = Math.PI * 4.5;
+       public static final double TOP_BASE_IN_CONE_TOP_MAX_ACCEL = Math.PI * 1.6;
+
+      // for cone going to top level (not sure if we need this anymore)
       public static final double TOP_CONE_TOP_MAX_VEL = Math.PI * 4.5;
       public static final double TOP_CONE_TOP_MAX_ACCEL = Math.PI * 1.6;
+
+      // for cone going to middle level (not sure if we need this anymore)
       public static final double TOP_CONE_MIDDLE_MAX_VEL = Math.PI * 4.5;
       public static final double TOP_CONE_MIDDLE_MAX_ACCEL = Math.PI * 1;
+
+      // for cubes (bottom arm)
       public static final double BOTTOM_MAX_VEL = Math.PI * 3;
       public static final double BOTTOM_MAX_ACCEL = Math.PI *3;
+
+      // for cones (bottom arm)
       public static final double BOTTOM_CONE_MAX_VEL = Math.PI * 3;
       public static final double BOTTOM_CONE_MAX_ACCEL = Math.PI * 2;
       

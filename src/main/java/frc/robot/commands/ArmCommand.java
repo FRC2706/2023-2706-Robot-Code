@@ -74,8 +74,11 @@ public class ArmCommand extends CommandBase {
     if (armSetpoint == ArmSetpoint.MIDDLE_CONE) {
       ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_CONE_MIDDLE_MAX_VEL, ArmConfig.TOP_CONE_MIDDLE_MAX_ACCEL);
     }
-    if (armSetpoint == ArmSetpoint.TOP_CONE) {
+    else if (armSetpoint == ArmSetpoint.TOP_CONE) {
       ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_CONE_TOP_MAX_VEL, ArmConfig.TOP_CONE_TOP_MAX_ACCEL);
+    }
+    else {
+      ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_MAX_VEL, ArmConfig.TOP_MAX_ACCEL);
     }
 
     startBrakeTimer = false;
