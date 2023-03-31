@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -201,7 +202,7 @@ public class CompRobotContainer extends RobotContainer {
   @Override
   public Command getAutonomousCommand() {
     int autoId = m_autoSelector.getAutoId();
-    System.out.println("*********************** Auto Id"+autoId);
+    System.out.println("\n*********************** Auto Id"+autoId+"\n");
      return routines.getAutonomousCommand(autoId);
   }
   public static RobotGamePieceState getRobotGamePieceState() {

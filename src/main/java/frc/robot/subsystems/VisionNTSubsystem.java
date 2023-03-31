@@ -163,7 +163,7 @@ public class VisionNTSubsystem extends SubsystemBase{
             heading
             );//.unaryMinus();
 
-        System.out.println(robotToTarget);
+        // System.out.println(robotToTarget);
         // Add the XY from the field to the target and from the target to the robot center
         Translation2d fieldToRobot = SwerveSubsystem.getInstance().getPose().getTranslation().plus(robotToTarget);
         // Return the field to robot XY and set the gyro as the heading

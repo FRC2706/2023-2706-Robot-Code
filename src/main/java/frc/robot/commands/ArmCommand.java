@@ -7,6 +7,8 @@ package frc.robot.commands;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.config.ArmConfig;
 import frc.robot.config.ArmConfig.ArmSetpoint;
@@ -54,7 +56,8 @@ public class ArmCommand extends CommandBase {
   @Override
   public void initialize() {
 
-    System.out.println("~~~~~" + armSetpoint.name());
+    // System.out.println("~~~~~" + armSetpoint.name());
+    Shuffleboard.addEventMarker("ArmSetpoint: " + armSetpoint.name(), EventImportance.kLow);
 
     if (Double.isNaN(armSetpoint.getX()) || Double.isNaN(armSetpoint.getZ())) {
       DriverStation.reportError("ArmSetpoint called " + armSetpoint.name() + " is NaN", true);

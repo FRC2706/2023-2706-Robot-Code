@@ -49,8 +49,8 @@ public class ArmSubsystem extends SubsystemBase {
   private static final MotorType motorType = MotorType.kBrushless;
   private static final SparkMaxAbsoluteEncoder.Type encAbsType = SparkMaxAbsoluteEncoder.Type.kDutyCycle;
   
-  public CANCoder m_absoluteTopArmEncoder;
-  public CANCoder m_absoluteBottomArmEncoder;
+  // public CANCoder m_absoluteTopArmEncoder;
+  // public CANCoder m_absoluteBottomArmEncoder;
   private static ArmSubsystem instance = null;
   public final CANSparkMax m_topArm;
   public final CANSparkMax m_bottomArm;
@@ -156,8 +156,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     armDisplay = new ArmDisplay(ArmConfig.L1, ArmConfig.L2);
 
-    m_absoluteTopArmEncoder = new CANCoder(Config.CANID.TOP_CANCODER_CAN_ID);
-    m_absoluteBottomArmEncoder = new CANCoder(Config.CANID.BOTTOM_CANCODER_CAN_ID);
+    // m_absoluteTopArmEncoder = new CANCoder(Config.CANID.TOP_CANCODER_CAN_ID);
+    // m_absoluteBottomArmEncoder = new CANCoder(Config.CANID.BOTTOM_CANCODER_CAN_ID);
 
     brakeSolenoidLow = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
                                           PneumaticsModuleType.CTREPCM,
@@ -169,8 +169,8 @@ public class ArmSubsystem extends SubsystemBase {
                                           Config.ARMHIGH_PNEUMATIC_FORWARD_CHANNEL,
                                           Config.ARMHIGH_PNEUMATIC_REVERSE_CHANNEL);
 
-    m_absoluteTopArmEncoder.configAllSettings(config);
-    m_absoluteBottomArmEncoder.configAllSettings(config);
+    // m_absoluteTopArmEncoder.configAllSettings(config);
+    // m_absoluteBottomArmEncoder.configAllSettings(config);
 
     m_pidControllerTopArm = m_topArm.getPIDController();
     m_pidControllerBottomArm = m_bottomArm.getPIDController();

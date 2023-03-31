@@ -6,10 +6,13 @@ package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
 
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -45,6 +48,7 @@ public class Robot extends TimedRobot {
   private BrakeModeDisabled brakeModeDisabledCommand = null;
 
   Compressor pcmCompressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
+  DoublePublisher pressurePublisher = NetworkTableInstance.getDefault().getDoubleTopic("Air Pressure (psi)").publish();
 
 
 
@@ -108,7 +112,16 @@ public class Robot extends TimedRobot {
       .withPosition(3, 0)
       .withSize(3, 6);
 
-      
+
+      // Start Shuffleboard Recording:
+    Shuffleboard.startRecording();
+    Shuffleboard.addEventMarker(
+      "MatchInformation", 
+      String.format("EventName: %s, MatchNumber: %d-%d, isFMSAttached: %b, MatchType: %s", DriverStation.getEventName(), DriverStation.getMatchNumber(),
+          DriverStation.getReplayNumber(), DriverStation.isFMSAttached(), DriverStation.getMatchType().name()),
+      EventImportance.kNormal
+    );
+     
   }
 
   /**
@@ -125,6 +138,9 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    // Move this into a logging or pneumatic subsystem:
+    pressurePublisher.accept(pcmCompressor.getPressure());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -132,6 +148,8 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     if (brakeModeDisabledCommand != null) 
       brakeModeDisabledCommand.schedule();  
+
+    Shuffleboard.addEventMarker("Disabled", EventImportance.kNormal);
   }
 
   @Override
@@ -154,6 +172,17 @@ public class Robot extends TimedRobot {
     } else if (SubsystemChecker.canSubsystemConstruct(SubsystemType.DiffTalonSubsystem)) {
       DiffTalonSubsystem.getInstance().setNeutralMode(Config.DIFF.AUTO_NEUTRALMODE);
     }
+
+    Shuffleboard.addEventMarker("AutonomousInit", EventImportance.kNormal);
+
+    Shuffleboard.addEventMarker(
+      "MatchInformation", 
+      String.format("EventName: %s, MatchNumber: %d-%d, isFMSAttached: %b, MatchType: %s", DriverStation.getEventName(), DriverStation.getMatchNumber(),
+          DriverStation.getReplayNumber(), DriverStation.isFMSAttached(), DriverStation.getMatchType().name()),
+      EventImportance.kNormal
+    );
+
+    System.out.println("Autonamous enabled. Match time: " + DriverStation.getMatchTime());
   }
 
   /** This function is called periodically during autonomous. */
@@ -168,6 +197,18 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
+    }
+
+    Shuffleboard.addEventMarker("TeleopInit", EventImportance.kNormal);
+
+
+    if (DriverStation.isFMSAttached() == false) {
+      Shuffleboard.addEventMarker(
+        "MatchInformation", 
+        String.format("EventName: %s, MatchNumber: %d-%d, isFMSAttached: %b, MatchType: %s", DriverStation.getEventName(), DriverStation.getMatchNumber(),
+            DriverStation.getReplayNumber(), DriverStation.isFMSAttached(), DriverStation.getMatchType().name()),
+        EventImportance.kNormal
+      );
     }
   }
 

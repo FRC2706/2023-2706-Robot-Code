@@ -171,7 +171,7 @@ public class AutoRoutines {
     }
 
     public Command getAutonomousCommand(int selectAuto) {
-        System.out.println (selectAuto);
+        System.out.println ("\n"+selectAuto+"\n");
         switch (selectAuto) {
             case 0:
                 return new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, CompRobotContainer.setState).andThen(Commands.runOnce(()-> SwerveSubsystem.getInstance().resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))));
