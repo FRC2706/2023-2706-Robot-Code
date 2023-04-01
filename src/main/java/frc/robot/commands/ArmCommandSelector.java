@@ -44,7 +44,9 @@ public class ArmCommandSelector extends CommandBase {
       case NoGamePiece: 
         m_ArmSetPoint = ArmSetpoint.PICKUP;
       break;
-      case HasCone:
+      case HasNoseCone:
+      case HasBaseCone:
+      //todo: the arm's speed needs to be changed to suit these two cases
         if (m_Position == ArmPosition.GAME_PIECE_BOTTOM) {
           m_ArmSetPoint = ArmSetpoint.BOTTOM_CONE;
         }

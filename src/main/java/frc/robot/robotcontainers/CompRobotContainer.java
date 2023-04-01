@@ -47,7 +47,8 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class CompRobotContainer extends RobotContainer {
   public enum RobotGamePieceState {
     NoGamePiece,
-    HasCone,
+    HasBaseCone,
+    HasNoseCone,
     HasCube
   }
   private static RobotGamePieceState m_robotState = RobotGamePieceState.NoGamePiece;
