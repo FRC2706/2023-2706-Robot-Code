@@ -22,7 +22,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.ArmCommand;
+import frc.robot.commands.ArmJoystickConeCommand;
 import frc.robot.commands.ChargeCommand;
 import frc.robot.commands.ChargeCommandPigeon;
 import frc.robot.commands.ChargeCommandRoll;
@@ -126,13 +128,31 @@ public class AutoRoutines {
          eventMap.put("ArmHome", new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE));
          eventMap.put("ArmHomeAfterPickup", new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP));
 
+         eventMap.put("Arm2CubeTop", schedule(new ArmCommand(ArmSetpoint.TOP_CUBE)));
+         eventMap.put("Arm2ConeTop", schedule(new ArmJoystickConeCommand(ArmSetpoint.TOP_CONE, new CommandXboxController(3))));
+         eventMap.put("Arm2Pickup", schedule(new ArmCommand(ArmSetpoint.PICKUP)));
+         eventMap.put("Arm2HomeAfterPickup", schedule(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+
+         eventMap.put("Arm2TopConeLowerThenScore", schedule(new ParallelCommandGroup(
+            new ArmCommand(ArmSetpoint.TOP_CONE_RELEASE),
+            new WaitCommand(0.2).andThen(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState))
+        ).withTimeout(0.35)));
+
          eventMap.put("GripperPickCube", new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, 
                                             CompRobotContainer.setState));
          eventMap.put("GripperPickCone", new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, 
                                             CompRobotContainer.setState));
 
+        eventMap.put("Gripper2PickCone", schedule(new SequentialCommandGroup(
+            new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, CompRobotContainer.setState),
+            new WaitCommand(0.4),
+            new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP))));
+
          eventMap.put("GripperOpen", new GripperCommand(GRIPPER_INSTRUCTION.OPEN, 
                                             CompRobotContainer.setState));
+
+        eventMap.put("Gripper2Open", schedule(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, 
+                                            CompRobotContainer.setState)));
 
         eventMap.put("wait", new WaitCommand(0.3));
          
@@ -264,5 +284,9 @@ public class AutoRoutines {
 
         }
         return new InstantCommand();
+    }
+
+    private Command schedule(Command command) {
+        return Commands.runOnce(() -> command.schedule());
     }
 }
