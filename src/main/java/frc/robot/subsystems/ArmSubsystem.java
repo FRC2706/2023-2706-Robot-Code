@@ -30,10 +30,10 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ProfileExternalPIDController;
 import frc.robot.SubsystemChecker;
@@ -343,11 +343,11 @@ public class ArmSubsystem extends SubsystemBase {
 
     double velRange = Math.toRadians(-40);
     if (topVel < velRange) {
-      slowDownVoltage += (topVel - velRange) * -1.2;
+      slowDownVoltage += (topVel - velRange) * -0.9;
     }
 
     if (getTopPosition() < 40 && topVel < Math.toRadians(-60)) {
-      slowDownVoltage += getTopVel() * -0.9;
+      slowDownVoltage += getTopVel() * -0.5;
     }
 
     // Overshoot then prevent it from going below the setpoint

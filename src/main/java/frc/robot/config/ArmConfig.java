@@ -43,8 +43,8 @@ public class ArmConfig {
         BOTTOM_CONE(27, -3),
         MIDDLE_CONE(33.5, 35), //, new ArmWaypoint(28, 29)), 
         MIDDLE_CONE_RELEASE(36, 28.03-7), //WRONG
-        TOP_CONE(46.5, 46.86, new ArmWaypoint(30, 20, 4, 10), new ArmWaypoint(42, 34, 3, 0.6)),
-        //TOP_CONE(47, 46, new ArmWaypoint(30, 20, 4, 10), new ArmWaypoint(40, 30, 3, 4)), // <- This does a nice S curve if cone flipping is fixed mechanically
+        //TOP_CONE(46.5, 46.86, new ArmWaypoint(30, 20, 4, 10), new ArmWaypoint(42, 34, 3, 0.6)),
+        TOP_CONE(47, 46, new ArmWaypoint(30, 20, 4, 15)),//, new ArmWaypoint(40, 30, 3, 4)), // <- This does a nice S curve if cone flipping is fixed mechanically
         TOP_CONE_NO_WAYPOINT(47, 46),
         TOP_CONE_RELEASE(46.5, 47-4), // WRONG
 
@@ -107,16 +107,32 @@ public class ArmConfig {
       public static final int CURRENT_LIMIT = 60;
 
       // constants for arm constraints
+
+      // for cubes (general)
       public static final double TOP_MAX_VEL = Math.PI * 4.5;
-      public static final double TOP_MAX_ACCEL = Math.PI * 3;
-      public static final double TOP_CONE_MAX_VEL = Math.PI * 4.5;
-      public static final double TOP_CONE_MAX_ACCEL = Math.PI * 1.6;
-      public static final double TOP_CONE_TOP_MAX_VEL = Math.PI * 4.5;
-      public static final double TOP_CONE_TOP_MAX_ACCEL = Math.PI * 1.6;
-      public static final double TOP_CONE_MIDDLE_MAX_VEL = Math.PI * 4.5;
-      public static final double TOP_CONE_MIDDLE_MAX_ACCEL = Math.PI * 1;
+      public static final double TOP_MAX_ACCEL = Math.PI * 4;
+
+      // for nose in cones to middle level
+      public static final double TOP_NOSE_IN_CONE_MIDDLE_MAX_VEL = Math.PI * 4.5;
+      public static final double TOP_NOSE_IN_CONE_MIDDLE_MAX_ACCEL = Math.PI * 1.2;
+
+      // for nose in cones to top level
+      public static final double TOP_NOSE_IN_CONE_TOP_MAX_VEL = Math.PI * 4.5;
+      public static final double TOP_NOSE_IN_CONE_TOP_MAX_ACCEL = Math.PI * 1.2;
+
+      // for base in cones to middle level
+      public static final double TOP_BASE_IN_CONE_MIDDLE_MAX_VEL = Math.PI * 4.5;
+      public static final double TOP_BASE_IN_CONE_MIDDLE_MAX_ACCEL = Math.PI * 3;
+
+       // for base in cones to top level
+       public static final double TOP_BASE_IN_CONE_TOP_MAX_VEL = Math.PI * 6;
+       public static final double TOP_BASE_IN_CONE_TOP_MAX_ACCEL = Math.PI * 5;
+
+      // for cubes (bottom arm)
       public static final double BOTTOM_MAX_VEL = Math.PI * 3;
       public static final double BOTTOM_MAX_ACCEL = Math.PI *3;
+
+      // for cones (bottom arm)
       public static final double BOTTOM_CONE_MAX_VEL = Math.PI * 3;
       public static final double BOTTOM_CONE_MAX_ACCEL = Math.PI * 2;
       
@@ -133,16 +149,17 @@ public class ArmConfig {
       public static final double waypointVelocityTolerance = Math.toRadians(6);
       public static final double waypointPickupPositionTolerance = Math.toRadians(2);
       public static final double waypointPickupVelocityTolerance = Math.toRadians(2);
+      public static final double waypointPickup0PositionTolerance = Math.toRadians(25);
       public static final double waypointConePositionTolerance = Math.toRadians(10);
 
-      // PID constants for top arm
-      public static final double top_arm_kP = 1.15;//0.23; 
+      // PID constants for top arm (for cubes)
+      public static final double top_arm_kP = 1.6;//0.23; 
       public static final double top_arm_kI = 0.002;
-      public static final double top_arm_kD = 4;// 4.0;
+      public static final double top_arm_kD = 40;// 4.0;
       public static final double top_arm_kIz = 0.3;
       public static final double top_arm_kFF = 0;
 
-      // PID constants for top arm
+      // PID constants for top arm (for cones)
       public static final double top_arm_kP2 = 3.6;//0.23; 
       public static final double top_arm_kI2 = 0.004;
       public static final double top_arm_kD2 = 80;// 4.0;
