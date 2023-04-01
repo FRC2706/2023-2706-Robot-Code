@@ -30,6 +30,7 @@ import frc.robot.commands.ChargeCommandPigeon;
 import frc.robot.commands.ChargeCommandPigeonExtend;
 import frc.robot.commands.ChargeCommandRoll;
 import frc.robot.commands.ChargeStationLock;
+import frc.robot.commands.ForceBrakesInAuto;
 import frc.robot.commands.GripperCommand;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.commands.SetBlingCommand;
@@ -144,8 +145,8 @@ public class AutoRoutines {
 
          eventMap.put("Arm2TopConeLowerThenScore", schedule(new ParallelCommandGroup(
             new ArmCommand(ArmSetpoint.TOP_CONE_RELEASE),
-            new WaitCommand(0.2).andThen(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState))
-        ).withTimeout(0.35)));
+            new WaitCommand(0.3).andThen(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState))
+        )));
 
          eventMap.put("GripperPickCube", new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, 
                                             CompRobotContainer.setState));
@@ -156,6 +157,9 @@ public class AutoRoutines {
             new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, CompRobotContainer.setState),
             new WaitCommand(0.4),
             new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP))));
+
+        eventMap.put("Gripper2PickCube", schedule(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, 
+                                CompRobotContainer.setState)));
 
          eventMap.put("GripperOpen", new GripperCommand(GRIPPER_INSTRUCTION.OPEN, 
                                             CompRobotContainer.setState));
@@ -184,7 +188,7 @@ public class AutoRoutines {
         cube_1p0_top = PathPlanner.loadPathGroup("cube_1p0_top", 2.5, 3);
         cube_1p0_bottom = PathPlanner.loadPathGroup("cube_1p0_bottom", 2.5, 3);
         cube_0p5_bottom = PathPlanner.loadPathGroup("cube_0p5_bottom", 2.5, 3);
-        cube_3p0_top = PathPlanner.loadPathGroup("cube_3p0_top", 2.5, 3);
+        cube_3p0_top = PathPlanner.loadPathGroup("cube_3p0_top", 2.6, 3.1);
 
         cone_0p5_top_charge = PathPlanner.loadPathGroup("cone_0p5_top_charge", 2.8, 3.5);
 
@@ -223,7 +227,7 @@ public class AutoRoutines {
                 // return(autoBuilder.fullAuto(forward));
              
             case 2:
-                return (autoBuilder.fullAuto(cube_3p0_top));
+                return new ForceBrakesInAuto().alongWith(autoBuilder.fullAuto(cube_3p0_top));
                 // return(autoBuilder.fullAuto(curve));
          
             case 3:
