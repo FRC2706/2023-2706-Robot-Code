@@ -11,7 +11,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class SyncSteerOnFly extends CommandBase {
   /** Creates a new SyncSteerOnFly. */
   public SyncSteerOnFly() {
-    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(SwerveSubsystem.getInstance());
   }
 
   // Called when the command is initially scheduled.
