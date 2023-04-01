@@ -138,7 +138,7 @@ public class SwerveModule {
         canCoderEntry = swerveModuleTable.getDoubleTopic("CanCoder").publish();
         desiredAngle360Range = swerveModuleTable.getDoubleTopic("Desired angle 360 range").publish();
         currentAngle360Range = swerveModuleTable.getDoubleTopic("Current angle 360 range").publish();
-        sub_offset = swerveModuleTable.getDoubleTopic("Current angle 360 range").subscribe(encoderOffset);
+        sub_offset = swerveModuleTable.getDoubleTopic("offset").subscribe(encoderOffset);
         
         updateSteeringFromCanCoder();
 

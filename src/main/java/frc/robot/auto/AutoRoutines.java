@@ -27,6 +27,7 @@ import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmJoystickConeCommand;
 import frc.robot.commands.ChargeCommand;
 import frc.robot.commands.ChargeCommandPigeon;
+import frc.robot.commands.ChargeCommandPigeonExtend;
 import frc.robot.commands.ChargeCommandRoll;
 import frc.robot.commands.ChargeStationLock;
 import frc.robot.commands.GripperCommand;
@@ -48,6 +49,7 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> cube_0p5_top_charge;
     List<PathPlannerTrajectory> cube_0p5_bottom_charge;
     List<PathPlannerTrajectory> cube_0p5_middle_charge;
+    List<PathPlannerTrajectory> cube_0p5_middle2_charge;
     List<PathPlannerTrajectory> cube_1p0_top;
     List<PathPlannerTrajectory> cube_1p0_bottom;
     List<PathPlannerTrajectory> cone_0p5_top_charge;
@@ -109,6 +111,13 @@ public class AutoRoutines {
         
         eventMap.put("chargePigeonWidePx", chargePigeonWideNxCommand);// new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(true, 1.0).alongWith(Commands.runOnce(() -> chargePigeonWideNxLowerArm.schedule()))).andThen(new ChargeStationLock()).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))));
         
+        Command chargePigeonExtendCommand = new SequentialCommandGroup(
+            new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))),
+            new ChargeCommandPigeonExtend().alongWith(new WaitCommand(0.2).andThen(Commands.runOnce(() -> chargePigeonWideNxLowerArm.schedule()))),
+            new ChargeStationLock().withTimeout(1),
+            Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))
+        );
+        eventMap.put("chargePigeonExtend", chargePigeonExtendCommand);// new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(true, 1.0).alongWith(Commands.runOnce(() -> chargePigeonWideNxLowerArm.schedule()))).andThen(new ChargeStationLock()).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))));
         
         
         eventMap.put("chargePigeonWideNx", new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(true, -1.0).andThen(new ChargeStationLock())));
@@ -171,6 +180,7 @@ public class AutoRoutines {
         cube_0p5_top_charge = PathPlanner.loadPathGroup("cube_0p5_top_charge", 2.5, 3);
         cube_0p5_bottom_charge = PathPlanner.loadPathGroup("cube_0p5_bottom_charge", 2.5, 3);
         cube_0p5_middle_charge = PathPlanner.loadPathGroup("cube_0p5_middle_charge", 2.5, 3);
+        cube_0p5_middle2_charge = PathPlanner.loadPathGroup("cube_0p5_middle2_charge", 2.5, 3);
         cube_1p0_top = PathPlanner.loadPathGroup("cube_1p0_top", 2.5, 3);
         cube_1p0_bottom = PathPlanner.loadPathGroup("cube_1p0_bottom", 2.5, 3);
         cube_0p5_bottom = PathPlanner.loadPathGroup("cube_0p5_bottom", 2.5, 3);

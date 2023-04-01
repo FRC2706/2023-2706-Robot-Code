@@ -31,6 +31,7 @@ import frc.robot.commands.ResetGyro;
 import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.RotateXYSupplier;
 import frc.robot.commands.SwerveTeleop;
+import frc.robot.commands.SyncSteerOnFly;
 import frc.robot.commands.WaitForVisionData;
 import frc.robot.config.ArmConfig.ArmPosition;
 import frc.robot.config.ArmConfig.ArmSetpoint;
@@ -47,7 +48,8 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class CompRobotContainer extends RobotContainer {
   public enum RobotGamePieceState {
     NoGamePiece,
-    HasCone,
+    HasBaseCone,
+    HasNoseCone,
     HasCube
   }
   private static RobotGamePieceState m_robotState = RobotGamePieceState.NoGamePiece;
@@ -98,7 +100,8 @@ public class CompRobotContainer extends RobotContainer {
       new WaitForVisionData(isTapeNotApril),
       new AlignToTargetVision(isTapeNotApril, 2.0, 0.2, 0, Math.PI, 2.5, 3)
     ));
-    driver.start().whileTrue(new AlignToTargetVision(isTapeNotApril, 1.0, 0.03, 0, Math.PI, 1.5, 1.7)); // ResetGyroToNearest command is untested
+    driver.b().whileTrue(new AlignToTargetVision(isTapeNotApril, 1.0, 0.03, 0, Math.PI, 1.5, 1.7));
+    driver.start().onTrue(new SyncSteerOnFly());
 
     // Operator Joystick
     operator.rightBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));

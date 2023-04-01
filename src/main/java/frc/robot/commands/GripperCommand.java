@@ -31,6 +31,7 @@ public class GripperCommand extends InstantCommand {
   
   BooleanSubscriber bDetectCone;
   BooleanSubscriber bDetectCube;
+  BooleanSubscriber bConeNoseIn;
 
   /** Creates a new IntakeCommand. */
   public GripperCommand(GRIPPER_INSTRUCTION gripperInstruction, Consumer<RobotGamePieceState> robotState) {
@@ -49,6 +50,7 @@ public class GripperCommand extends InstantCommand {
 
     bDetectCone = NetworkTableInstance.getDefault().getTable("MergePipelineIntake22").getBooleanTopic("DetectCone").subscribe(false);
     bDetectCube = NetworkTableInstance.getDefault().getTable("MergePipelineIntake22").getBooleanTopic("DetectCube").subscribe(false);
+    bConeNoseIn = NetworkTableInstance.getDefault().getTable("MergePipelineIntake22").getBooleanTopic("ConeNoseIn").subscribe(false);
 
   }
 
@@ -64,7 +66,13 @@ public class GripperCommand extends InstantCommand {
       {
         takeCone();
         if (newRobotState != null)
-          newRobotState.accept(RobotGamePieceState.HasCone);
+        {
+          if (bConeNoseIn.get()==true)
+            newRobotState.accept(RobotGamePieceState.HasNoseCone);
+          else
+            newRobotState.accept(RobotGamePieceState.HasBaseCone);
+
+        }
         ArmSubsystem.getInstance().setHasCone(true);
       }
       else if( bDetectCube.get() == true)
@@ -88,7 +96,13 @@ public class GripperCommand extends InstantCommand {
     {
       takeCone();
       if (newRobotState != null)
-        newRobotState.accept(RobotGamePieceState.HasCone);
+      {
+        if (bConeNoseIn.get()==true)
+          newRobotState.accept(RobotGamePieceState.HasNoseCone);
+        else
+          newRobotState.accept(RobotGamePieceState.HasBaseCone);
+      }
+      //todo: ArmSubsystem needs to know nose/base cone
       ArmSubsystem.getInstance().setHasCone(true);
       break;
     }
