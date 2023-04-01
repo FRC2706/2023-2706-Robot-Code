@@ -70,13 +70,7 @@ public class ArmCommand extends CommandBase {
     ArmSubsystem.getInstance().resetMotionProfile();
     ArmSubsystem.getInstance().controlTopArmBrake(false);
     ArmSubsystem.getInstance().controlBottomArmBrake(false);
-
-    if (armSetpoint == ArmSetpoint.MIDDLE_CONE) {
-      ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_CONE_MIDDLE_MAX_VEL, ArmConfig.TOP_CONE_MIDDLE_MAX_ACCEL);
-    }
-    if (armSetpoint == ArmSetpoint.TOP_CONE) {
-      ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_CONE_TOP_MAX_VEL, ArmConfig.TOP_CONE_TOP_MAX_ACCEL);
-    }
+    ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_MAX_VEL, ArmConfig.TOP_MAX_ACCEL);
 
     startBrakeTimer = false;
     m_timer.stop();
@@ -176,9 +170,8 @@ public class ArmCommand extends CommandBase {
       else if (armSetpoint == ArmSetpoint.PICKUP && index == 0) {
         topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.waypointPositionTolerance &&
           Math.abs(ArmSubsystem.getInstance().getTopVel()) < ArmConfig.waypointVelocityTolerance;
-        bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.waypointPositionTolerance &&
-          Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointVelocityTolerance;
-
+        bottomReached = Math.abs(ArmSubsystem.getInstance().getBottomPosition() - angle1) < ArmConfig.waypointPickup0PositionTolerance;// &&
+          // Math.abs(ArmSubsystem.getInstance().getBottomVel()) < ArmConfig.waypointVelocityTolerance;
       }
       else {
         topReached = Math.abs(ArmSubsystem.getInstance().getTopPosition() - angle2) < ArmConfig.waypointPositionTolerance; //&&
