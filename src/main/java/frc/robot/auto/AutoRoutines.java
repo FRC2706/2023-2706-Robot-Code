@@ -174,7 +174,7 @@ public class AutoRoutines {
                 SwerveSubsystem.getInstance()::resetOdometry,
                 Config.Swerve.kSwerveDriveKinematics,
                 new PIDConstants(7, 0, 0), // Translation PID
-                new PIDConstants(7, 0, 0.2), // Heading PID
+                new PIDConstants(9, 0, 0.2), // Heading PID
                 SwerveSubsystem.getInstance()::setModuleStatesAuto,
                 eventMap,
                 true,
@@ -190,7 +190,7 @@ public class AutoRoutines {
         cube_0p5_bottom = PathPlanner.loadPathGroup("cube_0p5_bottom", 2.5, 3);
         cube_3p0_top = PathPlanner.loadPathGroup("cube_3p0_top", 2.6, 3.1);
 
-        cone_0p5_top_charge = PathPlanner.loadPathGroup("cone_0p5_top_charge", 2.8, 3.5);
+        cone_0p5_top_charge = PathPlanner.loadPathGroup("cone_0p5_top_charge", 2.5, 3);
 
 
         forward = PathPlanner.loadPathGroup("TuningDriveForward", 2.5, 3);
