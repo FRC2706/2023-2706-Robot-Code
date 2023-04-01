@@ -40,8 +40,6 @@ import frc.robot.SubsystemChecker;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.config.ArmConfig;
 import frc.robot.config.Config;
-import frc.robot.robotcontainers.CompRobotContainer;
-import frc.robot.robotcontainers.CompRobotContainer.RobotGamePieceState;
 
 
 public class ArmSubsystem extends SubsystemBase {
@@ -106,9 +104,6 @@ public class ArmSubsystem extends SubsystemBase {
   private DoubleSubscriber momentToVoltageConversion;
   private double m_bottomVoltageConversion;
   private boolean m_hasCone = false;
-
-  // for nose-in/base-in cones
-  private RobotGamePieceState m_isNoseInCone;
 
   // for arm pneumatic brakes
   DoubleSolenoid brakeSolenoidLow;
