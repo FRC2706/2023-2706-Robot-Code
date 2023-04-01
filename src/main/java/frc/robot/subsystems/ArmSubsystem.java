@@ -30,16 +30,18 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ProfileExternalPIDController;
 import frc.robot.SubsystemChecker;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.config.ArmConfig;
 import frc.robot.config.Config;
+import frc.robot.robotcontainers.CompRobotContainer;
+import frc.robot.robotcontainers.CompRobotContainer.RobotGamePieceState;
 
 
 public class ArmSubsystem extends SubsystemBase {
@@ -106,7 +108,7 @@ public class ArmSubsystem extends SubsystemBase {
   private boolean m_hasCone = false;
 
   // for nose-in/base-in cones
-  private boolean m_isNoseInCone;
+  private RobotGamePieceState m_isNoseInCone;
 
   // for arm pneumatic brakes
   DoubleSolenoid brakeSolenoidLow;
@@ -346,11 +348,11 @@ public class ArmSubsystem extends SubsystemBase {
 
     double velRange = Math.toRadians(-40);
     if (topVel < velRange) {
-      slowDownVoltage += (topVel - velRange) * -1.2;
+      slowDownVoltage += (topVel - velRange) * -0.9;
     }
 
     if (getTopPosition() < 40 && topVel < Math.toRadians(-60)) {
-      slowDownVoltage += getTopVel() * -0.9;
+      slowDownVoltage += getTopVel() * -0.5;
     }
 
     // Overshoot then prevent it from going below the setpoint
@@ -503,15 +505,6 @@ public class ArmSubsystem extends SubsystemBase {
       m_bottomPID.setConstraints(new Constraints(ArmConfig.BOTTOM_MAX_VEL, ArmConfig.BOTTOM_MAX_ACCEL));
     }
     m_hasCone = hasCone;
-  }
-
-  public void setConeOrientation(boolean isNoseInCone) {
-    // not sure what to do here yet
-     m_isNoseInCone = isNoseInCone;
-  }
-
-  public boolean getConeOrientation() {
-    return m_isNoseInCone;
   }
 
   /**

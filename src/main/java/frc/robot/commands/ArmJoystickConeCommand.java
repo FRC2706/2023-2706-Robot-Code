@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.config.ArmConfig;
 import frc.robot.config.ArmConfig.ArmSetpoint;
+import frc.robot.robotcontainers.CompRobotContainer;
+import frc.robot.robotcontainers.CompRobotContainer.RobotGamePieceState;
 import frc.robot.subsystems.ArmDisplay;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmWaypoint;
@@ -79,7 +81,7 @@ public class ArmJoystickConeCommand extends CommandBase {
     ArmSubsystem.getInstance().controlTopArmBrake(false);
     ArmSubsystem.getInstance().controlBottomArmBrake(false);
 
-    if (ArmSubsystem.getInstance().getConeOrientation()) {
+    if (CompRobotContainer.getRobotGamePieceState() == CompRobotContainer.RobotGamePieceState.HasNoseCone) {
       if (armSetpoint == ArmSetpoint.MIDDLE_CONE) {
         ArmSubsystem.getInstance().setTopConstraints(ArmConfig.TOP_NOSE_IN_CONE_MIDDLE_MAX_VEL, ArmConfig.TOP_NOSE_IN_CONE_MIDDLE_MAX_ACCEL);
       }
