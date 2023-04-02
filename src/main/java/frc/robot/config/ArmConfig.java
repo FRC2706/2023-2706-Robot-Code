@@ -46,7 +46,7 @@ public class ArmConfig {
         //TOP_CONE(46.5, 46.86, new ArmWaypoint(30, 20, 4, 10), new ArmWaypoint(42, 34, 3, 0.6)),
         TOP_CONE(47, 46, new ArmWaypoint(30, 20, 4, 15)),//, new ArmWaypoint(40, 30, 3, 4)), // <- This does a nice S curve if cone flipping is fixed mechanically
         TOP_CONE_NO_WAYPOINT(47, 46),
-        TOP_CONE_RELEASE(53, 39-7), // WRONG
+        TOP_CONE_RELEASE(46.5, 47-4), // Used in cube_3p0_top auto
 
         BOTTOM_CUBE(24, -7),
         MIDDLE_CUBE(40.5, 27),//, new ArmWaypoint(21, 12, 0, 4)),

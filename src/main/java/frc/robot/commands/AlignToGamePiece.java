@@ -48,7 +48,7 @@ public class AlignToGamePiece extends CommandBase{
   @Override
   public void execute() {
     SwerveSubsystem.getInstance().drive(
-        1.0, 
+        0.5, 
         0,
         calculateRot(),
         false,
@@ -57,7 +57,9 @@ public class AlignToGamePiece extends CommandBase{
 
   public double calculateRot() {
     double value = m_supplier.getAsDouble();
-    if (value != -99 && Math.abs(value) < 30) {
+    if (value != -99 && Math.abs(value) < 30 && 
+      (Math.abs(startingLocation.getDistance(
+        SwerveSubsystem.getInstance().getPose().getTranslation())) < m_travelDistance - 0.4)) {
       setpoint = SwerveSubsystem.getInstance().getHeading().getRadians() + Math.toRadians(value*-1);
     }
     return(pid.calculate(SwerveSubsystem.getInstance().getHeading().getRadians(), setpoint));

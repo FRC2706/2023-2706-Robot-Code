@@ -162,6 +162,8 @@ public class Config {
         public static double ENCODER_SYNCING_PERIOD = 0.5; // seconds
         public static int ENCODER_SYNCING_TIMEOUT = 40; // seconds
 
+        public static double TIME_FOR_BRAKES_IN_AUTO = 14.9; // seconds
+
         public static final double MK4_L1_GEAR_RATIO = (50.0/14.0)*(19.0/25.0)*(45.0/15.0);
         public static final double turningEncoderConstant = (2*Math.PI)/12.8;
         public static final double drivePositionConversionFactor = drivetrainWheelDiameter * Math.PI / MK4_L1_GEAR_RATIO;
@@ -220,8 +222,8 @@ public class Config {
         public static final double teleopRateLimit = 3;
 
         public static final double driveKS = 0.667;
-        public static final double driveKV = 2.8;
-        public static final double driveKA = 0.48;
+        public static final double driveKV = 2.9;
+        public static final double driveKA = 0.5;
 
         public static DoubleSubscriber sub_kA = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kA").subscribe(driveKA);
         public static DoubleSubscriber sub_kV = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kV").subscribe(driveKV);
