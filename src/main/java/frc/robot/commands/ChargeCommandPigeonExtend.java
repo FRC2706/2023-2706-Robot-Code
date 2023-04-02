@@ -28,14 +28,13 @@ public class ChargeCommandPigeonExtend extends CommandBase {
   double currentX;
   double xLimit;
 
-  double PITCH_TOLERANCE = 10;
+  double PITCH_TOLERANCE = 9;
   double X_WIDE_LIMIT = 7.0;
   // Unit: seconds
-  double TIME_FOR_REVERSING = 0.10;
-  double TIME_FOR_STATE4    = 2;
+  double TIME_FOR_REVERSING = 0.18;
+  double TIME_FOR_STATE4    = 1.0;
  
   int stateIndex = 0;
-
   /**
    * state 0: on the ground
    * state 1: climbing on the ramp
@@ -43,12 +42,13 @@ public class ChargeCommandPigeonExtend extends CommandBase {
    * state 3: down the ramp
    * state 4: on the ground ( a timer)
    * state 5: change the x direction, on the ground
-   * state 6: climing on the ramp
-   * state 7: stop in the middle of the charge station (a timer)
+   * state 6: climing on the ramp with time out
+   * state 7: very slow speed on the charge station
+   * state 8: stop in the middle of the charge station (a timer)
    */
   // Unit: meters per second
-  //states              0,  1,   2,    3,   4,   5,    6,   7
-  double[] xSpeeds = {1.5, 0.5, 0.5, 0.5, 0.5, -1.5, -0.5, 0.5 };
+  //states              0,  1,   2,    3,   4,   5,     6,    7,   8
+  double[] xSpeeds = {1.5, 0.5, 1.0, 1.0, 1.0, -1.5, -1.5, -0.2, 0.5 };
 
   BlingSubsystem bling;  
   
@@ -103,15 +103,20 @@ public class ChargeCommandPigeonExtend extends CommandBase {
     pigeonValue = SwerveSubsystem.getInstance().getRoll();
 
     //update the state
-    if ((Math.abs(initPigeonValue - pigeonValue) > PITCH_TOLERANCE +1)
-        && (( stateIndex == 0) || (stateIndex == 2) || (stateIndex == 5)))
+    if ((Math.abs(initPigeonValue - pigeonValue) > PITCH_TOLERANCE +2)
+        && (( stateIndex == 0) || (stateIndex == 2) || (stateIndex == 5) ))
     {
       stateIndex = stateIndex + 1;
       System.out.println("============ChargeCmd state " + stateIndex);
 
+      if ( stateIndex == 6 )
+      {
+        m_timer.reset();
+        m_timer.restart();
+      }
     }
-    else if ((Math.abs(initPigeonValue - pigeonValue) < PITCH_TOLERANCE)
-            && ( (stateIndex == 1) || (stateIndex == 3) ||(stateIndex == 6)))
+    else if ((Math.abs(initPigeonValue - pigeonValue) < 9)
+            && ( (stateIndex == 1) || (stateIndex == 3) || (stateIndex == 7)))
     {
       stateIndex = stateIndex + 1;
       System.out.println("============ChargeCmd state " + stateIndex);
@@ -124,25 +129,35 @@ public class ChargeCommandPigeonExtend extends CommandBase {
       if( stateIndex == 4 )
       {
         //let timer to decide when go to state 5
+        m_timer.reset();
         m_timer.restart();
         bling.setBlue();
-      }
+      }   
 
-      if (stateIndex == 7 )
+      if( stateIndex == 8 )
       {
-        //isFinished() will terminate the command
+       //isFinished will terminate the command
+       m_timer.reset();
         m_timer.restart();
-        bling.setPurple();
+        bling.setRed();
       }
 
+    }  
+
+    if(stateIndex == 6 &&  m_timer.hasElapsed(0.4))
+    {
+      stateIndex = stateIndex + 1;
+      System.out.println("============ChargeCmd state " + stateIndex);
+      // m_timer.stop();
+      // m_timer.reset();
     }
 
     if ( (stateIndex == 4 ) && (m_timer.hasElapsed(TIME_FOR_STATE4)))
     {
       stateIndex = stateIndex + 1;
       System.out.println("============ChargeCmd state " + stateIndex);
-      m_timer.stop();
-      m_timer.reset();
+      // m_timer.stop();
+      // m_timer.reset();
     }
     
     SwerveSubsystem.getInstance().drive(xSpeeds[stateIndex], 0, theta, true, false);
@@ -159,7 +174,7 @@ public class ChargeCommandPigeonExtend extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-   if ((stateIndex == 7 && m_timer.hasElapsed(TIME_FOR_REVERSING)) || Math.abs(initXPos - currentX) > xLimit)
+   if ((stateIndex == 8 && m_timer.hasElapsed(TIME_FOR_REVERSING)) || Math.abs(initXPos - currentX) > xLimit)
     return (true);
   else
     return (false);
