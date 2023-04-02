@@ -9,8 +9,8 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -26,7 +26,6 @@ import frc.robot.commands.ChargeStationLock;
 import frc.robot.commands.DriveArmAgainstBackstop;
 import frc.robot.commands.GripperCommand;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
-import frc.robot.commands.PickupJoystickRumble;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.RotateXYSupplier;
@@ -35,7 +34,6 @@ import frc.robot.commands.SyncSteerOnFly;
 import frc.robot.commands.WaitForVisionData;
 import frc.robot.config.ArmConfig.ArmPosition;
 import frc.robot.config.ArmConfig.ArmSetpoint;
-import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 
@@ -105,13 +103,16 @@ public class CompRobotContainer extends RobotContainer {
 
     // Operator Joystick
     operator.rightBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));
-    operator.leftBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.USE_VISION, setState).andThen(new WaitCommand(0.3)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP))); // maybe remove and replace with human player pickup
+   // operator.leftBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.USE_VISION, setState).andThen(new WaitCommand(0.3)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP))); // maybe remove and replace with human player pickup
     operator.back().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, setState).andThen(new WaitCommand(0.3)).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
     operator.start().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, setState))
                     .onFalse(new WaitCommand(0.5).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
     
-    operator.rightTrigger().onTrue(new ArmCommand(ArmSetpoint.HUMAN_PLAYER_PICKUP));
-    operator.leftTrigger().onTrue(new ArmCommand(ArmSetpoint.PICKUP_OUTSIDE_FRAME));
+    //operator.rightTrigger().onTrue(new ArmCommand(ArmSetpoint.HUMAN_PLAYER_PICKUP));
+    //operator.leftTrigger().onTrue(new ArmCommand(ArmSetpoint.PICKUP_OUTSIDE_FRAME));
+
+    operator.rightTrigger().onTrue(Commands.runOnce(()-> setRobotGamePieceState(RobotGamePieceState.HasNoseCone)));
+    operator.leftTrigger().onTrue(Commands.runOnce(()-> setRobotGamePieceState(RobotGamePieceState.HasBaseCone)));
 
     // Choose the ArmSetpoint based on RobotGamePieceState
     operator.a().onTrue(new ArmCommandSelector(getState, ArmPosition.GAME_PIECE_BOTTOM, false, operator));
