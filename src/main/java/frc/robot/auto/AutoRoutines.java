@@ -38,6 +38,7 @@ import frc.robot.commands.TranslationCommand;
 import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.config.Config;
 import frc.robot.robotcontainers.CompRobotContainer;
+import frc.robot.robotcontainers.CompRobotContainer.RobotGamePieceState;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -147,6 +148,8 @@ public class AutoRoutines {
             new ArmCommand(ArmSetpoint.TOP_CONE_RELEASE),
             new WaitCommand(0.3).andThen(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState))
         )));
+
+        eventMap.put("SetStateBaseCone", Commands.runOnce(() -> CompRobotContainer.setRobotGamePieceState(RobotGamePieceState.HasBaseCone)));
 
          eventMap.put("GripperPickCube", new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, 
                                             CompRobotContainer.setState));
