@@ -16,6 +16,8 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -23,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.AlignToGamePiece;
+import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmJoystickConeCommand;
 import frc.robot.commands.ChargeCommand;
@@ -64,8 +68,10 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> forward;
     List<PathPlannerTrajectory> curve;
 
-    // // Possible humbers
-    // List<PathPlannerTrajectory> cone_2p0_bot;
+    
+    List<PathPlannerTrajectory> cone_2p0_bot_P1;
+    List<PathPlannerTrajectory> cone_2p0_bot_P2;
+
     // List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2;
 
     // List<PathPlannerTrajectory> cube_0p5_top_charge_good;
@@ -161,6 +167,11 @@ public class AutoRoutines {
             new WaitCommand(0.4),
             new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP))));
 
+        eventMap.put("Gripper2SetConeStart", schedule(new SequentialCommandGroup(
+            new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, CompRobotContainer.setState),
+            Commands.runOnce(() -> CompRobotContainer.setRobotGamePieceState(RobotGamePieceState.HasBaseCone)))
+        ));
+
         eventMap.put("Gripper2PickCube", schedule(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, 
                                 CompRobotContainer.setState)));
 
@@ -195,6 +206,8 @@ public class AutoRoutines {
 
         cone_0p5_top_charge = PathPlanner.loadPathGroup("cone_0p5_top_charge", 2.5, 3);
 
+        cone_2p0_bot_P1 = PathPlanner.loadPathGroup("cone_2p0_bot_P1", 2.5, 3);
+        cone_2p0_bot_P2 = PathPlanner.loadPathGroup("cone_2p0_bot_P2", 2.5, 3);
 
         forward = PathPlanner.loadPathGroup("TuningDriveForward", 2.5, 3);
         curve = PathPlanner.loadPathGroup("TuningDriveCurve", 2.5, 3);
@@ -254,8 +267,23 @@ public class AutoRoutines {
                     new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP).withTimeout(1)
                 ).andThen(new ChargeStationLock()));
 
-            // case 8:
-            //     return (autoBuilder.fullAuto(cone_0p5_middle2_charge));
+            case 8:
+                DoubleSubscriber yawSub = NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99);
+                return new ForceBrakesInAuto().alongWith(new SequentialCommandGroup(
+                    autoBuilder.fullAuto(cone_2p0_bot_P1),
+                    new AlignToGamePiece(yawSub, 1.2),
+                    schedule(new SequentialCommandGroup(
+                        new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, CompRobotContainer.setState),
+                        new WaitCommand(0.4),
+                        new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP))),
+                    new WaitCommand(1),
+                    autoBuilder.followPathGroupWithEvents(cone_2p0_bot_P2),
+                    new AlignToTargetVision(true, 1.0, 0.05, 0, Math.PI, 1.0, 1.0).withTimeout(3),
+                    schedule(new ParallelCommandGroup(
+                        new ArmCommand(ArmSetpoint.TOP_CONE_RELEASE),
+                        new WaitCommand(0.3).andThen(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState)))),
+                    new WaitCommand(3)
+                ));
                 
             // case 9:
             //     return (autoBuilder.fullAuto(cone_0p5_bottom_charge));
