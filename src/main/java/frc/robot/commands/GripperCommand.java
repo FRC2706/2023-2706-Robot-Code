@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import java.util.function.Consumer;
 
+import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -31,7 +32,7 @@ public class GripperCommand extends InstantCommand {
   
   BooleanSubscriber bDetectCone;
   BooleanSubscriber bDetectCube;
-  BooleanSubscriber bConeNoseIn;
+  BooleanEntry bConeNoseIn;
 
   /** Creates a new IntakeCommand. */
   public GripperCommand(GRIPPER_INSTRUCTION gripperInstruction, Consumer<RobotGamePieceState> robotState) {
@@ -50,7 +51,8 @@ public class GripperCommand extends InstantCommand {
 
     bDetectCone = NetworkTableInstance.getDefault().getTable("MergePipelineIntake22").getBooleanTopic("DetectCone").subscribe(false);
     bDetectCube = NetworkTableInstance.getDefault().getTable("MergePipelineIntake22").getBooleanTopic("DetectCube").subscribe(false);
-    bConeNoseIn = NetworkTableInstance.getDefault().getTable("MergePipelineIntake22").getBooleanTopic("ConeNoseIn").subscribe(false);
+    //default value is true, i.e. with Nose in
+    bConeNoseIn = NetworkTableInstance.getDefault().getTable("MergePipelineIntake22").getBooleanTopic("ConeNoseIn").getEntry(true);
 
   }
 
@@ -90,6 +92,8 @@ public class GripperCommand extends InstantCommand {
       if(newRobotState != null)
         newRobotState.accept(RobotGamePieceState.NoGamePiece);
       ArmSubsystem.getInstance().setHasCone(false);
+      //resets network table entry to default value
+      bConeNoseIn.set(true);
       break;
     }
     case PICK_UP_CONE:
@@ -120,6 +124,8 @@ public class GripperCommand extends InstantCommand {
       if(newRobotState != null)
         newRobotState.accept(RobotGamePieceState.NoGamePiece);
       ArmSubsystem.getInstance().setHasCone(false);
+      //resets network table entry to default value
+      bConeNoseIn.set(true);
       break;
      }
     }
