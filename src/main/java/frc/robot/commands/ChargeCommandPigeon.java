@@ -47,7 +47,7 @@ public class ChargeCommandPigeon extends CommandBase {
 
   // Erik: This 10 degrees was tested to work well with the old ChargeCommand and should still be good.
   //           Only change this is it's not properly going through the states but preferably don't touch it.
-  double PITCH_TOLERANCE = 10;
+  double PITCH_TOLERANCE = 9;
 
   // Erik: These are just safety factors to make sure the robot doesn't drive to the other side of the 
   //          field if something goes wrong. 4.5 meters is perfect.
@@ -94,17 +94,18 @@ public class ChargeCommandPigeon extends CommandBase {
    */
 
   // Unit: seconds
-  double TIME_FOR_REVERSING = 0.10;
-
+  double TIME_FOR_REVERSING = 0.18;
   // Unit: meters per second
   double X_SPEED_STATE0 = 1.5;
-  double X_SPEED_STATE1 = 0.5;
-  double X_SPEED_STATE2 = -0.5; // Negative because it should "jump back" or just get rid of any velocity.
+  double X_SPEED_STATE1 = 1.5;
+  double X_SPEED_STATE2 = 0.2; // Negative because it should "jump back" or just get rid of any velocity.
+  double X_SPEED_STATE3 = -0.5;
 
   int state = 0;
   double flipXState0;
   double flipXState1;
   double flipXState2;
+  double flipXState3;
 
   /** Creates a new ChargeCommand. */
   public ChargeCommandPigeon( boolean bWideSide, double flipXDirection) {
@@ -149,6 +150,7 @@ public class ChargeCommandPigeon extends CommandBase {
     flipXState0 = flipXDirection;
     flipXState1 = flipXDirection;
     flipXState2 = flipXDirection;
+    flipXState3 = flipXDirection;
 
     m_timer.stop();
     m_timer.reset();
@@ -172,13 +174,23 @@ public class ChargeCommandPigeon extends CommandBase {
     }
     
 
-    if (state == 0 && Math.abs(initPigeonValue - pigeonValue) > PITCH_TOLERANCE +1) 
+    if (state == 0 && Math.abs(initPigeonValue - pigeonValue) > PITCH_TOLERANCE +2) 
     {
       state = 1;
+      m_timer.start();
+      System.out.println("============ChargeCommandPigeon: state 1");
     }
-    if (state == 1 && Math.abs(initPigeonValue - pigeonValue) < PITCH_TOLERANCE) 
-    {
+
+    if (state == 1 && m_timer.hasElapsed(0.6)) {
       state = 2;
+      System.out.println("============ChargeCommandPigeon: state 2");
+      m_timer.stop();
+      m_timer.reset();
+    }
+    if (state == 2 && Math.abs(initPigeonValue - pigeonValue) < 9) 
+    {
+      state = 3;
+      System.out.println("============ChargeCommandPigeon: state 3");
       m_timer.restart();
     }
 
@@ -199,6 +211,9 @@ public class ChargeCommandPigeon extends CommandBase {
         xSpeed = X_SPEED_STATE2;
         xFlip = flipXState2;
         break;
+      case 3:
+        xSpeed = X_SPEED_STATE3;
+        xFlip = flipXState3;
       default:
       break;
     }
@@ -217,9 +232,15 @@ public class ChargeCommandPigeon extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if ((state == 2 && m_timer.hasElapsed(TIME_FOR_REVERSING)) || Math.abs(initXPos - currentX) > xLimit)
+    if ((state == 3 && 
+         m_timer.hasElapsed(TIME_FOR_REVERSING) )
+        || Math.abs(initXPos - currentX) > xLimit)
       return (true);
     else
       return (false);
   }
 }
+
+
+        // ((Math.abs(initPigeonValue - pigeonValue) < 2))
+        //  // || (Math.abs(initPigeonValue - pigeonValue) >2)))
