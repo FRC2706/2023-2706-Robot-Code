@@ -4,17 +4,12 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionNTSubsystem;
 
@@ -40,9 +35,15 @@ public class AlignToTargetVision extends CommandBase {
 
   Timer time = new Timer();
 
+  boolean m_finishedWhenAligned;
+
+  Timer m_timer = new Timer();
+
+  boolean timerStarted = false;
+
   /** Creates a new AlignWithNode. */
   
-  public AlignToTargetVision(boolean isTapeNotApril, double distFromTarget, double tolerance, double desiredVisionY, double desiredHeading, double vel, double accel) {
+  public AlignToTargetVision(boolean isTapeNotApril, double distFromTarget, double tolerance, double desiredVisionY, double desiredHeading, double vel, double accel, boolean finishedWhenAligned) {
     m_isTapeNotApril = isTapeNotApril;
     
     m_distFromTarget = distFromTarget;
@@ -52,6 +53,10 @@ public class AlignToTargetVision extends CommandBase {
     rotSetpoint = desiredHeading;
     pidX.setConstraints(new Constraints(vel, accel));
     pidY.setConstraints(new Constraints(vel, accel));
+
+    m_finishedWhenAligned = finishedWhenAligned;
+
+    
 
     addRequirements(SwerveSubsystem.getInstance());
   }
@@ -73,6 +78,9 @@ public class AlignToTargetVision extends CommandBase {
 
     xSetpoint = SwerveSubsystem.getInstance().getPose().getX();
     ySetpoint = SwerveSubsystem.getInstance().getPose().getY();
+
+    m_timer.restart();
+    timerStarted = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -101,7 +109,15 @@ public class AlignToTargetVision extends CommandBase {
         (Math.abs(SwerveSubsystem.getInstance().getHeading().getRadians() - rotSetpoint) < Math.PI / 8.0)) {
           
       SwerveSubsystem.getInstance().stopMotors();
+      if (timerStarted == false) {
+        timerStarted = true;
+        m_timer.restart();
+      }
+      
     } else {
+      m_timer.stop();
+      m_timer.reset();
+      timerStarted = false;
       SwerveSubsystem.getInstance().drive(
         xSpeed, 
         ySpeed, 
@@ -122,12 +138,16 @@ public class AlignToTargetVision extends CommandBase {
   @Override
   public boolean isFinished() {
 
-    //if (pidX.atSetpoint() && pidY.atSetpoint() && pidRot.atSetpoint()) {
-    // if ((Math.abs(SwerveSubsystem.getInstance().getPose().getX() - xSetpoint) < m_tolerance) && 
+    // if (pidX.atSetpoint() && pidY.atSetpoint() && pidRot.atSetpoint()) {
+    // if (m_finishedWhenAligned && (Math.abs(SwerveSubsystem.getInstance().getPose().getX() - xSetpoint) < m_tolerance) && 
     //     (Math.abs(SwerveSubsystem.getInstance().getPose().getY() - ySetpoint) < m_tolerance) && 
     //     (Math.abs(SwerveSubsystem.getInstance().getHeading().getRadians() - rotSetpoint) < Math.PI / 8.0)) {
     //   return(true);
     // }
+
+    if (m_finishedWhenAligned && m_timer.hasElapsed(0.4)) {
+      return true;
+    }
 
     return false;
   }

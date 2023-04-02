@@ -268,9 +268,20 @@ public class AutoRoutines {
                 ).andThen(new ChargeStationLock()));
 
             case 8:
+                SwerveModuleState s = new SwerveModuleState(-0.1, new Rotation2d(0));
                 DoubleSubscriber yawSub = NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99);
-                return new ForceBrakesInAuto().alongWith(new SequentialCommandGroup(
-                    autoBuilder.fullAuto(cone_2p0_bot_P1),
+                return new SequentialCommandGroup(
+                    schedule(new ArmCommand(ArmSetpoint.TOP_CONE)),
+                    new WaitCommand(0.1),
+                    Commands.runOnce(() -> SwerveSubsystem.getInstance().resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))),
+                    new AlignToTargetVision(true, 1.0, 0.05, 0, Math.PI, 2.0, 1.3, true).withTimeout(3),
+                    schedule(new ParallelCommandGroup(
+                        new ArmCommand(ArmSetpoint.TOP_CONE_RELEASE),
+                        new WaitCommand(0.3).andThen(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState))
+                    )),
+                    new WaitCommand(0.4),
+                    new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState),
+                    autoBuilder.fullAuto(cone_2p0_bot_P1), // PathPlanner will reset odometry after vision has aligned
                     new AlignToGamePiece(yawSub, 1.2),
                     schedule(new SequentialCommandGroup(
                         new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, CompRobotContainer.setState),
@@ -278,12 +289,12 @@ public class AutoRoutines {
                         new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP))),
                     new WaitCommand(1),
                     autoBuilder.followPathGroupWithEvents(cone_2p0_bot_P2),
-                    new AlignToTargetVision(true, 1.0, 0.05, 0, Math.PI, 1.0, 1.0).withTimeout(3),
+                    new AlignToTargetVision(true, 1.0, 0.05, 0, Math.PI, 2.0, 1.3, true).withTimeout(3),
                     schedule(new ParallelCommandGroup(
                         new ArmCommand(ArmSetpoint.TOP_CONE_RELEASE),
                         new WaitCommand(0.3).andThen(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState)))),
                     new WaitCommand(3)
-                ));
+                ).withTimeout(14.9).andThen(brakes(true));
                 
             // case 9:
             //     return (autoBuilder.fullAuto(cone_0p5_bottom_charge));
@@ -333,5 +344,12 @@ public class AutoRoutines {
 
     private Command schedule(Command command) {
         return Commands.runOnce(() -> command.schedule());
+    }
+
+    private Command brakes(boolean turnBrakeOn) {
+        return new SequentialCommandGroup(
+            Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(turnBrakeOn)),
+            Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(turnBrakeOn))
+        );
     }
 }
