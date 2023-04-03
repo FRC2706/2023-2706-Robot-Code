@@ -2,51 +2,21 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 3.476820999443526,
-        "y": 0.8159039218841817
+        "x": 1.8,
+        "y": 0.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7629050677948697,
-        "y": 0.80570512286063
+        "x": 2.1977531619185386,
+        "y": 0.6427831863297327
       },
-      "holonomicAngle": -180.0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "Gripper2SetConeStart",
-          "Arm2ConeTop"
-        ],
-        "executionBehavior": "sequential",
-        "waitBehavior": "after",
-        "waitTime": 0.3
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 1.7940191605574054,
-        "y": 0.5609339462953734
-      },
-      "prevControl": {
-        "x": 2.1713747244288397,
-        "y": 0.8974943140725967
-      },
-      "nextControl": {
-        "x": 2.1713747244288397,
-        "y": 0.8974943140725967
-      },
-      "holonomicAngle": 180.0,
-      "isReversal": true,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [
-          "Arm2TopConeLowerThenScore"
-        ],
+        "names": [],
         "executionBehavior": "sequential",
         "waitBehavior": "after",
         "waitTime": 0.0
@@ -55,17 +25,17 @@
     {
       "anchorPoint": {
         "x": 2.732308670724212,
-        "y": 0.7241147306722104
+        "y": 0.77
       },
       "prevControl": {
         "x": 2.528332690253166,
-        "y": 0.703717132625106
+        "y": 0.7496024019528956
       },
       "nextControl": {
         "x": 3.067813231145963,
-        "y": 0.7576651867143852
+        "y": 0.8035504560421748
       },
-      "holonomicAngle": 90.0,
+      "holonomicAngle": 110.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -80,17 +50,17 @@
     {
       "anchorPoint": {
         "x": 4.568092494963616,
-        "y": 0.7241147306722104
+        "y": 0.77
       },
       "prevControl": {
-        "x": 4.251929725233497,
-        "y": 0.7086270593915253
+        "x": 4.25215196677674,
+        "y": 0.7895025017399306
       },
       "nextControl": {
-        "x": 5.719221576128851,
-        "y": 0.7805043834638494
+        "x": 5.394195215871348,
+        "y": 0.7190060048822386
       },
-      "holonomicAngle": 90.0,
+      "holonomicAngle": 110.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -104,12 +74,12 @@
     },
     {
       "anchorPoint": {
-        "x": 6.179502740684871,
-        "y": 1.223855882826271
+        "x": 6.424273917250125,
+        "y": 1.4890246574386297
       },
       "prevControl": {
-        "x": 5.955129162166722,
-        "y": 0.9892835052845681
+        "x": 5.893936368025408,
+        "y": 0.9688859072374649
       },
       "nextControl": null,
       "holonomicAngle": 45.0,
@@ -127,7 +97,13 @@
   ],
   "markers": [
     {
-      "position": 1.1878787878789223,
+      "position": 0.18181818181809078,
+      "names": [
+        "Arm2Pickup"
+      ]
+    },
+    {
+      "position": 2.0363636363637383,
       "names": [
         "Arm2Pickup"
       ]

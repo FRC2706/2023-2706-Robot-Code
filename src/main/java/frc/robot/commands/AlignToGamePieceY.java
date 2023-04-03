@@ -14,28 +14,33 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.SwerveSubsystem;
 
-public class AlignToGamePiece extends CommandBase{
-
-  ProfiledPIDController pid = new ProfiledPIDController(2.05, 0, 0.5, 
+public class AlignToGamePieceY extends CommandBase{
+  ProfiledPIDController pidRotate = new ProfiledPIDController(2.05, 0, 0.5, 
                                         new TrapezoidProfile.Constraints(4 * Math.PI, 8 * Math.PI));
+  ProfiledPIDController pid = new ProfiledPIDController(1, 0.0, 0.2, 
+                                           new TrapezoidProfile.Constraints(1, 1));
   DoubleSupplier m_supplier;
   double m_travelDistance;
   double setpoint;
 
   Translation2d startingLocation;
 
+  private final double ROTATION_SETPOINT = Math.toRadians(45);
+
   /** Creates a new RotateAngleXY. */
-  public AlignToGamePiece(DoubleSupplier supplier, double travelDistance) {
+  public AlignToGamePieceY(DoubleSupplier supplier, double travelDistance) {
     m_travelDistance = travelDistance;
     m_supplier = supplier;
 
-    pid.setTolerance(0.1);
-    pid.enableContinuousInput(-Math.PI, Math.PI);
+    // pid.setTolerance(0.1);
+    // pid.enableContinuousInput(-Math.PI, Math.PI);
+    pidRotate.setTolerance(0.1);
+    pidRotate.enableContinuousInput(-Math.PI, Math.PI);
 
     addRequirements(SwerveSubsystem.getInstance());
   }
 
-  public AlignToGamePiece(DoubleSubscriber subscriber, double travelDistance){
+  public AlignToGamePieceY(DoubleSubscriber subscriber, double travelDistance){
     this(()-> subscriber.getAsDouble(), travelDistance);
   }
 
@@ -49,20 +54,25 @@ public class AlignToGamePiece extends CommandBase{
   public void execute() {
     SwerveSubsystem.getInstance().drive(
         0.8, 
-        0,
+        calculateY(),
         calculateRot(),
         false,
         false);
   }
 
   public double calculateRot() {
+    return(pidRotate.calculate(SwerveSubsystem.getInstance().getHeading().getRadians(), ROTATION_SETPOINT));
+  }
+
+  public double calculateY() {
     double value = m_supplier.getAsDouble();
     if (value != -99 && Math.abs(value) < 30 && 
       (Math.abs(startingLocation.getDistance(
         SwerveSubsystem.getInstance().getPose().getTranslation())) < m_travelDistance - 0.4)) {
-      setpoint = SwerveSubsystem.getInstance().getHeading().getRadians() + Math.toRadians(value*-1);
+
+      setpoint = SwerveSubsystem.getInstance().getPose().getY() + value * (1/30);
     }
-    return(pid.calculate(SwerveSubsystem.getInstance().getHeading().getRadians(), setpoint));
+    return(pid.calculate(SwerveSubsystem.getInstance().getPose().getY(), setpoint));
   }
 
   @Override

@@ -49,18 +49,18 @@
     },
     {
       "anchorPoint": {
-        "x": 4.976044455905706,
-        "y": 0.6833195345780007
+        "x": 4.884255264693736,
+        "y": 0.7343135296957632
       },
       "prevControl": {
-        "x": 5.955271672903146,
-        "y": 0.6950234455381291
+        "x": 5.8631949499182365,
+        "y": 0.7607713590261554
       },
       "nextControl": {
-        "x": 2.416145900994092,
-        "y": 0.6527231375073447
+        "x": 3.7521885730794367,
+        "y": 0.7037171326251062
       },
-      "holonomicAngle": 180.0,
+      "holonomicAngle": 162.4744316262771,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -74,17 +74,42 @@
     },
     {
       "anchorPoint": {
-        "x": 2.2121699205230474,
-        "y": 1.63180784376836
+        "x": 3.048471440454332,
+        "y": 0.7649099267664192
       },
       "prevControl": {
-        "x": 2.2019711214994953,
-        "y": 0.5711327453189273
+        "x": 3.2940419373297813,
+        "y": 0.7599985168289105
+      },
+      "nextControl": {
+        "x": 2.538531489276719,
+        "y": 0.7751087257899708
+      },
+      "holonomicAngle": 164.93151184050768,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 2.283561513687913,
+        "y": 1.4074342652502112
+      },
+      "prevControl": {
+        "x": 2.375350704899883,
+        "y": 0.9076931130961498
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
       "isReversal": false,
-      "velOverride": 1.0,
+      "velOverride": 0.7,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
@@ -97,9 +122,15 @@
   ],
   "markers": [
     {
-      "position": 2.2181818181818915,
+      "position": 1.9636363636363636,
       "names": [
         "Arm2ConeTop"
+      ]
+    },
+    {
+      "position": 1.3575757575758538,
+      "names": [
+        "SetStateBaseCone"
       ]
     }
   ]

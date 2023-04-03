@@ -96,9 +96,9 @@ public class CompRobotContainer extends RobotContainer {
     boolean isTapeNotApril = true;
     driver.rightTrigger().whileTrue(Commands.sequence(
       new WaitForVisionData(isTapeNotApril),
-      new AlignToTargetVision(isTapeNotApril, 2.0, 0.2, 0, Math.PI, 2.5, 3)
+      new AlignToTargetVision(isTapeNotApril, 2.0, 0.2, 0, Math.PI, 2.5, 3, false)
     ));
-    driver.b().whileTrue(new AlignToTargetVision(isTapeNotApril, 1.0, 0.03, 0, Math.PI, 1.5, 1.7));
+    driver.b().whileTrue(new AlignToTargetVision(isTapeNotApril, 1.0, 0.03, 0, Math.PI, 1.5, 1.7, false));
     driver.start().onTrue(new SyncSteerOnFly());
 
     // Operator Joystick
