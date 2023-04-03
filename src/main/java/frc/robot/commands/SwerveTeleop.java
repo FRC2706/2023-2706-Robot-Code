@@ -55,16 +55,16 @@ public class SwerveTeleop extends CommandBase {
 
         if(driverStick.leftBumper().getAsBoolean()){
             x = forwardLimiter.calculate(x);
-            x *= Config.Swerve.teleopFastSpeed;
+            x *= Config.Swerve.teleopLeftBumperSpeed;
         }
         else if(driverStick.rightBumper().getAsBoolean()){
             forwardLimiter.reset(0);
-            x *= Config.Swerve.teleopSlowSpeed;
+            x *= Config.Swerve.teleopRightBumperSpeed;
 
         }
         else{
             x = forwardLimiter.calculate(x);
-            x *= Config.Swerve.teleopSpeed;
+            x *= Config.Swerve.teleopDefaultSpeed;
         }
 
         return x;
@@ -79,17 +79,17 @@ public class SwerveTeleop extends CommandBase {
         }
 
         if(driverStick.leftBumper().getAsBoolean()){
-            y *= Config.Swerve.teleopFastSpeed;
+            y *= Config.Swerve.teleopLeftBumperSpeed;
             y = strafeLimiter.calculate(y); 
         }
         else if(driverStick.rightBumper().getAsBoolean()){
             strafeLimiter.reset(0); 
-            y *= Config.Swerve.teleopSlowSpeed;
+            y *= Config.Swerve.teleopRightBumperSpeed;
 
         }
         else{ 
             y = strafeLimiter.calculate(y); 
-            y *= Config.Swerve.teleopSpeed;
+            y *= Config.Swerve.teleopDefaultSpeed;
         }
         return y;
     }
@@ -105,16 +105,16 @@ public class SwerveTeleop extends CommandBase {
 
         if(driverStick.leftBumper().getAsBoolean()){
             rot = rotationLimiter.calculate(rot); 
-            rot *= Config.Swerve.teleopFastAngularSpeed;
+            rot *= Config.Swerve.teleopLeftBumperAngularSpeed;
         }
         else if(driverStick.rightBumper().getAsBoolean()){
             rotationLimiter.reset(0);
-            rot *= Config.Swerve.teleopSlowAngularSpeed;
+            rot *= Config.Swerve.teleopRightBumperAngularSpeed;
 
         }
         else{
             rot = rotationLimiter.calculate(rot); 
-            rot *= Config.Swerve.teleopAngularSpeed;
+            rot *= Config.Swerve.teleopDefaultAngularSpeed;
         }
         return rot;
 
