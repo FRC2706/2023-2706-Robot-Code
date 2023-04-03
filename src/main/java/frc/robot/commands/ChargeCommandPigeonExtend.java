@@ -48,7 +48,8 @@ public class ChargeCommandPigeonExtend extends CommandBase {
    */
   // Unit: meters per second
   //states              0,  1,   2,    3,   4,   5,     6,    7,   8
-  double[] xSpeeds = {1.5, 0.5, 1.0, 1.0, 1.0, -1.5, -1.5, -0.2, 0.5 };
+  double[] xSpeeds = {1.5, 1.0, 1.5, 1.5, 1.5, -1.5, -1.5, -0.2, 0.5 };
+  //double[] xSpeeds = {1.5, 0.5, 1.0, 1.0, 1.0, -1.5, -1.5, -0.2, 0.5 };
 
   BlingSubsystem bling;  
   
