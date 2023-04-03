@@ -205,7 +205,6 @@ public class Config {
 
         // Max speeds for desaturating
         public static final double kMaxAttainableWheelSpeed = 3.0; // Used by Auto, do not change.
-        public static final double kMaxAttainableAngularSpeed = Math.PI*3.0; // Only used for teleop
         
         // ~ Teleop speeds. Speeds should be portional to kMaxAttainableAngularSpeed. Angular speeds should be specified.
            
