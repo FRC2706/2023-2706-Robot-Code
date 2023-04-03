@@ -55,6 +55,7 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> cube_0p5_top_charge;
     List<PathPlannerTrajectory> cube_0p5_bottom_charge;
     List<PathPlannerTrajectory> cube_0p5_middle_charge;
+    List<PathPlannerTrajectory> cube_0p5_middle_charge_fast;
     List<PathPlannerTrajectory> cube_0p5_middle2_charge;
     List<PathPlannerTrajectory> cube_1p0_top;
     List<PathPlannerTrajectory> cube_1p0_bottom;
@@ -198,6 +199,7 @@ public class AutoRoutines {
         cube_0p5_top_charge = PathPlanner.loadPathGroup("cube_0p5_top_charge", 2.5, 3);
         cube_0p5_bottom_charge = PathPlanner.loadPathGroup("cube_0p5_bottom_charge", 2.5, 3);
         cube_0p5_middle_charge = PathPlanner.loadPathGroup("cube_0p5_middle_charge", 2.5, 3);
+        cube_0p5_middle_charge_fast = PathPlanner.loadPathGroup("cube_0p5_middle_charge_fast", 2.5, 3);
         cube_0p5_middle2_charge = PathPlanner.loadPathGroup("cube_0p5_middle2_charge", 2.5, 3);
         cube_1p0_top = PathPlanner.loadPathGroup("cube_1p0_top", 2.5, 3);
         cube_1p0_bottom = PathPlanner.loadPathGroup("cube_1p0_bottom", 2.5, 3);
@@ -270,7 +272,19 @@ public class AutoRoutines {
                 ).withTimeout(14.95).andThen(brakes(true)); // Force auto to end at 14.95 seconds and ensure the brakes are on
          
             case 3:
-                return (autoBuilder.fullAuto(cube_0p5_middle_charge));
+                // return (autoBuilder.fullAuto(cube_0p5_middle_charge)); // This slower one should still work
+
+                Command lowerArm = new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE).asProxy();
+                return new SequentialCommandGroup(
+                    autoBuilder.fullAuto(cube_0p5_middle_charge_fast),
+                    brakes(true),
+                    new ParallelCommandGroup(
+                        // new ChargeCommandPigeon(true, 1.0),  // Use either ChargeCommandPigeon or ChargeCommandPigeonExtend
+                        new ChargeCommandPigeonExtend(), 
+                        new WaitCommand(0.2).andThen(schedule(lowerArm))
+                    ),
+                    brakes(true)
+                );
         
             case 4:
                 return (autoBuilder.fullAuto(cube_1p0_top));

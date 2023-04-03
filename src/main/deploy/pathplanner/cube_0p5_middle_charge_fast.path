@@ -1,0 +1,61 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 2.4700328246810357,
+        "y": 2.75
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.1372784656507355,
+        "y": 2.75
+      },
+      "holonomicAngle": -180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "Gripper2PickCube",
+          "Arm2CubeTop"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
+        "waitTime": 0.3
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.7955882065610302,
+        "y": 2.745953088060023
+      },
+      "prevControl": {
+        "x": 2.2075734722482196,
+        "y": 2.745953088060023
+      },
+      "nextControl": null,
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "Gripper2Open"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0.3
+      }
+    }
+  ],
+  "markers": [
+    {
+      "position": 0.8848484848484987,
+      "names": [
+        "Gripper2Open"
+      ]
+    }
+  ]
+}
