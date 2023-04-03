@@ -48,7 +48,7 @@ public class AlignToGamePiece extends CommandBase{
   @Override
   public void execute() {
     SwerveSubsystem.getInstance().drive(
-        0.5, 
+        0.8, 
         0,
         calculateRot(),
         false,
