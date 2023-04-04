@@ -72,6 +72,7 @@ public class AutoRoutines {
     
     List<PathPlannerTrajectory> cone_2p0_bot_P1;
     List<PathPlannerTrajectory> cone_2p0_bot_P2;
+    List<PathPlannerTrajectory> cone_2p0_bot_P2_RedSide;
 
     // List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2;
 
@@ -210,6 +211,7 @@ public class AutoRoutines {
 
         cone_2p0_bot_P1 = PathPlanner.loadPathGroup("cone_2p0_bot_P1", 2.7, 3.8);
         cone_2p0_bot_P2 = PathPlanner.loadPathGroup("cone_2p0_bot_P2", 2.7, 3.8);
+        cone_2p0_bot_P2_RedSide = PathPlanner.loadPathGroup("cone_2p0_bot_P2_RedSide", 2.7, 3.8);
 
         forward = PathPlanner.loadPathGroup("TuningDriveForward", 2.5, 3);
         curve = PathPlanner.loadPathGroup("TuningDriveCurve", 2.5, 3);
@@ -241,10 +243,35 @@ public class AutoRoutines {
                 return new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, CompRobotContainer.setState).andThen(Commands.runOnce(()-> SwerveSubsystem.getInstance().resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))));
 
             case 1:
-                return (autoBuilder.fullAuto(cube_0p5_top_charge)); 
-                // return(autoBuilder.fullAuto(forward));
+                // Red side 2 cone auto with vision. Starts bottom and starts with a cone.
+                DoubleSubscriber yawSub2 = NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99);
+                return new SequentialCommandGroup(
+                    schedule(new ArmJoystickConeCommand(ArmSetpoint.TOP_CONE, new CommandXboxController(3))), // Starting lifting the arm to the top cone node
+                    new WaitCommand(0.35), // Allow the arm time to lift the arm.
+                    Commands.runOnce(() -> SwerveSubsystem.getInstance().resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))), // Reset heading for next command
+                    new AlignToTargetVision(true, 1.0, 0.05, 0, Math.PI, 2.5, 2.0, true).withTimeout(2.4), // Use vision to align with tape target
+                    schedule(new ParallelCommandGroup(
+                        new ArmCommand(ArmSetpoint.TOP_CONE_RELEASE), // Lower the arm
+                        new WaitCommand(0.2).andThen(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState)) // Then release the gripper
+                    )).withTimeout(0.1),
+                    new WaitCommand(0.25), // Allow time to lower and release game piece
+                    autoBuilder.fullAuto(cone_2p0_bot_P1), // Run P1 PathPlanner. Will reset odometry to where vision aligned the robot.
+                    new AlignToGamePiece(yawSub2, 1.2), // Use vision to align to game piece. Increase value here (currently 1.2 meters) if the robot doesn't drive far enough to grab the cone.
+                    schedule(new SequentialCommandGroup(
+                        new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, CompRobotContainer.setState), // Pick up the cone
+                        new WaitCommand(0.3), // Give time for the cone is be grabbed aka pistons to extend
+                        new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP))), // Lift arm to home position
+                    new WaitCommand(0.5), // Give time for cone to be grabbed and arm lifted
+                    autoBuilder.followPathGroupWithEvents(cone_2p0_bot_P2_RedSide), // Run P2 PathPlanner. Will not reset odometry.
+                    new AlignToTargetVision(true, 1.0, 0.05, 0, Math.PI, 2.5, 2.5, true).withTimeout(3), // Use vision to align to tape node target.
+                    schedule(new ParallelCommandGroup(
+                        new ArmCommand(ArmSetpoint.TOP_CONE_RELEASE), // Lower arm
+                        new WaitCommand(0.2).andThen(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState)))), // Release gripper
+                    new WaitCommand(3) // Give time to lower and release cone
+                ).withTimeout(14.95).andThen(brakes(true)); // Force auto to end at 14.95 seconds and ensure the brakes are on
              
             case 2:
+                // Blue side 2 cone auto with vision. Starts bottom and starts with a cone.
                 DoubleSubscriber yawSub = NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99);
                 return new SequentialCommandGroup(
                     schedule(new ArmJoystickConeCommand(ArmSetpoint.TOP_CONE, new CommandXboxController(3))), // Starting lifting the arm to the top cone node
@@ -304,7 +331,11 @@ public class AutoRoutines {
                     new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP).withTimeout(1)
                 ).andThen(new ChargeStationLock()));
 
-            // case 8:
+            case 8: // Id8 but id7 for driveteam
+                // This is id 8 in code but for drive team it's id 7 since it takes 7 selector switch clicks.
+                return (autoBuilder.fullAuto(cube_0p5_top_charge)); 
+            
+                
                 
                 
             // case 9:
