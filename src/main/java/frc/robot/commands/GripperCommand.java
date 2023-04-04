@@ -98,15 +98,23 @@ public class GripperCommand extends InstantCommand {
     }
     case PICK_UP_CONE:
     {
-      takeCone();
+      
       if (newRobotState != null)
       {
         if (bConeNoseIn.get()==true)
+        {
           newRobotState.accept(RobotGamePieceState.HasNoseCone);
+          System.out.println("===== GripperCommand: detect noseIn");
+        }
         else
+        {
           newRobotState.accept(RobotGamePieceState.HasBaseCone);
+          System.out.println("===== GripperCommand: detect baseIn");
+        }
       }
-      //todo: ArmSubsystem needs to know nose/base cone
+
+      takeCone();
+      
       ArmSubsystem.getInstance().setHasCone(true);
       break;
     }
