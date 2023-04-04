@@ -197,28 +197,37 @@ public class Config {
         public static DoubleSubscriber sub_steering_kD = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Steering kD").subscribe(steering_kD);
         public static DoubleSubscriber sub_steering_kIZone = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Steering kIzone").subscribe(steering_kIZone);
 
-        // Distance between centers of right and left wheels on robot
-
         public static final SwerveDriveKinematics kSwerveDriveKinematics = new SwerveDriveKinematics(
             new Translation2d(kWheelBase / 2, kTrackWidth / 2),
             new Translation2d(kWheelBase / 2, -kTrackWidth / 2),   
             new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
             new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
-        public static final double teleopFastSpeed = 3.0;
-        public static final double teleopFastAngularSpeed = Math.PI*3.0;
+        // Max speeds for desaturating
+        public static final double kMaxAttainableWheelSpeed = 3.0; // Used by Auto, do not change.
+        
+        // ~ Teleop speeds. Speeds should be portional to kMaxAttainableAngularSpeed. Angular speeds should be specified.
+           
+        // Default Speeds
+        public static final double teleopDefaultSpeed = kMaxAttainableWheelSpeed;// Full speed
+        public static final double teleopDefaultAngularSpeed = Math.PI*3.0; // Old value: Math.PI*2.0
 
-        public static final double teleopSlowSpeed = 0.3;
-        public static final double teleopSlowAngularSpeed = 0.3;
-        public static final double teleopSpeed = 2.0;
-        public static final double teleopAngularSpeed = Math.PI*2.0;
-        public static final double kMaxAttainableAngularSpeed = Math.PI*3.0;
-        public static final double kMaxAttainableWheelSpeed = 3.0;
+        // Left Bumper speeds
+        public static final double teleopLeftBumperSpeed = kMaxAttainableWheelSpeed / 3.0;// A third of full speed
+        public static final double teleopLeftBumperAngularSpeed = Math.PI; // Can be a slower angular speed if wanted
+
+        // Right bumper speeds
+        public static final double teleopRightBumperSpeed = 0.3;
+        public static final double teleopRightBumperAngularSpeed = 0.3;
+        
+
+        // Old PathWeaver speeds
         public static final double kMaxAutoSpeed = 3; // m/s
         public static final double kMaxAutoAcceleration = 3; // m/s/s
         public static final double kMaxAutoAngularSpeed = Math.PI *3; // rad/s
         public static final double kMaxAutoAngularAcceleration = Math.PI * 3; // rad/s/s
 
+        // Acceleration limit for teleop
         public static final double teleopRateLimit = 3;
 
         public static final double driveKS = 0.667;
