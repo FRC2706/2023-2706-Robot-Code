@@ -1,0 +1,109 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 1.7843766596624102,
+        "y": 3.88059667028425
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.2307363705636503,
+        "y": 3.8897060521393776
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 3.041471355669984,
+        "y": 4.700441037245711
+      },
+      "prevControl": {
+        "x": 2.003001824185467,
+        "y": 4.691331655390584
+      },
+      "nextControl": {
+        "x": 3.5354631235836305,
+        "y": 4.70477429836776
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 5.100191654928764,
+        "y": 4.682222273535457
+      },
+      "prevControl": {
+        "x": 4.325840614497801,
+        "y": 4.682222273535457
+      },
+      "nextControl": {
+        "x": 6.0482678305920325,
+        "y": 4.682222273535457
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 7.259115154593945,
+        "y": 4.390722054171381
+      },
+      "prevControl": {
+        "x": 6.259115154593945,
+        "y": 4.390722054171381
+      },
+      "nextControl": null,
+      "holonomicAngle": -164.3577535427914,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "maxVelocity": 2.8,
+  "maxAcceleration": 3.5,
+  "isReversed": null,
+  "markers": [
+    {
+      "position": 0.5,
+      "names": [
+        "Arm2Pickup"
+      ]
+    }
+  ]
+}
