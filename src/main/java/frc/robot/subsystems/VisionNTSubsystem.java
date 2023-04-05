@@ -78,6 +78,10 @@ public class VisionNTSubsystem extends SubsystemBase{
         return instance;
     }
 
+    public void resetTapeFilters() {
+        linearTapeFilterX.reset();
+        linearTapeFilterY.reset();
+    }
     public Translation2d calculateTapeTarget() {
         //Tape target
         if(tapeX.get() != ANGLE_ERROR_CODE && tapeY.get() != ANGLE_ERROR_CODE){
@@ -163,7 +167,7 @@ public class VisionNTSubsystem extends SubsystemBase{
             heading
             );//.unaryMinus();
 
-        System.out.println(robotToTarget);
+       // System.out.println(robotToTarget);
         // Add the XY from the field to the target and from the target to the robot center
         Translation2d fieldToRobot = SwerveSubsystem.getInstance().getPose().getTranslation().plus(robotToTarget);
         // Return the field to robot XY and set the gyro as the heading

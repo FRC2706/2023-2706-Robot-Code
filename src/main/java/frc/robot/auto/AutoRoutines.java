@@ -299,18 +299,10 @@ public class AutoRoutines {
                 ).withTimeout(14.95).andThen(brakes(true)); // Force auto to end at 14.95 seconds and ensure the brakes are on
          
             case 3:
-                // return (autoBuilder.fullAuto(cube_0p5_middle_charge)); // This slower one should still work
+                return (autoBuilder.fullAuto(cube_0p5_middle_charge)); 
+                // return (autoBuilder.fullAuto(cube_0p5_middle2_charge));
 
-                Command lowerArm = new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE);
-                return new SequentialCommandGroup(
-                    autoBuilder.fullAuto(cube_0p5_middle_charge_fast),
-                    brakes(true),
-                    schedule(new ParallelCommandGroup(
-                        new ChargeCommandPigeonExtend(), 
-                        new WaitCommand(0.3).andThen(schedule(lowerArm)).withTimeout(4).andThen(brakes(true))
-                    ))
-                );
-        
+            
             case 4:
                 return (autoBuilder.fullAuto(cube_1p0_top));
             
@@ -333,9 +325,19 @@ public class AutoRoutines {
                 // This is id 8 in code but for drive team it's id 7 since it takes 7 selector switch clicks.
                 return (autoBuilder.fullAuto(cube_0p5_top_charge)); 
             
+            case 9:
+                Command lowerArm = new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE);
+                return new SequentialCommandGroup(
+                    autoBuilder.fullAuto(cube_0p5_middle_charge_fast),
+                    brakes(true),
+                    schedule(new ParallelCommandGroup(
+                        new ChargeCommandPigeonExtend(), 
+                        new WaitCommand(0.3).andThen(schedule(lowerArm)).withTimeout(4).andThen(brakes(true))
+                    ))
+                );
                 
                 
-                
+        
             // case 9:
             //     return (autoBuilder.fullAuto(cone_0p5_bottom_charge));
 
