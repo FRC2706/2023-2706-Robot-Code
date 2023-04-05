@@ -301,16 +301,14 @@ public class AutoRoutines {
             case 3:
                 // return (autoBuilder.fullAuto(cube_0p5_middle_charge)); // This slower one should still work
 
-                Command lowerArm = new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE).asProxy();
+                Command lowerArm = new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE);
                 return new SequentialCommandGroup(
                     autoBuilder.fullAuto(cube_0p5_middle_charge_fast),
                     brakes(true),
-                    new ParallelCommandGroup(
-                        // new ChargeCommandPigeon(true, 1.0),  // Use either ChargeCommandPigeon or ChargeCommandPigeonExtend
+                    schedule(new ParallelCommandGroup(
                         new ChargeCommandPigeonExtend(), 
-                        new WaitCommand(0.2).andThen(schedule(lowerArm))
-                    ),
-                    brakes(true)
+                        new WaitCommand(0.3).andThen(schedule(lowerArm)).withTimeout(4).andThen(brakes(true))
+                    ))
                 );
         
             case 4:
