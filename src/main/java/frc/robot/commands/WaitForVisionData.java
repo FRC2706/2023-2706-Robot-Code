@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.VisionNTSubsystem;
 
 public class WaitForVisionData extends CommandBase {
-    private final int NUM_DATA_THRESHOLD = 6;
+    private final int NUM_DATA_THRESHOLD = 15;
     private final double TIME_WITH_NO_DATA = 1.0;
 
     private boolean m_isTapeNotApril;
@@ -27,6 +27,10 @@ public class WaitForVisionData extends CommandBase {
     public void initialize() {
         numGoodData = 0;
         m_timer.restart();
+
+        if (m_isTapeNotApril) {
+            VisionNTSubsystem.getInstance().resetTapeFilters();
+        }
     }
 
     // Called every time the scheduler runs while the command is scheduled.
