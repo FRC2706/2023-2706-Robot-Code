@@ -299,27 +299,15 @@ public class AutoRoutines {
                 ).withTimeout(14.95).andThen(brakes(true)); // Force auto to end at 14.95 seconds and ensure the brakes are on
          
             case 3:
-                //  return (autoBuilder.fullAuto(cube_0p5_middle2_charge)); // This slower one should still work
-
                 return (autoBuilder.fullAuto(cube_0p5_middle_charge)); 
-
-                // Command lowerArm = new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE);
-                // return new SequentialCommandGroup(
-                //     autoBuilder.fullAuto(cube_0p5_middle_charge_fast),
-                //     schedule(brakes(true)),
-                //     new ParallelCommandGroup(
-                //         // new ChargeCommandPigeon(true, 1.0),  // Use either ChargeCommandPigeon or ChargeCommandPigeonExtend
-                //         new ChargeCommandPigeonExtend(), 
-                //         new WaitCommand(0.2).andThen(schedule(lowerArm))
-                //     )
-                //     // schedule(brakes(true))
-                // );
-        
+      
             case 4:
                 return (autoBuilder.fullAuto(cube_1p0_top));
             
             case 5:
-                return (autoBuilder.fullAuto(cube_0p5_bottom));
+                //return (autoBuilder.fullAuto(cube_0p5_bottom));
+                //go cross the charge station
+                return (autoBuilder.fullAuto(cube_0p5_middle2_charge));
 
              case 6:
                 return null;
