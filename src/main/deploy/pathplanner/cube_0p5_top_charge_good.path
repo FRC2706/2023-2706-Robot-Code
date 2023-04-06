@@ -121,7 +121,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "charge"
+          "chargePigeonWideNx"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",

@@ -181,13 +181,13 @@ public class ChargeCommandPigeon extends CommandBase {
       System.out.println("============ChargeCommandPigeon: state 1");
     }
 
-    if (state == 1 && m_timer.hasElapsed(0.6)) {
+    if (state == 1 && m_timer.hasElapsed(0.8)) {
       state = 2;
       System.out.println("============ChargeCommandPigeon: state 2");
       m_timer.stop();
       m_timer.reset();
     }
-    if (state == 2 && Math.abs(initPigeonValue - pigeonValue) < 9) 
+    if (state == 2 && Math.abs(initPigeonValue - pigeonValue) < 5) 
     {
       state = 3;
       System.out.println("============ChargeCommandPigeon: state 3");

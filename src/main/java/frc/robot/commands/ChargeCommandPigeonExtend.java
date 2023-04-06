@@ -29,7 +29,7 @@ public class ChargeCommandPigeonExtend extends CommandBase {
   double xLimit;
 
   double PITCH_TOLERANCE = 9;
-  double X_WIDE_LIMIT = 7.0;
+  double X_WIDE_LIMIT = 10.0;
   // Unit: seconds
   double TIME_FOR_REVERSING = 0.18;
   double TIME_FOR_STATE4    = 1.0;
@@ -48,8 +48,8 @@ public class ChargeCommandPigeonExtend extends CommandBase {
    */
   // Unit: meters per second
   //states              0,  1,   2,    3,   4,   5,     6,    7,   8
-  double[] xSpeeds = {1.5, 1.0, 1.5, 1.5, 1.5, -1.5, -1.5, -0.2, 0.5 };
-  //double[] xSpeeds = {1.5, 0.5, 1.0, 1.0, 1.0, -1.5, -1.5, -0.2, 0.5 };
+  //double[] xSpeeds = {1.5, 1.0, 1.5, 1.5, 1.5, -1.5, -1.5, -0.2, 0.5 };
+  double[] xSpeeds = {1.5, 0.5, 1.0, 1.0, 1.0, -1.5, -1.5, -0.2, 0.5 };
 
   BlingSubsystem bling;  
   

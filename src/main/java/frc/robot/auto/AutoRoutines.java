@@ -76,7 +76,7 @@ public class AutoRoutines {
 
     // List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2;
 
-    // List<PathPlannerTrajectory> cube_0p5_top_charge_good;
+    List<PathPlannerTrajectory> cube_0p5_top_charge_good;
     // List<PathPlannerTrajectory> cone_0p5_middle1_charge;    
     // List<PathPlannerTrajectory> cone_0p5_middle2_charge;
     // List<PathPlannerTrajectory> cone_0p5_bottom_charge;
@@ -111,15 +111,15 @@ public class AutoRoutines {
         eventMap.put("chargeRoll", new WaitCommand(0.4).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandRoll(3.2).alongWith(new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE))).andThen(new ChargeStationLock()));
         
         //wide and positive X flip
+        //========================
         Command chargePigeonWideNxLowerArm = new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE).asProxy();
-        Command chargePigeonWideNxCommand = new SequentialCommandGroup(
+        Command chargePigeonWidePxCommand = new SequentialCommandGroup(
             new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))),
             new ChargeCommandPigeon(true, 1.0).alongWith(new WaitCommand(0.2).andThen(Commands.runOnce(() -> chargePigeonWideNxLowerArm.schedule()))),
             new ChargeStationLock().withTimeout(1),
             Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))
-        );
-        
-        eventMap.put("chargePigeonWidePx", chargePigeonWideNxCommand);// new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(true, 1.0).alongWith(Commands.runOnce(() -> chargePigeonWideNxLowerArm.schedule()))).andThen(new ChargeStationLock()).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))));
+        );        
+        eventMap.put("chargePigeonWidePx", chargePigeonWidePxCommand);// new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(true, 1.0).alongWith(Commands.runOnce(() -> chargePigeonWideNxLowerArm.schedule()))).andThen(new ChargeStationLock()).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))));
         
         Command chargePigeonExtendCommand = new SequentialCommandGroup(
             new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))),
@@ -128,12 +128,29 @@ public class AutoRoutines {
             Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))
         );
         eventMap.put("chargePigeonExtend", chargePigeonExtendCommand);// new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(true, 1.0).alongWith(Commands.runOnce(() -> chargePigeonWideNxLowerArm.schedule()))).andThen(new ChargeStationLock()).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))));
-        
-        
-        eventMap.put("chargePigeonWideNx", new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(true, -1.0).andThen(new ChargeStationLock())));
-        eventMap.put("chargePigeonNarrowPx", new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(false, 1.0).andThen(new ChargeStationLock())));
-        eventMap.put("chargePigeonNarrowNx", new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(false, -1.0).andThen(new ChargeStationLock())));
+                
+        //narrow and negative X flip
+        //==========================
+        Command chargePigeonNarrowNxCommand = new SequentialCommandGroup(
+            new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))),
+            new ChargeCommandPigeon(false, -1.0).alongWith(new WaitCommand(0.2).andThen(Commands.runOnce(() -> chargePigeonWideNxLowerArm.schedule()))),
+            new ChargeStationLock().withTimeout(1),
+            Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))
+        );
+        eventMap.put("chargePigeonNarrowNx", chargePigeonNarrowNxCommand);//new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(false, -1.0).andThen(new ChargeStationLock())));
 
+        //wide and negative x flip
+        //=========================
+        Command chargePigeonWideNxCommand = new SequentialCommandGroup(
+            new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))),
+            new ChargeCommandPigeon(true, -1.0).alongWith(new WaitCommand(0.2).andThen(Commands.runOnce(() -> chargePigeonWideNxLowerArm.schedule()))),
+            new ChargeStationLock().withTimeout(1),
+            Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).andThen(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))
+        );
+        eventMap.put("chargePigeonWideNx", chargePigeonWideNxCommand);
+ 
+        // eventMap.put("chargePigeonWideNx", new WaitCommand(0.3).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlTopArmBrake(true)).alongWith(Commands.runOnce(() -> ArmSubsystem.getInstance().controlBottomArmBrake(true)))).andThen(new ChargeCommandPigeon(true, -1.0).andThen(new ChargeStationLock())));       
+    
         //2.3
          
          //place game pieces
@@ -220,7 +237,7 @@ public class AutoRoutines {
         // cone_2p0_bot = PathPlanner.loadPathGroup("cone_2p0_bot", 2.5, 3);
         // place_pick_place_pick_place_bottom2 = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2", 2.5, 3);
 
-        // cube_0p5_top_charge_good = PathPlanner.loadPathGroup("cube_0p5_top_charge_good", 2.5, 3);
+         cube_0p5_top_charge_good = PathPlanner.loadPathGroup("cube_0p5_top_charge_good", 2.5, 3);
         // cone_0p5_middle1_charge = PathPlanner.loadPathGroup("cone_0p5_middle1_charge", 2.5, 3);
         // cone_0p5_middle2_charge = PathPlanner.loadPathGroup("cone_0p5_middle2_charge", 2.5, 3);
         // cone_0p5_bottom_charge = PathPlanner.loadPathGroup("cone_0p5_bottom_charge", 2.5, 3);
@@ -306,8 +323,17 @@ public class AutoRoutines {
             
             case 5:
                 //return (autoBuilder.fullAuto(cube_0p5_bottom));
+                
+                //charge station
+                //==============
+                //return (autoBuilder.fullAuto(cube_0p5_bottom_charge));
+                //return (autoBuilder.fullAuto(cube_0p5_top_charge));
+
+                
+                return (autoBuilder.fullAuto(cube_0p5_top_charge_good));
+
                 //go cross the charge station
-                return (autoBuilder.fullAuto(cube_0p5_middle2_charge));
+                //return (autoBuilder.fullAuto(cube_0p5_middle2_charge));
 
              case 6:
                 return null;
