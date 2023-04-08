@@ -74,6 +74,10 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> cone_2p0_bot_P2;
     List<PathPlannerTrajectory> cone_2p0_bot_P2_RedSide;
 
+    List<PathPlannerTrajectory> cube_2p0_top_P1;
+    List<PathPlannerTrajectory> cube_2p0_top_P2;
+    List<PathPlannerTrajectory> cube_2p0_top_P3;
+
     // List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2;
 
     // List<PathPlannerTrajectory> cube_0p5_top_charge_good;
@@ -213,6 +217,10 @@ public class AutoRoutines {
         cone_2p0_bot_P2 = PathPlanner.loadPathGroup("cone_2p0_bot_P2", 2.7, 3.8);
         cone_2p0_bot_P2_RedSide = PathPlanner.loadPathGroup("cone_2p0_bot_P2_RedSide", 2.7, 3.8);
 
+        cube_2p0_top_P1 = PathPlanner.loadPathGroup("cube_2p0_top_P1", 2.7, 3.8);
+        cube_2p0_top_P2 = PathPlanner.loadPathGroup("cube_2p0_top_P2", 2.7, 3.8);
+        cube_2p0_top_P3 = PathPlanner.loadPathGroup("cube_2p0_top_P3", 2.7, 3.8);
+
         forward = PathPlanner.loadPathGroup("TuningDriveForward", 2.5, 3);
         curve = PathPlanner.loadPathGroup("TuningDriveCurve", 2.5, 3);
 
@@ -317,7 +325,30 @@ public class AutoRoutines {
                 return (autoBuilder.fullAuto(cube_1p0_top));
             
             case 5:
-                return (autoBuilder.fullAuto(cube_0p5_bottom));
+                // 1 cube 1 cone auto with vision. Starts top and starts with a cube.
+                DoubleSubscriber yawSub3 = NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99);
+                return new SequentialCommandGroup(
+                    autoBuilder.fullAuto(cube_2p0_top_P1), // Run P1 PathPlanner. Will reset odometry to where vision aligned the robot.
+                    new AlignToGamePiece(yawSub3, 1.25), // Use vision to align to game piece. Increase value here (currently 1.2 meters) if the robot doesn't drive far enough to grab the cone.
+                    schedule(new SequentialCommandGroup(
+                        new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, CompRobotContainer.setState), // Pick up the cone
+                        new WaitCommand(0.3), // Give time for the cone is be grabbed aka pistons to extend
+                        new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP))), // Lift arm to home position
+                    new WaitCommand(0.5), // Give time for cone to be grabbed and arm lifted
+                    autoBuilder.followPathGroupWithEvents(cube_2p0_top_P2), // Run P2 PathPlanner. Will not reset odometry.
+                    new AlignToTargetVision(true, 1.0, 0.05, 0, Math.PI, 2.5, 2.5, true).withTimeout(2.5), // Use vision to align to tape node target.
+                    schedule(new ParallelCommandGroup(
+                        new ArmCommand(ArmSetpoint.TOP_CONE_RELEASE), // Lower the arm
+                        new WaitCommand(0.2).andThen(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState)) // Then release the gripper
+                    )).withTimeout(0.1),
+                    new WaitCommand(0.35), // Give time to lower and release cone
+                    autoBuilder.followPathGroupWithEvents(cube_2p0_top_P3) // Run P3 PathPlanner. Will not reset odometry.
+                ).withTimeout(14.95).andThen(brakes(true)); // Force auto to end at 14.95 seconds and ensure the brakes are on
+                
+
+
+
+                // return (autoBuilder.fullAuto(cube_0p5_bottom));
 
              case 6:
                 return null;
