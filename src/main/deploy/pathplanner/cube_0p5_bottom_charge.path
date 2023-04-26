@@ -121,7 +121,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "charge2"
+          "chargePigeonNarrowNx"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",

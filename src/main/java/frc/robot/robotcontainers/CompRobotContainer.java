@@ -7,6 +7,8 @@ package frc.robot.robotcontainers;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -80,6 +82,10 @@ public class CompRobotContainer extends RobotContainer {
     // CommandXboxController testStick = new CommandXboxController(2);
     // CommandXboxController armStick = new CommandXboxController(3);
 
+    // SwerveModuleState state = new SwerveModuleState(0, new Rotation2d(0));
+    // testStick.a().whileTrue(Commands.run(() -> SwerveSubsystem.getInstance().setModuleStatesNoAntiJitter(
+    //   new SwerveModuleState[]{state, state, state, state}, true), SwerveSubsystem.getInstance()));
+
     // Driver joystick
     SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
 
@@ -96,9 +102,9 @@ public class CompRobotContainer extends RobotContainer {
     boolean isTapeNotApril = true;
     driver.rightTrigger().whileTrue(Commands.sequence(
       new WaitForVisionData(isTapeNotApril),
-      new AlignToTargetVision(isTapeNotApril, 2.0, 0.2, 0, Math.PI, 2.5, 3, false)
+      new AlignToTargetVision(isTapeNotApril, 1.38, 0.2, 0, Math.PI, 2.5, 3, false)
     ));
-    driver.b().whileTrue(new AlignToTargetVision(isTapeNotApril, 1.0, 0.03, 0, Math.PI, 1.5, 1.7, false));
+    driver.b().whileTrue(new AlignToTargetVision(isTapeNotApril, 1.0, 0.03, 0, Math.PI, 2.5, 2.5, false));
     driver.start().onTrue(new SyncSteerOnFly());
 
     // Operator Joystick
