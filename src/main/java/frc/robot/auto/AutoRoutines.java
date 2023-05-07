@@ -77,6 +77,7 @@ public class AutoRoutines {
     // List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2;
 
     List<PathPlannerTrajectory> cube_0p5_top_charge_good;
+    List<PathPlannerTrajectory> Eddy_Auto;
     // List<PathPlannerTrajectory> cone_0p5_middle1_charge;    
     // List<PathPlannerTrajectory> cone_0p5_middle2_charge;
     // List<PathPlannerTrajectory> cone_0p5_bottom_charge;
@@ -168,6 +169,10 @@ public class AutoRoutines {
          eventMap.put("Arm2ConeTop", schedule(new ArmJoystickConeCommand(ArmSetpoint.TOP_CONE, new CommandXboxController(3))));
          eventMap.put("Arm2Pickup", schedule(new ArmCommand(ArmSetpoint.PICKUP)));
          eventMap.put("Arm2HomeAfterPickup", schedule(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+         eventMap.put("Arm2CubeMiddleThenScore", schedule(new ParallelCommandGroup(
+            new ArmCommand(ArmSetpoint.MIDDLE_CUBE),
+            new WaitCommand(0.3).andThen(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState))
+         )));
 
          eventMap.put("Arm2TopConeLowerThenScore", schedule(new ParallelCommandGroup(
             new ArmCommand(ArmSetpoint.TOP_CONE_RELEASE),
@@ -238,6 +243,7 @@ public class AutoRoutines {
         // place_pick_place_pick_place_bottom2 = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2", 2.5, 3);
 
          cube_0p5_top_charge_good = PathPlanner.loadPathGroup("cube_0p5_top_charge_good", 2.5, 3);
+         Eddy_Auto = PathPlanner.loadPathGroup("Eddy's Auto", 2, 1);
         // cone_0p5_middle1_charge = PathPlanner.loadPathGroup("cone_0p5_middle1_charge", 2.5, 3);
         // cone_0p5_middle2_charge = PathPlanner.loadPathGroup("cone_0p5_middle2_charge", 2.5, 3);
         // cone_0p5_bottom_charge = PathPlanner.loadPathGroup("cone_0p5_bottom_charge", 2.5, 3);
@@ -260,7 +266,9 @@ public class AutoRoutines {
                 return new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CUBE, CompRobotContainer.setState).andThen(Commands.runOnce(()-> SwerveSubsystem.getInstance().resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))));
 
             case 1:
+                return (autoBuilder.fullAuto(Eddy_Auto));
                 // Red side 2 cone auto with vision. Starts bottom and starts with a cone.
+                /* 
                 DoubleSubscriber yawSub2 = NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99);
                 return new SequentialCommandGroup(
                     schedule(new ArmJoystickConeCommand(ArmSetpoint.TOP_CONE, new CommandXboxController(3))), // Starting lifting the arm to the top cone node
@@ -286,7 +294,7 @@ public class AutoRoutines {
                         new WaitCommand(0.2).andThen(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState)))), // Release gripper
                     new WaitCommand(3) // Give time to lower and release cone
                 ).withTimeout(14.95).andThen(brakes(true)); // Force auto to end at 14.95 seconds and ensure the brakes are on
-             
+             */
             case 2:
                 // Blue side 2 cone auto with vision. Starts bottom and starts with a cone.
                 DoubleSubscriber yawSub = NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99);
