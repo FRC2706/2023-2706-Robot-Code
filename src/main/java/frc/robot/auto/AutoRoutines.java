@@ -89,6 +89,9 @@ public class AutoRoutines {
     // List<PathPlannerTrajectory> place_pick_place_pick_place_bottom2_charge;
     // List<PathPlannerTrajectory> place_pick_place_pick_place_bottom_new;
 
+
+    List<PathPlannerTrajectory> erikPath;
+
    
     public AutoRoutines() {
         Map<String, Command> eventMap = new HashMap<String, Command>();
@@ -98,6 +101,7 @@ public class AutoRoutines {
         eventMap.put("Bling Blue", new SetBlingCommand(2));
         eventMap.put("Bling Red", new SetBlingCommand(3));
         eventMap.put("Bling Honeydew", new SetBlingCommand(4));
+        eventMap.put("BlingRainbow", new SetBlingCommand(6));
         eventMap.put("charge", new TranslationCommand(-1.9, 0).andThen(
             Commands.run(() -> SwerveSubsystem.getInstance().setModuleStatesAuto(new SwerveModuleState[]{
                 new SwerveModuleState(0.1, Rotation2d.fromDegrees(-45)),
@@ -251,6 +255,8 @@ public class AutoRoutines {
         // place_pick_bottom2_charge_new = PathPlanner.loadPathGroup("place_pick_bottom2_charge_new", 2.5, 3);
         // place_pick_place_pick_place_bottom2_charge = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2_charge", 2.5, 3);
         // place_pick_place_pick_place_bottom_new = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom_new", 2.5, 3);
+    
+        erikPath = PathPlanner.loadPathGroup("erikPath", 2, 1);
     }
 
     public Command getAutonomousCommand(int selectAuto) {
@@ -349,7 +355,9 @@ public class AutoRoutines {
 
             case 8: // Id8 but id7 for driveteam
                 // This is id 8 in code but for drive team it's id 7 since it takes 7 selector switch clicks.
-                return (autoBuilder.fullAuto(cube_0p5_top_charge)); 
+                // return (autoBuilder.fullAuto(cube_0p5_top_charge)); 
+
+                return autoBuilder.fullAuto(erikPath);
             
                 
                 
