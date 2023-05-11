@@ -39,12 +39,15 @@
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "GripperOpen",
+          "ArmPickup"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
-        "waitTime": 0
+        "waitTime": 0.5
       }
     },
     {
@@ -97,18 +100,15 @@
   ],
   "markers": [
     {
-      "position": 0.0,
+      "position": 0.8363636363636693,
       "names": [
-        "event",
-        "Bling Blue",
-        "Arm2CubeMiddleThenScore",
-        "Arm2Pickup"
+        "ArmCubeMiddle",
+        "GripperPickCube"
       ]
     },
     {
       "position": 3.0,
       "names": [
-        "event",
         "Bling Red"
       ]
     }
