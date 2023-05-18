@@ -243,7 +243,8 @@ public class AutoRoutines {
         // place_pick_place_pick_place_bottom2 = PathPlanner.loadPathGroup("place_pick_place_pick_place_bottom2", 2.5, 3);
 
          cube_0p5_top_charge_good = PathPlanner.loadPathGroup("cube_0p5_top_charge_good", 2.5, 3);
-         Eddy_Auto = PathPlanner.loadPathGroup("Eddy's Auto", 2, 1);
+         Eddy_Auto = PathPlanner.loadPathGroup("ArmTesting Auto", 2, 1);
+
         // cone_0p5_middle1_charge = PathPlanner.loadPathGroup("cone_0p5_middle1_charge", 2.5, 3);
         // cone_0p5_middle2_charge = PathPlanner.loadPathGroup("cone_0p5_middle2_charge", 2.5, 3);
         // cone_0p5_bottom_charge = PathPlanner.loadPathGroup("cone_0p5_bottom_charge", 2.5, 3);
