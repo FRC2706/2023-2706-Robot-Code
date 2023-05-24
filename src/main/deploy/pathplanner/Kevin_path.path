@@ -1,0 +1,83 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 2.138163250685476,
+        "y": 3.060337060845062
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.1381632506854755,
+        "y": 3.060337060845062
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "ArmPickup",
+          "ArmHomeAfterPickup"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 3.9994876570949724,
+        "y": 4.990176476079449
+      },
+      "prevControl": {
+        "x": 3.9994876570949724,
+        "y": 3.9901764760794487
+      },
+      "nextControl": {
+        "x": 3.9994876570949724,
+        "y": 3.9901764760794487
+      },
+      "holonomicAngle": 0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "ArmCubeTop",
+          "GripperOpen",
+          "ArmHome"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 5.404045338005206,
+        "y": 2.8776303706453565
+      },
+      "prevControl": {
+        "x": 7.27215828790632,
+        "y": 2.8132043358103807
+      },
+      "nextControl": null,
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "BlingBlue"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "markers": []
+}

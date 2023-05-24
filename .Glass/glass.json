@@ -1,9 +1,19 @@
 {
   "NetworkTables": {
+    "DriveTrain": {
+      "open": true
+    },
+    "SwerveChassis": {
+      "SwerveModuleFL": {
+        "open": true
+      },
+      "open": true
+    },
     "types": {
       "/FMSInfo": "FMSInfo",
       "/Shuffleboard/Auto/Routines": "String Chooser",
       "/Shuffleboard/BasicDebugging/CommandScheduler": "Scheduler",
+      "/SmartDashboard/ArmDisplay": "Mechanism2d",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/PPSwerveControllerCommand_field": "Field2d"
     },
@@ -20,7 +30,39 @@
     }
   },
   "NetworkTables Settings": {
-    "mode": "Client (NT4)",
+    "mode": "Client",
     "serverTeam": "2706"
+  },
+  "Plots": {
+    "Plot <0>": {
+      "plots": [
+        {
+          "height": 332,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SwerveChassis/SwerveModuleFL/Current speed (mps)"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/SwerveChassis/SwerveModuleFL/Desired speed (mps)"
+            }
+          ]
+        }
+      ],
+      "window": {
+        "visible": false
+      }
+    }
   }
 }

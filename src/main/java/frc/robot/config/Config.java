@@ -72,7 +72,7 @@ public class Config {
      */
     public static Double DRIVER_JOYSTICK_DEADBAND = 0.1; // TODO: Investigate if this can be better tuned
         
-    public static double drivetrainWheelDiameter = robotSpecific(0.0986536,0.1524, 0.1016, 0.1524, 0.01524, 0.1524); // Diameter of wheel is 0.1524
+    public static double drivetrainWheelDiameter = robotSpecific(0.09267,0.1524, 0.1016, 0.1524, 0.01524, 0.1524); // Diameter of wheel is 0.1524
 
     public static final double kWheelBase = robotSpecific(0.52, -0.0, -0.0, -0.0, -0.0, -0.0);
     public static final double kTrackWidth = robotSpecific(0.655, 1.2267, 0.3136, 0.569, 0.52, 0.51762);
@@ -231,8 +231,8 @@ public class Config {
         public static final double teleopRateLimit = 3;
 
         public static final double driveKS = 0.667;
-        public static final double driveKV = 2.9;
-        public static final double driveKA = 0.5;
+        public static final double driveKV = 3.0;
+        public static final double driveKA = 0.55;
 
         public static DoubleSubscriber sub_kA = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kA").subscribe(driveKA);
         public static DoubleSubscriber sub_kV = NetworkTableInstance.getDefault().getTable("SwerveChassis/DrivePID").getDoubleTopic("Drive kV").subscribe(driveKV);

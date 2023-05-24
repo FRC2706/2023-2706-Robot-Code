@@ -4,6 +4,7 @@
 
 package frc.robot.auto;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,10 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> cube_1p0_bottom;
     List<PathPlannerTrajectory> cone_0p5_top_charge;
     List<PathPlannerTrajectory> cube_0p5_bottom;
+
+    List<PathPlannerTrajectory> test_path;
+
+    List<PathPlannerTrajectory> Kevin_path;
 
     List<PathPlannerTrajectory> cube_3p0_top;
 
@@ -224,6 +229,11 @@ public class AutoRoutines {
         cube_0p5_bottom = PathPlanner.loadPathGroup("cube_0p5_bottom", 2.5, 3);
         cube_3p0_top = PathPlanner.loadPathGroup("cube_3p0_top", 2.6, 3.1);
 
+
+        test_path = PathPlanner.loadPathGroup("test_path", 2, 1);
+
+        Kevin_path = PathPlanner.loadPathGroup("Kevin_path", 2,1);
+
         cone_0p5_top_charge = PathPlanner.loadPathGroup("cone_0p5_top_charge", 2.5, 3);
 
         cone_2p0_bot_P1 = PathPlanner.loadPathGroup("cone_2p0_bot_P1", 2.7, 3.8);
@@ -319,7 +329,9 @@ public class AutoRoutines {
                 return (autoBuilder.fullAuto(cube_0p5_middle_charge)); 
       
             case 4:
-                return (autoBuilder.fullAuto(cube_1p0_top));
+                //return (autoBuilder.fullAuto(cube_1p0_top));
+                return (autoBuilder.fullAuto(test_path));
+                //return (autoBuilder.fullAuto(Kevin_path));
             
             case 5:
                 //return (autoBuilder.fullAuto(cube_0p5_bottom));
