@@ -27,6 +27,8 @@ public class ResetGyro extends CommandBase {
     Pose2d pose = SwerveSubsystem.getInstance().getPose();
     Pose2d newPose = new Pose2d(pose.getTranslation(), new Rotation2d(0));
     SwerveSubsystem.getInstance().resetOdometry(newPose);
+    System.out.println("after resetting gyro, heading ="+SwerveSubsystem.getInstance().getHeading().getDegrees());
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.

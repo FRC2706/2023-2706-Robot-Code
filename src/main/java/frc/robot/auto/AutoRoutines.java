@@ -60,6 +60,9 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> cube_1p0_bottom;
     List<PathPlannerTrajectory> cone_0p5_top_charge;
     List<PathPlannerTrajectory> cube_0p5_bottom;
+    List<PathPlannerTrajectory> emily_path;
+    List<PathPlannerTrajectory> emily_path2;
+
 
     List<PathPlannerTrajectory> cube_3p0_top;
 
@@ -182,6 +185,7 @@ public class AutoRoutines {
                                             CompRobotContainer.setState)));
 
         eventMap.put("wait", new WaitCommand(0.3));
+        eventMap.put("moveX", new TranslationCommand(0.5,0));
          
         autoBuilder = new SwerveAutoBuilder(
                 SwerveSubsystem.getInstance()::getPose,
@@ -203,6 +207,9 @@ public class AutoRoutines {
         cube_1p0_bottom = PathPlanner.loadPathGroup("cube_1p0_bottom", 2.5, 3);
         cube_0p5_bottom = PathPlanner.loadPathGroup("cube_0p5_bottom", 2.5, 3);
         cube_3p0_top = PathPlanner.loadPathGroup("cube_3p0_top", 2.6, 3.1);
+        emily_path = PathPlanner.loadPathGroup("emily_path", 2, 1);
+        emily_path2 = PathPlanner.loadPathGroup("emily_path2", 2, 1);
+        emily_path2.remove(1);
 
         cone_0p5_top_charge = PathPlanner.loadPathGroup("cone_0p5_top_charge", 2.5, 3);
 
@@ -243,11 +250,14 @@ public class AutoRoutines {
                 // return(autoBuilder.fullAuto(forward));
              
             case 2:
-                return new ForceBrakesInAuto().alongWith(autoBuilder.fullAuto(cube_3p0_top));
+                return (autoBuilder.fullAuto(emily_path));
+                //return new ForceBrakesInAuto().alongWith(autoBuilder.fullAuto(cube_3p0_top));
                 // return(autoBuilder.fullAuto(curve));
          
             case 3:
-                return (autoBuilder.fullAuto(cube_0p5_middle_charge));
+                return (autoBuilder.fullAuto(emily_path2));
+
+               // return (autoBuilder.fullAuto(cube_0p5_middle_charge));
         
             case 4:
                 return (autoBuilder.fullAuto(cube_1p0_top));
