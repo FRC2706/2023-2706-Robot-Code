@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -22,6 +23,7 @@ import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib2706.AdvantageUtil;
 import frc.robot.SubsystemChecker;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.config.Config;
@@ -38,7 +40,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private DoublePublisher pitchPub = table.getDoubleTopic("Pitch").publish();
     private DoublePublisher rollPub = table.getDoubleTopic("Roll").publish();
-    
+    private DoubleArrayPublisher desiredStatesPub = table.getDoubleArrayTopic("desiredStates").publish();
+    private DoubleArrayPublisher measuredStatesPub = table.getDoubleArrayTopic("measuredStates").publish();
+
     // Instance for singleton class
     private static SwerveSubsystem instance;
 
@@ -102,6 +106,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
         pitchPub.accept(getPitch());
         rollPub.accept(getRoll());
+
+        measuredStatesPub.accept(AdvantageUtil.deconstructSwerveModuleState(getState()));
     }
 
     private SwerveModulePosition[] getPosition() {
@@ -111,6 +117,15 @@ public class SwerveSubsystem extends SubsystemBase {
             m_rearLeft.getModulePosition(),
             m_rearRight.getModulePosition()};
     }
+
+    private SwerveModuleState[] getState() {
+        return new SwerveModuleState[] {
+            m_frontLeft.getModuleState(),
+            m_frontRight.getModuleState(),
+            m_rearLeft.getModuleState(),
+            m_rearRight.getModuleState()};
+    }
+
 
     public void setTrajectory(Trajectory traj){
         m_field.getObject("traj").setTrajectory(traj);
@@ -157,6 +172,7 @@ public class SwerveSubsystem extends SubsystemBase {
         m_frontRight.setDesiredState(swerveModuleStates[1], isOpenLoop);
         m_rearLeft.setDesiredState(swerveModuleStates[2], isOpenLoop);
         m_rearRight.setDesiredState(swerveModuleStates[3],isOpenLoop);
+        desiredStatesPub.accept(AdvantageUtil.deconstructSwerveModuleState(swerveModuleStates));
     }
 
     public void setModuleStatesNoAntiJitter(SwerveModuleState[] desiredStates, boolean isOpenLoop){
@@ -164,6 +180,7 @@ public class SwerveSubsystem extends SubsystemBase {
         m_frontRight.setDesiredState(desiredStates[1], isOpenLoop, false);
         m_rearLeft.setDesiredState(desiredStates[2], isOpenLoop, false);
         m_rearRight.setDesiredState(desiredStates[3], isOpenLoop, false);
+        desiredStatesPub.accept(AdvantageUtil.deconstructSwerveModuleState(desiredStates));
     }
 
     /**
@@ -178,6 +195,8 @@ public class SwerveSubsystem extends SubsystemBase {
         m_frontRight.setDesiredState(desiredStates[1], isOpenLoop);
         m_rearLeft.setDesiredState(desiredStates[2], isOpenLoop);
         m_rearRight.setDesiredState(desiredStates[3], isOpenLoop);
+        desiredStatesPub.accept(AdvantageUtil.deconstructSwerveModuleState(desiredStates));
+
     }
 
     /**

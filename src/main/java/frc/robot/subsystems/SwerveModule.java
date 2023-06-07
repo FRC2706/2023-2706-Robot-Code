@@ -162,6 +162,10 @@ public class SwerveModule {
     public SwerveModulePosition getModulePosition() {   
         return new SwerveModulePosition(getDrivePosition(), getSteeringAngle());
     }
+    public SwerveModuleState getModuleState() {   
+        return new SwerveModuleState(getVelocity(), getSteeringAngle());
+    }
+
 
     /**
      * Sets the desired state for the module.
