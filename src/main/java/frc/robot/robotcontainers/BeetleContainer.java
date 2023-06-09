@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.commands.ArcadeDrive;
+import frc.robot.commands.BeetleLimelightAlign;
 import frc.robot.config.Config;
 import frc.robot.subsystems.DiffTalonSubsystem;
 import frc.robot.subsystems.RelaySubsystem;
@@ -41,8 +42,10 @@ public class BeetleContainer extends RobotContainer {
     CommandXboxController operator = new CommandXboxController(1);
 
     DiffTalonSubsystem.getInstance().setDefaultCommand(
-        new ArcadeDrive(driver, XboxController.Axis.kLeftY.value, XboxController.Axis.kRightX.value));
+        new ArcadeDrive(driver, 1, 2));// XboxController.Axis.kLeftY.value, XboxController.Axis.kRightX.value));
 
+    driver.a().whileTrue(new BeetleLimelightAlign());
+    
     // Construct RelaySubsystem to the Relays can be controlled by NetworkTables
     RelaySubsystem.getInstance();
   }

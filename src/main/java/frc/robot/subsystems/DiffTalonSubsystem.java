@@ -134,4 +134,8 @@ public class DiffTalonSubsystem extends SubsystemBase {
     public void arcadeDrive(double forwardVal, double rotateVal) {
         diffDrive.arcadeDrive(forwardVal, rotateVal, false);
     }
+
+    public double getAveragePercentOutput() {
+        return (leftLeader.getMotorOutputPercent() + rightLeader.getMotorOutputPercent()) / 2.0;
+    }
 }
