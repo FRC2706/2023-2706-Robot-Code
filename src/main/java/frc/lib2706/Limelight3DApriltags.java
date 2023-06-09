@@ -30,4 +30,8 @@ public class Limelight3DApriltags {
     private void setAdvScopePose(Pose3d pose) {
         pubAdvScopePose.accept(AdvantageUtil.deconstruct(pose));
     }
+
+    private void setAdvScopeNoPose() {
+        pubAdvScopePose.accept(new double[]{});
+    }
 }

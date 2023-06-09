@@ -87,7 +87,7 @@ public class Config {
      * CAN IDs, ports, channels, etc.
      */
     public static class CANID {   
-        public static int PIGEON = robotSpecific(30, 27, 27, 27, 30);
+        public static int PIGEON = robotSpecific(30, 27, 30, 27, 30);
     
         public static int CANDLE = robotSpecific(15, 15, -1, 15, 15);
         public static int CTRE_PCM = robotSpecific(1, 1, -1, -1);

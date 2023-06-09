@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
@@ -97,6 +98,12 @@ public class DiffTalonSubsystem extends SubsystemBase {
 
         leftLeader.setInverted(Config.DIFF.LEADER_LEFT_INVERTED);
         rightLeader.setInverted(Config.DIFF.LEADER_RIGHT_INVERTED);
+
+        leftLeader.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+        rightLeader.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+
+        leftLeader.setSensorPhase(Config.DIFF.LEFT_SENSORPHASE);
+        rightLeader.setSensorPhase(Config.DIFF.RIGHT_SENSORPHASE);
 
         if (leftFollower != null && rightFollower != null) {
             leftFollower.configFactoryDefault();
