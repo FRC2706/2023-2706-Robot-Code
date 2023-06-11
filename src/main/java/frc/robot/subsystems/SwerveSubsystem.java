@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -15,13 +16,18 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.DoubleArrayEntry;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib2706.AdvantageUtil;
 import frc.robot.SubsystemChecker;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.config.Config;
@@ -38,6 +44,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private DoublePublisher pitchPub = table.getDoubleTopic("Pitch").publish();
     private DoublePublisher rollPub = table.getDoubleTopic("Roll").publish();
+
+    private DoubleArrayPublisher pubEstimatedPose = table.getDoubleArrayTopic("EstimatedPose").publish();
+    private DoubleArrayPublisher pubOdometry = table.getDoubleArrayTopic("OdometryPose").publish();
     
     // Instance for singleton class
     private static SwerveSubsystem instance;
@@ -52,6 +61,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     // Odometry class for tracking robot pose
     private SwerveDriveOdometry m_odometry;
+    private SwerveDrivePoseEstimator m_poseEstimator;
 
     /** Get instance of singleton class */
     public static SwerveSubsystem getInstance() {
@@ -61,6 +71,10 @@ public class SwerveSubsystem extends SubsystemBase {
         }
 
         return instance;
+    }
+
+    public void addVisionMeasurement(Pose2d pose, double timestamp){
+        m_poseEstimator.addVisionMeasurement(pose, timestamp);
     }
     
     /** Creates a new DriveSubsystem. */
@@ -75,6 +89,7 @@ public class SwerveSubsystem extends SubsystemBase {
         m_pigeon = new PigeonIMU(Config.CANID.PIGEON);
         m_odometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition(), new Pose2d(0, 0, Rotation2d.fromDegrees(rotEntry.get())));
         SmartDashboard.putData("Field", m_field);
+        m_poseEstimator = new SwerveDrivePoseEstimator(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition(), new Pose2d());
     }
 
     @Override
@@ -88,10 +103,18 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
         // Update the odometry in the periodic block
-        m_odometry.update(
+        Pose2d odometryPose = m_odometry.update(
                 Rotation2d.fromDegrees(currentGyro),
                 getPosition()
         );
+        
+        Pose2d estimatedPose = m_poseEstimator.update(
+                Rotation2d.fromDegrees(currentGyro),
+                getPosition()
+        );
+
+        pubEstimatedPose.accept(AdvantageUtil.deconstruct(estimatedPose));
+        pubOdometry.accept(AdvantageUtil.deconstruct(odometryPose));
         
         gyroEntry.accept(currentGyro);
         xEntry.accept(getPose().getX());
@@ -133,6 +156,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public void resetOdometry(Pose2d pose) {
         System.out.println(pose.toString());
         m_odometry.resetPosition(Rotation2d.fromDegrees(getGyro()), getPosition(), pose);
+        m_poseEstimator.resetPosition(Rotation2d.fromDegrees(getGyro()), getPosition(), pose);
     }
 
     /**
@@ -209,7 +233,11 @@ public class SwerveSubsystem extends SubsystemBase {
      * @return the robot's heading in degrees, from -180 to 180
      */
     public Rotation2d getHeading() {
-        return m_odometry.getPoseMeters().getRotation();
+        return getPose().getRotation();
+    }
+
+    public CommandBase getSyncOdometryCommand(){
+        return Commands.runOnce(()-> resetOdometry(m_poseEstimator.getEstimatedPosition()));
     }
 
     /**
