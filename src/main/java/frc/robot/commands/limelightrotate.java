@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.libLimelight.LimelightHelpers;
 import frc.robot.subsystems.DiffTalonSubsystem;
 
 public class limelightrotate extends CommandBase {
@@ -17,8 +18,6 @@ public class limelightrotate extends CommandBase {
   public limelightrotate() {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(DiffTalonSubsystem.getInstance());
-    txpub=NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx");
-    typub=NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty");
   }
 
   // Called when the command is initially scheduled.
@@ -28,17 +27,18 @@ public class limelightrotate extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double value=txpub.getDouble(0);
-    value*=-0.05;
-    value+=Math.copySign(0.01, value);
-    double limelightMountingDegrees = 11.0;
-    double limelightLenHeightMeters = 0.34;
-    double angleToGoalDegrees = typub.getDouble(0)+limelightMountingDegrees;
-    double angleToGoalRadians = angleToGoalDegrees*(3.14159/180);
-    double Distance = (1.26-limelightLenHeightMeters)/Math.tan(angleToGoalRadians);
-    double ForwardVal = (Distance-1.5)*0.87;
-    DiffTalonSubsystem.getInstance().arcadeDrive(ForwardVal, txpub.getDouble(0)*-0.05);
-    System.out.println(Distance);
+    if(!LimelightHelpers.getTV("")){
+      DiffTalonSubsystem.getInstance().stopMotors();
+    } else{
+      double value=LimelightHelpers.getTX("");
+      value*=-0.05;
+      value+=Math.copySign(0.01, value);
+      double Distance = (1.43 / (LimelightHelpers.getTLONG("") / 52));
+      double ForwardVal = (Distance-1.5)*0.87;
+      ForwardVal+=Math.copySign(0.06, ForwardVal);
+      DiffTalonSubsystem.getInstance().arcadeDrive(ForwardVal, value);
+      System.out.println(Distance);
+    }
   }
 
 
