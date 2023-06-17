@@ -49,7 +49,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 /** Add your docs here. */
 
 public class AutoRoutines {
-    SwerveAutoBuilder autoBuilder;
+    public SwerveAutoBuilder autoBuilder;
 
     // HUMBER MAINS
     List<PathPlannerTrajectory> cube_0p5_top_charge;
@@ -62,6 +62,9 @@ public class AutoRoutines {
     List<PathPlannerTrajectory> cube_0p5_bottom;
     List<PathPlannerTrajectory> emily_path;
     List<PathPlannerTrajectory> emily_path2;
+
+    List<PathPlannerTrajectory> Test_3m; 
+    List<PathPlannerTrajectory> Test_5m;
 
 
     List<PathPlannerTrajectory> cube_3p0_top;
@@ -211,6 +214,9 @@ public class AutoRoutines {
         emily_path2 = PathPlanner.loadPathGroup("emily_path2", 2, 1);
         emily_path2.remove(1);
 
+        Test_3m = PathPlanner.loadPathGroup("Test_3m", 2, 1);
+        Test_5m = PathPlanner.loadPathGroup("Test_5m", 2, 1);
+
         cone_0p5_top_charge = PathPlanner.loadPathGroup("cone_0p5_top_charge", 2.5, 3);
 
         cone_2p0_bot_P1 = PathPlanner.loadPathGroup("cone_2p0_bot_P1", 2.5, 3);
@@ -250,12 +256,14 @@ public class AutoRoutines {
                 // return(autoBuilder.fullAuto(forward));
              
             case 2:
-                return (autoBuilder.fullAuto(emily_path));
+                return (autoBuilder.fullAuto(Test_3m));             
+                //return (autoBuilder.fullAuto(emily_path));
                 //return new ForceBrakesInAuto().alongWith(autoBuilder.fullAuto(cube_3p0_top));
                 // return(autoBuilder.fullAuto(curve));
          
             case 3:
-                return (autoBuilder.fullAuto(emily_path2));
+                return (autoBuilder.fullAuto(Test_5m));
+                // return (autoBuilder.fullAuto(emily_path2));
 
                // return (autoBuilder.fullAuto(cube_0p5_middle_charge));
         
@@ -296,40 +304,6 @@ public class AutoRoutines {
                 ));
                 
             // case 9:
-            //     return (autoBuilder.fullAuto(cone_0p5_bottom_charge));
-
-            // case 10:
-            //     return (autoBuilder.fullAuto(cone_1p0_top));
-                
-            // case 11:
-            //     return (autoBuilder.fullAuto(cone_1p0_bottom));
-                
-
-            // case 12:
-            //     return (autoBuilder.fullAuto(BK_cube_2p0_bottom));
-
-            // case 13:
-            //     return (autoBuilder.fullAuto(BK_cube_0p5_middle_charge));
-
-            // case 14:
-            //     return (autoBuilder.fullAuto(BK_cone_0p5_charge));
-
-            // case 15:
-            //     return (autoBuilder.fullAuto(place_pick_bottom2_charge_new));
-                
-            // case 16:
-            //     return (autoBuilder.fullAuto(place_pick_place_pick_place_bottom2));
-
-            // case 17:
-            //     return (autoBuilder.fullAuto(place_pick_place_pick_place_bottom2_charge));
-
-            // case 18:
-            //     return (autoBuilder.fullAuto(place_pick_place_pick_place_bottom_new));
-
-            // case 19:
-            //     return (autoBuilder.fullAuto(cube_1p0_top_charge));
-
-            // case 20:
             //     return new SequentialCommandGroup(
             //         autoBuilder.fullAuto(cone_2p0_bot),
             //         // new ArmCommand(ArmSetpoint.TOP_CONE_NO_WAYPOINT),
