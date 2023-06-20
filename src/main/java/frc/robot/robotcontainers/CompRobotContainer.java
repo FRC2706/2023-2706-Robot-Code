@@ -7,7 +7,10 @@ package frc.robot.robotcontainers;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import com.pathplanner.lib.PathPoint;
+
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -27,6 +30,7 @@ import frc.robot.commands.ArmCommandSelector;
 import frc.robot.commands.ChargeStationLock;
 import frc.robot.commands.DriveArmAgainstBackstop;
 import frc.robot.commands.GripperCommand;
+import frc.robot.commands.OdometryCtrl;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.RotateAngleXY;
@@ -63,10 +67,12 @@ public class CompRobotContainer extends RobotContainer {
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public CompRobotContainer() {
-    // Configure the button bindings
-    configureButtonBindings();
+  
     m_autoSelector = new AutoSelector();
     routines = new AutoRoutines();
+
+      // Configure the button bindings
+      configureButtonBindings();
   }
 
   /**
@@ -105,7 +111,11 @@ public class CompRobotContainer extends RobotContainer {
       new AlignToTargetVision(isTapeNotApril, 1.38, 0.2, 0, Math.PI, 2.5, 3, false)
     ));
     driver.b().whileTrue(new AlignToTargetVision(isTapeNotApril, 1.0, 0.03, 0, Math.PI, 2.5, 2.5, false));
-    driver.start().onTrue(new SyncSteerOnFly());
+    //driver.start().onTrue(new SyncSteerOnFly());
+
+    //finalPoint is a fixed point on the field
+    PathPoint finalPoint = new PathPoint(new Translation2d(1,1),new Rotation2d(0), 0);
+    driver.start().onTrue(new OdometryCtrl(routines.autoBuilder, 2, 1, null));
 
     // Operator Joystick
     operator.rightBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));

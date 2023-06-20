@@ -49,7 +49,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 /** Add your docs here. */
 
 public class AutoRoutines {
-    SwerveAutoBuilder autoBuilder;
+    public SwerveAutoBuilder autoBuilder;
 
     // HUMBER MAINS
     List<PathPlannerTrajectory> cube_0p5_top_charge;

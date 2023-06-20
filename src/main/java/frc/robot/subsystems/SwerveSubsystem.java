@@ -201,6 +201,18 @@ public class SwerveSubsystem extends SubsystemBase {
         return m_pigeon.getFusedHeading();
     }
 
+    public ChassisSpeeds getChassisSpeeds()
+    {
+        SwerveModuleState[] currModuleStates = new SwerveModuleState[4];
+        currModuleStates[0] = m_frontLeft.getState();
+        currModuleStates[1] = m_frontRight.getState();
+        currModuleStates[2] = m_rearLeft.getState();
+        currModuleStates[3] = m_rearRight.getState();
+        
+        ChassisSpeeds chassisSpeeds = Config.Swerve.kSwerveDriveKinematics.toChassisSpeeds(currModuleStates);
+        return chassisSpeeds;
+    }
+
     /**
      * Returns the heading of the robot.
      * 
