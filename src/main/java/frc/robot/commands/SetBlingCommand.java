@@ -17,11 +17,28 @@ import frc.robot.commands.SetBlingCommand;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
 public class SetBlingCommand extends InstantCommand {
-  public int m_blingPatternId;
+  public enum BLING_COLOUR
+  {
+    DISABLED,
+    PURPLE,
+    BLUE,
+    RED,
+    YELLOW,
+    HONEYDEW,
+    RAINBOW,
+    FIRE,
+    RGBFADE,
+    WHITESTROBE,
+    REDSTROBE,
+    YELLOWSTROBE,
+    BLUESTROBE,
+    PURPLESTROBE
+  } 
+  public BLING_COLOUR m_blingPatternId;
   public BlingSubsystem bling = BlingSubsystem.getINSTANCE();
-
-  public SetBlingCommand(int patternId) {
+  public SetBlingCommand(BLING_COLOUR patternId) {
     m_blingPatternId = patternId;
+
 
     // Use addRequirements() here to declare subsystem dependencies.
     if( bling != null )
@@ -34,51 +51,51 @@ public class SetBlingCommand extends InstantCommand {
   public void initialize() {
     if (bling != null)
     {
-      if (m_blingPatternId!= 0) {
+      if (m_blingPatternId != BLING_COLOUR.DISABLED) {
         bling.setBrightness();
       }
       switch( m_blingPatternId )
       {
-        case 0:
+        case DISABLED:
           bling.setDisabled();
           break;
-        case 1:
+        case PURPLE:
           bling.setPurple();
           break;
-        case 2:
+        case BLUE:
           bling.setBlue();
           break;
-        case 3:
+        case RED:
           bling.setRed();
           break;
-        case 4:
+        case YELLOW:
           bling.setYellow();
           break;
-        case 5:
+        case HONEYDEW:
           bling.setHoneydew();
           break;
-        case 6: 
+        case RAINBOW: 
           setRainbow();
           break;
-        case 7: 
+        case FIRE: 
           setFire();
           break;
-        case 8:
+        case RGBFADE:
           setRgbFade();
           break;
-        case 9:
+        case WHITESTROBE:
           setWhiteStrobe();
           break;
-        case 10:
+        case REDSTROBE:
           setRedStrobe();
           break;
-        case 11:
+        case YELLOWSTROBE:
           setYellowStrobe();
           break;
-        case 12:
+        case BLUESTROBE:
           setBlueStrobe();
           break;
-        case 13:
+        case PURPLESTROBE:
           setPurpleStrobe();
           break;
         default:

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.SetBlingCommand.BLING_COLOUR;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.BlingSubsystem;
 
@@ -55,9 +56,9 @@ public class DriveArmAgainstBackstop extends CommandBase {
         ArmSubsystem.getInstance().stopMotors();
 
         new SequentialCommandGroup(
-            new SetBlingCommand(13),
+            new SetBlingCommand(BLING_COLOUR.PURPLESTROBE),
             (new WaitCommand(2)),
-            (new SetBlingCommand(0))
+            (new SetBlingCommand(BLING_COLOUR.DISABLED))
         ).schedule();
     }
 
