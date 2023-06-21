@@ -115,7 +115,7 @@ public class CompRobotContainer extends RobotContainer {
 
     //finalPoint is a fixed point on the field
     PathPoint finalPoint = new PathPoint(new Translation2d(1,1),new Rotation2d(0), 0);
-    driver.start().onTrue(new OdometryCtrl(routines.autoBuilder, 2, 1, null));
+    //driver.start().onTrue(new OdometryCtrl(routines.autoBuilder, 2, 1, null));
 
     // Operator Joystick
     operator.rightBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));
