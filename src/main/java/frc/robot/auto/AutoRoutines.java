@@ -37,6 +37,7 @@ import frc.robot.commands.ChargeStationLock;
 import frc.robot.commands.ForceBrakesInAuto;
 import frc.robot.commands.GripperCommand;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
+import frc.robot.commands.SetBlingCommand.BLING_COLOUR;
 import frc.robot.commands.SetBlingCommand;
 import frc.robot.commands.TranslationCommand;
 import frc.robot.config.ArmConfig.ArmSetpoint;
@@ -94,10 +95,10 @@ public class AutoRoutines {
         Map<String, Command> eventMap = new HashMap<String, Command>();
 
         eventMap.put("intake", new InstantCommand());
-        eventMap.put("Bling Purple", new SetBlingCommand(1));
-        eventMap.put("Bling Blue", new SetBlingCommand(2));
-        eventMap.put("Bling Red", new SetBlingCommand(3));
-        eventMap.put("Bling Honeydew", new SetBlingCommand(4));
+        eventMap.put("Bling Purple", new SetBlingCommand(BLING_COLOUR.PURPLE));
+        eventMap.put("Bling Blue", new SetBlingCommand(BLING_COLOUR.BLUE));
+        eventMap.put("Bling Red", new SetBlingCommand(BLING_COLOUR.RED));
+        eventMap.put("Bling Honeydew", new SetBlingCommand(BLING_COLOUR.HONEYDEW));
         eventMap.put("charge", new TranslationCommand(-1.9, 0).andThen(
             Commands.run(() -> SwerveSubsystem.getInstance().setModuleStatesAuto(new SwerveModuleState[]{
                 new SwerveModuleState(0.1, Rotation2d.fromDegrees(-45)),

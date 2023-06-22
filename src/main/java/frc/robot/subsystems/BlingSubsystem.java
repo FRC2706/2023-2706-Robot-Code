@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 import frc.robot.commands.SetBlingCommand;
+import frc.robot.commands.SetBlingCommand.BLING_COLOUR;
 import frc.robot.config.Config;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -105,18 +106,18 @@ public class BlingSubsystem extends SubsystemBase {
   public void armEncodersSynced() {
     armEncodersSynced = true;
     if (steerEncodersSynced) {
-      new SetBlingCommand(1).schedule(); // purple
+      new SetBlingCommand(BLING_COLOUR.PURPLE).schedule(); // purple
     } else {
-      new SetBlingCommand(2).schedule(); // blue
+      new SetBlingCommand(BLING_COLOUR.BLUE).schedule(); // blue
     }
   }
 
   public void steerEncodersSynced() {
     steerEncodersSynced = true;
     if (armEncodersSynced) {
-      new SetBlingCommand(1).schedule(); // purple
+      new SetBlingCommand(BLING_COLOUR.PURPLE).schedule(); // purple
     } else {
-      new SetBlingCommand(4).schedule(); // yellow
+      new SetBlingCommand(BLING_COLOUR.YELLOW).schedule(); // yellow
     }
   }
 
