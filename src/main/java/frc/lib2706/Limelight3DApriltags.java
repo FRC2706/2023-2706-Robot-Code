@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.Timer;
 import frc.libLimelight.LimelightHelpers;
+import frc.robot.config.Config;
 import frc.robot.subsystems.DiffTalonSubsystem;
 
 public class Limelight3DApriltags {
@@ -28,6 +29,11 @@ public class Limelight3DApriltags {
             return;
         }
         Pose2d pose = LimelightHelpers.getBotPose2d_wpiBlue(limeLightName);
+        if (pose.getX()<0 || pose.getX() > Config.FIELD_X || pose.getY() < 0 || pose.getY() > Config.FIELD_Y){
+            setAdvScopeNoPose();
+            return;
+        }
+        Pose2d poseOdometry = DiffTalonSubsystem.getInstance().getPose();
         setAdvScopePose(pose);
         double timestamp = Timer.getFPGATimestamp() - LimelightHelpers.getLatency_Capture(limeLightName)/1000.0-LimelightHelpers.getLatency_Pipeline(limeLightName)/1000.0;
         DiffTalonSubsystem.getInstance().newVisionMeasurement(pose,timestamp);

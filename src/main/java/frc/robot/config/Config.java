@@ -81,7 +81,8 @@ public class Config {
     public static final int DIFF_SLOTID_DRIVER = 0;
     public static final int DIFF_SLOTID_RAMSETE = 1;
 
-    
+    public static final double FIELD_X = 16.54175;
+    public static final double FIELD_Y = 8.0137;
 
     /**
      * CAN IDs, ports, channels, etc.
