@@ -451,6 +451,14 @@ public class LimelightHelpers {
         return getLimelightNTDouble(limelightName, "tx");
     }
 
+    public static double getTLONG(String limelightName) {
+        return getLimelightNTDouble(limelightName, "tlong");
+    }
+
+    public static double getTVERT(String limelightName) {
+        return getLimelightNTDouble(limelightName, "tvert");
+    }
+
     public static double getTY(String limelightName) {
         return getLimelightNTDouble(limelightName, "ty");
     }
