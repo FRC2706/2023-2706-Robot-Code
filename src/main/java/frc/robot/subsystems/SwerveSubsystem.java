@@ -201,16 +201,26 @@ public class SwerveSubsystem extends SubsystemBase {
         return m_pigeon.getFusedHeading();
     }
 
-    public ChassisSpeeds getChassisSpeeds()
+    public SwerveModuleState[] getModuleStates()
     {
-        SwerveModuleState[] currModuleStates = new SwerveModuleState[4];
-        currModuleStates[0] = m_frontLeft.getState();
-        currModuleStates[1] = m_frontRight.getState();
-        currModuleStates[2] = m_rearLeft.getState();
-        currModuleStates[3] = m_rearRight.getState();
+        return (new SwerveModuleState[] {
+        m_frontLeft.getState(),
+        m_frontRight.getState(),
+        m_rearLeft.getState(),
+        m_rearRight.getState()});
+
         
-        ChassisSpeeds chassisSpeeds = Config.Swerve.kSwerveDriveKinematics.toChassisSpeeds(currModuleStates);
-        return chassisSpeeds;
+    }
+    public ChassisSpeeds getSpeedsFieldRelative()
+    {              
+        return( ChassisSpeeds.fromFieldRelativeSpeeds(
+            Config.Swerve.kSwerveDriveKinematics.toChassisSpeeds(getModuleStates()), getHeading()));
+        
+    }
+
+    public ChassisSpeeds getSpeeds()
+    {
+        return Config.Swerve.kSwerveDriveKinematics.toChassisSpeeds(getModuleStates());
     }
 
     /**

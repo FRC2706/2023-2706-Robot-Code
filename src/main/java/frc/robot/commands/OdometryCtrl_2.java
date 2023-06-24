@@ -23,7 +23,7 @@ import java.util.List;
 
 
 
-public class OdometryCtrl extends CommandBase {
+public class OdometryCtrl_2 extends CommandBase {
   /** Creates a new OdometryCtrl. */
 
   private BaseAutoBuilder m_autoBuilder;
@@ -35,7 +35,7 @@ public class OdometryCtrl extends CommandBase {
 
   private CommandBase m_activeCommand;
 
-  public OdometryCtrl(BaseAutoBuilder autoBuilder, 
+  public OdometryCtrl_2(BaseAutoBuilder autoBuilder, 
                        double maxVel, 
                        double maxAccel, 
                        PathPoint finalPathPoint) {
@@ -58,7 +58,7 @@ public class OdometryCtrl extends CommandBase {
   @Override
   public void initialize() {
     Pose2d pose = m_drive.getPose();
-    ChassisSpeeds speeds = m_drive.getSpeeds();
+    ChassisSpeeds speeds = m_drive.getSpeedsFieldRelative();
 
     //set the first pathPoint: current (x,y) and current move moment
     m_pathPoints.set(0, new PathPoint(pose.getTranslation(), 
