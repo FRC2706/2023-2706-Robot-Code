@@ -33,7 +33,18 @@ public class Limelight3DApriltags {
             setAdvScopeNoPose();
             return;
         }
+        double extremeness = LimelightHelpers.getTLONG(limeLightName) / LimelightHelpers.getTSHORT(limeLightName);
+        System.out.println(extremeness);
+        if (extremeness < 1.15){
+            setAdvScopeNoPose();
+            return;
+        }
         Pose2d poseOdometry = DiffTalonSubsystem.getInstance().getPose();
+        if (poseOdometry.getX()>Config.FIELD_X*3/8 && poseOdometry.getX()<Config.FIELD_X*5/8){
+            setAdvScopeNoPose();
+            return;
+        }
+
         setAdvScopePose(pose);
         double timestamp = Timer.getFPGATimestamp() - LimelightHelpers.getLatency_Capture(limeLightName)/1000.0-LimelightHelpers.getLatency_Pipeline(limeLightName)/1000.0;
         DiffTalonSubsystem.getInstance().newVisionMeasurement(pose,timestamp);
