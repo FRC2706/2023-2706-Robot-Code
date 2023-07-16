@@ -31,6 +31,7 @@ import frc.robot.commands.ChargeStationLock;
 import frc.robot.commands.DriveArmAgainstBackstop;
 import frc.robot.commands.GripperCommand;
 import frc.robot.commands.OdometryCtrl;
+import frc.robot.commands.OdometryCtrl_2;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.RotateAngleXY;
@@ -115,7 +116,7 @@ public class CompRobotContainer extends RobotContainer {
 
     //finalPoint is a fixed point on the field
     PathPoint finalPoint = new PathPoint(new Translation2d(1,1),new Rotation2d(0), 0);
-    driver.start().whileTrue(new OdometryCtrl(routines.autoBuilder, 2, 1, finalPoint));
+    driver.start().whileTrue(new OdometryCtrl_2(routines.autoBuilder, 2, 1, finalPoint));
 
     // Operator Joystick
     operator.rightBumper().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, setState));
