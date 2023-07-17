@@ -58,21 +58,32 @@ public class OdometryCtrl extends CommandBase {
   @Override
   public void initialize() {
     Pose2d pose = m_drive.getPose();
-    ChassisSpeeds speeds = m_drive.getSpeeds();
+    ChassisSpeeds speeds = m_drive.getSpeedsFieldRelative();
 
     //set the first pathPoint: current (x,y) and current move moment
-    m_pathPoints.set(0, new PathPoint(pose.getTranslation(), 
-                                      new Rotation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond), 
-                                      Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)));
-   
+    double initSpeed = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
+    Rotation2d initHeading = null;
+    if( initSpeed < 1e-4)
+    {
+      initHeading = Rotation2d.fromDegrees(45);
+    }
+    else
+    {
+      initHeading = new Rotation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
+    }
+
+    m_pathPoints.set(0, new PathPoint(pose.getTranslation(),                                  
+                                      initHeading, 
+                                      pose.getRotation(),
+                                      initSpeed));
    
     //
-    //for testing only
-    //overwrite the input final path point here: heading is 0, velocity is 0
-    m_finalPathPoint = new PathPoint(pose.getTranslation().plus(new Translation2d(1,0)),
-                            new Rotation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond),//new Rotation2d(0), 
-                                     0);
-
+    //for testing: (x,y) --> (x+1,y+1)
+    //overwrite the input final path point here: heading is 45, velocity is 0 
+    m_finalPathPoint = new PathPoint(pose.getTranslation().plus(new Translation2d(1,1)),
+                            Rotation2d.fromDegrees(45), 
+                            pose.getRotation(),                         
+                            0);
 
     m_pathPoints.set(1, m_finalPathPoint);
     //@todo: currently only two pathPoints. Later to add more waypoints

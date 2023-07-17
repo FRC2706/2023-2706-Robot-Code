@@ -60,23 +60,18 @@ public class OdometryCtrl_2 extends CommandBase {
     Pose2d pose = m_drive.getPose();
     ChassisSpeeds speeds = m_drive.getSpeedsFieldRelative();
 
-
-    //issue:
-    //the robot turns the heading to 0 first and then starts the path
-    //path points: looks like movement angle, instead of robot heading
-
     //set the first pathPoint: current (x,y) and current move moment
     m_pathPoints.set(0, new PathPoint(pose.getTranslation(),                                  
                                       new Rotation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond), 
-                                      SwerveSubsystem.getInstance().getHeading(),
+                                      pose.getRotation(),
                                       Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)));
    
     //
-    //for testing only
-    //overwrite the input final path point here: heading is 0 since from x --> (x+1), velocity is 0
+    //for testing: (x,y) --> (x+1,y)
+    //overwrite the input final path point here: heading is 0 since from x --> (x+1), velocity is 0 
     m_finalPathPoint = new PathPoint(pose.getTranslation().plus(new Translation2d(1,0)),
                             Rotation2d.fromDegrees(0), 
-                            SwerveSubsystem.getInstance().getHeading(),                          
+                            pose.getRotation(),                         
                             0);
 
 
