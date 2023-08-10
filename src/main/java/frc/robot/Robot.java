@@ -56,7 +56,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    DataLogManager.start();
+    // Start Networktable logging, also record both DS control and joystick data
+    DriverStation.startDataLog(DataLogManager.getLog());
+
     DriverStation.silenceJoystickConnectionWarning(true);
     pcmCompressor.enableDigital();
     PathPlannerServer.startServer(5811);
