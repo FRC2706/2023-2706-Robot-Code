@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib2706.AdvantageUtil;
+import frc.lib2706.LL3DApriltags;
 import frc.robot.SubsystemChecker;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.config.Config;
@@ -63,6 +64,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private SwerveDriveOdometry m_odometry;
     private SwerveDrivePoseEstimator m_poseEstimator;
 
+    private LL3DApriltags m_limelight;
+
     /** Get instance of singleton class */
     public static SwerveSubsystem getInstance() {
         if (instance == null){
@@ -90,6 +93,8 @@ public class SwerveSubsystem extends SubsystemBase {
         m_odometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition(), new Pose2d(0, 0, Rotation2d.fromDegrees(rotEntry.get())));
         SmartDashboard.putData("Field", m_field);
         m_poseEstimator = new SwerveDrivePoseEstimator(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition(), new Pose2d());
+    
+        m_limelight = new LL3DApriltags("limelight");
     }
 
     @Override
@@ -112,6 +117,8 @@ public class SwerveSubsystem extends SubsystemBase {
                 Rotation2d.fromDegrees(currentGyro),
                 getPosition()
         );
+
+        m_limelight.update();
 
         pubEstimatedPose.accept(AdvantageUtil.deconstruct(estimatedPose));
         pubOdometry.accept(AdvantageUtil.deconstruct(odometryPose));
@@ -145,7 +152,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @return The pose.
      */
     public Pose2d getPose() {
-        return m_odometry.getPoseMeters();
+        return m_poseEstimator.getEstimatedPosition();
     }
 
     /**

@@ -556,6 +556,10 @@ public class LimelightHelpers {
         return getLimelightNTDouble(limelightName, "tid");
     }
 
+    public static int getFiducialIDAsInt(String limelightName) {
+        return (int) Math.round(getFiducialID(limelightName));
+    }
+
     public static double getNeuralClassID(String limelightName) {
         return getLimelightNTDouble(limelightName, "tclass");
     }

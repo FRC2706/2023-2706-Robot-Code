@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib2706.AdvantageUtil;
 import frc.lib2706.CTREUnits;
 import frc.lib2706.DifferentialDrivePoseEstimatorExposed;
-import frc.lib2706.Limelight3DApriltags;
+import frc.lib2706.LL3DApriltags;
 import frc.robot.SubsystemChecker;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.config.Config;
@@ -49,7 +49,7 @@ public class DiffTalonSubsystem extends SubsystemBase {
     private DifferentialDrivePoseEstimatorExposed poseEstimator;
     private boolean disableVisionFeedback = false;
 
-    private Limelight3DApriltags limelight;
+    private LL3DApriltags limelight;
 
     private DoublePublisher pubLeftVel, pubRightVel;
     private DoubleArrayPublisher pubPose;
@@ -134,7 +134,7 @@ public class DiffTalonSubsystem extends SubsystemBase {
             new Pose2d()
         );
 
-        limelight = new Limelight3DApriltags("limelight");
+        limelight = new LL3DApriltags("limelight");
 
         NetworkTable table = NetworkTableInstance.getDefault().getTable("Drivetrain");
         pubLeftVel = table.getDoubleTopic("LeftVelocityMPS").publish(PubSubOption.periodic(0.02));
