@@ -81,13 +81,14 @@ public class Config {
     public static final int DIFF_SLOTID_DRIVER = 0;
     public static final int DIFF_SLOTID_RAMSETE = 1;
 
-    
+    public static final double FIELD_X = 16.54175;
+    public static final double FIELD_Y = 8.0137;
 
     /**
      * CAN IDs, ports, channels, etc.
      */
     public static class CANID {   
-        public static int PIGEON = robotSpecific(30, 27, 27, 27, 30);
+        public static int PIGEON = robotSpecific(30, 27, 30, 27, 30);
     
         public static int CANDLE = robotSpecific(15, 15, -1, 15, 15);
         public static int CTRE_PCM = robotSpecific(1, 1, -1, -1);
