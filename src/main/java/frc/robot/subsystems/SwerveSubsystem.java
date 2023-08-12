@@ -65,6 +65,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private SwerveDrivePoseEstimator m_poseEstimator;
 
     private LL3DApriltags m_limelight;
+    private boolean skipLimelightPoseChecks;
 
     /** Get instance of singleton class */
     public static SwerveSubsystem getInstance() {
@@ -118,7 +119,8 @@ public class SwerveSubsystem extends SubsystemBase {
                 getPosition()
         );
 
-        m_limelight.update();
+
+        m_limelight.update(skipLimelightPoseChecks);
 
         pubEstimatedPose.accept(AdvantageUtil.deconstruct(estimatedPose));
         pubOdometry.accept(AdvantageUtil.deconstruct(odometryPose));
@@ -245,6 +247,14 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public CommandBase getSyncOdometryCommand(){
         return Commands.runOnce(()-> resetOdometry(m_poseEstimator.getEstimatedPosition()));
+    }
+
+    public CommandBase getToggleChecksCommand(){
+        return Commands.runOnce(()-> toggleSkipChecks());
+    }
+
+    public void toggleSkipChecks(){
+        skipLimelightPoseChecks = !skipLimelightPoseChecks;
     }
 
     /**

@@ -151,8 +151,6 @@ public class DiffTalonSubsystem extends SubsystemBase {
             getRightDistance()
         );
 
-        limelight.update();
-
         pubPose.accept(AdvantageUtil.deconstruct(poseEstimator.getEstimatedPosition()));
     }
 
