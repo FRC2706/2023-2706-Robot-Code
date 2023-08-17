@@ -37,8 +37,11 @@ public class LL3DApriltags {
             if (extremeness < 2) {
                 // one tag
                 Pose3d poseTag = LimelightHelpers.getTargetPose3d_CameraSpace(m_limeLightName);
+                
+                System.out.println("poseTag Hypo: " + Math.hypot(poseTag.getX(),poseTag.getZ()));
 
-                if (Math.hypot(poseTag.getX(),poseTag.getY()) > 2) {
+                if (Math.hypot(poseTag.getX(),poseTag.getZ()) > 2) {
+                    
                     return m_advScope.rejectDataBlueFilter(pose);
                 }
 
