@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -15,7 +17,7 @@ import frc.libLimelight.LimelightHelpers;
 import frc.robot.config.Config;
 import frc.robot.subsystems.SwerveSubsystem;
 
-public class LLAprilTagAlign extends CommandBase {
+public class LLAlignToSimpleTarget extends CommandBase {
     private final double TIME_WITH_NO_DATA = 0.4;
     private final double KEEP_AWAY_DISTANCE_METERS = 1.2;
     private final double KEEP_AWAY_TOLERANCE_RAD = Math.toRadians(5);
@@ -35,19 +37,27 @@ public class LLAprilTagAlign extends CommandBase {
     private final double m_desiredDistanceMeters;
     private final Rotation2d m_targetRotation;
     private final Rotation2d m_limelightAngle;
+    private final Supplier<Double> m_distanceToTarget;
     private final Timer m_timer;
 
     private double xSpeed, ySpeed, rotSpeed;
 
     /** Creates a new LLAlign. */
-    public LLAprilTagAlign(String llName, double desiredDistanceMeters, Rotation2d targetRotation, Rotation2d limelightAngle) {
+    public LLAlignToSimpleTarget(String llName, double desiredDistanceMeters, Rotation2d targetRotation, Rotation2d limelightAngle, Supplier<Double> distanceToTarget) {
         m_llName = llName;
         m_desiredDistanceMeters = desiredDistanceMeters;
         m_targetRotation = targetRotation;
         m_limelightAngle = limelightAngle;
+        m_distanceToTarget = distanceToTarget;
         m_timer = new Timer();
 
         addRequirements(SwerveSubsystem.getInstance());
+    }
+
+    public static Supplier<Double> createApriltagDistanceSupplier(String llName) {
+        return () -> {
+            return (1.43 / (LimelightHelpers.getTLONG(llName) / 52));
+        };
     }
 
     // Called when the command is initially scheduled.
@@ -81,7 +91,7 @@ public class LLAprilTagAlign extends CommandBase {
             Rotation2d angleAtTarget = llHeading.minus(m_targetRotation);
 
             // Distance in meters to the target
-            double llDistanceToTargetMeters = (1.43 / (LimelightHelpers.getTLONG(m_llName) / 52));
+            double llDistanceToTargetMeters = m_distanceToTarget.get();
 
             // Move in the Y until the limelight is directly facing the target
             double distanceParallelToTarget = llDistanceToTargetMeters * Math.sin(angleAtTarget.getRadians());
