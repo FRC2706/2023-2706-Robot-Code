@@ -89,6 +89,10 @@ public class CompRobotContainer extends RobotContainer {
     // CommandXboxController testStick = new CommandXboxController(2);
     // CommandXboxController armStick = new CommandXboxController(3);
 
+
+
+
+
     // SwerveModuleState state = new SwerveModuleState(0, new Rotation2d(0));
     // testStick.a().whileTrue(Commands.run(() -> SwerveSubsystem.getInstance().setModuleStatesNoAntiJitter(
     //   new SwerveModuleState[]{state, state, state, state}, true), SwerveSubsystem.getInstance()));
@@ -147,6 +151,8 @@ public class CompRobotContainer extends RobotContainer {
     
     // Starting configuration
     operator.leftStick().onTrue(new ArmCommand(ArmSetpoint.STARTING_CONFIGURATIN).andThen(new DriveArmAgainstBackstop()));
+
+    operator.rightStick().onTrue(SwerveSubsystem.getInstance().getToggleChecksCommand());
 
     // testStick.a().onTrue(new CheckArmSetpoints(testStick));
     // Force the buttons to just do cone setpoints
