@@ -13,7 +13,6 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import frc.robot.config.Config;
 
@@ -29,8 +28,7 @@ public class LL3DApriltagsAdvScope {
     private AprilTagFieldLayout m_apriltagLayout;
     private boolean m_failedToLoadFieldLayout = false;
 
-    public LL3DApriltagsAdvScope(String limelightName) {
-        NetworkTable table = NetworkTableInstance.getDefault().getTable(limelightName + "3DAprilTagsAdvScope");
+    public LL3DApriltagsAdvScope(NetworkTable table) {
         pubPose = table.getDoubleArrayTopic("VisionRobotPose").publish(PubSubOption.periodic(0.02));
         pubAcceptedTarget = table.getDoubleArrayTopic("AcceptedTarget").publish(PubSubOption.periodic(0.02));
         pubBlueFiltered = table.getDoubleArrayTopic("BlueCone").publish(PubSubOption.periodic(0.02));
