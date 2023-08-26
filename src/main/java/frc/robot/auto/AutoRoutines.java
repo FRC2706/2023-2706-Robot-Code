@@ -166,11 +166,26 @@ public class AutoRoutines {
 
          eventMap.put("Arm2CubeTop", schedule(new ArmCommand(ArmSetpoint.TOP_CUBE)));
          eventMap.put("Arm2ConeTop", schedule(new ArmJoystickConeCommand(ArmSetpoint.TOP_CONE, new CommandXboxController(3))));
+         eventMap.put("Arm2ConeMiddle", schedule(new ArmJoystickConeCommand(ArmSetpoint.MIDDLE_CONE, new CommandXboxController(3))));
          eventMap.put("Arm2Pickup", schedule(new ArmCommand(ArmSetpoint.PICKUP)));
          eventMap.put("Arm2HomeAfterPickup", schedule(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+         eventMap.put("Arm2Home", schedule(new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE)));
+         eventMap.put("Arm2Substation", schedule(new ArmCommand(ArmSetpoint.SUBSTATION)));
 
+         eventMap.put("Gripper2ConeSubstation", schedule(new SequentialCommandGroup(
+            new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, CompRobotContainer.setState),
+            new WaitCommand(0.4),
+            new ArmCommand(ArmSetpoint.SUBSTATION_LIFT))
+         ));
+            
+         
          eventMap.put("Arm2TopConeLowerThenScore", schedule(new ParallelCommandGroup(
             new ArmCommand(ArmSetpoint.TOP_CONE_RELEASE),
+            new WaitCommand(0.3).andThen(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState))
+        )));
+
+        eventMap.put("Arm2MiddleConeLowerThenScore", schedule(new ParallelCommandGroup(
+            new ArmCommand(ArmSetpoint.MIDDLE_CONE_RELEASE),
             new WaitCommand(0.3).andThen(new GripperCommand(GRIPPER_INSTRUCTION.OPEN, CompRobotContainer.setState))
         )));
 
@@ -181,6 +196,7 @@ public class AutoRoutines {
          eventMap.put("GripperPickCone", new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, 
                                             CompRobotContainer.setState));
 
+        
         eventMap.put("Gripper2PickCone", schedule(new SequentialCommandGroup(
             new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, CompRobotContainer.setState),
             new WaitCommand(0.4),

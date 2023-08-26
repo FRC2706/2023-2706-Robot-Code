@@ -8,15 +8,18 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.pathplanner.lib.PathPoint;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -26,26 +29,25 @@ import frc.robot.Robot;
 import frc.robot.auto.AutoRoutines;
 import frc.robot.auto.AutoSelector;
 import frc.robot.auto.DriverAidFactory;
-import frc.robot.commands.AlignToPoseWithOdometry;
 import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmCommandSelector;
 import frc.robot.commands.ChargeStationLock;
 import frc.robot.commands.DriveArmAgainstBackstop;
 import frc.robot.commands.GripperCommand;
-import frc.robot.commands.LLAlignToSimpleTargetV2;
-import frc.robot.commands.OdometryCtrl;
-import frc.robot.commands.OdometryCtrl_2;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
+import frc.robot.commands.LLAlignToSimpleTargetV2;
+import frc.robot.commands.OdometryCtrl_2;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.RotateXYSupplier;
 import frc.robot.commands.SwerveTeleop;
-import frc.robot.commands.SyncSteerOnFly;
+import frc.robot.commands.TestPathPlannerWithAdvScope;
 import frc.robot.commands.WaitForVisionData;
 import frc.robot.config.ArmConfig.ArmPosition;
 import frc.robot.config.ArmConfig.ArmSetpoint;
+import frc.robot.config.Config.Swerve;
 import frc.robot.subsystems.SwerveSubsystem;
 
 
@@ -70,12 +72,22 @@ public class CompRobotContainer extends RobotContainer {
    public static Supplier<RobotGamePieceState> getState = CompRobotContainer::getRobotGamePieceState;
    public static Consumer<RobotGamePieceState> setState = a ->setRobotGamePieceState(a);
 
+   private Command testPathPlanner;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public CompRobotContainer() {
-  
+    if (RobotBase.isReal() == false) {
+      PPSwerveControllerCommand.setLoggingCallbacks(
+        null, 
+        (targetPose) -> SwerveSubsystem.getInstance().resetOdometry(targetPose), 
+        null, 
+        null);
+    }
+    
     m_autoSelector = new AutoSelector();
     routines = new AutoRoutines();
+
+    testPathPlanner = new TestPathPlannerWithAdvScope(routines.autoBuilder);
 
       // Configure the button bindings
       configureButtonBindings();
@@ -256,9 +268,14 @@ public class CompRobotContainer extends RobotContainer {
    */
   @Override
   public Command getAutonomousCommand() {
-    int autoId = m_autoSelector.getAutoId();
-    System.out.println("*********************** Auto Id"+autoId);
-     return routines.getAutonomousCommand(autoId);
+    if (RobotBase.isReal()) {
+      int autoId = m_autoSelector.getAutoId();
+      System.out.println("*********************** Auto Id"+autoId);
+      return routines.getAutonomousCommand(autoId);
+
+    } else {
+      return testPathPlanner;
+    }
   }
   public static RobotGamePieceState getRobotGamePieceState() {
     return m_robotState;

@@ -122,8 +122,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
         m_limelight.update(skipLimelightPoseChecks);
 
-        pubEstimatedPose.accept(AdvantageUtil.deconstruct(estimatedPose));
-        pubOdometry.accept(AdvantageUtil.deconstruct(odometryPose));
+        pubEstimatedPose.accept(AdvantageUtil.deconstruct(estimatedPose, true));
+        pubOdometry.accept(AdvantageUtil.deconstruct(odometryPose, true));
         
         gyroEntry.accept(currentGyro);
         xEntry.accept(getPose().getX());

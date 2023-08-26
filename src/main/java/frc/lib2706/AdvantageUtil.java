@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.DoubleStream;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Quaternion;
@@ -13,11 +14,21 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.config.Config;
 
 /**
  * Copied and modified/added version from team 686
  */
 public class AdvantageUtil {
+    public static Pose2d m_redOrigin = new Pose2d(
+        new Translation2d(
+            Config.FIELD_X, 
+            Config.FIELD_Y),
+        Rotation2d.fromDegrees(180)
+    );
+
     public static double[] deconstruct(Pose3d pose)
     {
         return new double[]{
@@ -37,6 +48,12 @@ public class AdvantageUtil {
             r = DoubleStream.concat(Arrays.stream(r), Arrays.stream(deconstruct(pose))).toArray();
         }
         return r;
+    }
+    public static double[] deconstruct(Pose2d pose, boolean rotationPoseIfRedAlliance) {
+        if (DriverStation.getAlliance() == Alliance.Red) {
+            pose = pose.relativeTo(m_redOrigin);
+        }
+        return deconstruct(pose);
     }
     public static double[] deconstruct(Pose2d pose)
     {

@@ -69,7 +69,7 @@ public class TranslationCommand extends CommandBase {
   @Override
   public void execute() {
     //System.out.println("Current X: " + currentX + ", DesiredX: " + desiredX + ", Position Error: " + pidControlX.getPositionError());
-    System.out.println("Current Y: " + currentY + ", DesiredY: " + desiredY + ", Position Error: " + pidControlY.getPositionError());
+    // System.out.println("Current Y: " + currentY + ", DesiredY: " + desiredY + ", Position Error: " + pidControlY.getPositionError());
     //update the currentX and currentY
     currentX = SwerveSubsystem.getInstance().getPose().getX();
     currentY = SwerveSubsystem.getInstance().getPose().getY();
