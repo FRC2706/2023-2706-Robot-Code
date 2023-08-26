@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -25,8 +26,8 @@ public class AlignToPoseWithOdometry extends CommandBase {
             new TrapezoidProfile.Constraints(2, 2));
     ProfiledPIDController pidY = new ProfiledPIDController(4, 0.0, 0.2,
             new TrapezoidProfile.Constraints(2, 2));
-    ProfiledPIDController pidRot = new ProfiledPIDController(5.0, 0, 0.4,
-            new TrapezoidProfile.Constraints(4 * Math.PI, 8 * Math.PI)); // pid to be tested
+    ProfiledPIDController pidRot = new ProfiledPIDController(4.0, 0, 0.4,
+            new TrapezoidProfile.Constraints(4 * Math.PI, 8 * Math.PI));
 
     private Pose2d m_targetPose;
     private boolean m_isWaypoint;
@@ -35,14 +36,18 @@ public class AlignToPoseWithOdometry extends CommandBase {
     final double POS_TOLERANCE;
     final double ROT_TOLERANCE;
 
-    /** Creates a new AlignWithNode. */
+    public AlignToPoseWithOdometry(Pose2d targetPose, boolean isWaypoint, boolean neverEnd) {
+        this(targetPose, isWaypoint, neverEnd, 2, 2);
+    }
 
+    /** Creates a new AlignWithNode. */
     public AlignToPoseWithOdometry(Pose2d targetPose, boolean isWaypoint, boolean neverEnd, double vel, double accel) {
         m_targetPose = targetPose;
         m_isWaypoint = isWaypoint;
         m_neverEnd = neverEnd;
         pidX.setConstraints(new Constraints(vel, accel));
         pidY.setConstraints(new Constraints(vel, accel));
+        pidRot.enableContinuousInput(-Math.PI, Math.PI);
 
         if (isWaypoint) {
             POS_TOLERANCE = LOOSE_POS_TOLERANCE;
@@ -63,8 +68,6 @@ public class AlignToPoseWithOdometry extends CommandBase {
         pidX.reset(pose.getX(), speeds.vxMetersPerSecond);
         pidY.reset(pose.getY(), speeds.vyMetersPerSecond);
         pidRot.reset(pose.getRotation().getRadians(), speeds.omegaRadiansPerSecond);
-
-        pidRot.enableContinuousInput(-Math.PI, Math.PI);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -76,6 +79,18 @@ public class AlignToPoseWithOdometry extends CommandBase {
         double rot = pidRot.calculate(pose.getRotation().getRadians(),
                 m_targetPose.getRotation().getRadians());
 
+        if (Math.abs(pose.getX() - m_targetPose.getX()) < TIGHT_POS_TOLERANCE) {
+            xSpeed = 0;
+        }
+        if (Math.abs(pose.getY() - m_targetPose.getY()) < TIGHT_POS_TOLERANCE) {
+            ySpeed = 0;
+        }
+        if (Math.abs(pose.getRotation().getRadians() -
+                    m_targetPose.getRotation().getRadians()) < TIGHT_ROT_TOLERANCE) {
+            rot = 0;
+        }
+        
+        
         SwerveSubsystem.getInstance().drive(
                 xSpeed,
                 ySpeed,

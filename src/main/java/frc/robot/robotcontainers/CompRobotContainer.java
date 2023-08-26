@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 
 import com.pathplanner.lib.PathPoint;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -24,16 +25,20 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.auto.AutoRoutines;
 import frc.robot.auto.AutoSelector;
+import frc.robot.auto.DriverAidFactory;
+import frc.robot.commands.AlignToPoseWithOdometry;
 import frc.robot.commands.AlignToTargetVision;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmCommandSelector;
 import frc.robot.commands.ChargeStationLock;
 import frc.robot.commands.DriveArmAgainstBackstop;
 import frc.robot.commands.GripperCommand;
+import frc.robot.commands.LLAlignToSimpleTargetV2;
 import frc.robot.commands.OdometryCtrl;
 import frc.robot.commands.OdometryCtrl_2;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.commands.ResetGyro;
+import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.RotateAngleXY;
 import frc.robot.commands.RotateXYSupplier;
 import frc.robot.commands.SwerveTeleop;
@@ -86,7 +91,7 @@ public class CompRobotContainer extends RobotContainer {
     // CommandXboxController
     CommandXboxController driver = new CommandXboxController(0);
     CommandXboxController operator = new CommandXboxController(1);
-    // CommandXboxController testStick = new CommandXboxController(2);
+    CommandXboxController testStick = new CommandXboxController(2);
     // CommandXboxController armStick = new CommandXboxController(3);
 
 
@@ -98,7 +103,8 @@ public class CompRobotContainer extends RobotContainer {
     //   new SwerveModuleState[]{state, state, state, state}, true), SwerveSubsystem.getInstance()));
 
     // Driver joystick
-    SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
+    // SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(driver));
+    SwerveSubsystem.getInstance().setDefaultCommand(new SwerveTeleop(testStick));
 
     driver.back().onTrue(new ResetGyro());
 
@@ -153,6 +159,28 @@ public class CompRobotContainer extends RobotContainer {
     operator.leftStick().onTrue(new ArmCommand(ArmSetpoint.STARTING_CONFIGURATIN).andThen(new DriveArmAgainstBackstop()));
 
     operator.rightStick().onTrue(SwerveSubsystem.getInstance().getToggleChecksCommand());
+
+
+    // Test Joystick for kingston
+    testStick.back().onTrue(new ResetGyro());
+    testStick.start().onTrue(new ResetGyro(180));
+    testStick.a().whileTrue(new LLAlignToSimpleTargetV2(
+      "limelight", 
+      0.5, 
+      Rotation2d.fromDegrees(180), 
+      Rotation2d.fromDegrees(-45), 
+      LLAlignToSimpleTargetV2.createApriltagDistanceSupplier("limelight")
+    ));
+
+    testStick.b().onTrue(new ResetOdometry(new Pose2d(1.9, 0, Rotation2d.fromDegrees(180))));
+    // testStick.y().whileTrue(new AlignToPoseWithOdometry(new Pose2d(), false, false));
+    testStick.x().whileTrue(DriverAidFactory.alignToConeWithPid(0));
+    testStick.y().whileTrue(DriverAidFactory.scoreConeWithPid(0, ArmSetpoint.MIDDLE_CONE));
+
+    testStick.leftTrigger().onTrue(new ArmCommand(ArmSetpoint.PICKUP));
+    testStick.rightTrigger().onTrue(new GripperCommand(GRIPPER_INSTRUCTION.PICK_UP_CONE, setState))
+        .onFalse(new WaitCommand(0.5).andThen(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
+  
 
     // testStick.a().onTrue(new CheckArmSetpoints(testStick));
     // Force the buttons to just do cone setpoints

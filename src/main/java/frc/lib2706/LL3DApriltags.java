@@ -30,6 +30,11 @@ public class LL3DApriltags {
             return m_advScope.rejectDataNoTargets();
         }
 
+        int pipeline = LimelightHelpers.getCurrentPipelineAsInt(m_limeLightName);
+        if (pipeline != Config.LL_3DAPRILTAG_PIPELINE) {
+            return m_advScope.rejectDataNoTargets();
+        }
+        
         // TODO: Manage red alliance vs blue alliance
         Pose2d pose = LimelightHelpers.getBotPose2d_wpiBlue(m_limeLightName);
 

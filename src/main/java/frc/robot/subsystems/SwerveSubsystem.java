@@ -154,7 +154,8 @@ public class SwerveSubsystem extends SubsystemBase {
      * @return The pose.
      */
     public Pose2d getPose() {
-        return m_poseEstimator.getEstimatedPosition();
+        // return m_poseEstimator.getEstimatedPosition();
+        return m_odometry.getPoseMeters();
     }
 
     /**
@@ -247,7 +248,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public ChassisSpeeds getSpeedsFieldRelative()
     {              
         return( ChassisSpeeds.fromFieldRelativeSpeeds(
-            Config.Swerve.kSwerveDriveKinematics.toChassisSpeeds(getModuleStates()), getHeading()));
+            Config.Swerve.kSwerveDriveKinematics.toChassisSpeeds(getModuleStates()), getHeading().unaryMinus()));
         
     }
 

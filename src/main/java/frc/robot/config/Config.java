@@ -81,8 +81,20 @@ public class Config {
     public static final int DIFF_SLOTID_DRIVER = 0;
     public static final int DIFF_SLOTID_RAMSETE = 1;
 
+
+
     public static final double FIELD_X = 16.54175;
     public static final double FIELD_Y = 8.0137;
+
+    public static final int LL_3DAPRILTAG_PIPELINE = 1;
+
+    public static final double[] CONE_Y_COORDINATES_BLUE = {
+        0.0
+    };
+
+    public static final double[] CONE_Y_COORDINATES_RED = {
+        0.0
+    };
 
     /**
      * CAN IDs, ports, channels, etc.

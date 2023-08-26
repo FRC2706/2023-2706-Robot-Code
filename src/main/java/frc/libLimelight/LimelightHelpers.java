@@ -483,6 +483,10 @@ public class LimelightHelpers {
         return getLimelightNTDouble(limelightName, "getpipe");
     }
 
+    public static int getCurrentPipelineAsInt(String limelightName) {
+        return (int) Math.round(getCurrentPipelineIndex(limelightName));
+    }
+
     public static String getJSONDump(String limelightName) {
         return getLimelightNTString(limelightName, "json");
     }

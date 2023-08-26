@@ -11,21 +11,26 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class ResetGyro extends CommandBase {
-  
+  private final Rotation2d m_desiredAngle;
+
   /** 
    * ResetGyro will update the gyro offset in the {@link SwerveDriveOdometry}.
    * 
    * Keeps the X and Y of odometry the same.
    */
   public ResetGyro() {
-    // Use addRequirements() here to declare subsystem dependencies.
+    this(0);
+  }
+
+  public ResetGyro(double angleDeg) {
+    m_desiredAngle = Rotation2d.fromDegrees(angleDeg);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     Pose2d pose = SwerveSubsystem.getInstance().getPose();
-    Pose2d newPose = new Pose2d(pose.getTranslation(), new Rotation2d(0));
+    Pose2d newPose = new Pose2d(pose.getTranslation(), m_desiredAngle);
     SwerveSubsystem.getInstance().resetOdometry(newPose);
   }
 
