@@ -14,6 +14,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.subsystems.SwerveSubsystem;
 
 public class TestPathPlannerWithAdvScope extends CommandBase {
     private BaseAutoBuilder m_autoBuilder;
@@ -33,14 +34,16 @@ public class TestPathPlannerWithAdvScope extends CommandBase {
         m_autoBuilder = autoBuilder;
 
         NetworkTable table = NetworkTableInstance.getDefault().getTable("TestPathPlanner");
-        entryGetPathIndex = table.getIntegerTopic("PathIndexToTest").getEntry(-1);
+        entryGetPathIndex = table.getIntegerTopic("PathIndexToTest").getEntry(2);
         entryGetPathIndex.set(-1);
 
         entryVel = table.getDoubleTopic("Vel").getEntry(2.5);
-        entryVel.set(2.5);
+        entryVel.set(1);
 
         entryAccel = table.getDoubleTopic("Accel").getEntry(3);
-        entryAccel.set(3);
+        entryAccel.set(1);
+
+        addRequirements(SwerveSubsystem.getInstance());
     }
 
     // Called when the command is initially scheduled.

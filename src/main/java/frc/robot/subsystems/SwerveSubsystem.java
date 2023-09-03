@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -15,11 +16,10 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.DoubleArrayEntry;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -42,6 +42,10 @@ public class SwerveSubsystem extends SubsystemBase {
     private DoublePublisher xEntry = table.getDoubleTopic("OdometryX").publish();
     private DoublePublisher yEntry = table.getDoubleTopic("OdometryY").publish();
     private DoubleEntry rotEntry = table.getDoubleTopic("OdometryRot").getEntry(0);
+
+    private DoublePublisher xError = table.getDoubleTopic("xErrorEstimator").publish(PubSubOption.periodic(0.02));
+    private DoublePublisher yError = table.getDoubleTopic("yErrorEstimator").publish(PubSubOption.periodic(0.02));
+    private DoublePublisher rotError = table.getDoubleTopic("rotErrorEstimator").publish(PubSubOption.periodic(0.02));
 
     private DoublePublisher pitchPub = table.getDoubleTopic("Pitch").publish();
     private DoublePublisher rollPub = table.getDoubleTopic("Roll").publish();
@@ -119,11 +123,15 @@ public class SwerveSubsystem extends SubsystemBase {
                 getPosition()
         );
 
+        xError.accept(odometryPose.getX()-estimatedPose.getX());
+        yError.accept(odometryPose.getY()-estimatedPose.getY());
+        rotError.accept(odometryPose.getRotation().getDegrees()-estimatedPose.getRotation().getDegrees());
+
 
         m_limelight.update(skipLimelightPoseChecks);
 
-        pubEstimatedPose.accept(AdvantageUtil.deconstruct(estimatedPose, true));
-        pubOdometry.accept(AdvantageUtil.deconstruct(odometryPose, true));
+        pubEstimatedPose.accept(AdvantageUtil.deconstruct(estimatedPose));
+        pubOdometry.accept(AdvantageUtil.deconstruct(odometryPose));
         
         gyroEntry.accept(currentGyro);
         xEntry.accept(getPose().getX());
@@ -154,8 +162,8 @@ public class SwerveSubsystem extends SubsystemBase {
      * @return The pose.
      */
     public Pose2d getPose() {
-        // return m_poseEstimator.getEstimatedPosition();
-        return m_odometry.getPoseMeters();
+        return m_poseEstimator.getEstimatedPosition();
+        // return m_odometry.getPoseMeters();
     }
 
     /**
@@ -274,6 +282,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public CommandBase getToggleChecksCommand(){
         return Commands.runOnce(()-> toggleSkipChecks());
+    }
+
+    public CommandBase getSetSkipChecksCommand(boolean skipChecks) {
+        return Commands.runOnce(() -> {
+            skipLimelightPoseChecks = skipChecks;
+        });
+        
     }
 
     public void toggleSkipChecks(){

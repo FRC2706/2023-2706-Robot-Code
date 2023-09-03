@@ -18,7 +18,7 @@ public class AlignToPoseWithOdometry extends CommandBase {
     final double ANGULAR_VEL_TOLERANCE = Math.toRadians(10);
 
     final double TIGHT_POS_TOLERANCE = 0.01;
-    final double TIGHT_ROT_TOLERANCE = Math.toRadians(3);
+    final double TIGHT_ROT_TOLERANCE = Math.toRadians(0.5);
     final double LOOSE_POS_TOLERANCE = 0.3;
     final double LOOSE_ROT_TOLERANCE = Math.toRadians(10);
 

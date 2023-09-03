@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -21,12 +22,13 @@ import frc.robot.commands.ArmJoystickConeCommand;
 import frc.robot.commands.GripperCommand;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.commands.OdometryCtrl_2;
+import frc.robot.config.Config;
 import frc.robot.config.ArmConfig.ArmSetpoint;
 import frc.robot.robotcontainers.CompRobotContainer;
 import frc.robot.subsystems.ArmSubsystem;
 
 public class DriverAidFactory {
-    private final static double SCORING_X = 1.8;
+    private final static double SCORING_X = 1.78;
     private final static double RAISE_ARM_X = SCORING_X + 0.5;
     private final static Rotation2d SCORING_ANGLE = Rotation2d.fromDegrees(180);
     private final static double VEL = 2;
@@ -50,7 +52,7 @@ public class DriverAidFactory {
                 new Pose2d(RAISE_ARM_X, yCoordinateMeters, Rotation2d.fromDegrees(180)),
                 true, false, VEL, ACCEL),
             new ParallelDeadlineGroup(
-                new ArmJoystickConeCommand(armSetpoint, new CommandXboxController(3)).withTimeout(2),
+                new ArmJoystickConeCommand(armSetpoint, new CommandXboxController(4)).withTimeout(2),
                 new AlignToPoseWithOdometry(
                     new Pose2d(RAISE_ARM_X, yCoordinateMeters, Rotation2d.fromDegrees(180)),
                     true, true, VEL, ACCEL)
@@ -58,7 +60,7 @@ public class DriverAidFactory {
             brakes(true), 
             new AlignToPoseWithOdometry(
                 new Pose2d(SCORING_X, yCoordinateMeters, Rotation2d.fromDegrees(180)),
-                false, false, VEL, ACCEL),
+                false, false, VEL, ACCEL).withTimeout(1),
             new ParallelCommandGroup(
                 new AlignToPoseWithOdometry(
                     new Pose2d(SCORING_X, yCoordinateMeters, Rotation2d.fromDegrees(180)),
@@ -69,8 +71,8 @@ public class DriverAidFactory {
             brakes(true),
             new AlignToPoseWithOdometry(
                 new Pose2d(RAISE_ARM_X, yCoordinateMeters, Rotation2d.fromDegrees(180)),
-                false, false, VEL, ACCEL),
-            new ArmCommand(ArmSetpoint.PICKUP)
+                false, false, VEL, ACCEL).withTimeout(1),
+            new ScheduleCommand(new ArmCommand(ArmSetpoint.PICKUP))
         );
     }
 
@@ -85,17 +87,19 @@ public class DriverAidFactory {
         );
     }
     
-    public static Command pathFindThenPathPlanner(BaseAutoBuilder builder, PathPlannerTrajectory traj, Pose2d finalPose) {
+    public static Command pathFindThenPathPlanner(BaseAutoBuilder builder, PathPlannerTrajectory traj) {
         PathPlannerState trajStartState = traj.getInitialState();
         PathPoint trajStartPoint = new PathPoint(
             trajStartState.poseMeters.getTranslation(), 
             trajStartState.poseMeters.getRotation(),
             trajStartState.holonomicRotation,
             trajStartState.velocityMetersPerSecond);
+        double yCoordinateMeters = traj.getEndState().poseMeters.getY();
 
         return Commands.sequence(
-            new OdometryCtrl_2(builder, 2.5, 3, trajStartPoint),
-            builder.followPathWithEvents(traj)
+            new OdometryCtrl_2(builder, 1, 1, trajStartPoint),
+            builder.followPathWithEvents(traj),
+            scoreConeWithPid(yCoordinateMeters, ArmSetpoint.MIDDLE_CONE)
         );
     }
     

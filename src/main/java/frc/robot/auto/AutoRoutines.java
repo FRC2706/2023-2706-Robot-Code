@@ -165,8 +165,8 @@ public class AutoRoutines {
          eventMap.put("ArmHomeAfterPickup", new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP));
 
          eventMap.put("Arm2CubeTop", schedule(new ArmCommand(ArmSetpoint.TOP_CUBE)));
-         eventMap.put("Arm2ConeTop", schedule(new ArmJoystickConeCommand(ArmSetpoint.TOP_CONE, new CommandXboxController(3))));
-         eventMap.put("Arm2ConeMiddle", schedule(new ArmJoystickConeCommand(ArmSetpoint.MIDDLE_CONE, new CommandXboxController(3))));
+         eventMap.put("Arm2ConeTop", schedule(new ArmJoystickConeCommand(ArmSetpoint.TOP_CONE, new CommandXboxController(4))));
+         eventMap.put("Arm2ConeMiddle", schedule(new ArmJoystickConeCommand(ArmSetpoint.MIDDLE_CONE, new CommandXboxController(4))));
          eventMap.put("Arm2Pickup", schedule(new ArmCommand(ArmSetpoint.PICKUP)));
          eventMap.put("Arm2HomeAfterPickup", schedule(new ArmCommand(ArmSetpoint.HOME_AFTER_PICKUP)));
          eventMap.put("Arm2Home", schedule(new ArmCommand(ArmSetpoint.HOME_WITH_GAMEPIECE)));
@@ -217,6 +217,8 @@ public class AutoRoutines {
                                             CompRobotContainer.setState)));
 
         eventMap.put("wait", new WaitCommand(0.3));
+
+        // eventMap.put("coneVisionAlign", new AlignToGamePiece(yawSub, 1.2));
          
         autoBuilder = new SwerveAutoBuilder(
                 SwerveSubsystem.getInstance()::getPose,
@@ -279,7 +281,7 @@ public class AutoRoutines {
                 // Red side 2 cone auto with vision. Starts bottom and starts with a cone.
                 DoubleSubscriber yawSub2 = NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99);
                 return new SequentialCommandGroup(
-                    schedule(new ArmJoystickConeCommand(ArmSetpoint.TOP_CONE, new CommandXboxController(3))), // Starting lifting the arm to the top cone node
+                    schedule(new ArmJoystickConeCommand(ArmSetpoint.TOP_CONE, new CommandXboxController(4))), // Starting lifting the arm to the top cone node
                     new WaitCommand(0.35), // Allow the arm time to lift the arm.
                     Commands.runOnce(() -> SwerveSubsystem.getInstance().resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))), // Reset heading for next command
                     new AlignToTargetVision(true, 1.0, 0.05, 0, Math.PI, 2.5, 2.0, true).withTimeout(2.4), // Use vision to align with tape target
@@ -307,7 +309,7 @@ public class AutoRoutines {
                 // Blue side 2 cone auto with vision. Starts bottom and starts with a cone.
                 DoubleSubscriber yawSub = NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99);
                 return new SequentialCommandGroup(
-                    schedule(new ArmJoystickConeCommand(ArmSetpoint.TOP_CONE, new CommandXboxController(3))), // Starting lifting the arm to the top cone node
+                    schedule(new ArmJoystickConeCommand(ArmSetpoint.TOP_CONE, new CommandXboxController(4))), // Starting lifting the arm to the top cone node
                     new WaitCommand(0.35), // Allow the arm time to lift the arm.
                     Commands.runOnce(() -> SwerveSubsystem.getInstance().resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180)))), // Reset heading for next command
                     new AlignToTargetVision(true, 1.0, 0.05, 0, Math.PI, 2.5, 2.0, true).withTimeout(2.4), // Use vision to align with tape target

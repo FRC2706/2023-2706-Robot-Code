@@ -10,7 +10,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.config.Config;
 import frc.robot.subsystems.SwerveSubsystem;
 
 import com.pathplanner.lib.PathConstraints;
@@ -69,19 +71,22 @@ public class OdometryCtrl_2 extends CommandBase {
     //
     //for testing: (x,y) --> (x+1,y)
     //overwrite the input final path point here: heading is 0 since from x --> (x+1), velocity is 0 
-    m_finalPathPoint = new PathPoint(pose.getTranslation().plus(new Translation2d(1,0)),
-                            Rotation2d.fromDegrees(0), 
-                            pose.getRotation(),                         
-                            0);
+    // m_finalPathPoint = new PathPoint(pose.getTranslation().plus(new Translation2d(1,0)),
+    //                         Rotation2d.fromDegrees(0), 
+    //                         pose.getRotation(),                         
+    //                         0);
 
 
     m_pathPoints.set(1, m_finalPathPoint);
+
+
     //@todo: currently only two pathPoints. Later to add more waypoints
 
     PathPlannerTrajectory traj = PathPlanner.generatePath(
                                             new PathConstraints(m_maxVel, m_maxAccel), 
                                             m_pathPoints
                                             );
+
 
 
     m_activeCommand = m_autoBuilder.followPath(traj);

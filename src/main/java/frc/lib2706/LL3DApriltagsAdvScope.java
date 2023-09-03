@@ -6,8 +6,11 @@ package frc.lib2706;
 
 import java.util.Optional;
 
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -22,7 +25,7 @@ public class LL3DApriltagsAdvScope {
     private final Pose3d ALTERNATIVE_POSE = new Pose3d(Config.FIELD_X/2, Config.FIELD_Y/2, 1, new Rotation3d());
 
     // The height that the blue/yellow cones should be placed at above the green ghost.
-    private final double CONE_HEIGHT = 2.5;
+    private final double CONE_HEIGHT = 1.5;
 
     private DoubleArrayPublisher pubPose, pubAcceptedTarget, pubBlueFiltered, pubYellowFiltered;
     private AprilTagFieldLayout m_apriltagLayout;
@@ -36,8 +39,11 @@ public class LL3DApriltagsAdvScope {
        
         try {
             m_apriltagLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
+            m_apriltagLayout.setOrigin(OriginPosition.kRedAllianceWallRightSide);
         } catch (Exception e) {
             m_failedToLoadFieldLayout = true;
+
+
         }   
     }
 

@@ -56,14 +56,10 @@ public class LL3DApriltags {
             double hypoDistance = Math.hypot(poseTag.getX(), poseTag.getZ()); // Limelight (X, Z) == robot (X, Y)
             pubHypoDistance.accept(hypoDistance);
 
-            if (extremeness < 2) {
+            if (extremeness < 2.5) {
                 // one tag
 
                 if (hypoDistance > 2) {
-                    return m_advScope.rejectDataBlueFilter(pose);
-                }
-
-                if (poseOdometry.getX() > Config.FIELD_X * 1 / 5 && poseOdometry.getX() < Config.FIELD_X * 4 / 5) {
                     return m_advScope.rejectDataBlueFilter(pose);
                 }
 
@@ -72,7 +68,7 @@ public class LL3DApriltags {
                 }
 
                 if (extremeness < 1.1) {
-                    return m_advScope.rejectDataYellowFilter(pose);
+                    return m_advScope.rejectDataBlueFilter(pose);
                 }
 
                 
@@ -84,12 +80,12 @@ public class LL3DApriltags {
                     return m_advScope.rejectDataBlueFilter(pose);
                 }
                 
-                if (poseOdometry.getX() > Config.FIELD_X * 3 / 8 && poseOdometry.getX() < Config.FIELD_X * 5 / 8) {
-                    return m_advScope.rejectDataBlueFilter(pose);
-                }
+                if (hypoDistance > 6) {
+                     return m_advScope.rejectDataBlueFilter(pose);
+                 }
 
                 if (Math.abs(poseOdometry.getX() - pose.getX()) > 1 || Math.abs(poseOdometry.getY() - pose.getY()) > 1 || Math.abs(pose.getRotation().getDegrees() - poseOdometry.getRotation().getDegrees()) > 20) {
-                    return m_advScope.rejectDataBlueFilter(pose);
+                    return m_advScope.rejectDataYellowFilter(pose);
                 }
             }
         }
