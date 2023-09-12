@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -15,13 +17,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.DoubleArrayEntry;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib2706.AdvantageUtil;
 import frc.lib2706.LL3DApriltags;
+import frc.lib2706.PoseBuffer;
 import frc.robot.SubsystemChecker;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.config.Config;
@@ -67,6 +68,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private LL3DApriltags m_limelight;
     private boolean skipLimelightPoseChecks;
 
+    private PoseBuffer m_poseBuffer = new PoseBuffer();
+
     /** Get instance of singleton class */
     public static SwerveSubsystem getInstance() {
         if (instance == null){
@@ -96,6 +99,7 @@ public class SwerveSubsystem extends SubsystemBase {
         m_poseEstimator = new SwerveDrivePoseEstimator(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition(), new Pose2d());
     
         m_limelight = new LL3DApriltags("limelight");
+        m_poseBuffer = new PoseBuffer();
     }
 
     @Override
@@ -113,6 +117,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 Rotation2d.fromDegrees(currentGyro),
                 getPosition()
         );
+        m_poseBuffer.addPoseToBuffer(odometryPose);
         
         Pose2d estimatedPose = m_poseEstimator.update(
                 Rotation2d.fromDegrees(currentGyro),
@@ -136,6 +141,10 @@ public class SwerveSubsystem extends SubsystemBase {
         rollPub.accept(getRoll());
     }
 
+    public Optional<Pose2d> getPoseAtTimestamp(double timestampSeconds) {
+        return m_poseBuffer.getPoseAtTimestamp(timestampSeconds);    
+    }
+
     private SwerveModulePosition[] getPosition() {
         return new SwerveModulePosition[] {
             m_frontLeft.getModulePosition(),
@@ -155,6 +164,10 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     public Pose2d getPose() {
         // return m_poseEstimator.getEstimatedPosition();
+        return m_odometry.getPoseMeters();
+    }
+
+    public Pose2d getOdometryPose() {
         return m_odometry.getPoseMeters();
     }
 
@@ -233,6 +246,20 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     private double getGyro() {
         return m_pigeon.getFusedHeading();
+    }
+
+    public void resetOdometryPID() {
+
+    }
+    public void driveToPose(Pose2d pose, boolean useOdometryNotEstimator) {
+        if (useOdometryNotEstimator) {
+
+        } else {
+            
+        }
+    }
+    public boolean hasReachedOdometryPID() {
+        return false;
     }
 
     public SwerveModuleState[] getModuleStates()
