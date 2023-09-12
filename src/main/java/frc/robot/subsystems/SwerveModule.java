@@ -67,6 +67,24 @@ public class SwerveModule {
      */
     public SwerveModule(int driveCanID, boolean driveInverted, int turningCanID, boolean turningInverted, int encoderCanID, double encoderOffset, String ModuleName) {
 
+        CANCoderConfiguration encoderConfiguration = new CANCoderConfiguration();
+        encoderConfiguration.initializationStrategy = 
+            SensorInitializationStrategy.BootToAbsolutePosition;
+        encoderConfiguration.sensorTimeBase = SensorTimeBase.PerSecond;
+        encoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
+        encoderConfiguration.magnetOffsetDegrees = 0;
+        encoderConfiguration.sensorDirection = direction == Direction.CLOCKWISE;
+
+        encoder = new CANCoder(encoderCanID);
+
+        errCTRE(encoder.configFactoryDefault());
+        CANCoderUtil.setCANCoderBusUsage(encoder, CCUsage.kMinimal);
+        errCTRE(encoder.configAllSettings(encoderConfiguration));
+
+        String tableName = "SwerveChassis/SwerveModule" + ModuleName;
+        swerveModuleTable = NetworkTableInstance.getDefault().getTable(tableName);
+        sub_offset = swerveModuleTable.getDoubleTopic("offset").subscribe(encoderOffset);
+
         // CODE: Construct both CANSparkMax objects and set all the nessecary settings (CONSTANTS from Config or from the parameters of the constructor)
         m_driveMotor = new CANSparkMax(driveCanID, MotorType.kBrushless);
 
@@ -109,25 +127,12 @@ public class SwerveModule {
         errREV(m_turningPIDController.setIZone(Config.Swerve.sub_steering_kIZone.get()));
         errREV(m_turningPIDController.setFF(Config.Swerve.sub_steering_kFF.get()));
 
+        updateSteeringFromCanCoder();
+        resetLastAngle();
+        
         errREV(m_driveMotor.burnFlash());
         errREV(m_turningMotor.burnFlash());
 
-        String tableName = "SwerveChassis/SwerveModule" + ModuleName;
-        swerveModuleTable = NetworkTableInstance.getDefault().getTable(tableName);
-
-        CANCoderConfiguration encoderConfiguration = new CANCoderConfiguration();
-        encoderConfiguration.initializationStrategy = 
-            SensorInitializationStrategy.BootToAbsolutePosition;
-        encoderConfiguration.sensorTimeBase = SensorTimeBase.PerSecond;
-        encoderConfiguration.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
-        encoderConfiguration.magnetOffsetDegrees = 0;
-        encoderConfiguration.sensorDirection = direction == Direction.CLOCKWISE;
-
-        encoder = new CANCoder(encoderCanID);
-
-        errCTRE(encoder.configFactoryDefault());
-        CANCoderUtil.setCANCoderBusUsage(encoder, CCUsage.kMinimal);
-        errCTRE(encoder.configAllSettings(encoderConfiguration));
         
         desiredSpeedEntry = swerveModuleTable.getDoubleTopic("Desired speed (mps)").publish();
         desiredAngleEntry = swerveModuleTable.getDoubleTopic("Desired angle (deg)").publish();
@@ -138,11 +143,10 @@ public class SwerveModule {
         canCoderEntry = swerveModuleTable.getDoubleTopic("CanCoder").publish();
         desiredAngle360Range = swerveModuleTable.getDoubleTopic("Desired angle 360 range").publish();
         currentAngle360Range = swerveModuleTable.getDoubleTopic("Current angle 360 range").publish();
-        sub_offset = swerveModuleTable.getDoubleTopic("offset").subscribe(encoderOffset);
         
-        updateSteeringFromCanCoder();
 
-        resetLastAngle();
+
+        
     }
 
     /**

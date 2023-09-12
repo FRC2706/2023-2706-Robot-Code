@@ -204,6 +204,7 @@ public class ArmConfig {
 
       // Syncing encoders
       public static double ENCODER_SYNCING_PERIOD = 0.4; // seconds
+      public static double ENCODER_SYNCING_PERIOD_V2 = 0.05; // seconds
       public static int ENCODER_SYNCING_TIMEOUT = 20; // seconds
       public static double ENCODER_SYNCING_TOLERANCE = 0.01; // radians
       public static int NUM_SYNCING_SAMPLES = 20; // num of samples needed to average
