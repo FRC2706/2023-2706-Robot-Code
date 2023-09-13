@@ -141,7 +141,6 @@ public class Robot extends TimedRobot {
       
     if (SubsystemChecker.canSubsystemConstruct(SubsystemType.BlingSubsystem)) {
       if (m_firstDisableAtBootup) {
-        System.out.println("AAAAHHHHH");
         m_firstDisableAtBootup = false;
       } else {
         BlingSubsystem.getINSTANCE().setDisabled();
