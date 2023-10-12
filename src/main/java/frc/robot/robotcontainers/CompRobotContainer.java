@@ -92,8 +92,8 @@ public class CompRobotContainer extends RobotContainer {
     driver.back().onTrue(new ResetGyro());
 
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
-    driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
-    
+
+    driver.a().whileTrue(new PhotonMoveToTarget());    
     driver.x().whileTrue(new ChargeStationLock());
     driver.leftTrigger().whileTrue(new RotateXYSupplier(driver,
       NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99)
