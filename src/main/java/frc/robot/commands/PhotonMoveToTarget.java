@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DiffTalonSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 
 public class PhotonMoveToTarget extends CommandBase {
     double CAMERA_HEIGHT_METERS = 0.255;
@@ -50,14 +51,15 @@ public class PhotonMoveToTarget extends CommandBase {
     double forwardSpeed = rangeController.calculate(range, 2);
     double turnSpeed = yawController.calculate(yaw,0);
     
-      DiffTalonSubsystem.getInstance().arcadeDrive(forwardSpeed, turnSpeed);
-
+      SwerveSubsystem.getInstance().drive(forwardSpeed, 0, turnSpeed, false, false);
                               }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    SwerveSubsystem.getInstance().stopMotors();
+  }
 
   // Returns true when the command should end.
   @Override
