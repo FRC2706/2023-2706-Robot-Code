@@ -25,7 +25,8 @@ public class PhotonMoveToTarget extends CommandBase {
   PIDController yawController;
   public PhotonMoveToTarget() {
     camera1 = new PhotonCamera("OV9281");
-    rangeController = new PIDController(-.7, 0, 0);
+    xController = new PIDController(-.7, 0, 0);
+    yController = new PIDController(-.7, 0, 0);
     yawController = new PIDController(0.06, 0, 5);
 }
 
@@ -48,10 +49,12 @@ public class PhotonMoveToTarget extends CommandBase {
                                 double yaw = result.getBestTarget().getYaw();
       System.out.println(range);
       System.out.println(yaw);
-    double forwardSpeed = rangeController.calculate(range, 2);
-    double turnSpeed = yawController.calculate(yaw,0);
+
+    double xSpeed = xController.calculate(math.sin(yaw)*range, 2);
+    double turnSpeed = yawController.calculate(yaw, 0);
+    double yspeed = yController.calculate(math.cos(yaw)*range, 2);
     
-      SwerveSubsystem.getInstance().drive(forwardSpeed, 0, turnSpeed, false, false);
+      SwerveSubsystem.getInstance().drive(yspeed, xSpeed, turnSpeed, false, false);
                               }
   }
 
