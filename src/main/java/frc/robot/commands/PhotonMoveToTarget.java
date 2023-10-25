@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import javax.naming.spi.DirStateFactory.Result;
-
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 
@@ -50,9 +48,9 @@ public class PhotonMoveToTarget extends CommandBase {
       System.out.println(range);
       System.out.println(yaw);
 
-    double xSpeed = xController.calculate(math.sin(yaw)*range, 2);
+    double xSpeed = xController.calculate(Math.sin(yaw)*range, 2);
     double turnSpeed = yawController.calculate(yaw, 0);
-    double yspeed = yController.calculate(math.cos(yaw)*range, 2);
+    double yspeed = yController.calculate(Math.cos(yaw)*range, 2);
     
       SwerveSubsystem.getInstance().drive(yspeed, xSpeed, turnSpeed, false, false);
                               }
