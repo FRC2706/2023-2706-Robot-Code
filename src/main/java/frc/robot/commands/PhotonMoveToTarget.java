@@ -4,8 +4,10 @@
 
 package frc.robot.commands;
 
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonUtils;
+import java.util.List;
+
+import org.photonvision.*;
+import org.photonvision.targeting.TargetCorner;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
@@ -14,17 +16,18 @@ import frc.robot.subsystems.DiffTalonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class PhotonMoveToTarget extends CommandBase {
-    double CAMERA_HEIGHT_METERS = 0.255;
-    double TARGET_HEIGHT_METERS = 0.85;
-    double CAMERA_PITCH_RADIANS = Units.degreesToRadians(14);
+    double EXAMPLE_SIZE_HEIGHT = 25.808;
+    double EXAMPLE_DISTANCE = 2.000;
+    //height of april = 1 foot 3 and 1/4
   /** Creates a new ExampleCommand. */
   PhotonCamera camera1;
-  PIDController rangeController;
+  PIDController xController;
+  PIDController yController;
   PIDController yawController;
   public PhotonMoveToTarget() {
     camera1 = new PhotonCamera("OV9281");
-    xController = new PIDController(-.7, 0, 0);
-    yController = new PIDController(-.7, 0, 0);
+    xController = new PIDController(0.7, 0, 0);
+    yController = new PIDController(0.7, 0, 0);
     yawController = new PIDController(0.06, 0, 5);
 }
 
@@ -37,22 +40,18 @@ public class PhotonMoveToTarget extends CommandBase {
   public void execute() {
     var result = camera1.getLatestResult();
     if (result.hasTargets()){
-        double range =
-                        PhotonUtils.calculateDistanceToTargetMeters(
-                                CAMERA_HEIGHT_METERS,
-                                TARGET_HEIGHT_METERS,
-                                CAMERA_PITCH_RADIANS,
-                                Units.degreesToRadians(result.getBestTarget().getPitch()));
-        
-                                double yaw = result.getBestTarget().getYaw();
+      List<TargetCorner> corners = result.getBestTarget().getDetectedCorners();
+      double height = (corners.get(0).y - corners.get(3).y + corners.get(1).y - corners.get(2).y)/2;
+      double range = height/EXAMPLE_SIZE_HEIGHT*EXAMPLE_DISTANCE;
+      double yaw = result.getBestTarget().getYaw();
       System.out.println(range);
       System.out.println(yaw);
 
-    double xSpeed = xController.calculate(Math.sin(yaw)*range, 2);
-    double turnSpeed = yawController.calculate(yaw, 0);
-    double yspeed = yController.calculate(Math.cos(yaw)*range, 2);
+    double xSpeed = xController.calculate(Math.cos(yaw)*range, 2);
+    //double turnSpeed = yawController.calculate(yaw, 0);
+    double yspeed = yController.calculate(Math.sin(yaw)*range, 2);
     
-      SwerveSubsystem.getInstance().drive(yspeed, xSpeed, turnSpeed, false, false);
+      SwerveSubsystem.getInstance().drive(xSpeed, yspeed, 0, false, false);
                               }
   }
 
