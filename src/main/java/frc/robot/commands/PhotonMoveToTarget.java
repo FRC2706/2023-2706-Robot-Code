@@ -22,7 +22,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class PhotonMoveToTarget extends CommandBase {
   double EXAMPLE_SIZE_HEIGHT = 104.6;
   double EXAMPLE_DISTANCE = 1.000;
-  Pose2d cameraOffset = new Pose2d(new Translation2d(0.3,0.3), Rotation2d.fromDegrees(0));
+  Pose2d cameraOffset = new Pose2d(new Translation2d(0.3,-0.3), Rotation2d.fromDegrees(0));
   //height of april = 1 foot 3 and 1/4 to bottom of black
   /** Creates a new ExampleCommand. */
   PhotonCamera camera1;
@@ -30,15 +30,18 @@ public class PhotonMoveToTarget extends CommandBase {
   PIDController yController;
   PIDController yawController;
   Translation2d setPoint;
+  double rotationSetPoint=0;
   LinearFilter filterX = LinearFilter.movingAverage(5);
   LinearFilter filterY = LinearFilter.movingAverage(5);
 
 
   public PhotonMoveToTarget() {
     camera1 = new PhotonCamera("OV9281");
-    xController = new PIDController(1.2, 0, 0);
-    yController = new PIDController(1.2, 0, 0);
-    yawController = new PIDController(0.06, 0, 5);
+    xController = new PIDController(1, 0.01, 0);
+    yController = new PIDController(1, 0.01, 0);
+    yawController = new PIDController(0.06, 0, 0.05);
+
+    addRequirements(SwerveSubsystem.getInstance());
   }
 
   // Called when the command is initially scheduled.
@@ -54,11 +57,12 @@ public class PhotonMoveToTarget extends CommandBase {
     if (result.hasTargets()){
       List<TargetCorner> corners = result.getBestTarget().getDetectedCorners();
       double heightSize = (corners.get(0).y - corners.get(3).y + corners.get(1).y - corners.get(2).y)/2;
-      System.out.println(heightSize);
+      System.out.println("tagsize "+heightSize);
       double range = EXAMPLE_SIZE_HEIGHT*EXAMPLE_DISTANCE/heightSize;
       System.out.println("range"+range);
       Rotation2d yaw = Rotation2d.fromDegrees(-result.getBestTarget().getYaw()); //+ odometryPose.getRotation().getDegrees());
       
+
       Translation2d visionXY = new Translation2d(range, yaw);
       Translation2d robotToTargetRELATIVE = cameraOffset.getTranslation().plus(visionXY);
       Translation2d robotToTarget = robotToTargetRELATIVE.rotateBy(odometryPose.getRotation());
@@ -67,11 +71,13 @@ public class PhotonMoveToTarget extends CommandBase {
       System.out.println("odometry"+ odometryPose.toString());
       
       setPoint = new Translation2d(filterX.calculate(feildToTarget.getX())-1,filterY.calculate(feildToTarget.getY()));
-      System.out.println("set "+setPoint);
+      rotationSetPoint= yaw.getDegrees()+odometryPose.getRotation().getDegrees();
     }
-      double xSpeed = xController.calculate(odometryPose.getX(), setPoint.getX());
-      double yspeed = yController.calculate(odometryPose.getY(), setPoint.getY());
-      SwerveSubsystem.getInstance().drive(xSpeed, yspeed, 0, true, false);
+      System.out.println("set "+setPoint);
+    double xSpeed = xController.calculate(odometryPose.getX(), setPoint.getX());
+    double yspeed = yController.calculate(odometryPose.getY(), setPoint.getY());
+    double rotation = yawController.calculate(rotationSetPoint-odometryPose.getRotation().getDegrees());
+    SwerveSubsystem.getInstance().drive(xSpeed, yspeed, rotation, true, false);
   }
   
 
