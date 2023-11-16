@@ -30,7 +30,8 @@ public class PhotonMoveToTarget extends CommandBase {
   PIDController yController;
   PIDController yawController;
   Translation2d setPoint;
-  double rotationSetPoint=0;
+  Rotation2d rotationSetPoint;
+  LinearFilter filteryaw = LinearFilter.movingAverage(5);
   LinearFilter filterX = LinearFilter.movingAverage(5);
   LinearFilter filterY = LinearFilter.movingAverage(5);
 
@@ -60,7 +61,7 @@ public class PhotonMoveToTarget extends CommandBase {
       System.out.println("tagsize "+heightSize);
       double range = EXAMPLE_SIZE_HEIGHT*EXAMPLE_DISTANCE/heightSize;
       System.out.println("range"+range);
-      Rotation2d yaw = Rotation2d.fromDegrees(-result.getBestTarget().getYaw()); //+ odometryPose.getRotation().getDegrees());
+      Rotation2d yaw = Rotation2d.fromDegrees(-result.getBestTarget().getYaw());  
       
 
       Translation2d visionXY = new Translation2d(range, yaw);
@@ -69,14 +70,15 @@ public class PhotonMoveToTarget extends CommandBase {
       Translation2d feildToTarget = robotToTarget.plus(odometryPose.getTranslation());
       System.out.println("robot to target "+ robotToTargetRELATIVE.toString());
       System.out.println("odometry"+ odometryPose.toString());
+      Rotation2d fieldOrientedTarget = yaw.rotateBy(odometryPose.getRotation());
       
       setPoint = new Translation2d(filterX.calculate(feildToTarget.getX())-1,filterY.calculate(feildToTarget.getY()));
-      rotationSetPoint= yaw.getDegrees()+odometryPose.getRotation().getDegrees();
+      rotationSetPoint = new Rotation2d(filteryaw.calculate(fieldOrientedTarget.getDegrees()));
     }
       System.out.println("set "+setPoint);
     double xSpeed = xController.calculate(odometryPose.getX(), setPoint.getX());
     double yspeed = yController.calculate(odometryPose.getY(), setPoint.getY());
-    double rotation = yawController.calculate(rotationSetPoint-odometryPose.getRotation().getDegrees());
+    double rotation = yawController.calculate(odometryPose.getRotation().getDegrees(), rotationSetPoint.getDegrees());
     SwerveSubsystem.getInstance().drive(xSpeed, yspeed, rotation, true, false);
   }
   
