@@ -15,9 +15,11 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.PubSub;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,7 +40,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private DoublePublisher pitchPub = table.getDoubleTopic("Pitch").publish();
     private DoublePublisher rollPub = table.getDoubleTopic("Roll").publish();
-    
+
+    private DoubleArrayPublisher pubOdometry = table.getDoubleArrayTopic("OdometryArr").publish(PubSubOption.periodic(0.02));
     // Instance for singleton class
     private static SwerveSubsystem instance;
 
@@ -102,6 +105,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
         pitchPub.accept(getPitch());
         rollPub.accept(getRoll());
+
+        pubOdometry.accept(new double[]{getPose().getX(), getPose().getY(), getPose().getRotation().getRadians()});
     }
 
     private SwerveModulePosition[] getPosition() {

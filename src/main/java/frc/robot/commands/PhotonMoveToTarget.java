@@ -15,6 +15,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DiffTalonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -22,32 +26,38 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class PhotonMoveToTarget extends CommandBase {
   double EXAMPLE_SIZE_HEIGHT = 104.6;
   double EXAMPLE_DISTANCE = 1.000;
-  Pose2d cameraOffset = new Pose2d(new Translation2d(0.3,-0.3), Rotation2d.fromDegrees(0));
+  Pose2d cameraOffset = new Pose2d(new Translation2d(0,0), Rotation2d.fromDegrees(0));
   //height of april = 1 foot 3 and 1/4 to bottom of black
   /** Creates a new ExampleCommand. */
+  DoubleArrayPublisher pubSetPoint;
   PhotonCamera camera1;
   PIDController xController;
   PIDController yController;
   PIDController yawController;
   Translation2d setPoint;
   Rotation2d rotationSetPoint;
-  LinearFilter filteryaw = LinearFilter.movingAverage(5);
-  LinearFilter filterX = LinearFilter.movingAverage(5);
-  LinearFilter filterY = LinearFilter.movingAverage(5);
+  LinearFilter filteryaw = LinearFilter.movingAverage(10);
+  LinearFilter filterX = LinearFilter.movingAverage(10);
+  LinearFilter filterY = LinearFilter.movingAverage(10);
 
 
   public PhotonMoveToTarget() {
     camera1 = new PhotonCamera("OV9281");
-    xController = new PIDController(1, 0.01, 0);
-    yController = new PIDController(1, 0.01, 0);
-    yawController = new PIDController(0.06, 0, 0.05);
-
+    xController = new PIDController(0.5, 0.01, 0);
+    yController = new PIDController(0.5, 0.01, 0);
+    yawController = new PIDController(0.02, 0, 0);
+    pubSetPoint = NetworkTableInstance.getDefault().getTable(("PhotonCamera")).getDoubleArrayTopic("PhotonAprilPoint").publish(PubSubOption.periodic(0.02));
     addRequirements(SwerveSubsystem.getInstance());
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    filterX.reset();
+    filterY.reset();
+    filteryaw.reset();
+    rotationSetPoint = SwerveSubsystem.getInstance().getPose().getRotation();
+    setPoint = SwerveSubsystem.getInstance().getPose().getTranslation();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -58,24 +68,24 @@ public class PhotonMoveToTarget extends CommandBase {
     if (result.hasTargets()){
       List<TargetCorner> corners = result.getBestTarget().getDetectedCorners();
       double heightSize = (corners.get(0).y - corners.get(3).y + corners.get(1).y - corners.get(2).y)/2;
-      System.out.println("tagsize "+heightSize);
+      //System.out.println("tagsize "+heightSize);
       double range = EXAMPLE_SIZE_HEIGHT*EXAMPLE_DISTANCE/heightSize;
-      System.out.println("range"+range);
+      //System.out.println("range"+range);
       Rotation2d yaw = Rotation2d.fromDegrees(-result.getBestTarget().getYaw());  
-      
 
       Translation2d visionXY = new Translation2d(range, yaw);
       Translation2d robotToTargetRELATIVE = cameraOffset.getTranslation().plus(visionXY);
       Translation2d robotToTarget = robotToTargetRELATIVE.rotateBy(odometryPose.getRotation());
       Translation2d feildToTarget = robotToTarget.plus(odometryPose.getTranslation());
-      System.out.println("robot to target "+ robotToTargetRELATIVE.toString());
-      System.out.println("odometry"+ odometryPose.toString());
+      //System.out.println("robot to target "+ robotToTargetRELATIVE.toString());
+      //System.out.println("odometry"+ odometryPose.toString());
       Rotation2d fieldOrientedTarget = yaw.rotateBy(odometryPose.getRotation());
       
       setPoint = new Translation2d(filterX.calculate(feildToTarget.getX())-1,filterY.calculate(feildToTarget.getY()));
-      rotationSetPoint = new Rotation2d(filteryaw.calculate(fieldOrientedTarget.getDegrees()));
+      rotationSetPoint = Rotation2d.fromDegrees(filteryaw.calculate(fieldOrientedTarget.getDegrees()));
+      pubSetPoint.accept(new double[]{setPoint.getX(),setPoint.getY(),rotationSetPoint.getRadians()});
     }
-      System.out.println("set "+setPoint);
+    //System.out.println("set "+setPoint);
     double xSpeed = xController.calculate(odometryPose.getX(), setPoint.getX());
     double yspeed = yController.calculate(odometryPose.getY(), setPoint.getY());
     double rotation = yawController.calculate(odometryPose.getRotation().getDegrees(), rotationSetPoint.getDegrees());
