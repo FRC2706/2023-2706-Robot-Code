@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -25,10 +26,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SubsystemChecker;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.config.Config;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public class SwerveSubsystem extends SubsystemBase {
-    private Field2d m_field = new Field2d();    
-
+    private Field2d m_field = new Field2d();
 
     private NetworkTable table = NetworkTableInstance.getDefault().getTable("DriveTrain");
     private DoublePublisher gyroEntry = table.getDoubleTopic("RawGyroYaw").publish();
@@ -38,7 +39,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private DoublePublisher pitchPub = table.getDoubleTopic("Pitch").publish();
     private DoublePublisher rollPub = table.getDoubleTopic("Roll").publish();
-    
+
     // Instance for singleton class
     private static SwerveSubsystem instance;
 
@@ -48,33 +49,64 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SwerveModule m_frontRight;
     private final SwerveModule m_rearRight;
     // The gyro sensor
-    private final PigeonIMU m_pigeon; 
+    private final PigeonIMU m_pigeon;
 
     // Odometry class for tracking robot pose
     private SwerveDriveOdometry m_odometry;
 
+    // ProfiledPIDControllers for the pid control
+    ProfiledPIDController pidControlX;
+    double currentX;
+    double desiredX;
+    
+    ProfiledPIDController pidControlY;
+    double currentY;
+    double desiredY;
+
+    ProfiledPIDController pidControlRotation;
+    double currentRotation;
+    double desiredRotation;
+
+    double tolerance;
+
     /** Get instance of singleton class */
     public static SwerveSubsystem getInstance() {
-        if (instance == null){
+        if (instance == null) {
             SubsystemChecker.subsystemConstructed(SubsystemType.SwerveSubsystem);
             instance = new SwerveSubsystem();
         }
 
         return instance;
     }
-    
+
     /** Creates a new DriveSubsystem. */
     private SwerveSubsystem() {
-        m_frontLeft = new SwerveModule(Config.CANID.FRONT_LEFT_DRIVE, Config.Swerve.INVERTED_FRONT_LEFT_DRIVE, Config.CANID.FRONT_LEFT_STEERING, Config.Swerve.INVERTED_FRONT_LEFT_STEERING, Config.CANID.FRONT_LEFT_CANCODER, Config.Swerve.FL_ENCODER_OFFSET, "FL");
+        m_frontLeft = new SwerveModule(Config.CANID.FRONT_LEFT_DRIVE, Config.Swerve.INVERTED_FRONT_LEFT_DRIVE,
+                Config.CANID.FRONT_LEFT_STEERING, Config.Swerve.INVERTED_FRONT_LEFT_STEERING,
+                Config.CANID.FRONT_LEFT_CANCODER, Config.Swerve.FL_ENCODER_OFFSET, "FL");
 
-        m_rearLeft = new SwerveModule(Config.CANID.REAR_LEFT_DRIVE, Config.Swerve.INVERTED_REAR_LEFT_DRIVE, Config.CANID.REAR_LEFT_STEERING, Config.Swerve.INVERTED_REAR_LEFT_STEERING, Config.CANID.REAR_LEFT_CANCODER, Config.Swerve.RL_ENCODER_OFFSET, "RL");
+        m_rearLeft = new SwerveModule(Config.CANID.REAR_LEFT_DRIVE, Config.Swerve.INVERTED_REAR_LEFT_DRIVE,
+                Config.CANID.REAR_LEFT_STEERING, Config.Swerve.INVERTED_REAR_LEFT_STEERING,
+                Config.CANID.REAR_LEFT_CANCODER, Config.Swerve.RL_ENCODER_OFFSET, "RL");
 
-        m_frontRight = new SwerveModule(Config.CANID.FRONT_RIGHT_DRIVE, Config.Swerve.INVERTED_FRONT_RIGHT_DRIVE, Config.CANID.FRONT_RIGHT_STEERING, Config.Swerve.INVERTED_FRONT_RIGHT_STEERING, Config.CANID.FRONT_RIGHT_CANCODER, Config.Swerve.FR_ENCODER_OFFSET, "FR");
+        m_frontRight = new SwerveModule(Config.CANID.FRONT_RIGHT_DRIVE, Config.Swerve.INVERTED_FRONT_RIGHT_DRIVE,
+                Config.CANID.FRONT_RIGHT_STEERING, Config.Swerve.INVERTED_FRONT_RIGHT_STEERING,
+                Config.CANID.FRONT_RIGHT_CANCODER, Config.Swerve.FR_ENCODER_OFFSET, "FR");
 
-        m_rearRight = new SwerveModule(Config.CANID.REAR_RIGHT_DRIVE, Config.Swerve.INVERTED_REAR_RIGHT_DRIVE, Config.CANID.REAR_RIGHT_STEERING, Config.Swerve.INVERTED_REAR_RIGHT_STEERING, Config.CANID.REAR_RIGHT_CANCODER, Config.Swerve.RR_ENCODER_OFFSET, "RR");
+        m_rearRight = new SwerveModule(Config.CANID.REAR_RIGHT_DRIVE, Config.Swerve.INVERTED_REAR_RIGHT_DRIVE,
+                Config.CANID.REAR_RIGHT_STEERING, Config.Swerve.INVERTED_REAR_RIGHT_STEERING,
+                Config.CANID.REAR_RIGHT_CANCODER, Config.Swerve.RR_ENCODER_OFFSET, "RR");
         m_pigeon = new PigeonIMU(Config.CANID.PIGEON);
-        m_odometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()), getPosition(), new Pose2d(0, 0, Rotation2d.fromDegrees(rotEntry.get())));
+        m_odometry = new SwerveDriveOdometry(Config.Swerve.kSwerveDriveKinematics, Rotation2d.fromDegrees(getGyro()),
+                getPosition(), new Pose2d(0, 0, Rotation2d.fromDegrees(rotEntry.get())));
         SmartDashboard.putData("Field", m_field);
+
+        pidControlX = new ProfiledPIDController(1, 0.0, 0.2,
+                new TrapezoidProfile.Constraints(1, 1));
+        pidControlY = new ProfiledPIDController(1, 0.0, 0.2,
+                new TrapezoidProfile.Constraints(1, 1));
+        pidControlRotation = new ProfiledPIDController(5.0, 0, 0.4,
+                new TrapezoidProfile.Constraints(4 * Math.PI, 8 * Math.PI));
     }
 
     @Override
@@ -86,13 +118,11 @@ public class SwerveSubsystem extends SubsystemBase {
         m_rearLeft.updateNT();
         m_rearRight.updateNT();
 
-
         // Update the odometry in the periodic block
         m_odometry.update(
                 Rotation2d.fromDegrees(currentGyro),
-                getPosition()
-        );
-        
+                getPosition());
+
         gyroEntry.accept(currentGyro);
         xEntry.accept(getPose().getX());
         yEntry.accept(getPose().getY());
@@ -106,13 +136,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private SwerveModulePosition[] getPosition() {
         return new SwerveModulePosition[] {
-            m_frontLeft.getModulePosition(),
-            m_frontRight.getModulePosition(),
-            m_rearLeft.getModulePosition(),
-            m_rearRight.getModulePosition()};
+                m_frontLeft.getModulePosition(),
+                m_frontRight.getModulePosition(),
+                m_rearLeft.getModulePosition(),
+                m_rearRight.getModulePosition() };
     }
 
-    public void setTrajectory(Trajectory traj){
+    public void setTrajectory(Trajectory traj) {
         m_field.getObject("traj").setTrajectory(traj);
     }
 
@@ -148,18 +178,20 @@ public class SwerveSubsystem extends SubsystemBase {
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isOpenLoop) {
         SwerveModuleState[] swerveModuleStates;
         if (fieldRelative) {
-            swerveModuleStates = Config.Swerve.kSwerveDriveKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getHeading()));
+            swerveModuleStates = Config.Swerve.kSwerveDriveKinematics
+                    .toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getHeading()));
         } else {
-            swerveModuleStates = Config.Swerve.kSwerveDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(xSpeed, ySpeed, rot));
+            swerveModuleStates = Config.Swerve.kSwerveDriveKinematics
+                    .toSwerveModuleStates(new ChassisSpeeds(xSpeed, ySpeed, rot));
         }
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Config.Swerve.kMaxAttainableWheelSpeed);
         m_frontLeft.setDesiredState(swerveModuleStates[0], isOpenLoop);
         m_frontRight.setDesiredState(swerveModuleStates[1], isOpenLoop);
         m_rearLeft.setDesiredState(swerveModuleStates[2], isOpenLoop);
-        m_rearRight.setDesiredState(swerveModuleStates[3],isOpenLoop);
+        m_rearRight.setDesiredState(swerveModuleStates[3], isOpenLoop);
     }
 
-    public void setModuleStatesNoAntiJitter(SwerveModuleState[] desiredStates, boolean isOpenLoop){
+    public void setModuleStatesNoAntiJitter(SwerveModuleState[] desiredStates, boolean isOpenLoop) {
         m_frontLeft.setDesiredState(desiredStates[0], isOpenLoop, false);
         m_frontRight.setDesiredState(desiredStates[1], isOpenLoop, false);
         m_rearLeft.setDesiredState(desiredStates[2], isOpenLoop, false);
@@ -188,12 +220,13 @@ public class SwerveSubsystem extends SubsystemBase {
     public void setModuleStatesAuto(SwerveModuleState[] desiredStates) {
         setModuleStates(desiredStates, false);
     }
-    
+
     /**
      * Returns the heading of the robot.
      * 
-     * This is private because only the odoemtry get's the raw gyro value. 
-     * Everything else get's the gyro value from the odometry since it does an offset.
+     * This is private because only the odoemtry get's the raw gyro value.
+     * Everything else get's the gyro value from the odometry since it does an
+     * offset.
      *
      * @return the robot's heading in degrees, from -180 to 180
      */
@@ -204,7 +237,8 @@ public class SwerveSubsystem extends SubsystemBase {
     /**
      * Returns the heading of the robot.
      * 
-     * Uses this method for heading. Odometry does an offset to ensure this has the correct origin.
+     * Uses this method for heading. Odometry does an offset to ensure this has the
+     * correct origin.
      *
      * @return the robot's heading in degrees, from -180 to 180
      */
@@ -222,7 +256,7 @@ public class SwerveSubsystem extends SubsystemBase {
         m_rearRight.stopMotors();
     }
 
-    public void updateModulesPID(){
+    public void updateModulesPID() {
         m_frontLeft.updatePIDValues();
         m_frontRight.updatePIDValues();
         m_rearLeft.updatePIDValues();
@@ -257,10 +291,53 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public double getRoll() {
-        return(m_pigeon.getRoll());
+        return (m_pigeon.getRoll());
     }
 
     public double getPitch() {
-        return(m_pigeon.getPitch());
+        return (m_pigeon.getPitch());
+    }
+
+    // Swerve actual driving methods
+    public void resetDriveToPose(double deltaX, double deltaY, double toleranceIn) {
+        // odometry - get x, y, and rotation
+        currentX = getPose().getX();
+        currentY = getPose().getY();
+        currentRotation = getHeading().getRadians();
+
+        // set desired x, y, and rotation
+        desiredX = currentX + deltaX;
+        desiredY = currentY + deltaY;
+        // rotation stays the same
+        desiredRotation = currentRotation;
+
+        // reset current positions
+        pidControlX.reset(currentX);
+        pidControlY.reset(currentY);
+        pidControlRotation.reset(currentRotation);
+
+        // set tolerance
+        tolerance = toleranceIn;
+        pidControlX.setTolerance(tolerance, tolerance);
+        pidControlY.setTolerance(tolerance, tolerance);
+        pidControlRotation.setTolerance(tolerance, tolerance);
+    }
+
+    public void driveToPose() {
+        //update the currentX and currentY
+        currentX = getPose().getX();
+        currentY = getPose().getY();
+        currentRotation = getHeading().getRadians();
+
+        double x = pidControlX.calculate(currentX, desiredX);
+        double y = pidControlY.calculate(currentY, desiredY);
+        double rot = pidControlRotation.calculate(currentRotation, desiredRotation);
+
+        drive(x, y, rot, true, false);
+    }
+
+    public boolean isAtPose() {
+        return Math.abs(currentX - desiredX) < tolerance && Math.abs(currentY - desiredY) < tolerance
+                && Math.abs(currentRotation - desiredRotation) < tolerance;
     }
 }
