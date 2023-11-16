@@ -26,7 +26,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class PhotonMoveToTarget extends CommandBase {
   double EXAMPLE_SIZE_HEIGHT = 104.6;
   double EXAMPLE_DISTANCE = 1.000;
-  Pose2d cameraOffset = new Pose2d(new Translation2d(0,0), Rotation2d.fromDegrees(0));
+  Pose2d cameraOffset = new Pose2d(new Translation2d(0,0.3), Rotation2d.fromDegrees(0));
   //height of april = 1 foot 3 and 1/4 to bottom of black
   /** Creates a new ExampleCommand. */
   DoubleArrayPublisher pubSetPoint;
@@ -74,7 +74,8 @@ public class PhotonMoveToTarget extends CommandBase {
       Rotation2d yaw = Rotation2d.fromDegrees(-result.getBestTarget().getYaw());  
 
       Translation2d visionXY = new Translation2d(range, yaw);
-      Translation2d robotToTargetRELATIVE = cameraOffset.getTranslation().plus(visionXY);
+      Translation2d robotRotated = visionXY.rotateBy(cameraOffset.getRotation());
+      Translation2d robotToTargetRELATIVE = robotRotated.plus(cameraOffset.getTranslation());
       Translation2d robotToTarget = robotToTargetRELATIVE.rotateBy(odometryPose.getRotation());
       Translation2d feildToTarget = robotToTarget.plus(odometryPose.getTranslation());
       //System.out.println("robot to target "+ robotToTargetRELATIVE.toString());
