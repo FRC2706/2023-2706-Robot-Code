@@ -58,16 +58,14 @@ public class SwerveSubsystem extends SubsystemBase {
     ProfiledPIDController pidControlX;
     double currentX;
     double desiredX;
-    
     ProfiledPIDController pidControlY;
     double currentY;
     double desiredY;
-
     ProfiledPIDController pidControlRotation;
     double currentRotation;
     double desiredRotation;
-
-    double tolerance;
+    double tolerance = 0.01;
+    double angleTolerance = 0.01;
 
     /** Get instance of singleton class */
     public static SwerveSubsystem getInstance() {
@@ -299,35 +297,22 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     // Swerve actual driving methods
-    public void resetDriveToPose(double deltaX, double deltaY, double toleranceIn) {
-        // odometry - get x, y, and rotation
-        currentX = getPose().getX();
-        currentY = getPose().getY();
-        currentRotation = getHeading().getRadians();
-
-        // set desired x, y, and rotation
-        desiredX = currentX + deltaX;
-        desiredY = currentY + deltaY;
-        // rotation stays the same
-        desiredRotation = currentRotation;
-
+    public void resetDriveToPose() {
         // reset current positions
         pidControlX.reset(currentX);
         pidControlY.reset(currentY);
         pidControlRotation.reset(currentRotation);
-
-        // set tolerance
-        tolerance = toleranceIn;
-        pidControlX.setTolerance(tolerance, tolerance);
-        pidControlY.setTolerance(tolerance, tolerance);
-        pidControlRotation.setTolerance(tolerance, tolerance);
     }
 
-    public void driveToPose() {
+    public void driveToPose(Pose2d pose) {
         //update the currentX and currentY
         currentX = getPose().getX();
         currentY = getPose().getY();
         currentRotation = getHeading().getRadians();
+
+        desiredX = pose.getX();
+        desiredY = pose.getY();
+        desiredRotation = pose.getRotation().getRadians();
 
         double x = pidControlX.calculate(currentX, desiredX);
         double y = pidControlY.calculate(currentY, desiredY);
@@ -338,6 +323,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public boolean isAtPose() {
         return Math.abs(currentX - desiredX) < tolerance && Math.abs(currentY - desiredY) < tolerance
-                && Math.abs(currentRotation - desiredRotation) < tolerance;
+                && Math.abs(currentRotation - desiredRotation) < angleTolerance;
     }
 }
