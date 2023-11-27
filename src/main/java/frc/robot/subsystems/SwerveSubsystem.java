@@ -4,23 +4,28 @@
 
 package frc.robot.subsystems;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import com.ctre.phoenix.sensors.PigeonIMU;
 
+import edu.wpi.first.math.MathSharedStore;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.PubSub;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,7 +33,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SubsystemChecker;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.config.Config;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public class SwerveSubsystem extends SubsystemBase {
     private Field2d m_field = new Field2d();
@@ -57,6 +61,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     // Odometry class for tracking robot pose
     private SwerveDriveOdometry m_odometry;
+
+    private final double BUFFER_DURATION = 1.5;
+    private TimeInterpolatableBuffer<Pose2d> m_poseBuffer =
+            TimeInterpolatableBuffer.createBuffer(BUFFER_DURATION);
 
     // ProfiledPIDControllers for the pid control
     ProfiledPIDController pidControlX;
@@ -125,6 +133,8 @@ public class SwerveSubsystem extends SubsystemBase {
                 Rotation2d.fromDegrees(currentGyro),
                 getPosition());
 
+        m_poseBuffer.addSample(MathSharedStore.getTimestamp(), getPose());
+
         gyroEntry.accept(currentGyro);
         xEntry.accept(getPose().getX());
         yEntry.accept(getPose().getY());
@@ -160,6 +170,26 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     /**
+     * Get the odometry pose at a given timestamp.
+     * Can only go 1.5 seconds into the past {@link BUFFER_DURATION}
+     * 
+     * @param timestampSeconds The timestamp in seconds, 
+     *              matches PoseEstimator and similar timestamps
+     * @return An Optional with the Pose2d, or an empty optional.
+     */
+    public Optional<Pose2d> getPoseAtTimestamp(double timestampSeconds) {
+        try {
+            if (m_poseBuffer.getInternalBuffer().lastKey() - BUFFER_DURATION > timestampSeconds) {
+                return Optional.empty();
+            }
+        } catch (NoSuchElementException ex) {
+            return Optional.empty();
+        }
+
+        return m_poseBuffer.getSample(timestampSeconds);
+    }
+
+    /**
      * Resets the odometry to the specified pose.
      *
      * @param pose The pose to which to set the odometry.
@@ -167,6 +197,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public void resetOdometry(Pose2d pose) {
         System.out.println(pose.toString());
         m_odometry.resetPosition(Rotation2d.fromDegrees(getGyro()), getPosition(), pose);
+        m_poseBuffer.clear();
     }
 
     /**
