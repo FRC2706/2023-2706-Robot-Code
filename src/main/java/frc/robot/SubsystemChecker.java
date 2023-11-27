@@ -34,11 +34,12 @@ public class SubsystemChecker {
      */
     // RobotID: 0, 2023 Competition robot, unnamed
     private static SubsystemType[] compBotId0 = new SubsystemType[] {
-        SubsystemType.SwerveSubsystem,  // Chassis unknown
+        SubsystemType.SwerveSubsystem,
         SubsystemType.ArmSubsystem,
         SubsystemType.RelaySubsystem,
         SubsystemType.VisionNTSubsystem,
         SubsystemType.GripperSubsystem,
+        SubsystemType.BlingSubsystem,
     };
 
     // RobotID: 1, 2022 robot, RapidReact, Clutch

@@ -19,7 +19,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.commands.BrakeModeDisabled;
 import frc.robot.commands.CheckArmSetpoints;
+import frc.robot.commands.SetBlingCommand;
 import frc.robot.commands.SyncArmEncoders;
+import frc.robot.commands.SyncArmEncodersV2;
 import frc.robot.commands.SyncSteerEncoders;
 import frc.robot.config.Config;
 import frc.robot.robotcontainers.ArmBotContainer;
@@ -30,6 +32,7 @@ import frc.robot.robotcontainers.MergonautContainer;
 import frc.robot.robotcontainers.MiniNeoDiffContainer;
 import frc.robot.robotcontainers.MiniSwerveContainer;
 import frc.robot.robotcontainers.RobotContainer;
+import frc.robot.subsystems.BlingSubsystem;
 import frc.robot.subsystems.DiffNeoSubsystem;
 import frc.robot.subsystems.DiffTalonSubsystem;
 
@@ -45,6 +48,8 @@ public class Robot extends TimedRobot {
   private BrakeModeDisabled brakeModeDisabledCommand = null;
 
   Compressor pcmCompressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
+
+  private boolean m_firstDisableAtBootup = true;
 
 
 
@@ -97,8 +102,9 @@ public class Robot extends TimedRobot {
     } 
     
     if (SubsystemChecker.canSubsystemConstruct(SubsystemType.SwerveSubsystem)) {
+      BlingSubsystem.getINSTANCE().setRed();
       new SyncSteerEncoders().schedule();
-      new WaitCommand(3).andThen(new SyncArmEncoders()).schedule();
+      new SyncArmEncodersV2().schedule();
     } 
 
     // Add CommandScheduler to shuffleboard so we can display what commands are scheduled
@@ -131,7 +137,15 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     if (brakeModeDisabledCommand != null) 
-      brakeModeDisabledCommand.schedule();  
+      brakeModeDisabledCommand.schedule(); 
+      
+    if (SubsystemChecker.canSubsystemConstruct(SubsystemType.BlingSubsystem)) {
+      if (m_firstDisableAtBootup) {
+        m_firstDisableAtBootup = false;
+      } else {
+        BlingSubsystem.getINSTANCE().setDisabled();
+      }
+    }
   }
 
   @Override

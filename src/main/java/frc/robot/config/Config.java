@@ -208,13 +208,16 @@ public class Config {
         
         // ~ Teleop speeds. Speeds should be portional to kMaxAttainableAngularSpeed. Angular speeds should be specified.
            
+        // REDUCING THE SPEED OF THE ROBOT SO WE DON"T DAMAGE SPONSER'S CARPET
+        public static final double OUTREACH_SPEED_REDUCTION = 0.4;
+
         // Default Speeds
-        public static final double teleopDefaultSpeed = kMaxAttainableWheelSpeed;// Full speed
-        public static final double teleopDefaultAngularSpeed = Math.PI*3.0; // Old value: Math.PI*2.0
+        public static final double teleopDefaultSpeed = kMaxAttainableWheelSpeed * OUTREACH_SPEED_REDUCTION;// Full speed
+        public static final double teleopDefaultAngularSpeed = Math.PI*3.0 * OUTREACH_SPEED_REDUCTION; // Old value: Math.PI*2.0
 
         // Left Bumper speeds
-        public static final double teleopLeftBumperSpeed = kMaxAttainableWheelSpeed / 3.0;// A third of full speed
-        public static final double teleopLeftBumperAngularSpeed = Math.PI; // Can be a slower angular speed if wanted
+        public static final double teleopLeftBumperSpeed = kMaxAttainableWheelSpeed / 3.0 * OUTREACH_SPEED_REDUCTION;// A third of full speed
+        public static final double teleopLeftBumperAngularSpeed = Math.PI * OUTREACH_SPEED_REDUCTION; // Can be a slower angular speed if wanted
 
         // Right bumper speeds
         public static final double teleopRightBumperSpeed = 0.3;
