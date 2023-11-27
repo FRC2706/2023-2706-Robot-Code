@@ -65,7 +65,7 @@ public class SwerveSubsystem extends SubsystemBase {
     double currentRotation;
     double desiredRotation;
     double tolerance = 0.01;
-    double angleTolerance = 0.01;
+    double angleTolerance = 0.05;
 
     /** Get instance of singleton class */
     public static SwerveSubsystem getInstance() {
@@ -314,8 +314,8 @@ public class SwerveSubsystem extends SubsystemBase {
         desiredY = pose.getY();
         desiredRotation = pose.getRotation().getRadians();
 
-        double x = pidControlX.calculate(currentX, desiredX);
-        double y = pidControlY.calculate(currentY, desiredY);
+        double x = pidControlX.calculate(currentX, desiredX) + pidControlX.getSetpoint().velocity;
+        double y = pidControlY.calculate(currentY, desiredY) + pidControlY.getSetpoint().velocity;
         double rot = pidControlRotation.calculate(currentRotation, desiredRotation);
 
         drive(x, y, rot, true, false);

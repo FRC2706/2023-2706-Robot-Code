@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -91,10 +92,8 @@ public class CompRobotContainer extends RobotContainer {
 
     driver.back().onTrue(new ResetGyro());
 
-    driver.y().whileTrue(new RotateAngleXY(driver, 0));
-    driver.a().whileTrue(new RotateAngleXY(driver, Math.PI));
+    driver.a().whileTrue(Commands.run(() -> SwerveSubsystem.getInstance().driveToPose(new Pose2d(1, 0, Rotation2d.fromDegrees(0)))));
     
-    driver.x().whileTrue(new ChargeStationLock());
     driver.leftTrigger().whileTrue(new RotateXYSupplier(driver,
       NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99)
     ));
