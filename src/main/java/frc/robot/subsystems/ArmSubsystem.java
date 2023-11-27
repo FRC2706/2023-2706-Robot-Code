@@ -242,8 +242,11 @@ public class ArmSubsystem extends SubsystemBase {
     m_bottomArmFFTestingVolts = bottomArmDataTable.getDoubleTopic("VoltageSetInFFTesting").publish();
 
     updatePIDSettings();
-    updateFromAbsoluteTop();
-    updateFromAbsoluteBottom();
+  }
+
+  public void sparkMaxBurnFlash() {
+    m_bottomArm.burnFlash();
+    m_topArm.burnFlash();
   }
 
   public void updatePIDSettings() {
