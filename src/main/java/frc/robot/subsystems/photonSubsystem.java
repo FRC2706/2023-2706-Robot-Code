@@ -16,8 +16,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class photonAprilTag extends SubsystemBase {
-  private static photonAprilTag instance;
+public class photonSubsystem extends SubsystemBase {
+  private static photonSubsystem instance;
   private double EXAMPLE_SIZE_HEIGHT = 104.6;
   private double EXAMPLE_DISTANCE = 1.000;
   private Pose2d cameraOffset = new Pose2d(new Translation2d(0.23,0.3), Rotation2d.fromDegrees(0));
@@ -30,15 +30,15 @@ public class photonAprilTag extends SubsystemBase {
   private LinearFilter filterX = LinearFilter.movingAverage(10);
   private LinearFilter filterY = LinearFilter.movingAverage(10);
 
-  public static photonAprilTag getInstance(){
+  public static photonSubsystem getInstance(){
     if (instance == null){
-      instance = new photonAprilTag();
+      instance = new photonSubsystem();
     }
     return instance;
   }
 
   /** Creates a new photonAprilTag. */
-  private photonAprilTag() {
+  private photonSubsystem() {
     camera1 = new PhotonCamera("OV9281");
     pubSetPoint = NetworkTableInstance.getDefault().getTable(("PhotonCamera")).getDoubleArrayTopic("PhotonAprilPoint").publish(PubSubOption.periodic(0.02));
     targetRotation = SwerveSubsystem.getInstance().getPose().getRotation();
@@ -74,9 +74,18 @@ public class photonAprilTag extends SubsystemBase {
       //System.out.println("tagsize "+heightSize);
       double range = EXAMPLE_SIZE_HEIGHT*EXAMPLE_DISTANCE/heightSize;
       //System.out.println("range"+range);
-      Rotation2d yaw = Rotation2d.fromDegrees(-result.getBestTarget().getYaw());  
+      //148, 640
+      int targetx = 0;
+      for (int i = 0; i<4; i++){
+        targetx += corners.get(i).x;
+      }
+      targetx/=4;
+      targetx = -(targetx-320);
+      //System.out.println(targetx);
+      Rotation2d yaw = Rotation2d.fromDegrees(targetx/320*74);  
 
       Translation2d visionXY = new Translation2d(range, yaw);
+      System.out.println("XY "+visionXY);
       Translation2d robotRotated = visionXY.rotateBy(cameraOffset.getRotation());
       Translation2d robotToTargetRELATIVE = robotRotated.plus(cameraOffset.getTranslation());
       Translation2d robotToTarget = robotToTargetRELATIVE.rotateBy(odometryPose.getRotation());
