@@ -80,12 +80,16 @@ public class photonSubsystem extends SubsystemBase {
         targetx += corners.get(i).x;
       }
       targetx/=4;
-      targetx = -(targetx-320);
-      //System.out.println(targetx);
-      Rotation2d yaw = Rotation2d.fromDegrees(targetx/320*74);  
+      System.out.println(targetx);
+      targetx -=(double)320;
+      targetx *= 74/320;
+      System.out.println("degrees "+targetx);
+      Rotation2d yaw = Rotation2d.fromDegrees(targetx);  
 
       Translation2d visionXY = new Translation2d(range, yaw);
-      System.out.println("XY "+visionXY);
+      //System.out.println("XY "+visionXY);
+      System.out.println("yaw "+ yaw);
+      //System.out.println("range "+range);
       Translation2d robotRotated = visionXY.rotateBy(cameraOffset.getRotation());
       Translation2d robotToTargetRELATIVE = robotRotated.plus(cameraOffset.getTranslation());
       Translation2d robotToTarget = robotToTargetRELATIVE.rotateBy(odometryPose.getRotation());
@@ -94,7 +98,7 @@ public class photonSubsystem extends SubsystemBase {
       //System.out.println("odometry"+ odometryPose.toString());
       Rotation2d fieldOrientedTarget = yaw.rotateBy(odometryPose.getRotation());
       
-      targetPos = new Translation2d(filterX.calculate(feildToTarget.getX())-1,filterY.calculate(feildToTarget.getY()));
+      targetPos = new Translation2d(filterX.calculate(feildToTarget.getX()),filterY.calculate(feildToTarget.getY()));
       targetRotation = Rotation2d.fromDegrees(filteryaw.calculate(fieldOrientedTarget.getDegrees()));
 
 
