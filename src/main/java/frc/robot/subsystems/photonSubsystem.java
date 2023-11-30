@@ -82,6 +82,7 @@ public class photonSubsystem extends SubsystemBase {
       targetx/=4;
       System.out.println(targetx);
       targetx -=(double)320;
+      System.out.println(targetx+"degree");
       targetx *= 74/320;
       System.out.println("degrees "+targetx);
       Rotation2d yaw = Rotation2d.fromDegrees(targetx);  
