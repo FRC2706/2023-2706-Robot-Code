@@ -94,8 +94,8 @@ public class ArmConfig {
         GAME_PIECE_BOTTOM
       }
     
-      public static final double TOP_NEO_GEAR_RATIO = Config.robotSpecific(23.5, 0.0, 0.0, 0.0, 0.0, 60.0, 60.0); //comp --> 23.5
-      public static final double BOTTOM_NEO_GEAR_RATIO = 62.5;  
+      public static final double TOP_NEO_GEAR_RATIO = Config.robotSpecific(1.0, 0.0, 0.0, 0.0, 0.0, 60.0, 60.0); // NEO Encoder gear ratio is 23.5;  
+      public static final double BOTTOM_NEO_GEAR_RATIO = 1.0; // NEO Encoder gear ratio is 62.5;  
       public static final double L1 = 27.75; //length of arm 1 in inches
       public static final double L2 = 38.6; //length of arm 2 in inches 
       public static final double LENGTH_BOTTOM_ARM_TO_COG = 14.56;
@@ -198,12 +198,16 @@ public class ArmConfig {
       public static final int top_duty_cycle_channel = 9;
       public static final int bottom_duty_cycle_channel = 7;
 
-      // arm offsets
-      public static final double top_arm_offset = -282.000000;
-      public static final double bottom_arm_offset = 307.800000;
+      // arm offsets - Must be [0, 360] if using setZeroOffset on a REV AbsoluteEncoder object
+      public static final double top_arm_offset = 285; // Old rio wiring: -282.000000;
+      public static final double bottom_arm_offset = 50.2; // Old rio wiring: 307.800000;
+
+      public static final boolean botEncoderInverted = true;
+      public static final boolean topEncoderInverted = false;
 
       // Syncing encoders
       public static double ENCODER_SYNCING_PERIOD = 0.4; // seconds
+      public static double ENCODER_SYNCING_PERIOD_V2 = 0.05; // seconds
       public static int ENCODER_SYNCING_TIMEOUT = 20; // seconds
       public static double ENCODER_SYNCING_TOLERANCE = 0.01; // radians
       public static int NUM_SYNCING_SAMPLES = 20; // num of samples needed to average

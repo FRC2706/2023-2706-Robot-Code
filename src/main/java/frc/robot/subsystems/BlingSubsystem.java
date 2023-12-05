@@ -21,7 +21,7 @@ public class BlingSubsystem extends SubsystemBase {
   private static BlingSubsystem INSTANCE = null;
 
   private boolean steerEncodersSynced = false;
-  private boolean armEncodersSynced = false;
+  private boolean armEncodersSynced = true; // No longer need arm encoder syncing
   /**
    * Creates a new Bling.
    */

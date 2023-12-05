@@ -43,7 +43,7 @@ public class SyncSteerEncoders extends CommandBase {
     @Override
     public void execute() {
         SmartDashboard.putNumber("SyncSteerState", state);
-        if (state == 0 && m_permanantTimer.hasElapsed(6)) {
+        if (state == 0 && m_permanantTimer.hasElapsed(1)) {
             state = 1;
             DriverStation.reportWarning(
                     String.format("Starting to sync steer encoders (%.1fs)", m_permanantTimer.get()), false);
@@ -57,14 +57,16 @@ public class SyncSteerEncoders extends CommandBase {
                     false);
                 SwerveSubsystem.getInstance().resetEncodersFromCanCoder();
             } else {
-                state = 2;
+                state = 99;
                 m_smallTimer.restart();
             }
         }
-        if (state == 2 && m_smallTimer.hasElapsed(5)) {
-            SwerveSubsystem.getInstance().resetEncodersFromCanCoder();
-            state = 99;
-        }
+        // if (state == 2 && m_smallTimer.hasElapsed(1)) {
+        //     if (SwerveSubsystem.getInstance().checkSteeringEncoders() == false) {
+        //         SwerveSubsystem.getInstance().resetEncodersFromCanCoder();
+        //     }
+        //     state = 99;
+        // }
         SmartDashboard.putNumber("SyncSteerState", state);
     }
 
@@ -77,7 +79,11 @@ public class SyncSteerEncoders extends CommandBase {
                         false);
             BlingSubsystem.getINSTANCE().steerEncodersSynced();
 
-            new WaitCommand(1).andThen(Commands.runOnce(() -> BlingSubsystem.getINSTANCE().steerEncodersSynced())).schedule();
+            new WaitCommand(1).andThen(
+                Commands.runOnce(() -> BlingSubsystem.getINSTANCE().steerEncodersSynced()),
+                new WaitCommand(1),
+                Commands.runOnce(() -> BlingSubsystem.getINSTANCE().steerEncodersSynced())
+            ).schedule();
         }
 
         m_permanantTimer.stop();
