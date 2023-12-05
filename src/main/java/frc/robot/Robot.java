@@ -104,7 +104,7 @@ public class Robot extends TimedRobot {
     if (SubsystemChecker.canSubsystemConstruct(SubsystemType.SwerveSubsystem)) {
       BlingSubsystem.getINSTANCE().setRed();
       new SyncSteerEncoders().schedule();
-      new SyncArmEncodersV2().schedule();
+      // new SyncArmEncodersV2().schedule(); // With new encoder wiring, no longer need to sync arms
     } 
 
     // Add CommandScheduler to shuffleboard so we can display what commands are scheduled
