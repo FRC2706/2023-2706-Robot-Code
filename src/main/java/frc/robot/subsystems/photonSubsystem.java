@@ -12,6 +12,7 @@ import org.photonvision.targeting.TargetCorner;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,6 +24,7 @@ public class photonSubsystem extends SubsystemBase {
   private Pose2d cameraOffset = new Pose2d(new Translation2d(0.23,0.3), Rotation2d.fromDegrees(0));
   //height of april = 1 foot 3 and 1/4 to bottom of black
   private DoubleArrayPublisher pubSetPoint;
+  private DoublePublisher pubRange, pubYaw;
   private PhotonCamera camera1;
   private Translation2d targetPos;
   private Rotation2d targetRotation;
@@ -41,6 +43,9 @@ public class photonSubsystem extends SubsystemBase {
   private photonSubsystem() {
     camera1 = new PhotonCamera("OV9281");
     pubSetPoint = NetworkTableInstance.getDefault().getTable(("PhotonCamera")).getDoubleArrayTopic("PhotonAprilPoint").publish(PubSubOption.periodic(0.02));
+    pubRange = NetworkTableInstance.getDefault().getTable(("PhotonCamera")).getDoubleTopic("Range").publish(PubSubOption.periodic(0.02));
+    pubYaw = NetworkTableInstance.getDefault().getTable(("PhotonCamera")).getDoubleTopic("Yaw").publish(PubSubOption.periodic(0.02));
+    
     targetRotation = SwerveSubsystem.getInstance().getPose().getRotation();
     targetPos = SwerveSubsystem.getInstance().getPose().getTranslation();
   }
@@ -75,22 +80,14 @@ public class photonSubsystem extends SubsystemBase {
       double range = EXAMPLE_SIZE_HEIGHT*EXAMPLE_DISTANCE/heightSize;
       //System.out.println("range"+range);
       //148, 640
-      int targetx = 0;
+      double targetx = 0;
       for (int i = 0; i<4; i++){
         targetx += corners.get(i).x;
       }
-      targetx/=4;
-      System.out.println(targetx);
-      targetx -=(double)320;
-      System.out.println(targetx+"degree");
-      targetx *= 74/320;
-      System.out.println("degrees "+targetx);
+      targetx = -(targetx/4-320)*35.0/320.0;
       Rotation2d yaw = Rotation2d.fromDegrees(targetx);  
 
       Translation2d visionXY = new Translation2d(range, yaw);
-      //System.out.println("XY "+visionXY);
-      System.out.println("yaw "+ yaw);
-      //System.out.println("range "+range);
       Translation2d robotRotated = visionXY.rotateBy(cameraOffset.getRotation());
       Translation2d robotToTargetRELATIVE = robotRotated.plus(cameraOffset.getTranslation());
       Translation2d robotToTarget = robotToTargetRELATIVE.rotateBy(odometryPose.getRotation());
@@ -104,6 +101,8 @@ public class photonSubsystem extends SubsystemBase {
 
 
       pubSetPoint.accept(new double[]{targetPos.getX(),targetPos.getY(),targetRotation.getRadians()});
+      pubRange.accept(range);
+      pubYaw.accept(targetx);
     }
   }
 }

@@ -24,6 +24,7 @@ public class PhotonMoveToTarget extends CommandBase {
   @Override
   public void initialize() {
     SwerveSubsystem.getInstance().resetDriveToPose();
+    photonSubsystem.getInstance().reset();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
