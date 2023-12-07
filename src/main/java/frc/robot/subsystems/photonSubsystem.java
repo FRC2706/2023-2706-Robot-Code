@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.TargetCorner;
@@ -31,6 +32,7 @@ public class photonSubsystem extends SubsystemBase {
   private LinearFilter filteryaw = LinearFilter.movingAverage(10);
   private LinearFilter filterX = LinearFilter.movingAverage(10);
   private LinearFilter filterY = LinearFilter.movingAverage(10);
+  private int data;
 
   public static photonSubsystem getInstance(){
     if (instance == null){
@@ -48,6 +50,7 @@ public class photonSubsystem extends SubsystemBase {
     
     targetRotation = SwerveSubsystem.getInstance().getPose().getRotation();
     targetPos = SwerveSubsystem.getInstance().getPose().getTranslation();
+    data = 0;
   }
 
   public void reset() {
@@ -56,6 +59,7 @@ public class photonSubsystem extends SubsystemBase {
     filteryaw.reset();
     targetRotation = SwerveSubsystem.getInstance().getPose().getRotation();
     targetPos = SwerveSubsystem.getInstance().getPose().getTranslation();
+    data = 0;
   }
 
   public Translation2d getTargetPos(){
@@ -66,6 +70,10 @@ public class photonSubsystem extends SubsystemBase {
     return targetRotation;
   }
 
+  public boolean hasData() {
+    return(data>9);
+  }
+
 
   @Override
   public void periodic() {
@@ -73,7 +81,11 @@ public class photonSubsystem extends SubsystemBase {
     var result = camera1.getLatestResult();
     
     if (result.hasTargets()){
-      Pose2d odometryPose = SwerveSubsystem.getInstance().getPose();
+      Optional<Pose2d> optPose= SwerveSubsystem.getInstance().getPoseAtTimestamp(result.getTimestampSeconds());
+      if (optPose.isEmpty()){
+        return;
+      }
+      Pose2d odometryPose =optPose.get();
       List<TargetCorner> corners = result.getBestTarget().getDetectedCorners();
       double heightSize = (corners.get(0).y - corners.get(3).y + corners.get(1).y - corners.get(2).y)/2;
       //System.out.println("tagsize "+heightSize);
@@ -98,6 +110,7 @@ public class photonSubsystem extends SubsystemBase {
       
       targetPos = new Translation2d(filterX.calculate(feildToTarget.getX()),filterY.calculate(feildToTarget.getY()));
       targetRotation = Rotation2d.fromDegrees(filteryaw.calculate(fieldOrientedTarget.getDegrees()));
+      data ++;
 
 
       pubSetPoint.accept(new double[]{targetPos.getX(),targetPos.getY(),targetRotation.getRadians()});

@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -15,16 +14,22 @@ import frc.robot.subsystems.photonSubsystem;
 
 public class PhotonMoveToTarget extends CommandBase {
 
+  Translation2d targetOffset;
+
   public PhotonMoveToTarget() {
     addRequirements(SwerveSubsystem.getInstance());
     addRequirements(photonSubsystem.getInstance());
+  }
+  public PhotonMoveToTarget(Translation2d _targetOffset) {
+    addRequirements(SwerveSubsystem.getInstance());
+    addRequirements(photonSubsystem.getInstance());
+    targetOffset = _targetOffset;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     SwerveSubsystem.getInstance().resetDriveToPose();
-    photonSubsystem.getInstance().reset();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -32,8 +37,8 @@ public class PhotonMoveToTarget extends CommandBase {
   public void execute() {
     Translation2d setPoint = photonSubsystem.getInstance().getTargetPos();
     Rotation2d rotationSetPoint = photonSubsystem.getInstance().getTargetRotation();
-
-    SwerveSubsystem.getInstance().driveToPose(new Pose2d(setPoint.plus(new Translation2d(-1,0)), rotationSetPoint));
+    System.out.println(setPoint.getX());
+    SwerveSubsystem.getInstance().driveToPose(new Pose2d(setPoint.plus(targetOffset), rotationSetPoint));
   }
   
 
@@ -46,6 +51,6 @@ public class PhotonMoveToTarget extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return SwerveSubsystem.getInstance().isAtPose();
   }
 }

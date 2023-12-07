@@ -77,7 +77,7 @@ public class SwerveSubsystem extends SubsystemBase {
     double currentRotation;
     double desiredRotation;
     double tolerance = 0.01;
-    double angleTolerance = 0.01;
+    double angleTolerance = 0.10;
 
     /** Get instance of singleton class */
     public static SwerveSubsystem getInstance() {
@@ -336,9 +336,9 @@ public class SwerveSubsystem extends SubsystemBase {
     // Swerve actual driving methods
     public void resetDriveToPose() {
         // reset current positions
-        pidControlX.reset(currentX);
-        pidControlY.reset(currentY);
-        pidControlRotation.reset(currentRotation);
+        pidControlX.reset(getPose().getX());
+        pidControlY.reset(getPose().getY());
+        pidControlRotation.reset(getHeading().getRadians());
     }
 
     public void driveToPose(Pose2d pose) {

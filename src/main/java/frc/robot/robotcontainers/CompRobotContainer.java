@@ -7,14 +7,15 @@ package frc.robot.robotcontainers;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -28,6 +29,7 @@ import frc.robot.commands.ChargeStationLock;
 import frc.robot.commands.DriveArmAgainstBackstop;
 import frc.robot.commands.GripperCommand;
 import frc.robot.commands.PhotonMoveToTarget;
+import frc.robot.commands.PhotonWaitForData;
 import frc.robot.commands.GripperCommand.GRIPPER_INSTRUCTION;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.RotateAngleXY;
@@ -93,7 +95,7 @@ public class CompRobotContainer extends RobotContainer {
     driver.back().onTrue(new ResetGyro());
 
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
-    driver.a().whileTrue(new PhotonMoveToTarget());
+    driver.a().whileTrue(Commands.sequence(new PhotonWaitForData(), new ScheduleCommand(new PhotonMoveToTarget(new Translation2d(-1,-0.3))))).onFalse(new InstantCommand( () -> {},SwerveSubsystem.getInstance()));
     driver.x().whileTrue(new ChargeStationLock());
     driver.leftTrigger().whileTrue(new RotateXYSupplier(driver,
       NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99)
