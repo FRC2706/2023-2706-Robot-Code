@@ -15,17 +15,27 @@ import frc.robot.subsystems.photonSubsystem;
 public class PhotonMoveToTarget extends CommandBase {
 
   Translation2d targetOffset;
+  boolean centerTarget;
+  Rotation2d desiredHeading;
 
-  public PhotonMoveToTarget() {
-    addRequirements(SwerveSubsystem.getInstance());
-    addRequirements(photonSubsystem.getInstance());
-  }
+
+  
   public PhotonMoveToTarget(Translation2d _targetOffset) {
     addRequirements(SwerveSubsystem.getInstance());
     addRequirements(photonSubsystem.getInstance());
     targetOffset = _targetOffset;
+    centerTarget=true;
+
   }
 
+  public PhotonMoveToTarget(Translation2d _targetOffset, Rotation2d _desiredHeading) {
+    addRequirements(SwerveSubsystem.getInstance());
+    addRequirements(photonSubsystem.getInstance());
+    targetOffset = _targetOffset;
+    desiredHeading = _desiredHeading;
+    centerTarget=false;
+
+  }
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
@@ -37,8 +47,12 @@ public class PhotonMoveToTarget extends CommandBase {
   public void execute() {
     Translation2d setPoint = photonSubsystem.getInstance().getTargetPos();
     Rotation2d rotationSetPoint = photonSubsystem.getInstance().getTargetRotation();
-    System.out.println(setPoint.getX());
-    SwerveSubsystem.getInstance().driveToPose(new Pose2d(setPoint.plus(targetOffset), rotationSetPoint));
+    //System.out.println(setPoint.getX());
+    if (centerTarget){
+      SwerveSubsystem.getInstance().driveToPose(new Pose2d(setPoint.plus(targetOffset), rotationSetPoint));
+    }else{
+      SwerveSubsystem.getInstance().driveToPose(new Pose2d(setPoint.plus(targetOffset), desiredHeading));
+    }
   }
   
 

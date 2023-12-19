@@ -7,6 +7,7 @@ package frc.robot.robotcontainers;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -95,7 +96,13 @@ public class CompRobotContainer extends RobotContainer {
     driver.back().onTrue(new ResetGyro());
 
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
-    driver.a().whileTrue(Commands.sequence(new PhotonWaitForData(), new ScheduleCommand(new PhotonMoveToTarget(new Translation2d(-1,-0.3))))).onFalse(new InstantCommand( () -> {},SwerveSubsystem.getInstance()));
+    driver.a().whileTrue(Commands.sequence(
+      new PhotonWaitForData(), new ScheduleCommand(Commands.sequence
+            (new PhotonMoveToTarget(new Translation2d(-1.5,-0.3)),
+            new PhotonMoveToTarget(new Translation2d(-1,0.05),Rotation2d.fromDegrees(0))))))
+      .onFalse(new InstantCommand( () -> {},SwerveSubsystem.getInstance()));
+
+
     driver.x().whileTrue(new ChargeStationLock());
     driver.leftTrigger().whileTrue(new RotateXYSupplier(driver,
       NetworkTableInstance.getDefault().getTable("MergeVisionPipelineIntake22").getDoubleTopic("Yaw").subscribe(-99)
