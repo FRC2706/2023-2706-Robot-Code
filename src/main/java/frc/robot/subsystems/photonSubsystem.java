@@ -4,12 +4,12 @@
 
 package frc.robot.subsystems;
 
+//imports
 import java.util.List;
 import java.util.Optional;
-
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
-
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
@@ -18,12 +18,10 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+//class
 public class photonSubsystem extends SubsystemBase {
+  //declarations
   private static photonSubsystem instance;
-  private double EXAMPLE_SIZE_HEIGHT = 104.6;
-  private double EXAMPLE_DISTANCE = 1.000;
-  private Pose2d cameraOffset = new Pose2d(new Translation2d(0.23,0.3), Rotation2d.fromDegrees(0));
-  //height of april = 1 foot 3 and 1/4 to bottom of black
   private DoubleArrayPublisher pubSetPoint;
   private DoublePublisher pubRange, pubYaw;
   private PhotonCamera camera1;
@@ -33,6 +31,13 @@ public class photonSubsystem extends SubsystemBase {
   private LinearFilter filterX = LinearFilter.movingAverage(10);
   private LinearFilter filterY = LinearFilter.movingAverage(10);
   private int data;
+  private int id;
+
+  //constants
+  //height of april = 1 foot 3 and 1/4 to bottom of black
+  private double EXAMPLE_SIZE_HEIGHT = 104.6;
+  private double EXAMPLE_DISTANCE = 1.000;
+  private Pose2d cameraOffset = new Pose2d(new Translation2d(0.23,0.3), Rotation2d.fromDegrees(0));
 
   public static photonSubsystem getInstance(){
     if (instance == null){
@@ -43,23 +48,30 @@ public class photonSubsystem extends SubsystemBase {
 
   /** Creates a new photonAprilTag. */
   private photonSubsystem() {
+    //name of camera
     camera1 = new PhotonCamera("OV9281");
+    //networktable publishers
     pubSetPoint = NetworkTableInstance.getDefault().getTable(("PhotonCamera")).getDoubleArrayTopic("PhotonAprilPoint").publish(PubSubOption.periodic(0.02));
     pubRange = NetworkTableInstance.getDefault().getTable(("PhotonCamera")).getDoubleTopic("Range").publish(PubSubOption.periodic(0.02));
     pubYaw = NetworkTableInstance.getDefault().getTable(("PhotonCamera")).getDoubleTopic("Yaw").publish(PubSubOption.periodic(0.02));
-    
+    //set target info to the robot's info
     targetRotation = SwerveSubsystem.getInstance().getPose().getRotation();
     targetPos = SwerveSubsystem.getInstance().getPose().getTranslation();
+    //initialize vars
     data = 0;
+    id = -1;
   }
 
-  public void reset() {
+  public void reset(int desiredId) {
     filterX.reset();
     filterY.reset();
     filteryaw.reset();
+    //set target info to the robot's info
     targetRotation = SwerveSubsystem.getInstance().getPose().getRotation();
     targetPos = SwerveSubsystem.getInstance().getPose().getTranslation();
+
     data = 0;
+    id = desiredId;
   }
 
   public Translation2d getTargetPos(){
@@ -71,7 +83,8 @@ public class photonSubsystem extends SubsystemBase {
   }
 
   public boolean hasData() {
-    return(data>9);
+    //if data is the max that the filters hold
+    return(data == 10);
   }
 
 
@@ -79,14 +92,32 @@ public class photonSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     var result = camera1.getLatestResult();
-    
     if (result.hasTargets()){
+      //get the swerve pose at the time that the result was gotten
       Optional<Pose2d> optPose= SwerveSubsystem.getInstance().getPoseAtTimestamp(result.getTimestampSeconds());
+
       if (optPose.isEmpty()){
         return;
       }
+      
       Pose2d odometryPose =optPose.get();
-      List<TargetCorner> corners = result.getBestTarget().getDetectedCorners();
+      PhotonTrackedTarget target = null;
+      if (id == -1){
+        target = result.getBestTarget();
+      } else{
+        List<PhotonTrackedTarget> allTargets = result.getTargets();
+        for (PhotonTrackedTarget t:allTargets){
+          if (t.getFiducialId() == id){
+           target = t;
+           break;
+          }
+        }
+        if (target == null){
+          return;
+        }
+      }
+      
+      List<TargetCorner> corners = target.getDetectedCorners();
       double heightSize = (corners.get(0).y - corners.get(3).y + corners.get(1).y - corners.get(2).y)/2;
       //System.out.println("tagsize "+heightSize);
       double range = EXAMPLE_SIZE_HEIGHT*EXAMPLE_DISTANCE/heightSize;

@@ -97,9 +97,9 @@ public class CompRobotContainer extends RobotContainer {
 
     driver.y().whileTrue(new RotateAngleXY(driver, 0));
     driver.a().whileTrue(Commands.sequence(
-      new PhotonWaitForData(), new ScheduleCommand(Commands.sequence
-            (new PhotonMoveToTarget(new Translation2d(-1.5,-0.3)),
-            new PhotonMoveToTarget(new Translation2d(-1,0.05),Rotation2d.fromDegrees(0))))))
+      new PhotonWaitForData(-1), new ScheduleCommand(Commands.sequence
+            (new PhotonMoveToTarget(new Translation2d(-1.5,-0.3), 0.2),
+            new PhotonMoveToTarget(new Translation2d(-1,0.05),Rotation2d.fromDegrees(0), 0.01)))))
       .onFalse(new InstantCommand( () -> {},SwerveSubsystem.getInstance()));
 
 

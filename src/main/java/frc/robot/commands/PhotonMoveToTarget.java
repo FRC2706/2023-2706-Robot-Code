@@ -17,25 +17,28 @@ public class PhotonMoveToTarget extends CommandBase {
   Translation2d targetOffset;
   boolean centerTarget;
   Rotation2d desiredHeading;
+  double tolerance=0.01;
 
 
-  
-  public PhotonMoveToTarget(Translation2d _targetOffset) {
+  public PhotonMoveToTarget(Translation2d _targetOffset, double _tolerance) {
     addRequirements(SwerveSubsystem.getInstance());
     addRequirements(photonSubsystem.getInstance());
     targetOffset = _targetOffset;
     centerTarget=true;
-
+    tolerance=_tolerance;
   }
 
-  public PhotonMoveToTarget(Translation2d _targetOffset, Rotation2d _desiredHeading) {
+  
+  public PhotonMoveToTarget(Translation2d _targetOffset, Rotation2d _desiredHeading, double _tolerance) {
     addRequirements(SwerveSubsystem.getInstance());
     addRequirements(photonSubsystem.getInstance());
     targetOffset = _targetOffset;
     desiredHeading = _desiredHeading;
     centerTarget=false;
-
+    tolerance=_tolerance;
   }
+
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
@@ -47,7 +50,6 @@ public class PhotonMoveToTarget extends CommandBase {
   public void execute() {
     Translation2d setPoint = photonSubsystem.getInstance().getTargetPos();
     Rotation2d rotationSetPoint = photonSubsystem.getInstance().getTargetRotation();
-    //System.out.println(setPoint.getX());
     if (centerTarget){
       SwerveSubsystem.getInstance().driveToPose(new Pose2d(setPoint.plus(targetOffset), rotationSetPoint));
     }else{
@@ -59,12 +61,12 @@ public class PhotonMoveToTarget extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    SwerveSubsystem.getInstance().stopMotors();
+    // SwerveSubsystem.getInstance().stopMotors();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return SwerveSubsystem.getInstance().isAtPose();
+    return SwerveSubsystem.getInstance().isAtPose(tolerance, tolerance*10);
   }
 }

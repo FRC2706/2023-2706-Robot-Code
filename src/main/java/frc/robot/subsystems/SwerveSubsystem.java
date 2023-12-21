@@ -4,11 +4,10 @@
 
 package frc.robot.subsystems;
 
+//imports
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
 import com.ctre.phoenix.sensors.PigeonIMU;
-
 import edu.wpi.first.math.MathSharedStore;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -34,6 +33,7 @@ import frc.robot.SubsystemChecker;
 import frc.robot.SubsystemChecker.SubsystemType;
 import frc.robot.config.Config;
 
+//class
 public class SwerveSubsystem extends SubsystemBase {
     private Field2d m_field = new Field2d();
 
@@ -76,8 +76,7 @@ public class SwerveSubsystem extends SubsystemBase {
     ProfiledPIDController pidControlRotation;
     double currentRotation;
     double desiredRotation;
-    double tolerance = 0.01;
-    double angleTolerance = 0.10;
+
 
     /** Get instance of singleton class */
     public static SwerveSubsystem getInstance() {
@@ -343,6 +342,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void driveToPose(Pose2d pose) {
         //update the currentX and currentY
+        
         currentX = getPose().getX();
         currentY = getPose().getY();
         currentRotation = getHeading().getRadians();
@@ -358,8 +358,8 @@ public class SwerveSubsystem extends SubsystemBase {
         drive(x, y, rot, true, false);
     }
 
-    public boolean isAtPose() {
-        return Math.abs(currentX - desiredX) < tolerance && Math.abs(currentY - desiredY) < tolerance
-                && Math.abs(currentRotation - desiredRotation) < angleTolerance;
+    public boolean isAtPose(double tol,double angleTol) {
+        return Math.abs(currentX - desiredX) < tol && Math.abs(currentY - desiredY) < tol
+                && Math.abs(currentRotation - desiredRotation) < angleTol;
     }
 }

@@ -10,7 +10,11 @@ import frc.robot.subsystems.photonSubsystem;
 
 public class PhotonWaitForData extends CommandBase {
 
-
+  int id = -1;
+  public PhotonWaitForData(int desiredId) {
+    addRequirements(photonSubsystem.getInstance());
+    id = desiredId;
+  }
   public PhotonWaitForData() {
     addRequirements(photonSubsystem.getInstance());
   }
@@ -18,7 +22,7 @@ public class PhotonWaitForData extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    photonSubsystem.getInstance().reset();
+    photonSubsystem.getInstance().reset(id);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
