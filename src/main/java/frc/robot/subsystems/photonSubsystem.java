@@ -69,7 +69,7 @@ public class photonSubsystem extends SubsystemBase {
     //set target info to the robot's info
     targetRotation = SwerveSubsystem.getInstance().getPose().getRotation();
     targetPos = SwerveSubsystem.getInstance().getPose().getTranslation();
-
+    //set vars
     data = 0;
     id = desiredId;
   }
@@ -119,30 +119,25 @@ public class photonSubsystem extends SubsystemBase {
       
       List<TargetCorner> corners = target.getDetectedCorners();
       double heightSize = (corners.get(0).y - corners.get(3).y + corners.get(1).y - corners.get(2).y)/2;
-      //System.out.println("tagsize "+heightSize);
       double range = EXAMPLE_SIZE_HEIGHT*EXAMPLE_DISTANCE/heightSize;
-      //System.out.println("range"+range);
-      //148, 640
       double targetx = 0;
       for (int i = 0; i<4; i++){
         targetx += corners.get(i).x;
       }
       targetx = -(targetx/4-320)*35.0/320.0;
+
       Rotation2d yaw = Rotation2d.fromDegrees(targetx);  
+      Rotation2d fieldOrientedTarget = yaw.rotateBy(odometryPose.getRotation());
 
       Translation2d visionXY = new Translation2d(range, yaw);
       Translation2d robotRotated = visionXY.rotateBy(cameraOffset.getRotation());
       Translation2d robotToTargetRELATIVE = robotRotated.plus(cameraOffset.getTranslation());
       Translation2d robotToTarget = robotToTargetRELATIVE.rotateBy(odometryPose.getRotation());
       Translation2d feildToTarget = robotToTarget.plus(odometryPose.getTranslation());
-      //System.out.println("robot to target "+ robotToTargetRELATIVE.toString());
-      //System.out.println("odometry"+ odometryPose.toString());
-      Rotation2d fieldOrientedTarget = yaw.rotateBy(odometryPose.getRotation());
       
       targetPos = new Translation2d(filterX.calculate(feildToTarget.getX()),filterY.calculate(feildToTarget.getY()));
       targetRotation = Rotation2d.fromDegrees(filteryaw.calculate(fieldOrientedTarget.getDegrees()));
       data ++;
-
 
       pubSetPoint.accept(new double[]{targetPos.getX(),targetPos.getY(),targetRotation.getRadians()});
       pubRange.accept(range);

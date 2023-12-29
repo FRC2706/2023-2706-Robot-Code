@@ -56,7 +56,7 @@ public class PhotonMoveToTarget extends CommandBase {
       SwerveSubsystem.getInstance().driveToPose(new Pose2d(setPoint.plus(targetOffset), desiredHeading));
     }
   }
-  
+ 
 
   // Called once the command ends or is interrupted.
   @Override
