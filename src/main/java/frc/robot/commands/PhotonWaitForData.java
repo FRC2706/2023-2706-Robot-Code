@@ -4,10 +4,11 @@
 
 package frc.robot.commands;
 
-
+//imports
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.photonSubsystem;
 
+//class
 public class PhotonWaitForData extends CommandBase {
 
   int id = -1;
@@ -30,7 +31,6 @@ public class PhotonWaitForData extends CommandBase {
   public void execute() {
   }
   
-
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {

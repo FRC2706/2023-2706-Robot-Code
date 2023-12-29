@@ -4,7 +4,7 @@
 
 package frc.robot.commands;
 
-
+//imports
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,8 +12,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.photonSubsystem;
 
+//class
 public class PhotonMoveToTarget extends CommandBase {
-
+  //declerations
   Translation2d targetOffset;
   boolean centerTarget;
   Rotation2d desiredHeading;
@@ -45,6 +46,7 @@ public class PhotonMoveToTarget extends CommandBase {
     SwerveSubsystem.getInstance().resetDriveToPose();
   }
 
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
@@ -64,6 +66,7 @@ public class PhotonMoveToTarget extends CommandBase {
     // SwerveSubsystem.getInstance().stopMotors();
   }
 
+  
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
