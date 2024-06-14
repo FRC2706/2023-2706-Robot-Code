@@ -44,6 +44,9 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
   private BrakeModeDisabled brakeModeDisabledCommand = null;
 
+  private VisionCtrlNetTable visionCtrlNetTable;
+  boolean isRealMatch = false;
+
   Compressor pcmCompressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
 
 
@@ -55,6 +58,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    visionCtrlNetTable = new VisionCtrlNetTable();
     DriverStation.silenceJoystickConnectionWarning(true);
     pcmCompressor.enableDigital();
     PathPlannerServer.startServer(5811);
@@ -130,6 +134,10 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    if (isRealMatch) {
+      visionCtrlNetTable.shutDownVision();
+    }
+
     if (brakeModeDisabledCommand != null) 
       brakeModeDisabledCommand.schedule();  
   }
@@ -146,6 +154,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    visionCtrlNetTable.startUpVision();
+    isRealMatch = DriverStation.isFMSAttached();
     
     // Set the IdleMode or NeutralMode of Differential subsystem
     if (SubsystemChecker.canSubsystemConstruct(SubsystemType.DiffNeoSubsystem)) {
